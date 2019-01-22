@@ -8,7 +8,7 @@ namespace BusinessCore
 {
     public class NumberTools
     {
-        public static int factorial(int n)
+        public static long factorial(long n)
         {
 
 
