@@ -8,14 +8,26 @@ namespace BusinessCore
 {
     public class NumberTools
     {
-        public static int factorial(int n)
-        {
-            throw new NotImplementedException();
+        public static int factorial(int n){
+            int resultado=1;
+            for (int i = 1; i <= n; i++){
+                resultado = resultado * i;
+            }
+            return resultado;
+            //throw new NotImplementedException();
         }
 
-        public static int fibonacci(int n)
-        {
-            throw new NotImplementedException();
+        public static int fibonacci(int n){
+            int a = 0;
+            int b = 1;
+
+            for (int i = 0; i < n; i++){
+                int temp = a;
+                a = b;
+                b = temp + b;
+            }
+            return a;
+            //throw new NotImplementedException();
         }
     }
 }
