@@ -10,10 +10,10 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            long resultado = 0;
+            long resultado = 1;
             for (long i = 1; i <= n; i++)
             {
-                resultado = resultado * i +i;
+                resultado = resultado * i;
             }
             return (resultado);
         }
@@ -21,24 +21,15 @@ namespace BusinessCore
         public static long fibonacci(int n)
         {
 
-            long resultado = 0;
+            int aux1 =0;
+            int aux2 = 1;
             for(int i = 0; i<n; i++)
             {
-                if (n == 0)
-                {
-                    return (resultado);
-                }
-                else if (n == 1)
-                {
-                    resultado = 1;
-                    return (resultado);
-                }
-                else
-                {
-                    return fibonacci(n - 1) + fibonacci(n - 2);
-                }
+                int temporal = aux1;
+                aux1 = aux2;
+                aux2 = temporal + aux2;
             }
-            return (resultado);
+            return (aux1);
         }
     }
 }
