@@ -26,7 +26,7 @@ namespace BusinessCore
             }
             else if (n < 0)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentException("El numero introducido debe ser positivo");
             }
 
             return (lResult);
@@ -51,7 +51,7 @@ namespace BusinessCore
             }
             else if (n < 0)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentException("El numero introducido debe ser positivo");
             }
 
             return (iResult);
