@@ -10,17 +10,19 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-
-
-            throw new NotImplementedException();
+            long resultado = 0;
+            for (long i = 1; i <= n; i++)
+            {
+                resultado = resultado * i +i;
+            }
+            return (resultado);
         }
 
         public static long fibonacci(int n)
         {
 
             long resultado = 0;
-
-            for(int i = 0; i < n; i++)
+            for(int i = 0; i<n; i++)
             {
                 if (n == 0)
                 {
@@ -33,7 +35,7 @@ namespace BusinessCore
                 }
                 else
                 {
-                    resultado = resultado + n-1;
+                    return fibonacci(n - 1) + fibonacci(n - 2);
                 }
             }
             return (resultado);
