@@ -11,13 +11,11 @@ namespace BusinessCore
         public static long factorial(long n)
         {
             long fact = 1;
-            if(n != 0)
+
+            for(int i= 0; i < n; i++)
             {
-                for(int i= 0; i < n; i++)
-                {
-                    fact = fact * i;
-                };
-            }
+                fact = fact * i;
+            };
 
             return fact;
         }
