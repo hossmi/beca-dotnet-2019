@@ -10,12 +10,19 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            int result = 1;
-            int i;
-
-            for (i = n; i > 0; i--)
+            long result = 1;
+            
+            if (n == 0)
             {
-                result = result * i;
+                result = 0;
+            }
+            else
+            {
+                long i;
+                for (i = n; i > 0; i--)
+                {
+                    result = result * i;
+                }
             }
 
             return (result);
