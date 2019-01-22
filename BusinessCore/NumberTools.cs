@@ -14,7 +14,7 @@ namespace BusinessCore
             
             if (n == 0)
             {
-                result = 0;
+                result = 1;
             }
             else
             {
