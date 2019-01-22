@@ -10,6 +10,7 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
+            //Excepción que indica que la función está todavía sin implementar
             //throw new NotImplementedException();
             if (n == 0)
             {
