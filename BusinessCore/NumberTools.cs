@@ -10,27 +10,27 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            long result = n;            
+            long resul = n;            
 
             for (long i = n - 1; i > 1; i--)
             {
-                result *= i;
+                resul *= i;
             }
-            return result;
+            return resul;
         }
 
         public static int fibonacci(int n)
         {
-            int result = 0;
+            int resul = 0;
 
             if (n > 1)
-                result = fibonacci(n - 1) + fibonacci(n - 2);
+                resul = fibonacci(n - 1) + fibonacci(n - 2);
             else if (n == 1)
-                result = 1;
+                resul = 1;
             else if (n == 0)
-                result = 0;
+                resul = 0;
 
-            return result;
+            return resul;
         }
     }
 }
