@@ -8,7 +8,7 @@ namespace BusinessCore
 {
     public class NumberTools
     {
-        public static long factorial(long n)
+        public static long Factorial(long n)
         {
             long i = 1; long o = n;
             long a = o;
@@ -19,6 +19,7 @@ namespace BusinessCore
                 a = c;
                 o--;
             }
+            return a;
         }
         public static int fibonacci(int n)
         {
