@@ -9,7 +9,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void factorial_of_5_returns_120()
         {
-            int result = NumberTools.factorial(5);
+            long result = NumberTools.factorial(5);
 
             Assert.AreEqual(120, result);
         }
@@ -17,7 +17,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void factorial_of_15_returns_1307674368000()
         {
-            int result = NumberTools.factorial(15);
+            long result = NumberTools.factorial(15);
 
             Assert.AreEqual(1307674368000, result);
         }
