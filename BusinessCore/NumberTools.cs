@@ -13,19 +13,13 @@ namespace BusinessCore
             //throw new NotImplementedException();
             if (n == 0)
             {
-                return 0;
+                return 1;
             }
             else if(n == 1)
             {
                 return 1;
             }
-
-            int resul = 1;
-            for(int i = 2; i <= n; i++)
-            {
-                resul *= i;
-            }
-            return resul;
+            return n * factorial(n - 1);
         }
 
         public static int fibonacci(int n)
@@ -39,8 +33,6 @@ namespace BusinessCore
             {
                 return 1;
             }
-
-            //int resul;
             return fibonacci(n -1) + fibonacci(n - 2);
         }
     }
