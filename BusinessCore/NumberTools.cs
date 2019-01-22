@@ -10,46 +10,52 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            long result = 1;
-            
-            if (n == 0)
-            {
-                result = 1;
-            }
-            else
+            long lResult = 1;
+
+            if (n > 0)
             {
                 long i;
                 for (i = n; i > 0; i--)
                 {
-                    result = result * i;
+                    lResult = lResult * i;
                 }
             }
+            else if (n == 0)
+            {
+                lResult = 1;
+            }
+            else if (n < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
 
-            return (result);
-
+            return (lResult);
             
         }
 
         public static int fibonacci(int n)
         {
-            int result = 0;
+            int iResult = 0;
 
             if (n > 1)
             {
-                result = fibonacci(n - 1) + fibonacci(n - 2);
+                iResult = fibonacci(n - 1) + fibonacci(n - 2);
             }
             else if(n==1)
             {
-                result = 1;
+                iResult = 1;
             }
             else if (n==0)
             {
-                result = 0;
+                iResult = 0;
             }
-            
-            return (result);
+            else if (n < 0)
+            {
+                throw new IndexOutOfRangeException();
+            }
 
-            
+            return (iResult);
+
         }
     }
 }
