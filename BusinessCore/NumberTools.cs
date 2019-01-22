@@ -10,11 +10,38 @@ namespace BusinessCore
     {
         public static int factorial(int n)
         {
+
+
             throw new NotImplementedException();
         }
 
-        public static int fibonacci(int n)
+        public static long fibonacci(int n)
         {
+
+            long resultado = 0;
+            int aux1 = 0;
+
+            for(int i = 0; i < n; i++)
+            {
+                if (n == 0)
+                {
+                    return (resultado);
+                }
+                else if (n == 1)
+                {
+                    resultado = 1;
+                    return (resultado);
+                }
+                else
+                {
+                    resultado = resultado + n-1;
+                }
+            }
+            return (resultado);
+
+
+
+
             throw new NotImplementedException();
         }
     }
