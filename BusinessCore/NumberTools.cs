@@ -12,11 +12,7 @@ namespace BusinessCore
         {
             //Excepción que indica que la función está todavía sin implementar
             //throw new NotImplementedException();
-            if (n == 0)
-            {
-                return 1;
-            }
-            else if(n == 1)
+            if ((n == 0) || (n == 1))
             {
                 return 1;
             }
@@ -34,7 +30,7 @@ namespace BusinessCore
             {
                 return 1;
             }
-            return fibonacci(n -1) + fibonacci(n - 2);
+            return fibonacci(n - 1) + fibonacci(n - 2);
         }
     }
 }
