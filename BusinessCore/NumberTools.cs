@@ -10,6 +10,12 @@ namespace BusinessCore
     {
         public static int factorial(int n)
         {
+            int i = 1; int o = n;
+            while(o >= i)
+            {
+                int temp = o * o - 1;
+                o--;
+            }
             throw new NotImplementedException();
         }
 
