@@ -19,7 +19,6 @@ namespace BusinessCore
         {
 
             long resultado = 0;
-            int aux1 = 0;
 
             for(int i = 0; i < n; i++)
             {
@@ -38,11 +37,6 @@ namespace BusinessCore
                 }
             }
             return (resultado);
-
-
-
-
-            throw new NotImplementedException();
         }
     }
 }
