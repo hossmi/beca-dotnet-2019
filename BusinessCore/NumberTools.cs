@@ -27,7 +27,7 @@ namespace BusinessCore
 
             return (result);
 
-            throw new NotImplementedException();
+            
         }
 
         public static int fibonacci(int n)
@@ -49,7 +49,7 @@ namespace BusinessCore
             
             return (result);
 
-            throw new NotImplementedException();
+            
         }
     }
 }
