@@ -10,9 +10,9 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            int resul = n;            
+            long resul = n;            
 
-            for (int i = n - 1; i > 1; i--)
+            for (long i = n - 1; i > 1; i--)
             {
                 resul *= i;
             }
