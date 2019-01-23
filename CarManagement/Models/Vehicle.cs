@@ -5,6 +5,8 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private 
+
         public int DoorsCount
         {
             get
@@ -14,7 +16,10 @@ namespace CarManagement.Models
 
             set
             {
-                DoorsCount = value;
+                if (value < 1)
+                    throw new ArgumentException("Minimum doors value is 1.");
+                else
+                    DoorsCount = value;
             }
         }
 
