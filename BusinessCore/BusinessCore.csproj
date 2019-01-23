@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VehicleBuilder.cs" />
     <Compile Include="NumberTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

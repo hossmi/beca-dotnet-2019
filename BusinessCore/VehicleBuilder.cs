@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace BusinessCore
 {
-    class Vehicle
+    public class VehicleBuilder
     {
+
+    {
+       public static void Wheels
+       List wheels = new List wheels(4);
+    }
     }
 }

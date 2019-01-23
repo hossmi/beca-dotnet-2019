@@ -32,7 +32,7 @@ namespace BusinessCore.Tests
             string matricula = vehicle.Enrollment;
 
             // propiedad de solo lectura 
-            // propiedad: array Door
+            // propiedad: array[] Door
             // campo privado: List Door
             vehicle.Doors[0].Open();
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
