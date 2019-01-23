@@ -6,7 +6,9 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        List<Door> Doors;
+        private List<Wheel> wheel;
+        private List <Door> door;
+        private Engine engine;
 
         public int DoorsCount
         {

@@ -5,6 +5,8 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private Vehicle vehicle;
+
         public void addWheel()
         {
             throw new NotImplementedException();
@@ -12,12 +14,15 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            throw new NotImplementedException();
+            /*for(int i = 0; i < doorsCount; i++)
+            {
+                door[i] = new Door();
+            }*/
         }
 
         public void setEngine(int horsePorwer)
         {
-            throw new NotImplementedException();
+            //this.engine.HorsePorwer = horsePorwer;
         }
 
         public void setColor(CarColor red)
