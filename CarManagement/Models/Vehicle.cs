@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        List<Door> Doors;
+
         public int DoorsCount
         {
             get
@@ -48,5 +51,7 @@ namespace CarManagement.Models
         {
             throw new NotImplementedException();
         }
+
+
     }
 }
