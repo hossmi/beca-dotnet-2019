@@ -15,7 +15,7 @@ namespace CarManagement.Builders
             throw new NotImplementedException();
         }
 
-        public void setEngine(int horsePorwer)
+        public void setEngine(int horsePower)
         {
             throw new NotImplementedException();
         }

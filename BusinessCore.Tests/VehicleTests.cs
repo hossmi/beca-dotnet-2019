@@ -1,5 +1,4 @@
 ﻿using System;
-using BusinessCore.Models;
 using CarManagement.Builders;
 using CarManagement.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,7 +19,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setEngine(horsePower: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
@@ -65,7 +64,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setEngine(horsePower: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle1 = builder.build();

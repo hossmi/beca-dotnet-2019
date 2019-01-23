@@ -9,7 +9,12 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return DoorsCount;
+            }
+
+            set
+            {
+                DoorsCount = value;
             }
         }
 
@@ -17,7 +22,11 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return WheelCount;
+            }
+            set
+            {
+                WheelCount = value;
             }
         }
 
