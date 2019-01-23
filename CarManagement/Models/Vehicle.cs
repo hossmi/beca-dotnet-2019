@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models.Models;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private Engine engine;
+        private List<Door> doorList;
+        private List<Wheel> wheelList;
+
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return doorList.Count;
             }
         }
 
@@ -17,7 +22,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return wheelList.Count;
             }
         }
 
@@ -25,7 +30,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return new Engine(this.engine);
             }
         }
 
