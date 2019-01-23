@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarManagement.Models.Models;
+using CarManagement.Models;
 
 namespace CarManagement.Models
 {

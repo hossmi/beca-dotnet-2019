@@ -44,7 +44,7 @@
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
-    <Compile Include="Models\Models\Engine.cs" />
+    <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
