@@ -1,15 +1,36 @@
 ﻿using System;
-using CarManagement.Models;
+using System.Collections.Generic;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        List<Door> doors;
+        List<Wheel> wheels;
+
+        public Door[] Doors
+        {
+            get
+            {
+                return doors.ToArray();
+            }
+
+        }
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return wheels.ToArray();
+            }
+
+        }
+
+
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return doors.Count;
             }
         }
 
@@ -46,7 +67,10 @@ namespace CarManagement.Models
 
         public void SetWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            foreach (Wheel w in wheels)
+            {
+                w.FillWheel(pression);
+            }
         }
     }
 }
