@@ -1,5 +1,5 @@
 ﻿using System;
-using CarManagement.Models.Models;
+using CarManagement.Models;
 
 namespace CarManagement.Models
 {
