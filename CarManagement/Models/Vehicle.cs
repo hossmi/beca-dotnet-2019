@@ -82,6 +82,7 @@ namespace CarManagement.Models
             int number;
             char c;
 
+            System.Threading.Thread.Sleep(40);
             number = rnd.Next(0, 9999);
 
             if (number < 10)
@@ -110,6 +111,7 @@ namespace CarManagement.Models
             e = enA + "-" + enB;
 
             enrollment = e;
+
         }
 
 
