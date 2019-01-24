@@ -6,6 +6,7 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+
         const int maxWheels = 4;
         private List<Wheel> wheels = new List<Wheel>();
         private List<Door> doors = new List<Door>();
@@ -77,7 +78,7 @@ namespace CarManagement.Builders
             int number;
             char c;
 
-            System.Threading.Thread.Sleep(80);
+            System.Threading.Thread.Sleep(20);
             number = rnd.Next(0, 9999);
 
             if (number < 10)
@@ -106,6 +107,18 @@ namespace CarManagement.Builders
             e = enA + "-" + enB;
 
             enrollment = e;
+
+        }
+
+        private void generateEnrollmentB()
+        {
+
+
+
+
+
+
+
 
         }
     }
