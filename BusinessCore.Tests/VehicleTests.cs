@@ -1,5 +1,4 @@
 ﻿using System;
-using BusinessCore.Models;
 using CarManagement.Builders;
 using CarManagement.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,6 +38,9 @@ namespace BusinessCore.Tests
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
             Assert.IsFalse(vehicle.Doors[1].IsOpen);
 
+            vehicle.Doors[0].close();
+            Assert.IsFalse(vehicle.Doors[0].IsOpen);
+
             vehicle.Engine.Start();
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
@@ -50,7 +52,7 @@ namespace BusinessCore.Tests
             // campo privado: List Wheels
             foreach (Wheel wheel in vehicle.Wheels)
             {
-                Assert.IsTrue(wheel.Pressure = 2.4);
+                Assert.IsTrue(wheel.Pressure == 2.4);
             }
         }
 
@@ -66,7 +68,7 @@ namespace BusinessCore.Tests
 
             builder.setDoors(doorsCount: 2);
             builder.setEngine(horsePorwer: 100);
-            builder.setColor(CarColor.Red);
+            builder.setColor(CarColor.valor);
 
             Vehicle vehicle1 = builder.build();
             Vehicle vehicle2 = builder.build();

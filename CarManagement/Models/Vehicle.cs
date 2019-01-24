@@ -1,5 +1,6 @@
 ﻿using System;
-using CarManagement.Models.Models;
+using CarManagement.Models;
+using CarManagement.Builders;
 
 namespace CarManagement.Models
 {
@@ -13,7 +14,7 @@ namespace CarManagement.Models
             }
         }
 
-        public int WheelCount
+        public void WheelCount
         {
             get
             {

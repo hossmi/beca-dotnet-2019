@@ -1,17 +1,23 @@
 ﻿using System;
 using CarManagement.Models;
 
+
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
+        
+        
     {
-        public void addWheel()
+        private int doorsCount = 0;
+        private int WheelCount = 0;
+        public int addWheel()
         {
             throw new NotImplementedException();
         }
 
         public void setDoors(int doorsCount)
         {
+            this.doorsCount = doorsCount;
             throw new NotImplementedException();
         }
 
