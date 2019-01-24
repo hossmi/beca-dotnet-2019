@@ -4,19 +4,19 @@ namespace CarManagement.Models
 {
     public class Engine
     {
-        private bool start;
+        private bool isStart;
 
         public bool IsStarted
         {
             get
             {
-                return start;
+                return isStart;
             }
         }
 
         public void start()
         {
-            start = true;
+            isStart = true;
         }
     }
 }

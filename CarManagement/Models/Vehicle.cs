@@ -6,7 +6,7 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private List<Wheel> wheels;
-        private List<Doors> doors = new List<Doors>();
+        private List<Door> doors = new List<Door>();
         public int DoorsCount
         {
             get
@@ -46,7 +46,7 @@ namespace CarManagement.Models
             //}
         }
 
-        public Doors[] Doors
+        public Door[] Doors
         {
             get
             {
@@ -60,14 +60,6 @@ namespace CarManagement.Models
             get
             {
                 return this.wheels.ToArray();
-            }
-        }
-
-        public Door[] Doors
-        {
-            get
-            {
-                throw new NotImplementedException();
             }
         }
 
