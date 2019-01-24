@@ -1,11 +1,25 @@
-﻿namespace CarManagement.Models
-{
-    public class Door {
-        private int name;
+﻿using System;
 
-        public Door(int name)
+namespace CarManagement.Models
+{
+    public class Door
+    {
+        public bool IsOpen
         {
-            this.name = name;
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void open()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void close()
+        {
+            throw new NotImplementedException();
         }
     }
 }

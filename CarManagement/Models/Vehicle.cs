@@ -71,7 +71,15 @@ namespace CarManagement.Models
             }
         }
 
-        public void SetWheelsPressure(double pression)
+        public Door[] Doors
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void setWheelsPressure(double pression)
         {
             throw new NotImplementedException();
         }

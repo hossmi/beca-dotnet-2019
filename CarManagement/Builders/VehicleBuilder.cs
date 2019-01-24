@@ -26,7 +26,7 @@ namespace CarManagement.Builders
             this.engine = horsePorwer;
         }
 
-        public void setColor(CarColor valor)
+        public void setColor(CarColor color)
         {
             this.color = valor;
         }
