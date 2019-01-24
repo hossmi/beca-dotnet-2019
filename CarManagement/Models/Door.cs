@@ -20,9 +20,17 @@ namespace CarManagement.Models
             this.open = true;
         }
 
-        public bool IsOpen()
+        public void close()
         {
+            this.open = false;
+        }
 
+        public bool IsOpen
+        {
+            get
+            {
+                return this.open;
+            }
         }
     }
 }

@@ -6,15 +6,13 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheel;
-        private List <Door> door;
-        private Engine engine;
+        
 
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return Doors.Count;
             }
         }
 
@@ -22,17 +20,11 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return Wheels.Count;
             }
         }
 
-        public Engine Engine
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public Engine Engine { get; }
 
         public string Enrollment
         {
@@ -49,11 +41,16 @@ namespace CarManagement.Models
             //}
         }
 
+        public List<Wheel> Wheels { get; }
+        public List<Door> Doors { get;  }
+
         public void SetWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            for(int i = 0; i < Wheels.Count; i++)
+            {
+                Wheels[i].Pressure = pression;
+            }
         }
-
-
+        
     }
 }
