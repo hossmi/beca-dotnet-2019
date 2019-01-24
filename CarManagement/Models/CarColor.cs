@@ -3,14 +3,11 @@
     public enum CarColor
     {
         Red,
-        Green,
         Blue,
-        Yellow,
-        Orange,
-        Cyan,
         Purple,
-        Black,
         White,
-        Grey,
+        Black,
+        Green,
+        Yellow,
     }
 }
