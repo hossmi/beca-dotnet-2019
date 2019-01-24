@@ -45,20 +45,13 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
-        public Doors[] Doors = new Doors[2]
+        List<Doors> Doors = new List<Doors>();
+        public Doors[] Doors
         {
-            Open(),
-            Close(),
-        };
-
-        private static Doors Open()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static Doors Close()
-        {
-            throw new NotImplementedException();
+            get
+            {
+                return this.Doors.ToArray();
+            }
         }
     }
 
