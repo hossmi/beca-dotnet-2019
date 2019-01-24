@@ -5,11 +5,13 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private int doorsCount = 5;
+        private int wheelsCount = 4;
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return doorsCount;
             }
         }
 
@@ -17,15 +19,16 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return wheelsCount;
             }
         }
 
         public Engine Engine
         {
+
             get
             {
-                throw new NotImplementedException();
+
             }
         }
 
