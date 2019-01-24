@@ -28,7 +28,7 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
-            this.color = valor;
+            this.color = color;
         }
 
         public Vehicle build()

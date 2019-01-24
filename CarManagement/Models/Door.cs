@@ -4,22 +4,24 @@ namespace CarManagement.Models
 {
     public class Door
     {
+        private int name;
+        private Boolean openDoor=false;
         public bool IsOpen
         {
             get
             {
-                throw new NotImplementedException();
+                return this.openDoor;
             }
         }
 
         public void open()
         {
-            throw new NotImplementedException();
+            this.openDoor = true;
         }
 
         public void close()
         {
-            throw new NotImplementedException();
+            this.openDoor = false;
         }
     }
 }
