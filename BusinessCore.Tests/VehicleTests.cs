@@ -38,6 +38,9 @@ namespace BusinessCore.Tests
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
             Assert.IsFalse(vehicle.Doors[1].IsOpen);
 
+            vehicle.Doors[0].close();
+            Assert.IsFalse(vehicle.Doors[0].IsOpen);
+
             vehicle.Engine.Start();
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
@@ -49,7 +52,7 @@ namespace BusinessCore.Tests
             // campo privado: List Wheels
             foreach (Wheel wheel in vehicle.Wheels)
             {
-                Assert.IsTrue(wheel.Pressure = 2.4);
+                Assert.IsTrue(wheel.Pressure == 2.4);
             }
         }
 
@@ -89,6 +92,10 @@ namespace BusinessCore.Tests
                 builder.addWheel();
                 Assert.Fail();
             }
+            catch(UnitTestAssertException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 //good
@@ -105,6 +112,10 @@ namespace BusinessCore.Tests
             {
                 Vehicle vehicle = builder.build();
                 Assert.Fail();
+            }
+            catch (UnitTestAssertException)
+            {
+                throw;
             }
             catch (Exception)
             {
