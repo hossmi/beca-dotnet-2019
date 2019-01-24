@@ -20,7 +20,7 @@ namespace CarManagement.Builders
             throw new NotImplementedException();
         }
 
-        public void setColor(CarColor red)
+        public void setColor(CarColor color)
         {
             throw new NotImplementedException();
         }
