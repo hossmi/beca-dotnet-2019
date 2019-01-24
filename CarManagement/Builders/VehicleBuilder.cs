@@ -27,7 +27,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            throw new NotImplementedException();
+            return new Vehicle(this);
         }
     }
 }

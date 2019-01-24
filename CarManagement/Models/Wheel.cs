@@ -2,5 +2,6 @@
 {
     internal class Wheel
     {
+        public double pressure;
     }
 }

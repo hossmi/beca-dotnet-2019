@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CarManagement.Builders;
 using CarManagement.Models;
 
 namespace CarManagement.Models
@@ -9,6 +10,13 @@ namespace CarManagement.Models
         private Engine engine;
         private List<Door> doorList;
         private List<Wheel> wheelList;
+
+        private readonly string enrollment;
+
+        public Vehicle(VehicleBuilder referenceVehicle)
+        {
+            throw new NotImplementedException();
+        }
 
         public int DoorsCount
         {
@@ -38,7 +46,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment;
             }
             //set
             //{
@@ -49,9 +57,12 @@ namespace CarManagement.Models
             //}
         }
 
-        public void SetWheelsPressure(double pression)
+        public void SetWheelsPressure(double pressure)
         {
-            throw new NotImplementedException();
+            foreach( Wheel wheel in this.wheelList)
+            {
+               wheel.pressure = pressure;
+            }
         }
     }
 }
