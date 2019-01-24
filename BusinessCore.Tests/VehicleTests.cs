@@ -20,8 +20,8 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setDoors(2);
+            builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
@@ -47,7 +47,7 @@ namespace BusinessCore.Tests
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
             //ha de establecer la presion de cada rueda
-            vehicle.setWheelsPressure(pression: 2.4);
+            vehicle.setWheelsPressure(2.4);
 
             // propiedad de solo lectura 
             // propiedad: array Wheels
@@ -68,8 +68,8 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setDoors(2);
+            builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle1 = builder.build();
@@ -145,8 +145,8 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setDoors(2);
+            builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
