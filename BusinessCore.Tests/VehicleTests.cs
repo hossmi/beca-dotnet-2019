@@ -136,18 +136,21 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
+        [TestCategory("Long execution time")]
         public void every_enrollment_must_be_unique_SMALL()
         {
             buildMassiveVehicles(SMALL, new TimeSpan(0, 1, 0));
         }
 
         [TestMethod]
+        [TestCategory("Long execution time")]
         public void every_enrollment_must_be_unique_MEDIUM()
         {
             buildMassiveVehicles(MEDIUM, new TimeSpan(0, 2, 0));
         }
 
         [TestMethod]
+        [TestCategory("Long execution time")]
         public void every_enrollment_must_be_unique_LARGE()
         {
             buildMassiveVehicles(LARGE, new TimeSpan(0, 3, 0));
