@@ -47,7 +47,6 @@
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Vehicle.cs" />
-    <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
