@@ -93,6 +93,10 @@ namespace BusinessCore.Tests
                 builder.addWheel();
                 Assert.Fail();
             }
+            catch(UnitTestAssertException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 //good
@@ -109,6 +113,10 @@ namespace BusinessCore.Tests
             {
                 Vehicle vehicle = builder.build();
                 Assert.Fail();
+            }
+            catch (UnitTestAssertException)
+            {
+                throw;
             }
             catch (Exception)
             {
