@@ -81,7 +81,15 @@ namespace CarManagement.Models
             }
         }
 
-        public void SetWheelsPressure(double pression)
+        public Door[] Doors
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void setWheelsPressure(double pression)
         {
             foreach (Wheel wheel in wheels)
                 wheel.Pressure = pression;

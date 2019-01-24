@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using CarManagement.Builders;
 using CarManagement.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +21,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePower: 100);
+            builder.setEngine(horsePorwer: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
@@ -45,7 +47,7 @@ namespace BusinessCore.Tests
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
             //ha de establecer la presion de cada rueda
-            vehicle.SetWheelsPressure(pression: 2.4);
+            vehicle.setWheelsPressure(pression: 2.4);
 
             // propiedad de solo lectura 
             // propiedad: array Wheels
@@ -67,7 +69,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePower: 100);
+            builder.setEngine(horsePorwer: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle1 = builder.build();
@@ -96,6 +98,10 @@ namespace BusinessCore.Tests
             {
                 throw;
             }
+            catch (NotImplementedException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 //good
@@ -117,10 +123,41 @@ namespace BusinessCore.Tests
             {
                 throw;
             }
+            catch (NotImplementedException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 //good
             }
         }
+
+        [TestMethod]
+        public void every_enrollment_must_be_unique()
+        {
+            VehicleBuilder builder = new VehicleBuilder();
+            IDictionary<string, Vehicle> vehicles = new Dictionary<string, Vehicle>();
+            TimeSpan maxTime = new TimeSpan(0, 1, 0);
+
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+
+            builder.setDoors(doorsCount: 2);
+            builder.setEngine(horsePorwer: 100);
+            builder.setColor(CarColor.Red);
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            do
+            {
+                Vehicle vehicle = builder.build();
+
+                Assert.IsFalse(vehicles.ContainsKey(vehicle.Enrollment));
+                vehicles.Add(vehicle.Enrollment, vehicle);
+            } while (stopwatch.Elapsed <= maxTime);
+        }
+
     }
 }
