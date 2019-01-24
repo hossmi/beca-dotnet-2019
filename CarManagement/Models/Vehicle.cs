@@ -18,7 +18,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheelsCount;
+   
             }
         }
 
