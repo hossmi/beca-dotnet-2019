@@ -11,11 +11,6 @@ namespace CarManagement.Models
         private CarColor color;
         private string enrollment;
 
-        public Vehicle()
-        {
-            generateEnrollment();
-        }
-
         public Door[] Doors
         {
             get
@@ -70,47 +65,6 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
-
-        private void generateEnrollment()
-        {
-            string e;
-            Random rnd = new Random();
-            string enA = "";
-            string enB = "";
-            int number;
-            char c;
-
-            System.Threading.Thread.Sleep(40);
-            number = rnd.Next(0, 9999);
-
-            if (number < 10)
-            {
-                enB = "000" + number.ToString();
-            }
-            else if (number < 100)
-            {
-                enB = "00" + number.ToString();
-            }
-            else if (number < 1000)
-            {
-                enB = "0" + number.ToString();
-            }
-            else
-            {
-                enB = number.ToString();
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                number = rnd.Next(0, 26);
-                c = (char)('A' + number);
-                enA = enA + c;
-            }
-            e = enA + "-" + enB;
-
-            enrollment = e;
-
-        }
         
         public List<Wheel> SetWheels
         {
@@ -148,6 +102,14 @@ namespace CarManagement.Models
             foreach (Wheel w in wheels)
             {
                 w.FillWheel(pression);
+            }
+        }
+
+        public string SetEnrollment
+        {
+            set
+            {
+                enrollment = value;
             }
         }
     }

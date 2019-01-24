@@ -11,7 +11,7 @@ namespace CarManagement.Builders
         private List<Door> doors = new List<Door>();
         private Engine engine = new Engine();
         private CarColor color;
-        
+        private string enrollment = "";
 
         public void addWheel()
         {
@@ -52,10 +52,13 @@ namespace CarManagement.Builders
         {
             Vehicle vehicle = new Vehicle();
 
+            generateEnrollment();
+
             vehicle.SetWheels = wheels;
             vehicle.SetDoors = doors;
             vehicle.SetEngine = engine;
             vehicle.SetCarColor = color;
+            vehicle.SetEnrollment = enrollment;
 
             if (wheels.Count == 0)
             {
@@ -63,6 +66,47 @@ namespace CarManagement.Builders
             }
 
             return vehicle;
+        }
+
+        private void generateEnrollment()
+        {
+            string e;
+            Random rnd = new Random();
+            string enA = "";
+            string enB = "";
+            int number;
+            char c;
+
+            System.Threading.Thread.Sleep(80);
+            number = rnd.Next(0, 9999);
+
+            if (number < 10)
+            {
+                enB = "000" + number.ToString();
+            }
+            else if (number < 100)
+            {
+                enB = "00" + number.ToString();
+            }
+            else if (number < 1000)
+            {
+                enB = "0" + number.ToString();
+            }
+            else
+            {
+                enB = number.ToString();
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                number = rnd.Next(0, 26);
+                c = (char)('A' + number);
+                enA = enA + c;
+            }
+            e = enA + "-" + enB;
+
+            enrollment = e;
+
         }
     }
 }
