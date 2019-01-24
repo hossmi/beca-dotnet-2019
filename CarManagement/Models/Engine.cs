@@ -4,12 +4,12 @@ namespace CarManagement.Models
 {
     public class Engine
     {
-        private bool start;
+        private bool startEngine;
         private int horsePorwer;
 
         public Engine(int horsePorwer)
         {
-            this.start = false;
+            this.startEngine = false;
             this.horsePorwer = horsePorwer;
         }
 
@@ -17,13 +17,13 @@ namespace CarManagement.Models
         {
             get
             {
-                return start;
+                return startEngine;
             }
         }
 
-        public void Start()
+        public void start()
         {
-            start = true;
+            startEngine = true;
         }
 
         public int HorsePorwer
