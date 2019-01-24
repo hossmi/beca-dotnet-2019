@@ -6,31 +6,29 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private CarColor color;
-        private Door [] doors;
         private Engine engines;
         //private Wheel wheels;
-        private Wheel [] wheels;
         private string enrollment;
-        GeneraRandom NumRandom = new GeneraRandom();
-         
-       
+        private List<Door> doors;
+        private Engine engine;
+        private List<Wheel> wheels;
 
-        public Vehicle(CarColor color,Door[]doors, Engine engines, Wheel[]wheels,string enrrollment)
+  
+
+        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, string enrollment)
         {
             this.color = color;
             this.doors = doors;
-            this.engines = engines;
+            this.engine = engine;
             this.wheels = wheels;
             this.enrollment = enrollment;
-            
-            
         }
 
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.Count;
             }
         }
 
@@ -38,7 +36,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return (this.WheelCount);
+                return this.wheels.Count;
             }
         }
 
@@ -65,7 +63,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return this.wheels;
+                throw new NotImplementedException(); 
             }
         }
 
@@ -73,7 +71,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.ToArray();
             }
         }
 

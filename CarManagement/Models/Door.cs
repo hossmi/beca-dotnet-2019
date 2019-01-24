@@ -4,7 +4,8 @@ namespace CarManagement.Models
 {
     public class Door
     {
-        private bool openDoor;
+        
+
         public bool IsOpen
         {
             get
