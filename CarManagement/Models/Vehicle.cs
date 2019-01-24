@@ -25,24 +25,27 @@ namespace CarManagement.Models
 
         public int DoorsCount
         {
-            get
-            {
-                return doorList.Count;
-            }
+            get => doorList.Count;
         }
 
-        public int WheelCount {get => wheelList.Count;}
+        public int WheelCount
+        {
+            get => wheelList.Count;
+        }
 
         public string Enrollment
         {
-            get
-            {
-                return this.enrollment;
-            }
+            get => this.enrollment;
         }
 
-        public Door[] Doors { get => this.doorList.ToArray(); }
-        public Wheel[] Wheels { get => this.wheelList.ToArray(); }
+        public Door[] Doors
+        {
+            get => this.doorList.ToArray();
+        }
+        public Wheel[] Wheels
+        {
+            get => this.wheelList.ToArray();
+        }
 
         public void setWheelsPressure(double pressure)
         {

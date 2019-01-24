@@ -57,7 +57,8 @@ namespace CarManagement.Builders
             if (wheelList.Count() < 4)
                 this.wheelList.Add(new Wheel());
             else
-                throw new InvalidOperationException("Cannot add more than 4 wheels");
+                throw new InvalidOperationException
+                    ("Cannot add more than 4 wheels");
         }
 
         public void setDoors(int doorsCount)
@@ -93,8 +94,11 @@ namespace CarManagement.Builders
         public Vehicle build()
         {
             if (wheelList.Count() <= 0)
-                throw new System.InvalidOperationException($"You cannot build a vehicle with {wheelList.Count()} wheels");
-            return new Vehicle(Engine, DoorList, WheelList, Color, $"ali-{lastIssuedEnrollment++}-es");
+                throw new System.InvalidOperationException
+                    ($"You cannot build a vehicle with {wheelList.Count()} wheels");
+
+            return new Vehicle(Engine, DoorList,
+                WheelList, Color, $"ali-{lastIssuedEnrollment++}-es");
         }
     }
 }
