@@ -31,7 +31,7 @@ namespace CarManagement.Builders
             engine.Horsepower = horsePorwer;
         }
 
-        public void setColor(CarColor red)
+        public void setColor(CarColor color)
         {
             color = red;
         }
