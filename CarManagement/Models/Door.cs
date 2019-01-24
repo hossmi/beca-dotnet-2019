@@ -4,32 +4,28 @@ namespace CarManagement.Models
 {
     public class Door
     {
-        private bool open;
+        private bool openDoor;
 
-        public Door Doors
+        public Door()
         {
-            get
-            {
-                return this;
-            }
-
+            this.openDoor = false;
         }
 
-        public void Open()
+        public void open()
         {
-            this.open = true;
+            this.openDoor = true;
         }
 
         public void close()
         {
-            this.open = false;
+            this.openDoor = false;
         }
 
         public bool IsOpen
         {
             get
             {
-                return this.open;
+                return this.openDoor;
             }
         }
     }

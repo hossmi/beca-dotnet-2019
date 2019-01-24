@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using CarManagement.Models;
+=======
+>>>>>>> develop
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+<<<<<<< HEAD
         private string enrollment;
         private List<Wheel> wheels;
         private List<Door> doors;
@@ -14,6 +18,9 @@ namespace CarManagement.Models
         {
             enrollment = "AL1234";
         }
+=======
+        private List<Wheel> wheels;
+>>>>>>> develop
 
         public int DoorsCount
         {
@@ -53,6 +60,14 @@ namespace CarManagement.Models
             get
             {
                 return doors.ToArray();
+            }
+        }
+
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return this.wheels.ToArray();
             }
         }
 
