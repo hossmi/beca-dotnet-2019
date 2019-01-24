@@ -14,14 +14,13 @@ namespace CarManagement.Models
 
         private readonly string enrollment;
 
-        public Vehicle(VehicleBuilder referenceVehicle, int enrollment)
+        public Vehicle(Engine engine, List<Door> doorList, List<Wheel> wheelList, CarColor color, string enrollment)
         {
-            this.Engine = referenceVehicle.Engine;
-            this.doorList = referenceVehicle.DoorList;
-            this.wheelList = referenceVehicle.WheelList;
-            this.color = referenceVehicle.Color;
-
-            this.enrollment = $"asd-{enrollment}-ab";
+            this.Engine = engine;
+            this.doorList = doorList;
+            this.wheelList = wheelList;
+            this.color = color;
+            this.enrollment = enrollment;
         }
 
         public int DoorsCount
@@ -40,13 +39,6 @@ namespace CarManagement.Models
             {
                 return this.enrollment;
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
 
         public Door[] Doors { get => this.doorList.ToArray(); }
