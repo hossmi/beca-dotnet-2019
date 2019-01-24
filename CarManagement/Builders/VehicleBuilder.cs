@@ -94,7 +94,7 @@ namespace CarManagement.Builders
         {
             if (wheelList.Count() <= 0)
                 throw new System.InvalidOperationException($"You cannot build a vehicle with {wheelList.Count()} wheels");
-            return new Vehicle(engine, doorList, wheelList, color, $"ali-{lastIssuedEnrollment++}-es");
+            return new Vehicle(Engine, DoorList, WheelList, Color, $"ali-{lastIssuedEnrollment++}-es");
         }
     }
 }
