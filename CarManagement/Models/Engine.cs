@@ -14,7 +14,7 @@ namespace CarManagement.Models
             }
         }
 
-        public void Start()
+        public void start()
         {
             start = true;
         }
