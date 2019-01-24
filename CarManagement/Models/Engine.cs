@@ -24,7 +24,7 @@
             this.horsePower = engine.horsePower;
         }
 
-        public void Start()
+        public void start()
         {
             this.isStarted = true;
         }

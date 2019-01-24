@@ -20,7 +20,7 @@
         public bool IsOpen { get => isOpen; }
         public string Model { get => model; }
 
-        public void Open()
+        public void open()
         {
             this.isOpen = true;
         }

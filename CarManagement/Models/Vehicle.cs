@@ -52,7 +52,7 @@ namespace CarManagement.Models
         public Door[] Doors { get => this.doorList.ToArray(); }
         public Wheel[] Wheels { get => this.wheelList.ToArray(); }
 
-        public void SetWheelsPressure(double pressure)
+        public void setWheelsPressure(double pressure)
         {
             foreach( Wheel wheel in this.wheelList)
             {
