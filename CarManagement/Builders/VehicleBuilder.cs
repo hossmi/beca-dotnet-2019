@@ -62,6 +62,10 @@ namespace CarManagement.Builders
         public Vehicle build()
         {
             setEnrollment();
+
+            if (wheels.Count < 1)
+                throw new InvalidOperationException("Can not build a vehicle without wheels.");
+
             return new Vehicle(doors, wheels, engine, enrollment, carColor);
         }
     }
