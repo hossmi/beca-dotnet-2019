@@ -45,14 +45,21 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
-        public string[] Doors = new string[5]
+        public Doors[] Doors = new Doors[2]
         {
-            "FrontRight",
-            "FrontLeft",
-            "RearRight",
-            "RearLeft",
-            "Trunk",
+            Open(),
+            Close(),
         };
+
+        private static Doors Open()
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Doors Close()
+        {
+            throw new NotImplementedException();
+        }
     }
 
         public Wheel[] Wheels
