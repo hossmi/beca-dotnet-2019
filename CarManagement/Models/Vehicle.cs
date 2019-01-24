@@ -5,6 +5,7 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private 
         public int DoorsCount
         {
             get

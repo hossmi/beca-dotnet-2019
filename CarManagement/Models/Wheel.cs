@@ -6,15 +6,23 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
+
     public class Wheel
     {
         private double pressure;
 
-        private double Pressure
+        public double Pressure
         {
             set
             {
-                this.pressure = value;
+                if (value>0)
+                {
+                    this.Pressure = value;
+                }
+                else
+                {
+                    throw new ArgumentException("value");
+                }
             }
             get
             {
