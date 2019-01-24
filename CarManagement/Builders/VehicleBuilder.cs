@@ -1,47 +1,85 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private string enrollment;
+        private Random generate;
         private Vehicle vehicle;
-        private Wheel wheel;
-        private Door door;
-        
+        private CarColor color;
+        private int numberWheels;
+        private int numberDoors;
+        private int horsePorwer;
+
+        private int numberEnrollment = 0;
+
         public VehicleBuilder()
         {
-            vehicle = new Vehicle();
+            this.numberWheels = 0;
+            this.numberDoors = 0;
+            this.horsePorwer = 0;
+            
         }
 
         public void addWheel()
         {
-            wheel = new Wheel();
-            vehicle.Wheels.Add(wheel);
+            if(numberWheels < 4)
+            {
+                numberWheels++;
+            }
+            else
+            {
+                throw new Exception("No more wheels can be added");
+            }
+        }
+
+        public string generateEnrollment()
+        {
+            string result = "";
+            result = result + (char)this.generate.Next((int)'A', (int)'Z');
+            result = result + (char)this.generate.Next((int)'A', (int)'Z');
+            result = result + (char)this.generate.Next((int)'A', (int)'Z');
+            result = result + (char)this.generate.Next((int)'0', (int)'9');
+            result = result + (char)this.generate.Next((int)'0', (int)'9');
+            result = result + (char)this.generate.Next((int)'0', (int)'9');
+            result = result + (char)this.numberEnrollment++;
+
+            return result;
         }
 
         public void setDoors(int doorsCount)
         {
-            for(int i = 0; i < doorsCount; i++)
-            {
-                door = new Door();
-                vehicle.Doors.Add(door);
-            }
+            numberDoors = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            this.vehicle.Engine.HorsePorwer = horsePorwer;
+            this.horsePorwer = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            throw new NotImplementedException();
+            this.color = color;
         }
 
         public Vehicle build()
         {
-            return vehicle;
+            if((numberDoors > 0) || (numberWheels > 0))
+            {
+                generate = new Random();
+                enrollment = generateEnrollment();
+                //System.Threading.Thread.Sleep(10);
+                vehicle = new Vehicle(numberWheels, numberDoors, horsePorwer, color, enrollment);
+                return vehicle;
+            }
+            else
+            {
+                throw new Exception("Missing data to build the car");
+            }
+            
         }
     }
 }
