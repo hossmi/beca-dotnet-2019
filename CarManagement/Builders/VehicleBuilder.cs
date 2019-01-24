@@ -8,6 +8,8 @@ namespace CarManagement.Builders
     {
         private List<Door> doors = new List<Door>();
         private List<Wheel> wheels = new List<Wheel>();
+        private Engine engine = new Engine();
+        private CarColor color;
 
         public void addWheel()
         {
@@ -17,22 +19,31 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            throw new NotImplementedException();
+            for(int i=0;i< doorsCount;i++)
+            {
+                Door door = new Door();
+                doors.Add(door);
+            }
         }
 
         public void setEngine(int horsePorwer)
         {
-            throw new NotImplementedException();
+            engine.Horsepower = horsePorwer;
         }
 
         public void setColor(CarColor red)
         {
-            throw new NotImplementedException();
+            color = red;
         }
 
         public Vehicle build()
         {
-            throw new NotImplementedException();
+            Vehicle vehicle = new Vehicle();
+            vehicle.carcolor = color;
+            vehicle.cardoor = doors;
+            vehicle.carwheel = wheels;
+            vehicle.carengine = engine;
+            return vehicle;
         }
     }
 }

@@ -5,8 +5,40 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheels;
+        private List<Wheel> wheels = new List<Wheel>();
         private List<Door> doors = new List<Door>();
+        private Engine engine = new Engine();
+        private CarColor color;
+
+
+        public List<Wheel> carwheel
+        {
+            set
+            {
+                wheels = value;
+            }
+        }
+        public List<Door> cardoor
+        {
+            set
+            {
+                doors = value;
+            }
+        }
+        public Engine carengine
+        {
+            set
+            {
+                engine = value;
+            }
+        }
+        public CarColor carcolor
+        {
+            set
+            {
+                color = value;
+            }
+        }
         public int DoorsCount
         {
             get
