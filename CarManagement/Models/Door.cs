@@ -6,20 +6,14 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
-    class Door
+    
+    public class Door
     {
-        private int DoorsCount;
+        int nombre = 0;
 
         public Door()
         {
-            this.DoorsCount = 0;
-        }
-        public Door(int numDoor)
-        {
-            this.DoorsCount = numDoor;
-        }
 
+        }
     }
 }
-
-   

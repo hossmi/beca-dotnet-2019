@@ -5,7 +5,26 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheels;
+        private CarColor color;
+        private Door [] doors;
+        private Engine engines;
+        //private Wheel wheels;
+        private Wheel [] wheels;
+        private string enrollment;
+        GeneraRandom NumRandom = new GeneraRandom();
+         
+       
+
+        public Vehicle(CarColor color,Door[]doors, Engine engines, Wheel[]wheels,string enrrollment)
+        {
+            this.color = color;
+            this.doors = doors;
+            this.engines = engines;
+            this.wheels = wheels;
+            this.enrollment = enrollment;
+            
+            
+        }
 
         public int DoorsCount
         {
@@ -19,7 +38,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return (this.WheelCount);
             }
         }
 
@@ -27,36 +46,34 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Engine;                               
             }
         }
 
         public string Enrollment
         {
+        
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment;
+             
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
+         
         }
 
         public Wheel[] Wheels
         {
             get
             {
-                return this.wheels.ToArray();
+                return this.wheels;
             }
         }
 
         public void SetWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            Wheel pressure = new Wheel();   
+            
         }
+     
     }
 }

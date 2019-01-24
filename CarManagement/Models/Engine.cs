@@ -8,13 +8,14 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.IsStarted;
             }
         }
 
         public void Start()
         {
-            throw new NotImplementedException();
+            
+        
         }
     }
 }
