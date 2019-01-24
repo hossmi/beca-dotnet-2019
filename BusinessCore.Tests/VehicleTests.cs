@@ -176,7 +176,7 @@ namespace BusinessCore.Tests
             Vehicle vehicle = builder.build();
             string enrollment1 = vehicle.Enrollment;
             string enrollment2 = vehicle.Enrollment;
-            Assert.AreNotEqual(enrollment1, enrollment2);
+            Assert.AreEqual(enrollment1, enrollment2);
         }
     }
 }
