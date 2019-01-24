@@ -2,13 +2,9 @@
 
 namespace CarManagement.Models
 {
-    public class Engine
+    public class Door
     {
-<<<<<<< HEAD
-        private string engineType = "VR";
-        private string engineType1 = "Rotary";
-=======
-        public bool IsStarted
+        public bool IsOpen
         {
             get
             {
@@ -16,11 +12,14 @@ namespace CarManagement.Models
             }
         }
 
-        public void start()
+        public void open()
         {
             throw new NotImplementedException();
         }
->>>>>>> develop
-    }
 
+        public void close()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
