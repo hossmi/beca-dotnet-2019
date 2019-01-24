@@ -46,6 +46,14 @@ namespace CarManagement.Models
             //}
         }
 
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return this.wheels.ToArray();
+            }
+        }
+
         public void SetWheelsPressure(double pression)
         {
             throw new NotImplementedException();
