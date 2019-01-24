@@ -20,7 +20,7 @@ namespace BusinessCore.Tests
 
             builder.setDoors(doorsCount: 2);
             builder.setEngine(horsePorwer: 100);
-            builder.setColor(CarColor.Red);
+            //builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
 

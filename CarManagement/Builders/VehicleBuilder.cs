@@ -5,34 +5,43 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        public Vehicle Vehicle { get; }
+        private Vehicle vehicle;
+        private Wheel wheel;
+        private Door door;
+        
+        public VehicleBuilder()
+        {
+            vehicle = new Vehicle();
+        }
 
         public void addWheel()
         {
-            this.Vehicle.Wheels.Add(new Wheel());
+            wheel = new Wheel();
+            vehicle.Wheels.Add(wheel);
         }
 
         public void setDoors(int doorsCount)
         {
             for(int i = 0; i < doorsCount; i++)
             {
-                this.Vehicle.Doors.Add(new Door());
+                door = new Door();
+                vehicle.Doors.Add(door);
             }
         }
 
         public void setEngine(int horsePorwer)
         {
-            this.Vehicle.Engine.HorsePorwer = horsePorwer;
+            this.vehicle.Engine.HorsePorwer = horsePorwer;
         }
 
-        public void setColor(CarColor red)
+        public void setColor(CarColor color)
         {
             throw new NotImplementedException();
         }
 
         public Vehicle build()
         {
-            return Vehicle;
+            return vehicle;
         }
     }
 }

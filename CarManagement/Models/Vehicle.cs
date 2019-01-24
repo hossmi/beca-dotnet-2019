@@ -6,13 +6,20 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        
+        private string enrollment;
+        private List<Wheel> wheels;
+        private List<Door> doors;
+
+        public Vehicle()
+        {
+            enrollment = "AL1234";
+        }
 
         public int DoorsCount
         {
             get
             {
-                return Doors.Count;
+                return doors.Count;
             }
         }
 
@@ -20,7 +27,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return Wheels.Count;
+                return wheels.Count;
             }
         }
 
@@ -30,23 +37,28 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return enrollment;
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
 
-        public List<Wheel> Wheels { get; }
-        public List<Door> Doors { get;  }
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return wheels.ToArray();
+            }
+        }
+        public Door[] Doors
+        {
+            get
+            {
+                return doors.ToArray();
+            }
+        }
 
         public void SetWheelsPressure(double pression)
         {
-            for(int i = 0; i < Wheels.Count; i++)
+            for(int i = 0; i < wheels.Count; i++)
             {
                 Wheels[i].Pressure = pression;
             }
