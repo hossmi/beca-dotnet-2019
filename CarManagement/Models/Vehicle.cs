@@ -12,14 +12,12 @@ namespace CarManagement.Models
         private Engine engine;
         private CarColor color;
 
-        public Vehicle(int nWheels, int nDoors, int horsePorwer, CarColor color, string enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, string enrollment)
         {
-            this.wheels = new List<Wheel>();
-            this.doors = new List<Door>();
-            this.engine = new Engine(horsePorwer);
+            this.wheels = wheels;
+            this.doors = doors;
+            this.engine = engine;
             this.color = color;
-            createWheels(nWheels);
-            createDoors(nDoors);
             this.enrollment = enrollment;
         }
 
@@ -72,23 +70,7 @@ namespace CarManagement.Models
             }
         }
 
-        public void createWheels(int nWheels)
-        {
-            for (int i = 0; i < nWheels; i++)
-            {
-                Wheel aux = new Wheel();
-                wheels.Add(aux);
-            }
-        }
-
-        public void createDoors(int nDoors)
-        {
-            for (int i = 0; i < nDoors; i++)
-            {
-                Door aux = new Door();
-                doors.Add(aux);
-            }
-        }
+        
 
         public void setWheelsPressure(double pression)
         {
