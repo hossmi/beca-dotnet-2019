@@ -6,11 +6,12 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        Random enrollmentGenerator = new Random();
         private List<Door> doors = new List<Door>();
         private List<Wheel> wheels = new List<Wheel>();
         private Engine engine;
         private CarColor carColor;
-        private int enrollmentCharQuantity = 4;
+        private const int ENROLLMENT_QUANTITY = 8;
         private String enrollment;
         private List<String> usedEnrollments = new List<String>();
 
@@ -34,21 +35,20 @@ namespace CarManagement.Builders
             engine = new Engine(horsePower);
         }
 
-        public void setColor(CarColor carColor)
+        public void setColor(CarColor color)
         {
-            this.carColor = carColor;
+            this.carColor = color;
         }
 
         private void setEnrollment()
         {
-            Random enrollmentGenerator = new Random();
             String enrollmentPlate;
 
             do
             {
                 enrollmentPlate = "";
 
-                for (int enrollmentChars = 0; enrollmentChars < enrollmentCharQuantity; enrollmentChars++)
+                for (int enrollmentChars = 0; enrollmentChars < ENROLLMENT_QUANTITY; enrollmentChars++)
                 {
                     enrollmentPlate += enrollmentGenerator.Next(0, 9).ToString();
                 }
@@ -64,7 +64,7 @@ namespace CarManagement.Builders
             setEnrollment();
 
             if (wheels.Count < 1)
-                throw new InvalidOperationException("Can not build a vehicle without wheels.");
+                throw new ArgumentException("Can not build a vehicle without wheels.");
 
             return new Vehicle(doors, wheels, engine, enrollment, carColor);
         }

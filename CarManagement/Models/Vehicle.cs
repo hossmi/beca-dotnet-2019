@@ -79,15 +79,7 @@ namespace CarManagement.Models
                     throw new ArgumentException("Unexpected car color value.");
                 carColor = value;
             }
-        }
-
-        public Door[] Doors
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        }     
 
         public void setWheelsPressure(double pression)
         {

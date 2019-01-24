@@ -21,7 +21,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setEngine(horsePower: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
@@ -69,7 +69,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setEngine(horsePower: 100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle1 = builder.build();
@@ -146,16 +146,23 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setEngine(horsePower: 100);
             builder.setColor(CarColor.Red);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
+            Debug.Print("Inicio: " + stopwatch.Elapsed.ToString());
+
             do
             {
                 Vehicle vehicle = builder.build();
+                Debug.Print("Build: " + stopwatch.Elapsed.ToString());
 
                 Assert.IsFalse(vehicles.ContainsKey(vehicle.Enrollment));
+                Debug.Print("ContainsKey: " + stopwatch.Elapsed.ToString());
+
                 vehicles.Add(vehicle.Enrollment, vehicle);
+                Debug.Print("Add: " + stopwatch.Elapsed.ToString());
+
             } while (stopwatch.Elapsed <= maxTime);
         }
 
