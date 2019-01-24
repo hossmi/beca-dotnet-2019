@@ -43,6 +43,7 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
+    }
 
         public void SetWheelsPressure(double pression)
         {

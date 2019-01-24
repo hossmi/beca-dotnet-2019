@@ -1,7 +1,7 @@
 ﻿using System;
 using CarManagement.Builders;
 using CarManagement.Models;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using BusinessCore.Vehicle;
 
 namespace BusinessCore.Tests
 {
@@ -23,6 +23,7 @@ namespace BusinessCore.Tests
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
+            Vehicle.Doors
 
             Assert.IsNotNull(vehicle);
             Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));

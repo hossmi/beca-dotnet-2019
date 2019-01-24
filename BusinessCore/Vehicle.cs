@@ -8,15 +8,10 @@ namespace BusinessCore
 {
     class Vehicle
     {
-        public bool Electric
+        public class Doors
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public Doors[] balance = new Doors[5]
+        };
+        public Doors[] Doors = new Doors[5]
         {
             FrontRight,
             FrontLeft,
