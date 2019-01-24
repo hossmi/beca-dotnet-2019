@@ -9,20 +9,35 @@ namespace CarManagement.Models
         private List<Door> doors = new List<Door>();
         private List<Wheel> wheels = new List<Wheel>();
 
-        public Door[] Door
+        public Vehicle(List<Door> doors, List<Wheel> wheels, Engine engine, String enrollment, CarColor carcolor)
+        {
+            this.doors = doors;
+            this.wheels = wheels;
+            this.Engine = engine;
+            this.Enrollment = enrollment;
+            this.Carcolor = carcolor;
+        }
+
+        public Door[] Doors
         {
             get
             {
-                
-                
+                return doors.ToArray();
             }
         }
-
         public int DoorsCount
         {
             get
             {
-                return DoorsCount;
+                return doors.Count;
+            }
+        }
+
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return wheels.ToArray();
             }
         }
 
@@ -30,7 +45,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return WheelCount;
+                return wheels.Count;
             }
         }
 
@@ -46,32 +61,38 @@ namespace CarManagement.Models
             }
         }
 
-        public string Enrollment
+        public String Enrollment
         {
             get
             {
-                throw new NotImplementedException();
+                return Enrollment;
             }
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException("The enrollment can not be empty or have blank spaces.");
-                else
-                    Enrollment = value;
+                Enrollment = value;
             }
+        }
 
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
+        public CarColor Carcolor
+        {
+            get
+            {
+                return Carcolor;
+            }
+            set
+            {
+                if (Enum.IsDefined(typeof(CarColor), value) == false)
+                    throw new ArgumentException("Unexpected car color value.");
+                Carcolor = value;
+            }
         }
 
         public void SetWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            foreach (Wheel wheel in wheels)
+                wheel.Pressure = pression;
         }
     }
 }

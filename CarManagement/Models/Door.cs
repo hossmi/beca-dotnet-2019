@@ -20,11 +20,11 @@ namespace CarManagement.Models
             }
         }
 
-        void Open()
+        public void open()
         {
             IsOpen = true;
         }
-        void Close()
+        public void close()
         {
             IsOpen = false;
         }

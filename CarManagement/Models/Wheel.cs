@@ -8,7 +8,7 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
-        public float Pressure
+        public double Pressure
         {
             get
             {
@@ -19,8 +19,7 @@ namespace CarManagement.Models
             {
                 if (value <= 0)
                     throw new ArgumentException("Wheel pressure value must be over 0.");
-                else
-                    Pressure = value;
+                Pressure = value;
             }
         }
     }

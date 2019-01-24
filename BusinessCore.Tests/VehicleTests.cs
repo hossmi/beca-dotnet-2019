@@ -34,14 +34,14 @@ namespace BusinessCore.Tests
             // propiedad de solo lectura 
             // propiedad: array Door
             // campo privado: List Door
-            vehicle.Doors[0].Open();
+            vehicle.Doors[0].open();
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
             Assert.IsFalse(vehicle.Doors[1].IsOpen);
 
             vehicle.Doors[0].close();
             Assert.IsFalse(vehicle.Doors[0].IsOpen);
 
-            vehicle.Engine.Start();
+            vehicle.Engine.start();
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
             //ha de establecer la presion de cada rueda
@@ -92,7 +92,7 @@ namespace BusinessCore.Tests
                 builder.addWheel();
                 Assert.Fail();
             }
-            catch(UnitTestAssertException)
+            catch (UnitTestAssertException)
             {
                 throw;
             }
