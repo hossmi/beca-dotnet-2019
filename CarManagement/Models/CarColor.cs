@@ -4,10 +4,10 @@
     {
         Red,
         Blue,
+        Purple,
         White,
         Black,
         Green,
         Yellow,
-        Orange,
     }
 }
