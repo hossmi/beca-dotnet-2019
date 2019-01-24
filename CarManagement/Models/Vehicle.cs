@@ -5,18 +5,12 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-<<<<<<< HEAD
-        private int doorsCount = 5;
-        private int wheelsCount = 4;
-=======
-        private List<Wheel> wheels;
 
->>>>>>> develop
         public int DoorsCount
         {
             get
             {
-                return doorsCount;
+
             }
         }
 
