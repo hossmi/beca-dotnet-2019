@@ -4,35 +4,26 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private int horsePower;
         public Engine(int horsePower)
         {
-            this.HorsePower = horsePower;
+            this.horsePower = horsePower;
         }
         public int HorsePower
         {
             get
             {
-                return HorsePower;
+                return horsePower;
             }
             set
             {
                 if (value <= 0)
                     throw new ArgumentException("HorsePower value must be over 0.");
-                HorsePower = value;
+                horsePower = value;
             }
         }
 
-        public bool IsStarted
-        {
-            get
-            {
-                return IsStarted;
-            }
-            private set
-            {
-                IsStarted = value;
-            }
-        }
+        public bool IsStarted { get; private set; }
 
         public void start()
         {
@@ -43,7 +34,5 @@ namespace CarManagement.Models
         {
             IsStarted = false;
         }
-
-
     }
 }

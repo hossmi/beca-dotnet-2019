@@ -8,14 +8,16 @@ namespace CarManagement.Models
     {
         private List<Door> doors = new List<Door>();
         private List<Wheel> wheels = new List<Wheel>();
+        private String enrollment;
+        private CarColor carColor;
 
         public Vehicle(List<Door> doors, List<Wheel> wheels, Engine engine, String enrollment, CarColor carcolor)
         {
             this.doors = doors;
             this.wheels = wheels;
             this.Engine = engine;
-            this.Enrollment = enrollment;
-            this.Carcolor = carcolor;
+            this.enrollment = enrollment;
+            this.carColor = carcolor;
         }
 
         public Door[] Doors
@@ -49,29 +51,19 @@ namespace CarManagement.Models
             }
         }
 
-        public Engine Engine
-        {
-            get
-            {
-                return Engine;
-            }
-            set
-            {
-                Engine = value;
-            }
-        }
+        public Engine Engine { get; }
 
         public String Enrollment
         {
             get
             {
-                return Enrollment;
+                return enrollment;
             }
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException("The enrollment can not be empty or have blank spaces.");
-                Enrollment = value;
+                enrollment = value;
             }
         }
 
@@ -79,13 +71,13 @@ namespace CarManagement.Models
         {
             get
             {
-                return Carcolor;
+                return carColor;
             }
             set
             {
                 if (Enum.IsDefined(typeof(CarColor), value) == false)
                     throw new ArgumentException("Unexpected car color value.");
-                Carcolor = value;
+                carColor = value;
             }
         }
 

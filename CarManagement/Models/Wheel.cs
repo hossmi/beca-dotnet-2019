@@ -8,18 +8,20 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+        private double pressure;
+
         public double Pressure
         {
             get
             {
-                return Pressure;
+                return pressure;
             }
 
             set
             {
                 if (value <= 0)
                     throw new ArgumentException("Wheel pressure value must be over 0.");
-                Pressure = value;
+                pressure = value;
             }
         }
     }
