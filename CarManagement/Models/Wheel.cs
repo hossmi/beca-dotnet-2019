@@ -2,19 +2,18 @@
 
 namespace CarManagement.Models
 {
-    public class Engine
+    public class Wheel
     {
-        public bool IsStarted
+        public double Pressure
         {
             get
             {
                 throw new NotImplementedException();
             }
-        }
-
-        public void Start()
-        {
-            throw new NotImplementedException();
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
