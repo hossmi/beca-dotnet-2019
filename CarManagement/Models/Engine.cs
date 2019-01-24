@@ -13,12 +13,6 @@ namespace CarManagement.Models
             isStarted = false;
         }
 
-        public Engine()
-        {
-            horsepower = 0;
-            isStarted = false;
-        }
-
         public void start()
         {
             try

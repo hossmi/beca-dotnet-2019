@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
+using System.IO;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-
+        private static int intEnrollment;
         const int maxWheels = 4;
-        private List<Wheel> wheels = new List<Wheel>();
-        private List<Door> doors = new List<Door>();
-        private Engine engine = new Engine();
-        private CarColor color;
         private string enrollment = "";
+
+        private int wheelsCount;
+        private int doorsCount;
+        private int enginePower;
+        private CarColor colorCode;
 
         public void addWheel()
         {
-            Wheel wheel = new Wheel();
-            if (wheels.Count < maxWheels)
-                wheels.Add(wheel);
+            if (wheelsCount < maxWheels)
+                this.wheelsCount++;
             else
                 throw new Exception("Se ha excedido el numero maximo de ruedas");
         }
@@ -29,8 +30,7 @@ namespace CarManagement.Builders
             {
                 for (int i = 0; i < doorsCount; i++)
                 {
-                    Door door = new Door();
-                    doors.Add(door);
+                    this.doorsCount++;
                 }
             }
             else if (doorsCount < 0)
@@ -41,19 +41,19 @@ namespace CarManagement.Builders
 
         public void setEngine(int horsePorwer)
         {
-            engine = new Engine(horsePorwer);
+            this.enginePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            this.color = color;
+            this.colorCode = color;
         }
 
         public Vehicle build()
         {
             Vehicle vehicle = new Vehicle();
 
-            generateEnrollment();
+            generateEnrollmentB();
 
             vehicle.SetWheels = wheels;
             vehicle.SetDoors = doors;
@@ -61,7 +61,7 @@ namespace CarManagement.Builders
             vehicle.SetCarColor = color;
             vehicle.SetEnrollment = enrollment;
 
-            if (wheels.Count == 0)
+            if (wheelsCount == 0)
             {
                 throw new Exception("No se puede crear un vehiculo sin ruedas");
             }
@@ -69,42 +69,57 @@ namespace CarManagement.Builders
             return vehicle;
         }
 
+        private List<Wheel> createWheels(int count)
+        {
+            List<Wheel> wheels = new List<Wheel>();
+
+            for()
+
+            return wheels;
+        }
+
         private void generateEnrollment()
         {
-            string e;
-            Random rnd = new Random();
-            string enA = "";
-            string enB = "";
-            int number;
-            char c;
+            string e = "";
 
             System.Threading.Thread.Sleep(20);
-            number = rnd.Next(0, 9999);
+            //number = generator.Next(0, 9999);
 
-            if (number < 10)
-            {
-                enB = "000" + number.ToString();
-            }
-            else if (number < 100)
-            {
-                enB = "00" + number.ToString();
-            }
-            else if (number < 1000)
-            {
-                enB = "0" + number.ToString();
-            }
-            else
-            {
-                enB = number.ToString();
-            }
 
-            for (int i = 0; i < 3; i++)
-            {
-                number = rnd.Next(0, 26);
-                c = (char)('A' + number);
-                enA = enA + c;
-            }
-            e = enA + "-" + enB;
+            e = e + (char)this.generator.Next((int)'A', (int)'Z');
+            e = e + (char)this.generator.Next((int)'A', (int)'Z');
+            e = e + (char)this.generator.Next((int)'A', (int)'Z');
+            e = e + "-";
+            e = e + (char)this.generator.Next((int)'0', (int)'9');
+            e = e + (char)this.generator.Next((int)'0', (int)'9');
+            e = e + (char)this.generator.Next((int)'0', (int)'9');
+            e = e + (char)this.generator.Next((int)'0', (int)'9');
+
+
+            //if (number < 10)
+            //{
+            //    enB = "000" + number.ToString();
+            //}
+            //else if (number < 100)
+            //{
+            //    enB = "00" + number.ToString();
+            //}
+            //else if (number < 1000)
+            //{
+            //    enB = "0" + number.ToString();
+            //}
+            //else
+            //{
+            //    enB = number.ToString();
+            //}
+
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    number = generator.Next(0, 26);
+            //    c = (char)('A' + number);
+            //    enA = enA + c;
+            //}
+            //e = enA + "-" + enB;
 
             enrollment = e;
 
@@ -112,14 +127,7 @@ namespace CarManagement.Builders
 
         private void generateEnrollmentB()
         {
-
-
-
-
-
-
-
-
+            enrollment = intEnrollment++.ToString();
         }
     }
 }
