@@ -1,11 +1,12 @@
 ﻿using System;
-using CarManagement.Models;
-using CarManagement.Builders;
+using System.Collections.Generic;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private List<Wheel> wheels;
+
         public int DoorsCount
         {
             get
@@ -14,7 +15,7 @@ namespace CarManagement.Models
             }
         }
 
-        public void WheelCount
+        public int WheelCount
         {
             get
             {
@@ -43,6 +44,14 @@ namespace CarManagement.Models
 
             //    this.enrollment = value;
             //}
+        }
+
+        public Wheel[] Wheels
+        {
+            get
+            {
+                return this.wheels.ToArray();
+            }
         }
 
         public void SetWheelsPressure(double pression)

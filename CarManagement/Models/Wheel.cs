@@ -1,27 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
-    class Wheel
+    public class Wheel
     {
-        int diametro;
-        int ancho;
-
-        public Wheel()
+        public double Pressure
         {
-            this.diametro = 0;
-            this.ancho = 0;
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
         }
-        public Wheel(int diametro,int ancho)
-        {
-            this.diametro = diametro;
-            this.ancho = ancho;
-        }
-        
     }
-}
 }
