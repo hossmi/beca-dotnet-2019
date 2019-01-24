@@ -20,7 +20,7 @@ namespace BusinessCore.Tests
 
             builder.setDoors(doorsCount: 2);
             builder.setEngine(horsePorwer: 100);
-            //builder.setColor(CarColor.Red);
+            builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
 
@@ -34,7 +34,7 @@ namespace BusinessCore.Tests
             // propiedad de solo lectura 
             // propiedad: array Door
             // campo privado: List Door
-            vehicle.Doors[0].Open();
+            vehicle.Doors[0].open();
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
             Assert.IsFalse(vehicle.Doors[1].IsOpen);
 
