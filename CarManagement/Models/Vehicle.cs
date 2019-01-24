@@ -54,7 +54,7 @@ namespace CarManagement.Models
             }
         }
 
-        public void SetWheelsPressure(double pression)
+        public void setWheelsPressure(double pression)
         {
             throw new NotImplementedException();
         }
