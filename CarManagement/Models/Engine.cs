@@ -4,8 +4,14 @@ namespace CarManagement.Models
 {
     public class Engine
     {
-        private int horsePower=0;
+        private int horsePower;
 
+        public Engine(int horsePower)
+        {
+            if (horsePower<=0)
+                throw new ArgumentException("Horse power need positive.");
+            this.horsePower = horsePower;
+        }
         public int Model {
             get
             {

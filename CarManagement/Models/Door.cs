@@ -4,8 +4,13 @@ namespace CarManagement.Models
 {
     public class Door
     {
-        private int name;
-        private Boolean openDoor=false;
+        
+        private bool openDoor;
+
+        public Door()
+        {
+            this.openDoor = false;
+        }
 
         public bool IsOpen
         {
@@ -24,5 +29,9 @@ namespace CarManagement.Models
         {
             this.openDoor = false;
         }
+
+        
+
+
     }
 }

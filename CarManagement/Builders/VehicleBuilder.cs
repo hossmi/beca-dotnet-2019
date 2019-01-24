@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models;
 
 namespace CarManagement.Builders
@@ -33,19 +34,19 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            Door[] doors= new Door[this.numberDoor];
+            List<Door> doors= new List<Door>();
             for (int x=0; x<this.numberDoor;x++)
             {
-                doors[x] = new Door(x);
+                doors.Add(new Door());
             }
 
 
             Engine engine = new Engine();
 
-            Wheel[] wheels = new Wheel[numberWheel];
+            List<Wheel> wheels = new List<Wheel>();
             for (int x=0; x<this.numberWheel;x++)
             {
-                wheels[x] = new Wheel();
+                wheels.Add(new Wheel());
             }
 
             String enrollment = Math.Ceiling((decimal)DateTime.Now.Month).ToString();

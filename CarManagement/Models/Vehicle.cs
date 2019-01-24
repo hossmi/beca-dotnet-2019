@@ -5,30 +5,27 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheels;
         private CarColor color;
-        private Door[] door;
-        private Engine moto;
-        private Wheel[] wheel;
+        private List<Wheel> wheels;
         private string enrollment;
+        private List<Door> doors;
+        private Engine engine;
 
-
-        public Vehicle(CarColor colorCar,Door[] door,Engine motor, Wheel[] road, string enrollment)
+       
+        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, string enrollment)
         {
-            this.color = colorCar;
-            this.door = door;
-            this.moto = motor;
-            this.wheel = road;
+            this.color = color;
+            this.doors = doors;
+            this.engine = engine;
+            this.wheels = wheels;
             this.enrollment = enrollment;
         }
 
-        
-        
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.Count;
             }
         }
 
@@ -36,7 +33,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.wheels.Count;
             }
         }
 
@@ -75,7 +72,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.ToArray();
             }
         }
 
