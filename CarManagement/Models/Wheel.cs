@@ -4,13 +4,19 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+        private double pression;
 
+        
 
-        public Wheel()
-        {
-            Pressure = 2.8;
+        public double Pressure {
+            get
+            {
+                return pression;
+            }
+            set
+            {
+                pression = value;
+            }
         }
-
-        public double Pressure { get; set; }
     }
 }

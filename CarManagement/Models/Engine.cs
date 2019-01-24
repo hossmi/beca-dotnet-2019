@@ -4,17 +4,38 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private bool start;
+        private int horsePorwer;
+
+        public Engine(int horsePorwer)
+        {
+            this.start = false;
+            this.horsePorwer = horsePorwer;
+        }
+
         public bool IsStarted
         {
             get
             {
-                throw new NotImplementedException();
+                return start;
             }
         }
 
         public void Start()
         {
-            throw new NotImplementedException();
+            start = true;
+        }
+
+        public int HorsePorwer
+        {
+            get
+            {
+                return horsePorwer;
+            }
+            set
+            {
+                horsePorwer = value;
+            }
         }
     }
 }

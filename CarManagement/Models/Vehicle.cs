@@ -1,26 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-<<<<<<< HEAD
 using CarManagement.Models;
-=======
->>>>>>> develop
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
-<<<<<<< HEAD
         private string enrollment;
         private List<Wheel> wheels;
         private List<Door> doors;
+        private Engine engine;
+        private CarColor color;
 
-        public Vehicle()
+        public Vehicle(int nWheels, int nDoors, int horsePorwer, CarColor color, string enrollment)
         {
-            enrollment = "AL1234";
+            this.wheels = new List<Wheel>();
+            this.doors = new List<Door>();
+            this.engine = new Engine(horsePorwer);
+            this.color = color;
+            createWheels(nWheels);
+            createDoors(nDoors);
+            this.enrollment = enrollment;
         }
-=======
-        private List<Wheel> wheels;
->>>>>>> develop
+
+        
 
         public int DoorsCount
         {
@@ -38,7 +41,13 @@ namespace CarManagement.Models
             }
         }
 
-        public Engine Engine { get; }
+        public Engine Engine
+        {
+            get
+            {
+                return engine;
+            }
+        }
 
         public string Enrollment
         {
@@ -63,17 +72,27 @@ namespace CarManagement.Models
             }
         }
 
-        public Wheel[] Wheels
+        public void createWheels(int nWheels)
         {
-            get
+            for (int i = 0; i < nWheels; i++)
             {
-                return this.wheels.ToArray();
+                Wheel aux = new Wheel();
+                wheels.Add(aux);
+            }
+        }
+
+        public void createDoors(int nDoors)
+        {
+            for (int i = 0; i < nDoors; i++)
+            {
+                Door aux = new Door();
+                doors.Add(aux);
             }
         }
 
         public void SetWheelsPressure(double pression)
         {
-            for(int i = 0; i < wheels.Count; i++)
+            for(int i = 0; i < WheelCount; i++)
             {
                 Wheels[i].Pressure = pression;
             }
