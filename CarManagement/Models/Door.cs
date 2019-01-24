@@ -6,6 +6,7 @@ namespace CarManagement.Models
     {
         private int name;
         private Boolean openDoor=false;
+
         public bool IsOpen
         {
             get
