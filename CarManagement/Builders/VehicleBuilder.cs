@@ -71,7 +71,6 @@ namespace CarManagement.Builders
             {
                 generate = new Random();
                 enrollment = generateEnrollment();
-                //System.Threading.Thread.Sleep(10);
                 vehicle = new Vehicle(numberWheels, numberDoors, horsePorwer, color, enrollment);
                 return vehicle;
             }
