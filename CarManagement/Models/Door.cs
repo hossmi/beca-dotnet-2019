@@ -1,20 +1,32 @@
 ﻿namespace CarManagement.Models
 {
-    internal class Door
+    public class Door
     {
+        private string model;
         private bool isOpen;
 
         public Door()
         {
+            this.model = "standard";
             this.isOpen = false;
         }
 
-        public bool IsOpen { get => isOpen; }
-
-        void openDoor()
+        public Door(Door door)
         {
-            this.isOpen ? this.isOpen = false : this.isOpen = true;
+            this.model = door.Model;
+            this.isOpen = door.IsOpen;
+        }
+
+        public bool IsOpen { get => isOpen; }
+        public string Model { get => model; }
+
+        public void Open()
+        {
             this.isOpen = true;
+        }
+        public void close()
+        {
+            this.isOpen = false;
         }
     }
 }

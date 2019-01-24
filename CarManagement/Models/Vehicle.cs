@@ -10,12 +10,18 @@ namespace CarManagement.Models
         private Engine engine;
         private List<Door> doorList;
         private List<Wheel> wheelList;
+        private CarColor color;
 
         private readonly string enrollment;
 
-        public Vehicle(VehicleBuilder referenceVehicle)
+        public Vehicle(VehicleBuilder referenceVehicle, int enrollment)
         {
-            throw new NotImplementedException();
+            this.engine = referenceVehicle.Engine;
+            this.doorList = referenceVehicle.DoorList;
+            this.wheelList = referenceVehicle.WheelList;
+            this.color = referenceVehicle.Color;
+
+            this.enrollment = $"asd-{enrollment}-ab";
         }
 
         public int DoorsCount
@@ -26,21 +32,9 @@ namespace CarManagement.Models
             }
         }
 
-        public int WheelCount
-        {
-            get
-            {
-                return wheelList.Count;
-            }
-        }
+        public int WheelCount {get => wheelList.Count;}
 
-        public Engine Engine
-        {
-            get
-            {
-                return new Engine(this.engine);
-            }
-        }
+        public Engine Engine{get => new Engine(this.engine); }
 
         public string Enrollment
         {
@@ -57,11 +51,14 @@ namespace CarManagement.Models
             //}
         }
 
+        public Door[] Doors { get => this.doorList.ToArray(); }
+        public Wheel[] Wheels { get => this.wheelList.ToArray(); }
+
         public void SetWheelsPressure(double pressure)
         {
             foreach( Wheel wheel in this.wheelList)
             {
-               wheel.pressure = pressure;
+               wheel.Pressure = pressure;
             }
         }
     }

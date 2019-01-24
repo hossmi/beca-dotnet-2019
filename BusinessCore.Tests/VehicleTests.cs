@@ -45,7 +45,7 @@ namespace BusinessCore.Tests
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
             //ha de establecer la presion de cada rueda
-            vehicle.SetWheelsPressure(pression: 2.4);
+            vehicle.SetWheelsPressure(pressure: 2.4);
 
             // propiedad de solo lectura 
             // propiedad: array Wheels
