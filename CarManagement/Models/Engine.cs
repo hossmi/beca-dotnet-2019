@@ -4,17 +4,19 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private bool start;
+
         public bool IsStarted
         {
             get
             {
-                throw new NotImplementedException();
+                return start;
             }
         }
 
         public void Start()
         {
-            throw new NotImplementedException();
+            start = true;
         }
     }
 }

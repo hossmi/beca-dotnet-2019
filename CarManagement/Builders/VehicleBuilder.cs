@@ -5,6 +5,7 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private List<Door>;
         public void addWheel()
         {
             throw new NotImplementedException();

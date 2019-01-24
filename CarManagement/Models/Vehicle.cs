@@ -6,7 +6,7 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private List<Wheel> wheels;
-
+        private List<Doors> doors = new List<Doors>();
         public int DoorsCount
         {
             get
@@ -45,15 +45,15 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
-        List<Doors> Doors = new List<Doors>();
+
         public Doors[] Doors
         {
             get
             {
-                return this.Doors.ToArray();
+                return this.doors.ToArray();
             }
         }
-    }
+
 
         public Wheel[] Wheels
         {
