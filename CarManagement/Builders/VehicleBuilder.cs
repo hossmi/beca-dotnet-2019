@@ -24,12 +24,17 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            
-
-            for (int i = 0; i < doorsCount; i++)
+            if (doorsCount > 0)
             {
-                Door door = new Door();
-                doors.Add(door);
+                for (int i = 0; i < doorsCount; i++)
+                {
+                    Door door = new Door();
+                    doors.Add(door);
+                }
+            }
+            else if (doorsCount < 0)
+            {
+                throw new Exception("No se puede crear un vehiculo con puertas negativas.");
             }
         }
 

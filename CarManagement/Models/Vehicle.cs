@@ -32,8 +32,7 @@ namespace CarManagement.Models
             }
 
         }
-
-
+        
         public int DoorsCount
         {
             get
@@ -57,7 +56,6 @@ namespace CarManagement.Models
                 return engine;
             }
         }
-
         public string Enrollment
         {
             get
@@ -113,8 +111,7 @@ namespace CarManagement.Models
             enrollment = e;
 
         }
-
-
+        
         public List<Wheel> SetWheels
         {
             set
@@ -130,6 +127,7 @@ namespace CarManagement.Models
                 doors = value;
             }
         }
+
         public Engine SetEngine
         {
             set
