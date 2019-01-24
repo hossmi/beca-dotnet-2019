@@ -1,4 +1,8 @@
-﻿using BusinessCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
@@ -6,7 +10,8 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            Vehicle vehiculo = new Vehicle();
+            
+
         }
     }
 }
