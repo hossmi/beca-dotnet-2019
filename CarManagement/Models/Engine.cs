@@ -12,5 +12,9 @@ namespace CarManagement.Models
             }
         }
 
+        public void Start()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
