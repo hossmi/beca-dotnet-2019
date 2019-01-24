@@ -1,7 +1,6 @@
 ﻿using System;
 using CarManagement.Builders;
 using CarManagement.Models;
-using BusinessCore.Vehicle;
 
 namespace BusinessCore.Tests
 {

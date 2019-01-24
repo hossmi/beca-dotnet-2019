@@ -43,6 +43,14 @@ namespace CarManagement.Models
             //    this.enrollment = value;
             //}
         }
+        public string[] Doors = new string[5]
+        {
+            "FrontRight",
+            "FrontLeft",
+            "RearRight",
+            "RearLeft",
+            "Trunk",
+        };
     }
 
         public void SetWheelsPressure(double pression)
