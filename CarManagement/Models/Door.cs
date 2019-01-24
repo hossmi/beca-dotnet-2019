@@ -6,17 +6,17 @@ namespace CarManagement.Models
     public class Door
 
     {
-        private bool open = false;
+        private bool isOpen = false;
 
-        public void Open()
+        public void open()
         {
             try
             {
-                this.open = true;
+                this.isOpen = true;
             }
             catch (Exception)
             {
-                this.open = false;
+                this.isOpen = false;
             }
         }
 
@@ -24,11 +24,11 @@ namespace CarManagement.Models
         {
             try
             {
-                this.open = false;
+                this.isOpen = false;
             }
             catch (Exception)
             {
-                this.open = true;
+                this.isOpen = true;
             }
         }
 
@@ -36,7 +36,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return this.open;
+                return this.isOpen;
             }
 
         }

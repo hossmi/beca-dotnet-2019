@@ -5,18 +5,18 @@ namespace CarManagement.Models
     public class Engine
     {
         private int horsepower = 0;
-        private bool started = false;
+        private bool isStarted = false;
 
         public Engine(int h)
         {
             horsepower = h;
-            started = false;
+            isStarted = false;
         }
 
         public Engine()
         {
             horsepower = 0;
-            started = false;
+            isStarted = false;
         }
 
         public void start()
@@ -24,11 +24,11 @@ namespace CarManagement.Models
             try
             {
                 //Insert Start instructions here
-                started = true;
+                isStarted = true;
             }
             catch (Exception)
             {
-                started = false;
+                isStarted = false;
             }
         }
 
@@ -36,7 +36,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return started;
+                return isStarted;
             }
 
         }

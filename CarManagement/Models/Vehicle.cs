@@ -143,14 +143,6 @@ namespace CarManagement.Models
             }
         }
 
-        public Door[] Doors
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public void setWheelsPressure(double pression)
         {
             foreach (Wheel w in wheels)
