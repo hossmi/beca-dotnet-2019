@@ -6,6 +6,7 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        const int maxWheels = 4;
         private List<Wheel> wheels = new List<Wheel>();
         private List<Door> doors = new List<Door>();
         private Engine engine = new Engine();
@@ -15,15 +16,19 @@ namespace CarManagement.Builders
         public void addWheel()
         {
             Wheel wheel = new Wheel();
-            wheels.Add(wheel);
+            if (wheels.Count < maxWheels)
+                wheels.Add(wheel);
+            else
+                throw new Exception("Se ha excedido el numero maximo de ruedas");
         }
 
         public void setDoors(int doorsCount)
         {
-            Door door = new Door();
+            
 
             for (int i = 0; i < doorsCount; i++)
             {
+                Door door = new Door();
                 doors.Add(door);
             }
         }
@@ -47,6 +52,10 @@ namespace CarManagement.Builders
             vehicle.SetEngine = engine;
             vehicle.SetCarColor = color;
 
+            if (wheels.Count == 0)
+            {
+                throw new Exception("No se puede crear un vehiculo sin ruedas");
+            }
 
             return vehicle;
         }

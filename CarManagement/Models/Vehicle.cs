@@ -9,8 +9,12 @@ namespace CarManagement.Models
         private List<Wheel> wheels;
         private Engine engine;
         private CarColor color;
-        private string enrollmentA;
-        private int enrollmentB;
+        private string enrollment;
+
+        public Vehicle()
+        {
+            generateEnrollment();
+        }
 
         public Door[] Doors
         {
@@ -58,19 +62,7 @@ namespace CarManagement.Models
         {
             get
             {
-                string enrollment;
-                Random rnd = new Random();
-                string enB = "";
-
-                enrollmentB = rnd.Next(0, 9999);
-
-                switch
-                    { }
-
-
-
-                enrollment = enrollmentA + "-" + enB;
-                return enrollment; 
+                return enrollment;
             }
             //set
             //{
@@ -81,12 +73,52 @@ namespace CarManagement.Models
             //}
         }
 
+        private void generateEnrollment()
+        {
+            string e;
+            Random rnd = new Random();
+            string enA = "";
+            string enB = "";
+            int number;
+            char c;
+
+            number = rnd.Next(0, 9999);
+
+            if (number < 10)
+            {
+                enB = "000" + number.ToString();
+            }
+            else if (number < 100)
+            {
+                enB = "00" + number.ToString();
+            }
+            else if (number < 1000)
+            {
+                enB = "0" + number.ToString();
+            }
+            else
+            {
+                enB = number.ToString();
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                number = rnd.Next(0, 26);
+                c = (char)('A' + number);
+                enA = enA + c;
+            }
+            e = enA + "-" + enB;
+
+            enrollment = e;
+        }
+
+
         public List<Wheel> SetWheels
         {
             set
             {
                 wheels = value;
-            }    
+            }
         }
 
         public List<Door> SetDoors

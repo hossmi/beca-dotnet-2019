@@ -12,12 +12,11 @@ namespace CarManagement.Models
         {
             try
             {
-                //Insert Open instructions here
-                open = true;
+                this.open = true;
             }
             catch (Exception)
             {
-                open = false;
+                this.open = false;
             }
         }
 
@@ -25,12 +24,11 @@ namespace CarManagement.Models
         {
             try
             {
-                //Insert Open instructions here
-                open = false;
+                this.open = false;
             }
             catch (Exception)
             {
-                open = true;
+                this.open = true;
             }
         }
 
@@ -38,7 +36,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return open;
+                return this.open;
             }
 
         }
