@@ -10,15 +10,19 @@ namespace CarManagement.Models
         private Door[] door;
         private Engine moto;
         private Wheel[] wheel;
+        private string enrollment;
 
 
-        public Vehicle(CarColor colorCar,Door[] door,Engine motor, Wheel[] road)
+        public Vehicle(CarColor colorCar,Door[] door,Engine motor, Wheel[] road, string enrollment)
         {
             this.color = colorCar;
             this.door = door;
             this.moto = motor;
             this.wheel = road;
+            this.enrollment = enrollment;
         }
+
+        
         
         public int DoorsCount
         {
@@ -48,7 +52,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment;
             }
             //set
             //{
