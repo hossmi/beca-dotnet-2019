@@ -13,36 +13,60 @@ namespace CarManagement.Models
         private string Abc()
         {
             string A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            int lenght = A.Length;
-            int i = 1;
-            int i2 = 1;
-            int i3 = 1;
-            string result = "";
-            string result2 = "";
+            int lenght = A.Length - 1;
+            int i = 0;
+            int i2 = 0;
+            int i3 = 0;
+            int numi = 0;
             while (i <= A.Length)
             {
-
-                char letra = A[i];
-                result = result + letra;
-                i++;
-                while (i2 <= A.Length)
+                string salida = "";
+                string numi2 = numi.ToString();
+                int countnumi = numi2.Length;
+                if (countnumi == 1)
                 {
-                    letra = A[i2];
-                    result = result + letra;
-                    i2++;
-        
-            };
-                while (i3 <= A.Length)
+                    salida = A[i] + A[i2] + A[i3] + " - 000" + numi;
+                }
+                else if (countnumi == 2)
                 {
-                    letra = A[i3];
-                    result = result + letra;
-                    result2 = result;
-                    result = "";
-                    i3++;
+                    salida = A[i] + A[i2] + A[i3] + " - 00" + numi;
+                }
+                else if (countnumi == 3)
+                {
+                    salida = A[i] + A[i2] + A[i3] + " - 0" + numi;
+                }
+                else if (countnumi == 4)
+                {
+                    salida = A[i] + A[i2] + A[i3] + " - " + numi;
+                }
+                if (numi == 9999)
+                {
+                    if (i2 >= lenght && i3 == lenght)
+                    {
+                        i2 = 0;
+                        i3 = 0;
+                        i++;
+                    }
+                    if (i3 == lenght)
+                    {
+                        i3 = 0;
+                        i2++;
+                    }
+                    else
+                    {
+                        i3++;
+                        numi = 0;
+                    }
+                }
+                else
+                {
+                    numi++;
+                }
+            return salida;
 
-                    };
-            };
+            }
         }
+
 
         public List<Wheel> carwheel
         {
