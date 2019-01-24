@@ -1,10 +1,12 @@
 ﻿using System;
-using CarManagement.Models;
+using System.Collections.Generic;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private List<Wheel> wheels;
+
         public int DoorsCount
         {
             get
