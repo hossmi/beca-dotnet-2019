@@ -7,7 +7,7 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private Engine engine;
+        public readonly Engine Engine;
         private List<Door> doorList;
         private List<Wheel> wheelList;
         private CarColor color;
@@ -16,7 +16,7 @@ namespace CarManagement.Models
 
         public Vehicle(VehicleBuilder referenceVehicle, int enrollment)
         {
-            this.engine = referenceVehicle.Engine;
+            this.Engine = referenceVehicle.Engine;
             this.doorList = referenceVehicle.DoorList;
             this.wheelList = referenceVehicle.WheelList;
             this.color = referenceVehicle.Color;
@@ -33,8 +33,6 @@ namespace CarManagement.Models
         }
 
         public int WheelCount {get => wheelList.Count;}
-
-        public Engine Engine{get => new Engine(this.engine); }
 
         public string Enrollment
         {

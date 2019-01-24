@@ -6,6 +6,12 @@
         private int horsePower;
         private bool isStarted;
 
+        public Engine()
+        {
+            this.model = "standart";
+            this.horsePower = 50;
+        }
+
         public Engine(int horsePower, string model = "standart")
         {
             this.model = model;

@@ -12,7 +12,15 @@ namespace CarManagement.Builders
         private List<Wheel> wheelList;
         private CarColor color;
 
-        private int lastIssuedEnrollment; // asd-0000-aa
+        static private int lastIssuedEnrollment = 0;
+
+        public VehicleBuilder()
+        {
+            this.engine = new Engine();
+            this.doorList = new List<Door>();
+            this.wheelList = new List<Wheel>();
+            this.color = CarColor.White;
+        }
 
         public Engine Engine { get => new Engine(engine); }
         public int LastIssuedEnrollment { get => lastIssuedEnrollment; }
@@ -21,7 +29,7 @@ namespace CarManagement.Builders
         {
             get
             {
-                List<Wheel> wheelList = null;
+                List<Wheel> wheelList = new List<Wheel>();
                 foreach(Wheel wheel in this.wheelList)
                 {
                     wheelList.Add(new Wheel(wheel));
@@ -34,7 +42,7 @@ namespace CarManagement.Builders
         {
             get
             {
-                List<Door> doorList = null;
+                List<Door> doorList = new List<Door>();
                 foreach (Door door in this.doorList)
                 {
                     doorList.Add(new Door(door));
@@ -84,9 +92,9 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            int temp = this.lastIssuedEnrollment;
-            this.lastIssuedEnrollment++;
-            return new Vehicle(this, temp);
+            if (wheelList.Count() <= 0)
+                throw new System.InvalidOperationException($"You cannot build a vehicle with {wheelList.Count()} wheels");
+            return new Vehicle(this, lastIssuedEnrollment++);
         }
     }
 }
