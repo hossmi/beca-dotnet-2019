@@ -6,7 +6,20 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private List<Wheel> wheels;
+        private CarColor color;
+        private Door[] door;
+        private Engine moto;
+        private Wheel[] wheel;
 
+
+        public Vehicle(CarColor colorCar,Door[] door,Engine motor, Wheel[] road)
+        {
+            this.color = colorCar;
+            this.door = door;
+            this.moto = motor;
+            this.wheel = road;
+        }
+        
         public int DoorsCount
         {
             get

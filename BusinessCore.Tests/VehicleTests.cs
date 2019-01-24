@@ -11,18 +11,18 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void builder_default_functionality()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            VehicleBuilder pedido = new VehicleBuilder();
 
-            builder.addWheel();
-            builder.addWheel();
-            builder.addWheel();
-            builder.addWheel();
+            pedido.addWheel();
+            pedido.addWheel();
+            pedido.addWheel();
+            pedido.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
-            builder.setColor(CarColor.Red);
+            pedido.setDoors(doorsCount: 2);
+            pedido.setEngine(horsePorwer: 100);
+            pedido.setColor(CarColor.Red);
 
-            Vehicle vehicle = builder.build();
+            Vehicle vehicle = pedido.build();
 
             Assert.IsNotNull(vehicle);
             Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));

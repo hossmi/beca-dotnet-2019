@@ -6,7 +6,7 @@ namespace CarManagement.Builders
     public class VehicleBuilder
     {
         private int nWheel = 0;
-        private int nDoors = 0;
+        private int doors = 0;
         private int engine = 0;
         private CarColor color;
 
@@ -18,7 +18,7 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            this.nDoors++;
+            this.doors = ;
         }
 
         public void setEngine(int horsePorwer)
@@ -33,6 +33,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
+            return new Vehicle(nWheel, doors, engine,);
             throw new NotImplementedException();
         }
     }
