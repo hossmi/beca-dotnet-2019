@@ -9,7 +9,6 @@ namespace CarManagement.Models
 
     public class Wheel
     {
-        private double pressure;
 
         public double Pressure
         {
@@ -26,13 +25,15 @@ namespace CarManagement.Models
             }
             get
             {
-                return this.pressure;
+                return this.Pressure;
             }
         }
 
-        public Wheel(double valor)
+        public Wheel()
         {
-            this.pressure = valor;
+            Pressure = 0;
         }
+
+   
     }
 }
