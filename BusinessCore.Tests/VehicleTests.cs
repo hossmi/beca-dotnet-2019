@@ -159,5 +159,24 @@ namespace BusinessCore.Tests
             } while (stopwatch.Elapsed <= maxTime);
         }
 
+        [TestMethod]
+        public void enrollment_must_be_always_the_same()
+        {
+            VehicleBuilder builder = new VehicleBuilder();
+
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+
+            builder.setDoors(2);
+            builder.setEngine(100);
+            builder.setColor(CarColor.Red);
+
+            Vehicle vehicle = builder.build();
+            string enrollment1 = vehicle.Enrollment;
+            string enrollment2 = vehicle.Enrollment;
+            Assert.AreNotEqual(enrollment1, enrollment2);
+        }
     }
 }
