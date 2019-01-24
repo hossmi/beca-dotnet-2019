@@ -7,8 +7,7 @@ namespace CarManagement.Builders
     public class VehicleBuilder
     {
         private string enrollment;
-        private Random generate;
-        private Vehicle vehicle;
+        private readonly Random generate;
         private CarColor color;
         private int numberWheels;
         private int numberDoors;
@@ -21,7 +20,7 @@ namespace CarManagement.Builders
             this.numberWheels = 0;
             this.numberDoors = 0;
             this.horsePorwer = 0;
-            
+            generate = new Random();
         }
 
         public void addWheel()
@@ -36,7 +35,7 @@ namespace CarManagement.Builders
             }
         }
 
-        public string generateEnrollment()
+        private string generateEnrollment()
         {
             string result = "";
             result = result + (char)this.generate.Next((int)'A', (int)'Z');
@@ -65,13 +64,40 @@ namespace CarManagement.Builders
             this.color = color;
         }
 
+        private List<Wheel> createWheels(int nWheels)
+        {
+            List<Wheel> wheels = new List<Wheel>();
+            for (int i = 0; i < nWheels; i++)
+            {
+                Wheel aux = new Wheel();
+                wheels.Add(aux);
+            }
+
+            return wheels;
+        }
+
+        private List<Door> createDoors(int nDoors)
+        {
+            List<Door> doors = new List<Door>();
+            for (int i = 0; i < nDoors; i++)
+            {
+                Door aux = new Door();
+                doors.Add(aux);
+            }
+
+            return doors;
+        }
+
         public Vehicle build()
         {
             if((numberDoors > 0) || (numberWheels > 0))
             {
-                generate = new Random();
+                Engine engine = new Engine(this.horsePorwer);
+                List<Door> doors = createDoors(this.numberDoors);
+                List<Wheel> wheels = createWheels(this.numberWheels);
                 enrollment = generateEnrollment();
-                vehicle = new Vehicle(numberWheels, numberDoors, horsePorwer, color, enrollment);
+
+                Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
                 return vehicle;
             }
             else
