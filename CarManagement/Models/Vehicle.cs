@@ -10,7 +10,39 @@ namespace CarManagement.Models
         private Engine engine = new Engine();
         private CarColor color;
 
+        private string Abc()
+        {
+            string A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            int lenght = A.Length;
+            int i = 1;
+            int i2 = 1;
+            int i3 = 1;
+            string result = "";
+            string result2 = "";
+            while (i <= A.Length)
+            {
 
+                char letra = A[i];
+                result = result + letra;
+                i++;
+                while (i2 <= A.Length)
+                {
+                    letra = A[i2];
+                    result = result + letra;
+                    i2++;
+        
+            };
+                while (i3 <= A.Length)
+                {
+                    letra = A[i3];
+                    result = result + letra;
+                    result2 = result;
+                    result = "";
+                    i3++;
+
+                    };
+            };
+        }
 
         public List<Wheel> carwheel
         {
