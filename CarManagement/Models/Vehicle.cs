@@ -1,25 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private 
+        private List<Door> doors = new List<Door>();
+        private List<Wheel> wheels = new List<Wheel>();
+
+        public Door[] Door
+        {
+            get
+            {
+                
+                
+            }
+        }
 
         public int DoorsCount
         {
             get
             {
                 return DoorsCount;
-            }
-
-            set
-            {
-                if (value < 1)
-                    throw new ArgumentException("Minimum doors value is 1.");
-                else
-                    DoorsCount = value;
             }
         }
 
@@ -29,17 +32,17 @@ namespace CarManagement.Models
             {
                 return WheelCount;
             }
-            set
-            {
-                WheelCount = value;
-            }
         }
 
         public Engine Engine
         {
             get
             {
-                throw new NotImplementedException();
+                return Engine;
+            }
+            set
+            {
+                Engine = value;
             }
         }
 
@@ -49,6 +52,14 @@ namespace CarManagement.Models
             {
                 throw new NotImplementedException();
             }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("The enrollment can not be empty or have blank spaces.");
+                else
+                    Enrollment = value;
+            }
+
             //set
             //{
             //    if (string.IsNullOrWhiteSpace(value))

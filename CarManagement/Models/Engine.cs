@@ -18,5 +18,29 @@ namespace CarManagement.Models
                     HorsePower = value;
             }
         }
+
+        public bool IsStarted
+        {
+            get
+            {
+                return IsStarted;
+            }
+            private set
+            {
+                IsStarted = value;
+            }
+        }
+
+        void Start()
+        {
+            IsStarted = true;
+        }
+
+        void Stop()
+        {
+            IsStarted = false;
+        }
+
+
     }
 }

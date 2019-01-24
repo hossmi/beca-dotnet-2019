@@ -8,21 +8,25 @@ namespace CarManagement.Models
 {
     public class Door
     {
-        private bool Open;
         public bool IsOpen
         {
             get
             {
-                if (Open)
-                    return true;
-                return false;
+                return IsOpen;
             }
-            set
+            private set
             {
-
+                IsOpen = value;
             }
+        }
 
-
+        void Open()
+        {
+            IsOpen = true;
+        }
+        void Close()
+        {
+            IsOpen = false;
         }
     }
 }
