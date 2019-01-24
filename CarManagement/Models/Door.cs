@@ -21,6 +21,19 @@ namespace CarManagement.Models
             }
         }
 
+        public void close()
+        {
+            try
+            {
+                //Insert Open instructions here
+                open = false;
+            }
+            catch (Exception)
+            {
+                open = true;
+            }
+        }
+
         public bool IsOpen
         {
             get

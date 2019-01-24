@@ -5,8 +5,12 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        List<Door> doors;
-        List<Wheel> wheels;
+        private List<Door> doors;
+        private List<Wheel> wheels;
+        private Engine engine;
+        private CarColor color;
+        private string enrollmentA;
+        private int enrollmentB;
 
         public Door[] Doors
         {
@@ -38,7 +42,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return wheels.Count;
             }
         }
 
@@ -46,7 +50,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return engine;
             }
         }
 
@@ -54,7 +58,19 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                string enrollment;
+                Random rnd = new Random();
+                string enB = "";
+
+                enrollmentB = rnd.Next(0, 9999);
+
+                switch
+                    { }
+
+
+
+                enrollment = enrollmentA + "-" + enB;
+                return enrollment; 
             }
             //set
             //{
@@ -63,6 +79,36 @@ namespace CarManagement.Models
 
             //    this.enrollment = value;
             //}
+        }
+
+        public List<Wheel> SetWheels
+        {
+            set
+            {
+                wheels = value;
+            }    
+        }
+
+        public List<Door> SetDoors
+        {
+            set
+            {
+                doors = value;
+            }
+        }
+        public Engine SetEngine
+        {
+            set
+            {
+                engine = value;
+            }
+        }
+        public CarColor SetCarColor
+        {
+            set
+            {
+                color = value;
+            }
         }
 
         public void SetWheelsPressure(double pression)
