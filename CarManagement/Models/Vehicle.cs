@@ -18,7 +18,8 @@ namespace CarManagement.Models
             int i2 = 0;
             int i3 = 0;
             int numi = 0;
-            while (i <= A.Length)
+            int numo = 9999;
+            while (i <= lenght)
             {
                 string salida = "";
                 string numi2 = numi.ToString();
@@ -39,7 +40,7 @@ namespace CarManagement.Models
                 {
                     salida = A[i] + A[i2] + A[i3] + " - " + numi;
                 }
-                if (numi == 9999)
+                if (numi == numo)
                 {
                     if (i2 >= lenght && i3 == lenght)
                     {
