@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
+using System.Runtime.Serialization;
 
 namespace CarManagement.Builders
 {
