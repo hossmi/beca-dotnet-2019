@@ -27,7 +27,6 @@
                             throw new System.Exception("Alcanzado el limite maximo de matriculas");
                     }
                 }
-                
             }
 
             if (number < 1000)
@@ -42,6 +41,7 @@
             }
 
             enrollment = Letter1.ToString() + Letter2.ToString() + Letter3.ToString() + "-" + numberFill + number.ToString();
+
             number++;
 
             return enrollment;
