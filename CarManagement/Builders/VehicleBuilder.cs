@@ -14,7 +14,7 @@ namespace CarManagement.Builders
         public void addWheel()
         {
             Wheel wheel = new Wheel();
-            this.wheels.Add(wheel);
+            wheels.Add(wheel);
         }
 
         public void setDoors(int doorsCount)
@@ -22,7 +22,7 @@ namespace CarManagement.Builders
             for(int i=0;i< doorsCount;i++)
             {
                 Door door = new Door();
-                this.doors.Add(door);
+                doors.Add(door);
             }
         }
 
