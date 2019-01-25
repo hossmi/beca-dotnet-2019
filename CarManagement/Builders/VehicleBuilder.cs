@@ -1,20 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        Random enrollmentGenerator = new Random();
-
-        private CarColor carColor;
-        private const int ENROLLMENT_CHAR_QUANTITY = 8;
-        private String enrollment;
-        private List<String> usedEnrollments = new List<String>();
+        private CarColor carColor;       
         private int doorsCount;
         private int wheelsCount;
         private int horsePower;
+
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
 
         public void addWheel()
         {
@@ -38,24 +41,7 @@ namespace CarManagement.Builders
             this.carColor = color;
         }
 
-        private void setEnrollment()
-        {
-            String enrollmentPlate;
 
-            do
-            {
-                enrollmentPlate = "";
-
-                for (int enrollmentChars = 0; enrollmentChars < ENROLLMENT_CHAR_QUANTITY; enrollmentChars++)
-                {
-                    enrollmentPlate += enrollmentGenerator.Next((int)'A', (int)'Z').ToString();
-                }
-
-            } while (usedEnrollments.Contains(enrollmentPlate));
-
-            this.enrollment = enrollmentPlate;
-            this.usedEnrollments.Add(enrollmentPlate);
-        }
 
         private List<T> createElementsList<T>(int elementsQuantity) where T : class, new()
         {
@@ -71,14 +57,13 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            setEnrollment();
-
             if (this.wheelsCount < 1)
                 throw new ArgumentException("Can not build a vehicle without wheels.");
 
             List<Wheel> wheels = createElementsList<Wheel>(this.wheelsCount);
             List<Door> doors = createElementsList<Door>(this.doorsCount);
             Engine engine = new Engine(this.horsePower);
+            String enrollment = enrollmentProvider.getNewEnrollment();
 
             return new Vehicle(doors, wheels, engine, enrollment, this.carColor);
         }
