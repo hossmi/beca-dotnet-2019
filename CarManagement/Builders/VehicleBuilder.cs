@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
-using System.IO;
 
 namespace CarManagement.Builders
 {
@@ -9,12 +8,11 @@ namespace CarManagement.Builders
     {
         private static int intEnrollment;
         const int maxWheels = 4;
-        private string enrollment = "";
 
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
-        private CarColor colorCode;
+        private int colorCode;
 
         public void addWheel()
         {
@@ -46,38 +44,89 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
-            this.colorCode = color;
+            if (Enum.IsDefined(typeof(CarColor), color) == false)
+                throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
+            else
+            this.colorCode = (int)color;
         }
 
         public Vehicle build()
         {
             Vehicle vehicle = new Vehicle();
 
-            generateEnrollmentB();
+            //generateEnrollmentB();
 
-            vehicle.SetWheels = wheels;
-            vehicle.SetDoors = doors;
-            vehicle.SetEngine = engine;
-            vehicle.SetCarColor = color;
-            vehicle.SetEnrollment = enrollment;
+            vehicle.SetWheels = createWheels(wheelsCount);
+            vehicle.SetDoors = createDoors(doorsCount);
+            vehicle.SetEngine = createEngine(enginePower);
+            vehicle.SetCarColor = applyColor(colorCode);
+            //vehicle.SetEnrollment = enrollment;
 
             if (wheelsCount == 0)
-            {
                 throw new Exception("No se puede crear un vehiculo sin ruedas");
-            }
+            
 
             return vehicle;
+        }
+
+        private List<TItem> createObject(int count) 
+        {
+            List<TItem> list = new List<TItem>();
+
+            for (int i = 0; i < count; i++)
+            {
+                TItem obj = new TItem();
+                list.Add(obj);
+            }
+
+            return list;
         }
 
         private List<Wheel> createWheels(int count)
         {
             List<Wheel> wheels = new List<Wheel>();
 
-            for()
+            for (int i = 0; i < count; i++)
+            {
+                Wheel wheel = new Wheel();
+                wheels.Add(wheel);
+            }
 
             return wheels;
         }
+        private List<Door> createDoors(int count)
+        {
+            List<Door> doors = new List<Door>();
 
+            for (int i = 0; i < count; i++)
+            {
+                Door door = new Door();
+                doors.Add(door);
+            }
+
+            return doors;
+        }
+
+        private Engine createEngine(int power)
+        {
+            Engine engine = new Engine(power);
+
+            return engine;
+        }
+
+        private CarColor applyColor(int code)
+        {
+            CarColor color = (CarColor)code;
+
+            return color;
+        }
+
+
+
+
+
+
+        /*
         private void generateEnrollment()
         {
             string e = "";
@@ -129,5 +178,6 @@ namespace CarManagement.Builders
         {
             enrollment = intEnrollment++.ToString();
         }
+        */
     }
 }
