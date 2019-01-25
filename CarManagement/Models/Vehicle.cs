@@ -47,7 +47,7 @@ namespace CarManagement.Models
             }
         }
 
-        public string Enrollment
+        public IEnrollment Enrollment
         {
         
             get
