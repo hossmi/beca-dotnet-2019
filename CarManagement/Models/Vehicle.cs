@@ -34,7 +34,7 @@ namespace CarManagement.Models
             get => wheelList.Count;
         }
 
-        public string Enrollment
+        public IEnrollment Enrollment
         {
             get => this.enrollment;
         }
