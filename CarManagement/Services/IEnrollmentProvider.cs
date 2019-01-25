@@ -8,6 +8,6 @@ namespace CarManagement.Services
 {
     public interface IEnrollmentProvider
     {
-        string getNewEnrollment();
+        string NewEnrollment { get; }
     }
 }

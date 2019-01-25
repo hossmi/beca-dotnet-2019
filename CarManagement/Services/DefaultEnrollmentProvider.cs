@@ -10,12 +10,12 @@
             this.letter = "";
             this.number = 0;
         }
-        string IEnrollmentProvider.getNewEnrollment();
+        string IEnrollmentProvider.NewEnrollment
+        {
+            get
+            {
 
-                
-        
-        
-        
-      
+            }
+        }
     }
 }

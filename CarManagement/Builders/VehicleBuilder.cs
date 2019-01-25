@@ -12,10 +12,10 @@ namespace CarManagement.Builders
 
         private int  wheels = 0;
         private int doors = 0;
-        private int engine = 0;
         private CarColor color;
         private string enrollment = "AAAAAAA";
-        private int horsePower;
+        private int horsePower = 0;
+
 
         private readonly IEnrollmentProvider enrollmentProvider;
 
@@ -37,7 +37,7 @@ namespace CarManagement.Builders
 
         public void setEngine(int horsePorwer)
         {
-            this.engine = horsePorwer;
+            this.horsePower  = horsePorwer;
         }
 
         public void setColor(CarColor color)
@@ -67,7 +67,7 @@ namespace CarManagement.Builders
             //genero motor
     
 
-            Engine engine = new Engine(horsePower);
+            Engine engine = new Engine(this.horsePower );
 
             
             return new Vehicle(this.color,doors,engine,wheels,enrollment);
