@@ -45,10 +45,10 @@
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
+    <Compile Include="Models\Wheel.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\IEnrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
-    <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DefaultEnrollmentProvider.cs" />
     <Compile Include="Services\IEnrollmentProvider.cs" />

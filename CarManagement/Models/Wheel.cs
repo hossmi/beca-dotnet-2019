@@ -1,32 +1,39 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
-    public class Wheel
 
-       
+    public class Wheel
     {
-        public Wheel()
-        {
-            Pressure = 0;
-        }
+
         public double Pressure
         {
+            set
+            {
+                if (value>=0)
+                {
+                    this.Pressure = value;
+                }
+                else
+                {
+                    throw new ArgumentException("value");
+                }
+            }
             get
             {
                 return this.Pressure;
             }
-            set
-            {
-                if (Pressure < 0)
-                {
-                    throw new NotFiniteNumberException();
-                }
-                else
-                {
-                    this.Pressure = Pressure;
-                }
-            }
         }
+
+        public Wheel()
+        {
+            Pressure = 0;
+        }
+
+   
     }
 }

@@ -4,13 +4,19 @@ namespace CarManagement.Models
 {
     public class Door
     {
+        
+        private bool openDoor;
 
-        bool openDoor = false;
+        public Door()
+        {
+            this.openDoor = false;
+        }
+
         public bool IsOpen
         {
             get
             {
-                return this.IsOpen;
+                return this.openDoor;
             }
         }
 
@@ -23,5 +29,9 @@ namespace CarManagement.Models
         {
             this.openDoor = false;
         }
+
+        
+
+
     }
 }
