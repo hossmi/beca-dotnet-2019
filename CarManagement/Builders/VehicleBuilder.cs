@@ -13,24 +13,28 @@ namespace CarManagement.Builders
             this.enrollmentProvider = enrollmentProvider;
         }
 
+        private int numWheels;
+        private int numDoors;
+        private int horsePower;
+        private CarColor color;
         public void addWheel()
         {
-            throw new NotImplementedException();
+            this.numWheels++;
         }
 
         public void setDoors(int doorsCount)
         {
-            throw new NotImplementedException();
+            this.numDoors = doorsCount;
         }
 
-        public void setEngine(int horsePorwer)
+        public void setEngine(int horsePower)
         {
-            throw new NotImplementedException();
+            this.horsePower = horsePower;
         }
 
         public void setColor(CarColor color)
         {
-            throw new NotImplementedException();
+            this.color = color;
         }
 
         public Vehicle build()

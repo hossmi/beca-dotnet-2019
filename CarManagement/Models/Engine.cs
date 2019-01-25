@@ -4,10 +4,10 @@ namespace CarManagement.Models
 {
     public class Engine
     {
-<<<<<<< HEAD
+
         private string engineType = "VR";
         private string engineType1 = "Rotary";
-=======
+
         public bool IsStarted
         {
             get
@@ -20,7 +20,8 @@ namespace CarManagement.Models
         {
             throw new NotImplementedException();
         }
->>>>>>> develop
     }
-
 }
+
+
+

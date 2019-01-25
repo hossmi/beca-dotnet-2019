@@ -5,12 +5,20 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private Wheel[] wheels;
+        private Door door;
+        private Engine engine;
+        private CarColor color;
 
+        public Vehicle()
+        {
+
+        }
         public int DoorsCount
         {
             get
             {
-
+                throw new NotImplementedException();
             }
         }
 
@@ -18,7 +26,7 @@ namespace CarManagement.Models
         {
             get
             {
-   
+                throw new NotImplementedException();
             }
         }
 
@@ -27,7 +35,7 @@ namespace CarManagement.Models
 
             get
             {
-
+                throw new NotImplementedException();
             }
         }
 
