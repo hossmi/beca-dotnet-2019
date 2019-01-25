@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Services;
@@ -14,12 +15,11 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
-        private const string EVIL_ENROLLMENT = "XXX-0666";
 
         [TestMethod]
         public void builder_default_functionality()
         {
-            IEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider(EVIL_ENROLLMENT);
+            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
@@ -34,11 +34,11 @@ namespace BusinessCore.Tests
             Vehicle vehicle = builder.build();
 
             Assert.IsNotNull(vehicle);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));
+            Assert.IsNotNull(vehicle.Enrollment);
             Assert.AreEqual(2, vehicle.DoorsCount);
             Assert.AreEqual(4, vehicle.WheelCount);
 
-            Assert.AreEqual(EVIL_ENROLLMENT, vehicle.Enrollment);
+            Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
 
             // propiedad de solo lectura 
             // propiedad: array Door
@@ -178,16 +178,32 @@ namespace BusinessCore.Tests
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
-            string enrollment1 = vehicle.Enrollment;
-            string enrollment2 = vehicle.Enrollment;
+            IEnrollment enrollment1 = vehicle.Enrollment;
+            IEnrollment enrollment2 = vehicle.Enrollment;
             Assert.AreEqual(enrollment1, enrollment2);
+            Assert.AreEqual(enrollment1.ToString(), enrollment2.ToString());
+        }
+
+        [TestMethod]
+        public void enrollments_must_complaint_requested_format()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+
+            Regex fullRegex = new Regex("[A-Z][A-Z][A-Z]-[0-9][0-9][0-9][0-9]");
+            Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
+
+            Regex serialRegex = new Regex("[A-Z][A-Z][A-Z]");
+            Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
+
+            Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);
         }
 
         private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
-            IDictionary<string, Vehicle> vehicles = new Dictionary<string, Vehicle>();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
             builder.addWheel();
             builder.addWheel();

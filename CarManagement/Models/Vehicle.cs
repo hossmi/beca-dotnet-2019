@@ -9,10 +9,10 @@ namespace CarManagement.Models
         private List<Wheel> wheels;
         private Engine engine;
         private CarColor color;
-        private string enrollment;
+        private IEnrollment enrollment;
         private CarColor colorCode;
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor colorCode, string enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor colorCode, IEnrollment enrollment)
         {
             this.wheels = wheels;
             this.doors = doors;
@@ -61,19 +61,13 @@ namespace CarManagement.Models
                 return engine;
             }
         }
-        public string Enrollment
+
+        public IEnrollment Enrollment
         {
             get
             {
                 return enrollment;
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
         
         public List<Wheel> SetWheels
@@ -115,7 +109,7 @@ namespace CarManagement.Models
             }
         }
 
-        public string SetEnrollment
+        public IEnrollment SetEnrollment
         {
             set
             {

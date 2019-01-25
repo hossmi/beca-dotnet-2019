@@ -60,7 +60,7 @@ namespace CarManagement.Builders
             List<Wheel> wheels = CreateObject<Wheel>(wheelsCount);
             List<Door> doors = CreateObject<Door>(doorsCount);
             Engine engine = CreateEngine(enginePower);
-            string enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
              
             Vehicle vehicle = new Vehicle(wheels, doors, engine, colorCode, enrollment);
 
