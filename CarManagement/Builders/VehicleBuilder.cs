@@ -1,10 +1,18 @@
 ﻿using System;
 using CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
         public void addWheel()
         {
             throw new NotImplementedException();
