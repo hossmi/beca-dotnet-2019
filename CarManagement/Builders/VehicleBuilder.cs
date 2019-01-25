@@ -11,7 +11,7 @@ namespace CarManagement.Builders
         private List<Wheel> wheels = new List<Wheel>();
         private Engine engine;
         private CarColor carColor;
-        private const int ENROLLMENT_QUANTITY = 8;
+        private const int ENROLLMENT_CHAR_QUANTITY = 8;
         private String enrollment;
         private List<String> usedEnrollments = new List<String>();
 
@@ -48,9 +48,9 @@ namespace CarManagement.Builders
             {
                 enrollmentPlate = "";
 
-                for (int enrollmentChars = 0; enrollmentChars < ENROLLMENT_QUANTITY; enrollmentChars++)
+                for (int enrollmentChars = 0; enrollmentChars < ENROLLMENT_CHAR_QUANTITY; enrollmentChars++)
                 {
-                    enrollmentPlate += enrollmentGenerator.Next(0, 9).ToString();
+                    enrollmentPlate += enrollmentGenerator.Next((int)'A', (int)'Z').ToString();
                 }
 
             } while (usedEnrollments.Contains(enrollmentPlate));
