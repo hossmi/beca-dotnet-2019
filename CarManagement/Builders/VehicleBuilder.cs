@@ -25,7 +25,7 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (wheelsCount < MAX_WHEELS)
+            if (this.wheelsCount < MAX_WHEELS)
                 this.wheelsCount++;
             else
                 throw new Exception("Se ha excedido el numero maximo de ruedas");
@@ -37,7 +37,6 @@ namespace CarManagement.Builders
                 this.doorsCount = doorsCount;
             else if (doorsCount < 0)
                 throw new ArgumentException("No se puede crear un vehiculo con puertas negativas.");
-
         }
 
         public void setEngine(int horsePorwer)
@@ -55,7 +54,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            if (wheelsCount == 0)
+            if (this.wheelsCount == 0)
                 throw new Exception("No se puede crear un vehiculo sin ruedas");
 
             List<Wheel> wheels = CreateObject<Wheel>(wheelsCount);
