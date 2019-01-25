@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace CarManagement.Builders
 {
-    public class Asserts
+    class Asserts
     {
         [Serializable]
         private class AssertsException : Exception
@@ -27,8 +27,28 @@ namespace CarManagement.Builders
 
         public static void isTrue(bool condition)
         {
-            if(condition == false)
+            if (condition == false)
                 throw new AssertsException();
+        }
+
+        public static void isFalse(bool condition)
+        {
+            isTrue(condition == false);
+        }
+
+        public static void stringIsFilled(string text)
+        {
+            isFalse(string.IsNullOrWhiteSpace(text));
+        }
+
+        public static void isNotNull<T>(T item) where T : class
+        {
+            isTrue(item != null);
+        }
+
+        public static void isNull<T>(T item) where T : class
+        {
+            isTrue(item == null);
         }
 
         public static void isEnumDefined<TItem>(TItem value)
