@@ -10,6 +10,16 @@ namespace CarManagement.Models
         private Engine engine;
         private CarColor color;
         private string enrollment;
+        private CarColor colorCode;
+
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor colorCode, string enrollment)
+        {
+            this.wheels = wheels;
+            this.doors = doors;
+            this.engine = engine;
+            this.colorCode = colorCode;
+            this.enrollment = enrollment;
+        }
 
         public Door[] Doors
         {
