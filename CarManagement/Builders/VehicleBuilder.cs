@@ -13,6 +13,7 @@ namespace CarManagement.Builders
         private int engine = 0;
         private CarColor color;
         private string enrollment = "AAAAAAA";
+        private int horsePower;
 
         public void addWheel()
         {
@@ -55,7 +56,9 @@ namespace CarManagement.Builders
                 wheels.Add(new Wheel());
             }
             //genero motor
-            Engine engine = new Engine();
+    
+
+            Engine engine = new Engine(horsePower);
 
             
             return new Vehicle(this.color,doors,engine,wheels,enrollment);

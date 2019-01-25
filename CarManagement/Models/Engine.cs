@@ -5,6 +5,7 @@ namespace CarManagement.Models
     public class Engine
     {
         private int horsePower;
+        private bool isstart = false;
 
         public Engine (int horsePower)
         {
@@ -22,14 +23,15 @@ namespace CarManagement.Models
         {
             get
             {
-                return this.IsStarted;
+                return this.isstart;
             }
         }
 
         public void start()
         {
-            
+            this.isstart = true;
         
+          
         }
     }
 }
