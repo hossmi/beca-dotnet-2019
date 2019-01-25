@@ -4,8 +4,8 @@ namespace CarManagement.Models
 {
     public class Engine
     {
-        private int horsepower = 0;
-        private bool isStarted = false;
+        private int horsepower;
+        private bool isStarted;
 
         public Engine(int h)
         {
@@ -32,7 +32,6 @@ namespace CarManagement.Models
             {
                 return isStarted;
             }
-
         }
     }
 }
