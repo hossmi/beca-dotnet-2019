@@ -10,7 +10,7 @@ namespace CarManagement.Models
         private Engine engine = new Engine();
         private CarColor color;
 
-        private string Abc()
+        /*public string Abc(int[] args)
         {
             string A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             int lenght = A.Length - 1;
@@ -66,6 +66,10 @@ namespace CarManagement.Models
             return salida;
 
             }
+        }*/
+        string Generator = new Generator()
+        {
+
         }
 
 
