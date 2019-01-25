@@ -38,10 +38,6 @@ namespace CarManagement.Models
             {
                 return this.isOpen;
             }
-
         }
-
     }
-
-
 }
