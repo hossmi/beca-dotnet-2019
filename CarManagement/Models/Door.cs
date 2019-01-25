@@ -2,23 +2,22 @@
 {
     public class Door
     {
-        private string model;
+        public readonly string model;
         private bool isOpen;
 
-        public Door()
+        public Door(string model = null)
         {
-            this.model = "standard";
+            this.model = model ?? "standart";
             this.isOpen = false;
         }
 
         public Door(Door door)
         {
-            this.model = door.Model;
+            this.model = door.model;
             this.isOpen = door.IsOpen;
         }
 
         public bool IsOpen { get => isOpen; }
-        public string Model { get => model; }
 
         public void open()
         {

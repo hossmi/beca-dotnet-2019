@@ -5,32 +5,31 @@
         const char FIRSTCHAR = 'A';
         const char LASTCHAR = 'Z';
 
-        private static int lastIssuedNumber = 0;
-        private static char lastIssuedKeyLetter0 = FIRSTCHAR;
-        private static char lastIssuedKeyLetter1 = FIRSTCHAR;
+        private static int nextIssuedNumber = 0;
+        private static char[] lastIssuedLetters = new char[] {FIRSTCHAR, FIRSTCHAR};
 
         static public string LastIssuedEnrollment
-        { get => $"ALC-{lastIssuedNumber}-{lastIssuedKeyLetter1}{lastIssuedKeyLetter0}"; }
+        { get => $"ALC-{nextIssuedNumber-1}-{lastIssuedLetters[1]}{lastIssuedLetters[0]}"; }
         string IEnrollmentProvider.getNewEnrollment()
         {
-            if(lastIssuedNumber > 9999)
+            if(nextIssuedNumber > 9999)
             {
-                lastIssuedNumber = lastIssuedNumber % 10000;
+                nextIssuedNumber = nextIssuedNumber % 10000;
 
-                if (lastIssuedKeyLetter0 == LASTCHAR)
+                if (lastIssuedLetters[0] == LASTCHAR)
                 {
-                    lastIssuedKeyLetter0 = FIRSTCHAR;
-                    if (lastIssuedKeyLetter1 != LASTCHAR)
-                        lastIssuedKeyLetter1++;
+                    lastIssuedLetters[0] = FIRSTCHAR;
+                    if (lastIssuedLetters[1] != LASTCHAR)
+                        lastIssuedLetters[1]++;
                     else
                         throw new System.NotSupportedException
                             ("Number of enrollments issued reached the limit.");
                 }
                 else
-                    lastIssuedKeyLetter0++;
+                    lastIssuedLetters[0]++;
             }
 
-            return $"ESP-{lastIssuedNumber++}-{lastIssuedKeyLetter1}{lastIssuedKeyLetter0}";
+            return $"ESP-{nextIssuedNumber++}-{lastIssuedLetters[1]}{lastIssuedLetters[0]}";
         }
     }
 }

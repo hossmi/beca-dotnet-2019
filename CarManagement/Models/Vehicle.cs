@@ -14,7 +14,8 @@ namespace CarManagement.Models
 
         private readonly string enrollment;
 
-        public Vehicle(Engine engine, List<Door> doorList, List<Wheel> wheelList, CarColor color, string enrollment)
+        public Vehicle(Engine engine, List<Door> doorList,
+            List<Wheel> wheelList, CarColor color, string enrollment)
         {
             this.Engine = engine;
             this.doorList = doorList;

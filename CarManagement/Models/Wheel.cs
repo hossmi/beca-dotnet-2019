@@ -8,17 +8,21 @@
         public double Pressure
         {
             get => pressure;
-            set {
-                if (value >= 0) pressure = value;
-                else throw new System.ArgumentException("Pressure cannot be less than 0");
+            set
+            {
+                if (value > 0)
+                    pressure = value;
+                else
+                    throw new System.ArgumentException
+                        ("Pressure must be greater than 0");
             }
         }
 
         public string Model { get => model; }
 
-        public Wheel()
+        public Wheel(string model = null)
         {
-            this.model = "standart";
+            this.model = model ?? "standart";
             this.Pressure = 2.0d;
         }
 

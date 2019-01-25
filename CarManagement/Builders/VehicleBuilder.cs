@@ -24,9 +24,9 @@ namespace CarManagement.Builders
             this.color = CarColor.White;
         }
 
-        public Engine Engine { get => new Engine(this.engine); }
+        public Engine EngineClone { get => new Engine(this.engine); }
         public CarColor Color { get => this.color; }
-        public List<Wheel> WheelList
+        public List<Wheel> WheelListClone
         {
             get
             {
@@ -39,7 +39,7 @@ namespace CarManagement.Builders
                 return wheelList;
             }
         }
-        public List<Door> DoorList
+        public List<Door> DoorListClone
         {
             get
             {
@@ -98,8 +98,8 @@ namespace CarManagement.Builders
                 throw new System.InvalidOperationException
                     ($"You cannot build a vehicle with {wheelList.Count()} wheels");
 
-            return new Vehicle(Engine, DoorList,
-                WheelList, Color, enrollmentProvider.getNewEnrollment() );
+            return new Vehicle(this.EngineClone, this.DoorListClone,
+                this.WheelListClone, this.Color, enrollmentProvider.getNewEnrollment() );
         }
     }
 }
