@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarManagement.Models;
+
+using System;
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
@@ -19,7 +21,8 @@ namespace CarManagement.Services
             this.number4 = -1;
             this.serial = "";
         }
-        string IEnrollmentProvider.getNewEnrollment()
+
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
             if (number4<=9999)
             {

@@ -1,19 +1,38 @@
-﻿using CarManagement.Services;
+﻿using CarManagement.Models;
+using CarManagement.Services;
 
 namespace BusinessCore.Tests
 {
     public class FakeEnrollmentProvider : IEnrollmentProvider
     {
-        private readonly string enrollment;
-
-        public FakeEnrollmentProvider(string enrollment)
+        private class Enrollment : IEnrollment
         {
-            this.enrollment = enrollment;
+
+            public Enrollment(string serial, int number)
+            {
+                this.Serial = serial;
+                this.Number = number;
+            }
+
+            public string Serial { get; }
+            public int Number { get; }
+
+            public override string ToString()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
         }
 
-        string IEnrollmentProvider.getNewEnrollment()
+        public FakeEnrollmentProvider()
         {
-            return this.enrollment;
+            this.DefaultEnrollment = new Enrollment(serial: "XXX", number: 666);
+        }
+
+        public IEnrollment DefaultEnrollment { get; }
+
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        {
+            return this.DefaultEnrollment;
         }
     }
 }
