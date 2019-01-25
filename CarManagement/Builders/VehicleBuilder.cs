@@ -55,13 +55,11 @@ namespace CarManagement.Builders
         {
             Vehicle vehicle = new Vehicle();
 
-            //generateEnrollmentB();
-
-            vehicle.SetWheels = createWheels(wheelsCount);
-            vehicle.SetDoors = createDoors(doorsCount);
-            vehicle.SetEngine = createEngine(enginePower);
+            vehicle.SetWheels = CreateObject<Wheel>(wheelsCount);
+            vehicle.SetDoors = CreateObject<Door>(doorsCount);
+            vehicle.SetEngine = CreateEngine(enginePower);
             vehicle.SetCarColor = applyColor(colorCode);
-            //vehicle.SetEnrollment = enrollment;
+            
 
             if (wheelsCount == 0)
                 throw new Exception("No se puede crear un vehiculo sin ruedas");
@@ -70,7 +68,7 @@ namespace CarManagement.Builders
             return vehicle;
         }
 
-        private List<TItem> createObject(int count) 
+        private List<TItem> CreateObject<TItem>(int count) where TItem: class, new()
         {
             List<TItem> list = new List<TItem>();
 
@@ -83,32 +81,7 @@ namespace CarManagement.Builders
             return list;
         }
 
-        private List<Wheel> createWheels(int count)
-        {
-            List<Wheel> wheels = new List<Wheel>();
-
-            for (int i = 0; i < count; i++)
-            {
-                Wheel wheel = new Wheel();
-                wheels.Add(wheel);
-            }
-
-            return wheels;
-        }
-        private List<Door> createDoors(int count)
-        {
-            List<Door> doors = new List<Door>();
-
-            for (int i = 0; i < count; i++)
-            {
-                Door door = new Door();
-                doors.Add(door);
-            }
-
-            return doors;
-        }
-
-        private Engine createEngine(int power)
+        private Engine CreateEngine(int power)
         {
             Engine engine = new Engine(power);
 
@@ -121,64 +94,5 @@ namespace CarManagement.Builders
 
             return color;
         }
-
-
-
-
-
-
-        /*
-        private void generateEnrollment()
-        {
-            string e = "";
-
-            System.Threading.Thread.Sleep(20);
-            //number = generator.Next(0, 9999);
-
-
-            e = e + (char)this.generator.Next((int)'A', (int)'Z');
-            e = e + (char)this.generator.Next((int)'A', (int)'Z');
-            e = e + (char)this.generator.Next((int)'A', (int)'Z');
-            e = e + "-";
-            e = e + (char)this.generator.Next((int)'0', (int)'9');
-            e = e + (char)this.generator.Next((int)'0', (int)'9');
-            e = e + (char)this.generator.Next((int)'0', (int)'9');
-            e = e + (char)this.generator.Next((int)'0', (int)'9');
-
-
-            //if (number < 10)
-            //{
-            //    enB = "000" + number.ToString();
-            //}
-            //else if (number < 100)
-            //{
-            //    enB = "00" + number.ToString();
-            //}
-            //else if (number < 1000)
-            //{
-            //    enB = "0" + number.ToString();
-            //}
-            //else
-            //{
-            //    enB = number.ToString();
-            //}
-
-            //for (int i = 0; i < 3; i++)
-            //{
-            //    number = generator.Next(0, 26);
-            //    c = (char)('A' + number);
-            //    enA = enA + c;
-            //}
-            //e = enA + "-" + enB;
-
-            enrollment = e;
-
-        }
-
-        private void generateEnrollmentB()
-        {
-            enrollment = intEnrollment++.ToString();
-        }
-        */
     }
 }
