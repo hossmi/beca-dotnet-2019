@@ -7,28 +7,17 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private CarColor color;
+        private int numberWheels;
+        private int numberDoors;
+        private int horsePorwer;
         private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
-        }
-
-        private string enrollment;
-        private readonly Random generate;
-        private CarColor color;
-        private int numberWheels;
-        private int numberDoors;
-        private int horsePorwer;
-
-        private int numberEnrollment = 0;
-
-        public VehicleBuilder()
-        {
-            this.numberWheels = 0;
             this.numberDoors = 0;
-            this.horsePorwer = 0;
-            generate = new Random();
+            this.numberWheels = 0;
         }
 
         public void addWheel()
@@ -41,20 +30,6 @@ namespace CarManagement.Builders
             {
                 throw new Exception("No more wheels can be added");
             }
-        }
-
-        private string generateEnrollment()
-        {
-            string result = "";
-            result = result + (char)this.generate.Next((int)'A', (int)'Z');
-            result = result + (char)this.generate.Next((int)'A', (int)'Z');
-            result = result + (char)this.generate.Next((int)'A', (int)'Z');
-            result = result + (char)this.generate.Next((int)'0', (int)'9');
-            result = result + (char)this.generate.Next((int)'0', (int)'9');
-            result = result + (char)this.generate.Next((int)'0', (int)'9');
-            result = result + (char)this.numberEnrollment++;
-
-            return result;
         }
 
         public void setDoors(int doorsCount)
@@ -92,9 +67,8 @@ namespace CarManagement.Builders
                 Engine engine = new Engine(this.horsePorwer);
                 List<Door> doors = create<Door>(this.numberDoors);
                 List<Wheel> wheels = create<Wheel>(this.numberWheels);
-                enrollment = generateEnrollment();
 
-                Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+                Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
                 return vehicle;
             }
             else
