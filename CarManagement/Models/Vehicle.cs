@@ -7,7 +7,6 @@ namespace CarManagement.Models
     {
         private CarColor color;
         private Engine engines;
-        //private Wheel wheels;
         private string enrollment;
         private List<Door> doors;
         private Engine engine;
@@ -63,7 +62,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException(); 
+                return this.wheels.ToArray();
             }
         }
 
