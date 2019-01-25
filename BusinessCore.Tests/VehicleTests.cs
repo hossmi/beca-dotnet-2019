@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using CarManagement.Builders;
 using CarManagement.Models;
+using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -13,11 +14,13 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
+        private const string EVIL_ENROLLMENT = "XXX-0666";
 
         [TestMethod]
         public void builder_default_functionality()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider(EVIL_ENROLLMENT);
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -35,7 +38,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual(2, vehicle.DoorsCount);
             Assert.AreEqual(4, vehicle.WheelCount);
 
-            string matricula = vehicle.Enrollment;
+            Assert.AreEqual(EVIL_ENROLLMENT, vehicle.Enrollment);
 
             // propiedad de solo lectura 
             // propiedad: array Door
@@ -65,7 +68,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void cannot_create_the_same_vechicle_twice()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -85,7 +89,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void cannot_add_more_than_4_wheels()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -114,7 +119,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void cannot_create_vehicle_without_wheels()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             try
             {
@@ -159,7 +165,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void enrollment_must_be_always_the_same()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -178,7 +185,8 @@ namespace BusinessCore.Tests
 
         private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
             IDictionary<string, Vehicle> vehicles = new Dictionary<string, Vehicle>();
 
             builder.addWheel();

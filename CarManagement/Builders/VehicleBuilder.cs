@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
-using System.Runtime.Serialization;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
@@ -14,6 +14,13 @@ namespace CarManagement.Builders
         private int doorsCount;
         private int enginePower;
         private int colorCode;
+
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
 
         public void addWheel()
         {
