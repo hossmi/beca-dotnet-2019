@@ -62,19 +62,22 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            if((numberDoors > 0) || (numberWheels > 0))
-            {
-                Engine engine = new Engine(this.horsePorwer);
-                List<Door> doors = create<Door>(this.numberDoors);
-                List<Wheel> wheels = create<Wheel>(this.numberWheels);
-
-                Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
-                return vehicle;
-            }
-            else
+            /*if(numberWheels <= 0)
             {
                 throw new Exception("Missing data to build the car");
             }
+            else
+            {*/
+
+            Asserts.isTrue(numberWheels > 0);
+
+            Engine engine = new Engine(this.horsePorwer);
+            List<Door> doors = create<Door>(this.numberDoors);
+            List<Wheel> wheels = create<Wheel>(this.numberWheels);
+
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
+            return vehicle;
+            //}
             
         }
     }
