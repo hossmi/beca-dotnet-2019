@@ -55,7 +55,10 @@ namespace CarManagement.Models
                 return this.enrollment;
              
             }
+<<<<<<< HEAD
          
+=======
+>>>>>>> 46e3256130078045a4863617e58a2c25cb5fde1d
         }
 
         public Wheel[] Wheels
