@@ -7,32 +7,30 @@ namespace CarManagement.Builders
     public class VehicleBuilder
     {
         Random enrollmentGenerator = new Random();
-        private List<Door> doors = new List<Door>();
-        private List<Wheel> wheels = new List<Wheel>();
-        private Engine engine;
+
         private CarColor carColor;
         private const int ENROLLMENT_CHAR_QUANTITY = 8;
         private String enrollment;
         private List<String> usedEnrollments = new List<String>();
+        private int doorsCount;
+        private int wheelsCount;
+        private int horsePower;
 
         public void addWheel()
         {
-            if (wheels.Count >= 4)
+            if (wheelsCount >= 4)
                 throw new InvalidOperationException("Can not add more than 4 wheels.");
-            wheels.Add(new Wheel());
+            this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            for (; doorsCount > 0; doorsCount--)
-            {
-                doors.Add(new Door());
-            }
+            this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePower)
         {
-            engine = new Engine(horsePower);
+            this.horsePower = horsePower;
         }
 
         public void setColor(CarColor color)
@@ -55,18 +53,34 @@ namespace CarManagement.Builders
 
             } while (usedEnrollments.Contains(enrollmentPlate));
 
-            enrollment = enrollmentPlate;
-            usedEnrollments.Add(enrollment);
+            this.enrollment = enrollmentPlate;
+            this.usedEnrollments.Add(enrollmentPlate);
+        }
+
+        private List<T> createElementsList<T>(int elementsQuantity) where T : class, new()
+        {
+            List<T> tempList = new List<T>();
+
+            for (; elementsQuantity > 0; elementsQuantity--)
+            {
+                tempList.Add(new T());
+            }
+
+            return tempList;
         }
 
         public Vehicle build()
         {
             setEnrollment();
 
-            if (wheels.Count < 1)
+            if (this.wheelsCount < 1)
                 throw new ArgumentException("Can not build a vehicle without wheels.");
 
-            return new Vehicle(doors, wheels, engine, enrollment, carColor);
+            List<Wheel> wheels = createElementsList<Wheel>(this.wheelsCount);
+            List<Door> doors = createElementsList<Door>(this.doorsCount);
+            Engine engine = new Engine(this.horsePower);
+
+            return new Vehicle(doors, wheels, engine, enrollment, this.carColor);
         }
     }
 }
