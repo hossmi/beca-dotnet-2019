@@ -7,24 +7,25 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        private static int intEnrollment;
-        const int maxWheels = 4;
-
+        const int MAX_WHEELS = 4;
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
-        private int colorCode;
-
+        private CarColor colorCode;
         private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
+            this.wheelsCount = 0;
+            this.doorsCount = 0;
+            this.enginePower = 0;
+            this.colorCode = 0;
         }
 
         public void addWheel()
         {
-            if (wheelsCount < maxWheels)
+            if (wheelsCount < MAX_WHEELS)
                 this.wheelsCount++;
             else
                 throw new Exception("Se ha excedido el numero maximo de ruedas");
@@ -33,16 +34,10 @@ namespace CarManagement.Builders
         public void setDoors(int doorsCount)
         {
             if (doorsCount > 0)
-            {
-                for (int i = 0; i < doorsCount; i++)
-                {
-                    this.doorsCount++;
-                }
-            }
+                this.doorsCount = doorsCount;
             else if (doorsCount < 0)
-            {
-                throw new Exception("No se puede crear un vehiculo con puertas negativas.");
-            }
+                throw new ArgumentException("No se puede crear un vehiculo con puertas negativas.");
+
         }
 
         public void setEngine(int horsePorwer)
@@ -55,51 +50,39 @@ namespace CarManagement.Builders
             if (Enum.IsDefined(typeof(CarColor), color) == false)
                 throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
             else
-            this.colorCode = (int)color;
+                this.colorCode = color;
         }
 
         public Vehicle build()
         {
-            Vehicle vehicle = new Vehicle();
-
-            vehicle.SetWheels = CreateObject<Wheel>(wheelsCount);
-            vehicle.SetDoors = CreateObject<Door>(doorsCount);
-            vehicle.SetEngine = CreateEngine(enginePower);
-            vehicle.SetCarColor = applyColor(colorCode);
-            
-
             if (wheelsCount == 0)
                 throw new Exception("No se puede crear un vehiculo sin ruedas");
-            
+
+            List<Wheel> wheels = CreateObject<Wheel>(wheelsCount);
+            List<Door> doors = CreateObject<Door>(doorsCount);
+            Engine engine = CreateEngine(enginePower);
+            string enrollment = enrollmentProvider.getNewEnrollment();
+             
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, colorCode, enrollment);
 
             return vehicle;
         }
 
-        private List<TItem> CreateObject<TItem>(int count) where TItem: class, new()
+        private List<TItem> CreateObject<TItem>(int count) where TItem : class, new()
         {
             List<TItem> list = new List<TItem>();
-
             for (int i = 0; i < count; i++)
             {
                 TItem obj = new TItem();
                 list.Add(obj);
             }
-
             return list;
         }
 
         private Engine CreateEngine(int power)
         {
             Engine engine = new Engine(power);
-
             return engine;
-        }
-
-        private CarColor applyColor(int code)
-        {
-            CarColor color = (CarColor)code;
-
-            return color;
         }
     }
 }
