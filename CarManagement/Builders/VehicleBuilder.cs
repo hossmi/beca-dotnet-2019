@@ -2,11 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+        
         private Engine engine;
         private List<Door> doorList;
         private List<Wheel> wheelList;
