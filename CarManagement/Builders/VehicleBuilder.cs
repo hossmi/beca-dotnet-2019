@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Services;
 
+
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
@@ -12,6 +13,7 @@ namespace CarManagement.Builders
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
+       
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -20,6 +22,7 @@ namespace CarManagement.Builders
             this.engine = 0;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
+
         }
 
         public void addWheel()
@@ -51,7 +54,7 @@ namespace CarManagement.Builders
             }
 
 
-            Engine engine = new Engine();
+            Engine engine = new Engine(this.engine);
 
             List<Wheel> wheels = new List<Wheel>();
             for (int x=0; x<this.numberWheel;x++)
