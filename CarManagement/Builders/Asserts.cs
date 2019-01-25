@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace CarManagement.Builders
 {
-    public class Asserts
+    class Asserts
     {
         [Serializable]
         private class AssertsException : Exception
