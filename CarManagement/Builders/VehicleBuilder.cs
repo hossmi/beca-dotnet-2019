@@ -9,21 +9,20 @@ namespace CarManagement.Builders
     public class VehicleBuilder
         
     {
-<<<<<<< HEAD
+
         private int  wheels = 0;
         private int doors = 0;
         private int engine = 0;
         private CarColor color;
         private string enrollment = "AAAAAAA";
         private int horsePower;
-=======
+
         private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
         }
->>>>>>> develop
 
         public void addWheel()
         {

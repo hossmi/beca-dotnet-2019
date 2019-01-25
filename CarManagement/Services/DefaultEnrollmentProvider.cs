@@ -2,9 +2,20 @@
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        string IEnrollmentProvider.getNewEnrollment()
+        private string letter;
+        private int number;
+
+        DefaultEnrollmentProvider()
         {
-            throw new System.NotImplementedException();
+            this.letter = "";
+            this.number = 0;
         }
+        string IEnrollmentProvider.getNewEnrollment();
+
+                
+        
+        
+        
+      
     }
 }
