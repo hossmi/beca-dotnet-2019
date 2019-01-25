@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
         private string enrollment;
         private readonly Random generate;
         private CarColor color;
