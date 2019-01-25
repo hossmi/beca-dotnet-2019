@@ -4,7 +4,7 @@
     {
         string IEnrollmentProvider.getNewEnrollment()
         {
-            throw new System.NotImplementedException();
+            ; throw new System.NotImplementedException();
         }
     }
 }

@@ -7,16 +7,18 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        private int numberWheel = 0;
-        private int numberDoor = 0;
-        private int engine = 0;
+        private int numberWheel;
+        private int numberDoor;
+        private int engine;
         private CarColor color;
-
-
         private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
+            this.numberWheel = 0;
+            this.numberDoor = 0;
+            this.engine = 0;
+            this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
         }
 
