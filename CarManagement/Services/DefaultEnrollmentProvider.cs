@@ -15,14 +15,14 @@
             if (number >= 10000)
             {
                 number = 0;
-                Letter3 = (char)(Letter3 + 1);
+                Letter3++;
                 if (Letter3 > 'Z')
                 {
                     Letter3 = 'A';
-                    Letter2 = (char)(Letter2 + 1);
+                    Letter2++;
                     if (Letter2 > 'Z')
                     {
-                        Letter1 = (char)(Letter1 + 1);
+                        Letter1++;
                         if (Letter1 > 'Z')
                             throw new System.Exception("Alcanzado el limite maximo de matriculas");
                     }
