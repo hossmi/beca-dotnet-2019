@@ -1,8 +1,10 @@
-﻿namespace CarManagement.Services
+﻿using CarManagement.Models;
+
+namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        string IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
             throw new System.NotImplementedException();
         }
