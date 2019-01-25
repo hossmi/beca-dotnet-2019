@@ -7,12 +7,12 @@ namespace CarManagement.Models
     {
         private CarColor color;
         private List<Wheel> wheels;
-        private string enrollment;
+        private IEnrollment enrollment;
         private List<Door> doors;
         private Engine engine;
 
        
-        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, string enrollment)
+        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, IEnrollment enrollment)
         {
             this.color = color;
             this.doors = doors;
