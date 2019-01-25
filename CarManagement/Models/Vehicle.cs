@@ -67,10 +67,6 @@ namespace CarManagement.Models
 
             }
         }*/
-        string Generator = new Generator()
-        {
-
-        }
 
 
         public List<Wheel> carwheel
