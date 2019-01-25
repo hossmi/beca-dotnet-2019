@@ -28,8 +28,9 @@
                 else
                     lastIssuedLetters[0]++;
             }
+            string numberToIssue = nextIssuedNumber++.ToString("0000");
 
-            return $"A{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{nextIssuedNumber++}";
+            return $"A{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{numberToIssue}";
         }
     }
 }
