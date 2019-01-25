@@ -9,30 +9,23 @@ namespace CarManagement.Builders
     public class VehicleBuilder
     {
         private readonly IEnrollmentProvider enrollmentProvider;
-
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
-        {
-            this.enrollmentProvider = enrollmentProvider;
-        }
         
         private Engine engine;
         private List<Door> doorList;
         private List<Wheel> wheelList;
         private CarColor color;
 
-        static private int lastIssuedEnrollment = 0;
-
-        public VehicleBuilder()
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
+            this.enrollmentProvider = enrollmentProvider;
             this.engine = new Engine();
             this.doorList = new List<Door>();
             this.wheelList = new List<Wheel>();
             this.color = CarColor.White;
         }
 
-        public Engine Engine { get => new Engine(engine); }
-        public int LastIssuedEnrollment { get => lastIssuedEnrollment; }
-        public CarColor Color { get => color; }
+        public Engine Engine { get => new Engine(this.engine); }
+        public CarColor Color { get => this.color; }
         public List<Wheel> WheelList
         {
             get
@@ -106,7 +99,7 @@ namespace CarManagement.Builders
                     ($"You cannot build a vehicle with {wheelList.Count()} wheels");
 
             return new Vehicle(Engine, DoorList,
-                WheelList, Color, $"ali-{lastIssuedEnrollment++}-es");
+                WheelList, Color, enrollmentProvider.getNewEnrollment() );
         }
     }
 }
