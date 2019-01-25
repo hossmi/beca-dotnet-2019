@@ -2,9 +2,49 @@
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
+        static int number = 0;
+        static char Letter1 = 'A';
+        static char Letter2 = 'A';
+        static char Letter3 = 'A';
+
         string IEnrollmentProvider.getNewEnrollment()
         {
-            throw new System.NotImplementedException();
+            string enrollment = "";
+            string numberFill = "";
+
+            if (number >= 10000)
+            {
+                number = 0;
+                Letter3 = (char)(Letter3 + 1);
+                if (Letter3 > 'Z')
+                {
+                    Letter3 = 'A';
+                    Letter2 = (char)(Letter2 + 1);
+                    if (Letter2 > 'Z')
+                    {
+                        Letter1 = (char)(Letter1 + 1);
+                        if (Letter1 > 'Z')
+                            throw new System.Exception("Alcanzado el limite maximo de matriculas");
+                    }
+                }
+                
+            }
+
+            if (number < 1000)
+            {
+                numberFill = numberFill + "0";
+                if (number < 100)
+                {
+                    numberFill = numberFill + "0";
+                    if (number < 10)
+                        numberFill = numberFill + "0";
+                }
+            }
+
+            enrollment = Letter1.ToString() + Letter2.ToString() + Letter3.ToString() + "-" + numberFill + number.ToString();
+            number++;
+
+            return enrollment;
         }
     }
 }
