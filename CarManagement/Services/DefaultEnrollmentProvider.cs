@@ -29,7 +29,7 @@
                     lastIssuedLetters[0]++;
             }
 
-            return $"ESP-{nextIssuedNumber++}-{lastIssuedLetters[1]}{lastIssuedLetters[0]}";
+            return $"A{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{nextIssuedNumber++}";
         }
     }
 }
