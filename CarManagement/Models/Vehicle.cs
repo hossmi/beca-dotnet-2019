@@ -128,13 +128,6 @@ namespace CarManagement.Models
             {
                 throw new NotImplementedException();
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
 
         public Door[] Doors
