@@ -64,37 +64,26 @@ namespace CarManagement.Builders
             this.color = color;
         }
 
-        private List<Wheel> createWheels(int nWheels)
+        private List<T> create<T>(int nItems) where T : class, new()
         {
-            List<Wheel> wheels = new List<Wheel>();
-            for (int i = 0; i < nWheels; i++)
+            List<T> items = new List<T>();
+            for (int i = 0; i < nItems; i++)
             {
-                Wheel aux = new Wheel();
-                wheels.Add(aux);
+                T aux = new T();
+                items.Add(aux);
             }
 
-            return wheels;
+            return items;
         }
-
-        private List<Door> createDoors(int nDoors)
-        {
-            List<Door> doors = new List<Door>();
-            for (int i = 0; i < nDoors; i++)
-            {
-                Door aux = new Door();
-                doors.Add(aux);
-            }
-
-            return doors;
-        }
+        
 
         public Vehicle build()
         {
             if((numberDoors > 0) || (numberWheels > 0))
             {
                 Engine engine = new Engine(this.horsePorwer);
-                List<Door> doors = createDoors(this.numberDoors);
-                List<Wheel> wheels = createWheels(this.numberWheels);
+                List<Door> doors = create<Door>(this.numberDoors);
+                List<Wheel> wheels = create<Wheel>(this.numberWheels);
                 enrollment = generateEnrollment();
 
                 Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
