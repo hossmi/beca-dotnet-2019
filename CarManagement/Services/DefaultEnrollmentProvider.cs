@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarManagement.Models;
+
+using System;
 using System.Collections.Generic;
 
 namespace CarManagement.Services
@@ -12,6 +14,7 @@ namespace CarManagement.Services
         private double enrollmentCount = 0;
 
         string IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
 
             String enrollmentPlate = (this.enrollmentCount++).ToString();

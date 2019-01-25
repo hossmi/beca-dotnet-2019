@@ -43,6 +43,7 @@ namespace CarManagement.Models
             }
         }
 
+        public IEnrollment Enrollment
         public int WheelCount
         {
             get
