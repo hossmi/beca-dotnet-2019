@@ -12,13 +12,13 @@ namespace CarManagement.Models
         private Engine engine;
 
        
-        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, IEnrollment enrollment)
+        public Vehicle(CarColor color,   List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
         {
             this.color = color;
-            this.doors = doors;
-            this.engine = engine;
             this.wheels = wheels;
             this.enrollment = enrollment;
+            this.doors = doors;
+            this.engine = engine;
         }
 
         public int DoorsCount
@@ -41,7 +41,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.engine;
             }
         }
 
