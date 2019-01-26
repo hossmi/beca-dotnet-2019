@@ -71,7 +71,10 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            foreach (Wheel wheel in this.wheels )
+            {
+                wheel.Pressure = pression;
+            }
         }
     }
 }
