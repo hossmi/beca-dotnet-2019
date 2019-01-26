@@ -62,7 +62,7 @@ namespace CarManagement.Builders
                 wheels.Add(new Wheel());
             }
 
-            String enrollment = Math.Ceiling((decimal)DateTime.Now.Month).ToString();
+            IEnrollmentProvider enrollment = new DefaultEnrollmentProvider(aaa,numero);
 
             return new Vehicle(this.color,doors,engine,wheels, enrollment);
         }

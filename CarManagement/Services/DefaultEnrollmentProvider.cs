@@ -9,9 +9,36 @@ namespace CarManagement.Services
         private int number2;
         private int number3;
         private int number4;
-        private string number = "";
-        private string serial= "";
+        private string serial;
+        private int number;
 
+        private class Enrollment : IEnrollment
+        {
+            private int number = 0;
+            private string serial = "";
+            public Enrollment(string serial, int number)
+            {
+
+                this.serial = serial;
+                this.number = number;
+            }
+
+            public string Serial
+            {
+                get
+                {
+                    return this.serial;
+                }
+            }
+            public int Number
+            {
+                get
+                {
+                    return this.number;
+                }
+            }
+
+        }
 
         public DefaultEnrollmentProvider()
         {
@@ -19,19 +46,23 @@ namespace CarManagement.Services
             this.number2 = -1;
             this.number3 = -1;
             this.number4 = -1;
-            this.serial = "";
+
+
+
         }
+
+
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
-            if (number4<=9999)
+            if (number4 <= 9999)
             {
                 number4++;
             }
             else
             {
                 number4 = 0;
-                if (number3<=26)
+                if (number3 <= 26)
                 {
                     number3++;
                 }
@@ -48,7 +79,7 @@ namespace CarManagement.Services
                         number4 = 0;
                         number3 = 0;
                         number2 = 0;
-                        if (number1<=26)
+                        if (number1 <= 26)
                         {
                             number1++;
                         }
@@ -61,12 +92,13 @@ namespace CarManagement.Services
             }
             number1 += 65;
             number2 += 65;
-            number3 += 65; 
-            this.serial= (((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString();
-            this.number = ((Char)(number1)) + ((Char)(number2)) + ((Char)(number3)) + " - " + number4.ToString("0000");
+            number3 += 65;
+            this.serial = (((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString();
+            this.number = number4;
 
-            return this.number;
+            return new Enrollment(this.serial, this.number);
         }
 
     }
+
 }
