@@ -14,8 +14,8 @@ namespace CarManagement.Services
 
         private class Enrollment : IEnrollment
         {
-            private int number = 0;
-            private string serial = "";
+            private readonly int number;
+            private readonly string serial;
             public Enrollment(string serial, int number)
             {
 
@@ -46,9 +46,14 @@ namespace CarManagement.Services
             this.number2 = -1;
             this.number3 = -1;
             this.number4 = -1;
+        }
 
-
-
+        public DefaultEnrollmentProvider(string serial, int number)
+        {
+            this.number1 = -1;
+            this.number2 = -1;
+            this.number3 = -1;
+            this.number4 = -1;
         }
 
 
@@ -100,5 +105,4 @@ namespace CarManagement.Services
         }
 
     }
-
 }

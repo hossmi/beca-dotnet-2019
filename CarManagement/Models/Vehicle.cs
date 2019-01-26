@@ -6,9 +6,9 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private CarColor color;
-        private List<Wheel> wheels;
+        private IReadOnlyList<Wheel> wheels;
         private IEnrollment enrollment;
-        private List<Door> doors;
+        private IReadOnlyList<Door> doors;
         private Engine engine;
 
        

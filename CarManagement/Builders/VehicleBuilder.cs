@@ -62,7 +62,7 @@ namespace CarManagement.Builders
                 wheels.Add(new Wheel());
             }
 
-            IEnrollmentProvider enrollment = new DefaultEnrollmentProvider(aaa,numero);
+            IEnrollmentProvider enrollment = new DefaultEnrollmentProvider(String serial,int number);
 
             return new Vehicle(this.color,doors,engine,wheels, enrollment);
         }
