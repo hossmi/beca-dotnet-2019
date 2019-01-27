@@ -5,6 +5,7 @@ namespace CarManagement.Models
     public class Engine
     {
         private int horsePower;
+        private bool mode;
 
         public Engine(int horsePower)
         {
@@ -33,13 +34,13 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.mode;
             }
         }
 
         public void start()
         {
-            throw new NotImplementedException();
+            this.mode  = true;
         }
     }
 }
