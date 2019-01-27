@@ -1,10 +1,30 @@
-﻿using System;
+﻿using CarManagement.Models;
+using CarManagement.Services;
+using System;
 using System.Text;
 
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
+        private class Enrollment : IEnrollment
+        {
+
+            public Enrollment(string serial, int number)
+            {
+                this.Serial = serial;
+                this.Number = number;
+            }
+
+            public string Serial { get; }
+            public int Number { get; }
+
+            public override string ToString()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
+        }
+                            
         private const int TAM_ARRAYS = 4;
 
         private char[] letters =
@@ -15,14 +35,23 @@ namespace CarManagement.Services
         {
             '0', '0', '0', '0'
         };
-        
-        string IEnrollmentProvider.getNewEnrollment()
+
+        public DefaultEnrollmentProvider()
         {
-            string result = "";
+            this.NewEnrollment = new Enrollment(serial: generateLetter(), number: generateNumber());
+        }
+
+        public IEnrollment NewEnrollment { get; }
+
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        {
+            /*string result = "";
 
             result = generateLetter() + "-" + generateNumber();            
 
-            return result;
+            return result;*/
+
+            return this.NewEnrollment;
         }
 
         private string generateLetter()
@@ -53,9 +82,9 @@ namespace CarManagement.Services
             return lettersAux;
         }
 
-        private string generateNumber()
+        private int generateNumber()
         {
-            string numbersAux;
+            /*string numbersAux;
 
             for (int i = TAM_ARRAYS - 1; i > 0; i--)
             {
@@ -71,7 +100,8 @@ namespace CarManagement.Services
                 }
             }
             numbersAux = new string(numbers);
-            return numbersAux;
+            return numbersAux;*/
+            return 0000;
         }
 
     }
