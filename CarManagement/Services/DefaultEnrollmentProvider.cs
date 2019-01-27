@@ -9,36 +9,18 @@ namespace CarManagement.Services
         private int number2;
         private int number3;
         private int number4;
-        private string serial;
-        private int number;
       
 
         private class Enrollment : IEnrollment
         {
-            private readonly int number;
-            private readonly string serial;
             public Enrollment(string serial, int number)
             {
-
-                this.serial = serial;
-                this.number = number;
+                this.Serial = serial;
+                this.Number = number;
             }
 
-            public string Serial
-            {
-                get
-                {
-                    return this.serial;
-                }
-            }
-            public int Number
-            {
-                get
-                {
-                    return this.number;
-                }
-            }
-
+            public string Serial{get;}
+            public int Number{get;}
         }
 
         public DefaultEnrollmentProvider()
@@ -48,16 +30,6 @@ namespace CarManagement.Services
             this.number3 = -1;
             this.number4 = -1;
         }
-
-        public DefaultEnrollmentProvider(string serial, int number)
-        {
-            this.number1 = -1;
-            this.number2 = -1;
-            this.number3 = -1;
-            this.number4 = -1;
-        }
-
-
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
@@ -99,11 +71,8 @@ namespace CarManagement.Services
             number1 += 65;
             number2 += 65;
             number3 += 65;
-            this.serial = (((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString();
-            this.number = number4;
 
-            return new Enrollment(this.serial, this.number);
+            return new Enrollment((((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString(),  number4);
         }
-
     }
 }
