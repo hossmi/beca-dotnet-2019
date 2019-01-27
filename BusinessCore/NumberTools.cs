@@ -14,16 +14,6 @@ namespace BusinessCore
             {
                 n = n * (c - 1);
             }
-            /*long b = n-1;
-            long c = n;
-            int a = 0;
-            while (a < b)
-            {
-                n = n * (c - 1);
-                a++;
-                c--;
-
-            }*/
             return n;
         }
         public static int fibonacci(int n)
