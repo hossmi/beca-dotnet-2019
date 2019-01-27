@@ -13,7 +13,9 @@ namespace CarManagement.Builders
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
-       
+        int number = 0;
+        string serial = "";
+
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -47,24 +49,29 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            List<Door> doors= new List<Door>();
-            for (int x=0; x<this.numberDoor;x++)
+            //Generamos puertas
+            List<Door> doors = new List<Door>();
+            for (int x = 0; x < this.numberDoor; x++)
             {
                 doors.Add(new Door());
             }
 
-
+            //Generamos motor
             Engine engine = new Engine(this.engine);
 
+            //Generamos ruedas
             List<Wheel> wheels = new List<Wheel>();
-            for (int x=0; x<this.numberWheel;x++)
+            for (int x = 0; x < this.numberWheel; x++)
             {
                 wheels.Add(new Wheel());
             }
 
-            IEnrollmentProvider enrollment = new DefaultEnrollmentProvider(String serial,int number);
+            //Generamos matricula
+            IEnrollmentProvider enrollmentget = new DefaultEnrollmentProvider(serial, number);
+            IEnrollment enrollment = enrollmentget.getNewEnrollment();
 
-            return new Vehicle(this.color,doors,engine,wheels, enrollment);
+            //Generamos coche
+            return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
     }
 }
