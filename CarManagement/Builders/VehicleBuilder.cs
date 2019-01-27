@@ -22,12 +22,16 @@ namespace CarManagement.Builders
             this.engine = 0;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
-
         }
 
         public void addWheel()
         {
+            if (this.numberWheel>=4)
+            {
+                throw new ArgumentException("YEEEEEEEE ande vas!!! 4 Ruedas como máximo.!");
+            }
             this.numberWheel++;
+            
         }
 
         public void setDoors(int doorsCount)
@@ -56,6 +60,10 @@ namespace CarManagement.Builders
         }
         public Vehicle build()
         {
+            if (this.numberWheel < 1)
+            {
+                throw new ArgumentException("You can´t create a vehicle whithout wheels.");
+            }
             //Generamos puertas
             List<Door> doors=createList<Door>(this.numberDoor);
 
@@ -66,8 +74,7 @@ namespace CarManagement.Builders
             List<Wheel> wheels=createList<Wheel>(this.numberWheel);
 
             //Generamos matricula
-            IEnrollmentProvider enrollmentget = new DefaultEnrollmentProvider();
-            IEnrollment enrollment = enrollmentget.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
 
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);

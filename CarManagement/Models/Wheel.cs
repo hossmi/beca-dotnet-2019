@@ -14,7 +14,7 @@ namespace CarManagement.Models
         {
             set
             {
-                if (value>=0)
+                if (value >= 0)
                 {
                     this.Pressure = value;
                 }

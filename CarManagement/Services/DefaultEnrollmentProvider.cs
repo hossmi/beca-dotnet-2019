@@ -21,6 +21,11 @@ namespace CarManagement.Services
 
             public string Serial{get;}
             public int Number{get;}
+
+            public override string ToString()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
         }
 
         public DefaultEnrollmentProvider()

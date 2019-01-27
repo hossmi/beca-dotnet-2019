@@ -46,13 +46,7 @@ namespace CarManagement.Models
             }
         }
 
-        public IEnrollment Enrollment
-        {
-            get
-            {
-                return this.enrollment;
-            }
-        }
+        public IEnrollment Enrollment{get{return this.enrollment;}}
 
         public Wheel[] Wheels
         {
