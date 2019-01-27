@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
         private CarColor color;
-        private List<Wheel> wheels;
+        private IReadOnlyList<Wheel> wheels;
         private IEnrollment enrollment;
-        private List<Door> doors;
+        private IReadOnlyList<Door> doors;
         private Engine engine;
 
        
-        public Vehicle(CarColor color, List<Door> doors, Engine engine, List<Wheel> wheels, IEnrollment enrollment)
+        public Vehicle(CarColor color,   List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
         {
             this.color = color;
-            this.doors = doors;
-            this.engine = engine;
             this.wheels = wheels;
             this.enrollment = enrollment;
+            this.doors = doors;
+            this.engine = engine;
         }
 
         public int DoorsCount
@@ -41,7 +42,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.engine;
             }
         }
 
@@ -71,7 +72,10 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            foreach (Wheel wheel in this.wheels )
+            {
+                wheel.Pressure = pression;
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ namespace CarManagement.Models
                 }
                 else
                 {
-                    throw new ArgumentException("value");
+                    throw new ArgumentException("It not negative presure!");
                 }
             }
             get
@@ -33,7 +33,5 @@ namespace CarManagement.Models
         {
             Pressure = 0;
         }
-
-   
     }
 }
