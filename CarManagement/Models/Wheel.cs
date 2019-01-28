@@ -4,15 +4,16 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+        private double pressure;
         public double Pressure
         {
             get
             {
-                throw new NotImplementedException();
+                return pressure;
             }
             set
             {
-                throw new NotImplementedException();
+                pressure = value;
             }
         }
     }
