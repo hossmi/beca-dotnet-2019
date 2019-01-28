@@ -6,13 +6,13 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private string enrollment;
+        private IEnrollment enrollment;
         private List<Wheel> wheels;
         private List<Door> doors;
         private Engine engine;
         private CarColor color;
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, string enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
         {
             this.wheels = wheels;
             this.doors = doors;

@@ -62,13 +62,6 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            /*if(numberWheels <= 0)
-            {
-                throw new Exception("Missing data to build the car");
-            }
-            else
-            {*/
-
             Asserts.isTrue(numberWheels > 0);
 
             Engine engine = new Engine(this.horsePorwer);
@@ -77,8 +70,6 @@ namespace CarManagement.Builders
 
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
             return vehicle;
-            //}
-            
         }
     }
 }
