@@ -6,7 +6,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private int numberWheel;
         private int numberDoor;
@@ -77,6 +77,11 @@ namespace CarManagement.Builders
 
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
