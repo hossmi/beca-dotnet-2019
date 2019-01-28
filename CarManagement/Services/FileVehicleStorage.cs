@@ -11,12 +11,12 @@ namespace CarManagement.Services
             throw new System.NotImplementedException();
         }
 
-        public Vehicle get(IEnrollment defaultEnrollment)
+        public Vehicle get(IEnrollment enrollment)
         {
             throw new System.NotImplementedException();
         }
 
-        public void set(Vehicle motoVehicle)
+        public void set(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
         }
