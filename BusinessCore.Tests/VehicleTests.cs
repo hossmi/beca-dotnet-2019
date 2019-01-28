@@ -15,7 +15,7 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
-        private const int HARDCORE = 100 * LARGE;
+        private const int HARDCORE = 10 * LARGE;
 
         [TestMethod]
         public void builder_default_functionality()
