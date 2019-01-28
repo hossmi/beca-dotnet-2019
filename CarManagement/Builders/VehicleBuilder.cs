@@ -27,10 +27,17 @@ namespace CarManagement.Builders
 
 
         }
+
         public void addWheel()
         {
             Asserts.isTrue(numberWheel < 4);
             this.numberWheel++;
+        }
+
+        public void removeWheel()
+        {
+            Asserts.isTrue(this.numberWheel > 0);
+            this.numberWheel--;
         }
 
         public void setDoors(int doorsCount)
