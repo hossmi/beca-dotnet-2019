@@ -9,7 +9,7 @@ namespace CarManagement.Services
         private int number2;
         private int number3;
         private int number4;
-        private string letters;
+        private readonly string letters;
       
 
         private class Enrollment : IEnrollment
@@ -31,10 +31,10 @@ namespace CarManagement.Services
 
         public DefaultEnrollmentProvider()
         {
-            this.number1 = -1;
-            this.number2 = -1;
-            this.number3 = -1;
-            this.number4 = -1;
+            this.number1 = 0;
+            this.number2 = 0;
+            this.number3 = 0;
+            this.number4 = 0;
             this.letters = "BCDFGHJKLMNPRSTVWXYZ";//20 dígitos
         }
 
@@ -47,7 +47,7 @@ namespace CarManagement.Services
             else
             {
                 number4 = 0;
-                if (number3 <= 0)
+                if (number3 <= 19)
                 {
                     number3++;
                 }
@@ -55,7 +55,7 @@ namespace CarManagement.Services
                 {
                     number4 = 0;
                     number3 = 0;
-                    if (number2 <= 91)
+                    if (number2 <= 19)
                     {
                         number2++;
                     }
@@ -64,7 +64,7 @@ namespace CarManagement.Services
                         number4 = 0;
                         number3 = 0;
                         number2 = 0;
-                        if (number1 <= 91)
+                        if (number1 <= 19)
                         {
                             number1++;
                         }
@@ -75,9 +75,9 @@ namespace CarManagement.Services
                     }
                 }
             }
-            string letters = ((Char)(number1)).ToString() + ((Char)(number2)).ToString() + ((Char)(number3)).ToString();
+            string lettersEnrollment = this.letters[number1].ToString() + this.letters[number2].ToString() + this.letters[number3].ToString();
 
-            return new Enrollment(letters,  number4);
+            return new Enrollment(lettersEnrollment,  number4);
         }
     }
 }
