@@ -1,4 +1,5 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Builders;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
@@ -10,8 +11,10 @@ namespace CarManagement.Services
         private static int nextIssuedNumber = 0;
         public static readonly char locale = 'A';
         private static char[] lastIssuedLetters = new char[] {FIRSTCHAR, FIRSTCHAR};
+
         static public string LastIssuedEnrollment
-        { get => $"ALC-{nextIssuedNumber-1}-{lastIssuedLetters[1]}{lastIssuedLetters[0]}"; }
+        { get => $"{locale}{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{nextIssuedNumber-1}"; }
+
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
             if(nextIssuedNumber > 9999)
@@ -21,21 +24,13 @@ namespace CarManagement.Services
                 if (lastIssuedLetters[0] == LASTCHAR)
                 {
                     lastIssuedLetters[0] = FIRSTCHAR;
-                    if (lastIssuedLetters[1] != LASTCHAR)
-                    {
-                        lastIssuedLetters[1]++;
-                    }
-                    else
-                    {
-                        throw new System.NotSupportedException
-                            ("Number of enrollments issued reached the limit.");
-                    }
+                    Asserts.isTrue(lastIssuedLetters[1] != LASTCHAR, "Number of enrollments issued reached the limit.");
+                    lastIssuedLetters[1]++;
                 }
                 else
                     lastIssuedLetters[0]++;
             }
-            //string serialToIssue = nextIssuedNumber++.ToString("0000");
-            //return $"A{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{serialToIssue}";
+
             return new Enrollment(nextIssuedNumber++, $"{locale}{lastIssuedLetters[1]}{lastIssuedLetters[0]}");
         }
     }

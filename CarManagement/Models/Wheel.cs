@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Builders;
+
+namespace CarManagement.Models
 {
     public class Wheel
     {
@@ -10,11 +12,8 @@
             get => pressure;
             set
             {
-                if (value > 0)
-                    pressure = value;
-                else
-                    throw new System.ArgumentException
-                        ("Pressure must be greater than 0");
+                Asserts.isTrue(value > 0, "Pressure must be greater than 0");
+                pressure = value;
             }
         }
 

@@ -55,11 +55,8 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (wheelList.Count() < 4)
-                this.wheelList.Add(new Wheel());
-            else
-                throw new InvalidOperationException
-                    ("Cannot add more than 4 wheels");
+            Asserts.isTrue(wheelList.Count() < 4, "Cannot add more than 4 wheels");
+            this.wheelList.Add(new Wheel());
         }
 
         public void setDoors(int doorsCount)
@@ -89,17 +86,18 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
+            Asserts.isEnumDefined < CarColor > (color);
             this.color = color;
         }
 
         public Vehicle build()
         {
-            if (wheelList.Count() <= 0)
-                throw new System.InvalidOperationException
-                    ($"You cannot build a vehicle with {wheelList.Count()} wheels");
+            Asserts.isFalse(wheelList.Count() <= 0, $"You cannot build a vehicle with {wheelList.Count()} wheels");
+
+            IEnrollment toProvideEnrollment = this.enrollmentProvider.getNewEnrollment();
 
             return new Vehicle(this.EngineClone, this.DoorListClone,
-                this.WheelListClone, this.Color, enrollmentProvider.getNewEnrollment() );
+                this.WheelListClone, this.Color, toProvideEnrollment );
         }
     }
 }
