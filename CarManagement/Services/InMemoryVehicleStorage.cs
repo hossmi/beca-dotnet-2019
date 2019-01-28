@@ -25,15 +25,15 @@ namespace CarManagement.Services
         {
             //Asserts.isTrue(vehicles.Count > 0,"La lista de vehiculos esta vacia");
             Vehicle vehicle;
-            bool vehicleFound = this.vehicles.TryGetValue(defaultEnrollment,out vehicle);
+            bool vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
             Asserts.isTrue(vehicleFound,"Cannot find vehicle");
             return vehicle;
         }
 
         public void set(Vehicle vehicle)
         {
-            Asserts.isFalse(this.vehicles.ContainsKey(motoVehicle.Enrollment), "A vehicle already exists with the same enrollment");
-            vehicles.Add(motoVehicle.Enrollment, motoVehicle);
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment), "A vehicle already exists with the same enrollment");
+            vehicles.Add(vehicle.Enrollment, vehicle);
         }
     }
 }
