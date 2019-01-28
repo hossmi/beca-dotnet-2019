@@ -1,35 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
-    class Door
+    public class Door
     {
-        private bool open = false;
+        
+        private bool openDoor;
 
-        public void Open()
+        public Door()
         {
-            try
-            {
-               
-                open = true;
-            }
-            catch (Exception)
-            {
-                open = false;
-            }
+            this.openDoor = false;
         }
 
         public bool IsOpen
         {
             get
             {
-                return open;
+                return this.openDoor;
             }
-
         }
+
+        public void open()
+        {
+            this.openDoor = true;
+        }
+
+        public void close()
+        {
+            this.openDoor = false;
+        }
+
+        
+
+
     }
 }

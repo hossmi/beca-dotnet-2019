@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CarManagement.Builders;
 using CarManagement.Models;
+using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -8,44 +12,49 @@ namespace BusinessCore.Tests
     [TestClass]
     public class VehicleTests
     {
+        private const int SMALL = 10 * 1000;
+        private const int MEDIUM = 10 * SMALL;
+        private const int LARGE = 10 * MEDIUM;
+
         [TestMethod]
         public void builder_default_functionality()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setDoors(2);
+            builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
 
             Assert.IsNotNull(vehicle);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));
+            Assert.IsNotNull(vehicle.Enrollment);
             Assert.AreEqual(2, vehicle.DoorsCount);
             Assert.AreEqual(4, vehicle.WheelCount);
 
-            string matricula = vehicle.Enrollment;
+            Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
 
             // propiedad de solo lectura 
-            // propiedad: array[] Door
+            // propiedad: array Door
             // campo privado: List Door
-            vehicle.Doors[0].Open();
+            vehicle.Doors[0].open();
             Assert.IsTrue(vehicle.Doors[0].IsOpen);
             Assert.IsFalse(vehicle.Doors[1].IsOpen);
 
             vehicle.Doors[0].close();
             Assert.IsFalse(vehicle.Doors[0].IsOpen);
 
-            vehicle.Engine.Start();
+            vehicle.Engine.start();
             Assert.IsTrue(vehicle.Engine.IsStarted);
 
             //ha de establecer la presion de cada rueda
-            vehicle.SetWheelsPressure(pression: 2.4);
+            vehicle.setWheelsPressure(2.4);
 
             // propiedad de solo lectura 
             // propiedad: array Wheels
@@ -59,15 +68,16 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void cannot_create_the_same_vechicle_twice()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
 
-            builder.setDoors(doorsCount: 2);
-            builder.setEngine(horsePorwer: 100);
+            builder.setDoors(2);
+            builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle1 = builder.build();
@@ -76,12 +86,20 @@ namespace BusinessCore.Tests
             Assert.AreNotEqual(vehicle1.Enrollment, vehicle2.Enrollment);
         }
 
-
         [TestMethod]
         public void cannot_add_more_than_4_wheels()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
@@ -92,7 +110,11 @@ namespace BusinessCore.Tests
                 builder.addWheel();
                 Assert.Fail();
             }
-            catch(UnitTestAssertException)
+            catch (UnitTestAssertException)
+            {
+                throw;
+            }
+            catch (NotImplementedException)
             {
                 throw;
             }
@@ -102,11 +124,11 @@ namespace BusinessCore.Tests
             }
         }
 
-
         [TestMethod]
         public void cannot_create_vehicle_without_wheels()
         {
-            VehicleBuilder builder = new VehicleBuilder();
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             try
             {
@@ -117,10 +139,100 @@ namespace BusinessCore.Tests
             {
                 throw;
             }
+            catch (NotImplementedException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 //good
             }
         }
+
+        [TestMethod]
+        [TestCategory("Long execution time")]
+        public void every_enrollment_must_be_unique_SMALL()
+        {
+            buildMassiveVehicles(SMALL, new TimeSpan(0, 1, 0));
+        }
+
+        [TestMethod]
+        [TestCategory("Long execution time")]
+        public void every_enrollment_must_be_unique_MEDIUM()
+        {
+            buildMassiveVehicles(MEDIUM, new TimeSpan(0, 2, 0));
+        }
+
+        [TestMethod]
+        [TestCategory("Long execution time")]
+        public void every_enrollment_must_be_unique_LARGE()
+        {
+            buildMassiveVehicles(LARGE, new TimeSpan(0, 3, 0));
+        }
+
+        [TestMethod]
+        public void enrollment_must_be_always_the_same()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+
+            builder.setDoors(2);
+            builder.setEngine(100);
+            builder.setColor(CarColor.Red);
+
+            Vehicle vehicle = builder.build();
+            IEnrollment enrollment1 = vehicle.Enrollment;
+            IEnrollment enrollment2 = vehicle.Enrollment;
+            Assert.AreEqual(enrollment1, enrollment2);
+            Assert.AreEqual(enrollment1.ToString(), enrollment2.ToString());
+        }
+
+        [TestMethod]
+        public void enrollments_must_complaint_requested_format()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+
+            Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ]-[0-9][0-9][0-9][0-9]");
+            Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
+
+            Regex serialRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ]");
+            Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
+
+            Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);
+        }
+
+        private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+
+            builder.setDoors(2);
+            builder.setEngine(100);
+            builder.setColor(CarColor.Red);
+
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            for (int i = 0; i < numberOfVehicles; i++)
+            {
+                Vehicle vehicle = builder.build();
+
+                Assert.IsFalse(vehicles.ContainsKey(vehicle.Enrollment));
+                vehicles.Add(vehicle.Enrollment, vehicle);
+
+                Assert.IsTrue(stopwatch.Elapsed < maxTime);
+            }
+        }
+
     }
 }

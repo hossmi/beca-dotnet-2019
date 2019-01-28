@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,22 +7,26 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
+
     public class Wheel
     {
-        private double pressure;
-
+        double pressure = 0;
         public double Pressure
         {
+            set
+            {
+                Asserts.isTrue(value >= 0);
+                this.pressure = value;
+            }    
             get
             {
-                return pressure;
+                return this.pressure ;
             }
         }
 
-        public void FillWheel(double pression)
+        public Wheel()
         {
-            pressure = pression;
+            Pressure = 0;
         }
     }
 }
-

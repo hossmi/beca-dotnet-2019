@@ -1,15 +1,32 @@
 ﻿using System;
-using CarManagement.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private CarColor color;
+        private IReadOnlyList<Wheel> wheels;
+        private IEnrollment enrollment;
+        private IReadOnlyList<Door> doors;
+        private Engine engine;
+
+       
+        public Vehicle(CarColor color,   List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
+        {
+            this.color = color;
+            this.wheels = wheels;
+            this.enrollment = enrollment;
+            this.doors = doors;
+            this.engine = engine;
+        }
+
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.Count;
             }
         }
 
@@ -17,7 +34,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.wheels.Count;
             }
         }
 
@@ -25,28 +42,40 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.engine;
             }
         }
 
-        public string Enrollment
+        public IEnrollment Enrollment
         {
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment;
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
 
-        public void SetWheelsPressure(double pression)
+        public Wheel[] Wheels
         {
-            throw new NotImplementedException();
+            get
+            {
+                return this.wheels.ToArray();
+            }
+        }
+
+        public Door[] Doors
+        {
+            get
+            {
+                return this.doors.ToArray();
+            }
+        }
+
+        public void setWheelsPressure(double pression)
+        {
+            foreach (Wheel wheel in this.wheels )
+            {
+                wheel.Pressure = pression;
+            }
         }
     }
 }

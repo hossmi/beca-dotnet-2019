@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void fibonacci_of_0_returns_0()
         {
-            int result = NumberTools.fibonacci(0);
+            long result = NumberTools.fibonacci(0);
 
             Assert.AreEqual(0, result);
         }
@@ -33,7 +33,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void fibonacci_of_1_returns_1()
         {
-            int result = NumberTools.fibonacci(1);
+            long result = NumberTools.fibonacci(1);
 
             Assert.AreEqual(1, result);
         }
@@ -41,7 +41,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void fibonacci_of_2_returns_1()
         {
-            int result = NumberTools.fibonacci(2);
+            long result = NumberTools.fibonacci(2);
 
             Assert.AreEqual(1, result);
         }
@@ -49,7 +49,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void fibonacci_of_8_returns_21()
         {
-            int result = NumberTools.fibonacci(8);
+            long result = NumberTools.fibonacci(8);
 
             Assert.AreEqual(21, result);
         }
