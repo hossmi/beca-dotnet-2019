@@ -56,7 +56,7 @@ namespace CarManagement.Services
 
         }
 
-        private void writeToFile(string filePath)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -65,7 +65,7 @@ namespace CarManagement.Services
             //throw new NotImplementedException();
         }
 
-        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
             IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>();
             XmlSerializer serializer = new XmlSerializer(typeof(Vehicle));
