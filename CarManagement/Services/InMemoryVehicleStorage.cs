@@ -2,7 +2,7 @@
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class InMemoryVehicleStorage : IVehicleStorage
     {
         public int Count { get; }
 
@@ -13,7 +13,7 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment defaultEnrollment)
         {
-            
+            throw new System.NotImplementedException();
         }
 
         public void set(Vehicle motoVehicle)
