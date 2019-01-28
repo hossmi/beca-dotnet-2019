@@ -7,12 +7,11 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        private CarColor carColor;       
+        private CarColor carColor;
         private int doorsCount;
         private int wheelsCount;
         private int horsePower;
-
-        private readonly IEnrollmentProvider enrollmentProvider;
+        private IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -42,7 +41,6 @@ namespace CarManagement.Builders
         }
 
 
-
         private List<T> createElementsList<T>(int elementsQuantity) where T : class, new()
         {
             List<T> tempList = new List<T>();
@@ -63,9 +61,10 @@ namespace CarManagement.Builders
             List<Wheel> wheels = createElementsList<Wheel>(this.wheelsCount);
             List<Door> doors = createElementsList<Door>(this.doorsCount);
             Engine engine = new Engine(this.horsePower);
-            String enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
 
-            return new Vehicle(doors, wheels, engine, enrollment, this.carColor);
+            Vehicle vehicle = new Vehicle(doors, wheels, engine, enrollment, this.carColor);
+            return vehicle;
         }
     }
 }

@@ -8,10 +8,10 @@ namespace CarManagement.Models
     {
         private List<Door> doors = new List<Door>();
         private List<Wheel> wheels = new List<Wheel>();
-        private String enrollment;
+        private IEnrollment enrollment;
         private CarColor carColor;
 
-        public Vehicle(List<Door> doors, List<Wheel> wheels, Engine engine, String enrollment, CarColor carcolor)
+        public Vehicle(List<Door> doors, List<Wheel> wheels, Engine engine, IEnrollment enrollment, CarColor carcolor)
         {
             this.doors = doors;
             this.wheels = wheels;
@@ -44,6 +44,12 @@ namespace CarManagement.Models
         }
 
         public IEnrollment Enrollment
+        {
+            get
+            {
+                return this.enrollment;
+            }
+        }
         public int WheelCount
         {
             get
@@ -53,20 +59,6 @@ namespace CarManagement.Models
         }
 
         public Engine Engine { get; }
-
-        public String Enrollment
-        {
-            get
-            {
-                return enrollment;
-            }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("The enrollment can not be empty or have blank spaces.");
-                enrollment = value;
-            }
-        }
 
         public CarColor Carcolor
         {
@@ -80,7 +72,7 @@ namespace CarManagement.Models
                     throw new ArgumentException("Unexpected car color value.");
                 carColor = value;
             }
-        }     
+        }
 
         public void setWheelsPressure(double pression)
         {
