@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Xml.Serialization;
-using CarManagement.Builders;
 using CarManagement.Models;
-using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -13,14 +9,8 @@ namespace CarManagement.Services
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly string filePath;
-                
-        public int Count
-        {
-            get
-            {
-                return this.vehicles.Count;
-            }
-        }
+
+        public int Count { get; }
 
         public FileVehicleStorage(string fileFullPath)
         {
@@ -34,45 +24,28 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            this.vehicles.Clear();
-
-            writeToFile(this.filePath);
+            throw new System.NotImplementedException();
+            writeToFile(this.filePath, this.vehicles);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle listedVehicle;
-
-            bool vehicleIsListed = vehicles.TryGetValue(enrollment, out listedVehicle);
-            Asserts.isTrue(vehicleIsListed);
-
-            return listedVehicle;
+            throw new System.NotImplementedException();
         }
 
         public void set(Vehicle vehicle)
         {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            vehicles.Add(vehicle.Enrollment, vehicle);
-
-            writeToFile(this.filePath);
+            throw new System.NotImplementedException();
+            writeToFile(this.filePath, this.vehicles);
         }
 
-        private void writeToFile(string filePath)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
-            XmlSerializer ser = new XmlSerializer(typeof(DataSet));
-            TextWriter writer = new StreamWriter(filePath);
-            //ser.Serialize(writer, ds);
-            
-            writer.Close();
-
-
-
-
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
             throw new NotImplementedException();
         }
 
-        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
             throw new NotImplementedException();
         }
