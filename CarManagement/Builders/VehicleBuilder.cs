@@ -28,7 +28,6 @@ namespace CarManagement.Builders
         {
             Asserts.isTrue(this.numberWheel < 4);
             this.numberWheel++;
-            
         }
 
         public void removeWheel()
@@ -63,10 +62,7 @@ namespace CarManagement.Builders
         }
         public Vehicle build()
         {
-            if (this.numberWheel < 1)
-            {
-                throw new ArgumentException("You can´t create a vehicle whithout wheels.");
-            }
+            Asserts.isTrue(this.numberWheel >0);
             //Generamos puertas
             List<Door> doors=createList<Door>(this.numberDoor);
 
@@ -82,6 +78,5 @@ namespace CarManagement.Builders
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
-
     }
 }
