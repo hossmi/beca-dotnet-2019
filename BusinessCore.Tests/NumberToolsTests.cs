@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class NumberToolsTests
     {
         [TestMethod]
         public void factorial_of_5_returns_120()
