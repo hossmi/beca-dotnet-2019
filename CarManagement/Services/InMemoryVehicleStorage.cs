@@ -21,7 +21,7 @@ namespace CarManagement.Services
             vehicles.Clear();
         }
 
-        public Vehicle get(IEnrollment defaultEnrollment)
+        public Vehicle get(IEnrollment enrollment)
         {
             Vehicle vehicle;
             bool exists = vehicles.TryGetValue(defaultEnrollment, out vehicle);
@@ -29,7 +29,7 @@ namespace CarManagement.Services
             return vehicle;
         }
 
-        public void set(Vehicle motoVehicle)
+        public void set(Vehicle vehicle)
         {
             bool exists = vehicles.ContainsKey(motoVehicle.Enrollment);
             Asserts.isFalse(exists);
