@@ -21,7 +21,7 @@ namespace CarManagement.Services
             this.vehicles.Clear();
         }
 
-        public Vehicle get(IEnrollment defaultEnrollment)
+        public Vehicle get(IEnrollment enrollment)
         {
             bool hasVehicle = this.vehicles.TryGetValue(defaultEnrollment, out Vehicle returnedVehicle);
 
@@ -30,7 +30,7 @@ namespace CarManagement.Services
             return returnedVehicle;
         }
 
-        public void set(Vehicle motoVehicle)
+        public void set(Vehicle vehicle)
         {
             this.vehicles.Add(motoVehicle.Enrollment, motoVehicle);
         }

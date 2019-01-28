@@ -55,5 +55,15 @@ namespace CarManagement.Models
                wheel.Pressure = pressure;
             }
         }
+<<<<<<< HEAD
+=======
+
+        public CarColor Color { get; }
+
+        public void setWheelsPressure(double pression)
+        {
+            throw new NotImplementedException();
+        }
+>>>>>>> develop
     }
 }
