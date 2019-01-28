@@ -1,42 +1,54 @@
-﻿using CarManagement.Builders;
-using CarManagement.Models;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
     public class FileVehicleStorage : IVehicleStorage
     {
-        private IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly string filePath;
 
-        public int Count
+        public int Count { get; }
+
+        public FileVehicleStorage(string fileFullPath)
         {
-            get
-            {
-                return this.vehicles.Count;
-            }
+            this.filePath = fileFullPath;
+
+            if (File.Exists(fileFullPath))
+                this.vehicles = readFromFile(fileFullPath);
+            else
+                this.vehicles = new Dictionary<IEnrollment, Vehicle>();
         }
 
         public void clear()
         {
-            vehicles.Clear();
-            //File clear pending implementation
+            throw new System.NotImplementedException();
+            writeToFile(this.filePath);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle listedVehicle;
-
-            bool isVehicleListed = this.vehicles.TryGetValue(enrollment, out listedVehicle);
-            Asserts.isTrue(isVehicleListed);
-
-            return listedVehicle;
+            throw new System.NotImplementedException();
         }
 
         public void set(Vehicle vehicle)
         {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            //File update pending implementation
+            throw new System.NotImplementedException();
+            writeToFile(this.filePath);
         }
+
+        private void writeToFile(string filePath)
+        {
+            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
+            throw new NotImplementedException();
+        }
+
+        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
