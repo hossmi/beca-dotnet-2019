@@ -105,23 +105,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            try
-            {
-                builder.addWheel();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            Negassert.mustFail(() => builder.addWheel());
         }
 
         [TestMethod]
@@ -130,23 +114,10 @@ namespace BusinessCore.Tests
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
-            try
+            Negassert.mustFail(() =>
             {
                 Vehicle vehicle = builder.build();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
 
         [TestMethod]

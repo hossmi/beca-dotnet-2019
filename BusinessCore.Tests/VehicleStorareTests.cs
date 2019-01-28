@@ -16,13 +16,15 @@ namespace BusinessCore.Tests
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IVehicleStorage vehicleStorage = new FileVehicleStorage();
 
+            vehicleStorage.clear();
+            Assert.AreEqual(0, vehicleStorage.Count);
+
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
             vehicleBuilder.setDoors(0);
             vehicleBuilder.setEngine(40);
             Vehicle motoVehicle = vehicleBuilder.build();
 
-            Assert.AreEqual(0, vehicleStorage.Count);
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
@@ -60,23 +62,10 @@ namespace BusinessCore.Tests
             vehicleStorage = new InMemoryVehicleStorage();
             Assert.AreEqual(0, vehicleStorage.Count);
 
-            try
+            Negassert.mustFail(() =>
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
     }
 }

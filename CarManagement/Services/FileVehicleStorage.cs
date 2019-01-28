@@ -6,6 +6,11 @@ namespace CarManagement.Services
     {
         public int Count { get; }
 
+        public void clear()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public Vehicle get(IEnrollment defaultEnrollment)
         {
             throw new System.NotImplementedException();
