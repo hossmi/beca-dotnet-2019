@@ -25,43 +25,39 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (this.wheelsCount < MAX_WHEELS)
-                this.wheelsCount++;
-            else
-                throw new Exception("Se ha excedido el numero maximo de ruedas");
+            Asserts.isTrue(this.wheelsCount < MAX_WHEELS);
+            this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            if (doorsCount > 0)
-                this.doorsCount = doorsCount;
-            else if (doorsCount < 0)
-                throw new ArgumentException("No se puede crear un vehiculo con puertas negativas.");
+            Asserts.isTrue(doorsCount > 0);
+            this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
+            Asserts.isTrue(horsePorwer > 0);
             this.enginePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            if (Enum.IsDefined(typeof(CarColor), color) == false)
-                throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
-            else
-                this.colorCode = color;
+            //if (Enum.IsDefined(typeof(CarColor), color) == false)
+            //    throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
+            Asserts.isEnumDefined<CarColor>(color);
+            this.colorCode = color;
         }
 
         public Vehicle build()
         {
-            if (this.wheelsCount == 0)
-                throw new Exception("No se puede crear un vehiculo sin ruedas");
+            Asserts.isTrue(this.wheelsCount > 0);
 
             List<Wheel> wheels = CreateObject<Wheel>(wheelsCount);
             List<Door> doors = CreateObject<Door>(doorsCount);
             Engine engine = CreateEngine(enginePower);
             IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
-             
+
             Vehicle vehicle = new Vehicle(wheels, doors, engine, colorCode, enrollment);
 
             return vehicle;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 
 namespace CarManagement.Models
 {
@@ -9,6 +10,7 @@ namespace CarManagement.Models
 
         public Engine(int h)
         {
+            Asserts.isTrue(h > 0);
             horsepower = h;
             isStarted = false;
         }

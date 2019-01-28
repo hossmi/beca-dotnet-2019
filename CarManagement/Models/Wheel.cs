@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace CarManagement.Models
 
         public void FillWheel(double pression)
         {
+            Asserts.isTrue(pression > 0);
             pressure = pression;
         }
     }

@@ -1,13 +1,15 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Builders;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
+        private const char INITIAL_LETTER = 'B';
         static int number = 0;
-        static char Letter1 = 'A';
-        static char Letter2 = 'A';
-        static char Letter3 = 'A';
+        static char Letter1 = INITIAL_LETTER;
+        static char Letter2 = INITIAL_LETTER;
+        static char Letter3 = INITIAL_LETTER;
 
         private class Enrollment : IEnrollment
         {
@@ -28,47 +30,39 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
-            
-            
-            string numberFill = "";
-
             if (number >= 10000)
             {
                 number = 0;
                 Letter3++;
+                if (!IsValidLetter(Letter3))
+                    Letter3++;
                 if (Letter3 > 'Z')
                 {
-                    Letter3 = 'A';
+                    Letter3 = INITIAL_LETTER;
                     Letter2++;
+                    if (!IsValidLetter(Letter2))
+                        Letter2++;
                     if (Letter2 > 'Z')
                     {
+                        Letter2 = INITIAL_LETTER;
                         Letter1++;
-                        if (Letter1 > 'Z')
-                            throw new System.Exception("Alcanzado el limite maximo de matriculas");
+                        if (!IsValidLetter(Letter1))
+                            Letter1++;
+                        Asserts.isTrue(Letter1 <= 'Z', "Alcanzado el limite maximo de matriculas");
                     }
                 }
             }
 
-            if (number < 1000)
-            {
-                numberFill = numberFill + "0";
-                if (number < 100)
-                {
-                    numberFill = numberFill + "0";
-                    if (number < 10)
-                        numberFill = numberFill + "0";
-                }
-            }
-
-            //enrollment = Letter1.ToString() + Letter2.ToString() + Letter3.ToString() + "-" + numberFill + number.ToString();
             IEnrollment enrollment = new Enrollment(Letter1.ToString() + Letter2.ToString() + Letter3.ToString(), number);
-
-
             number++;
 
-
-
             return enrollment;
+        }
+
+        private bool IsValidLetter(char letter)
+        {
+            string allowedLetters = "BCDFGHJKLMNPRSTVWXYZ";
+            return allowedLetters.Contains(letter.ToString());
         }
     }
 }

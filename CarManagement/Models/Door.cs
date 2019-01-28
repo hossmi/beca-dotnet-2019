@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 
 namespace CarManagement.Models
 {
@@ -16,6 +17,7 @@ namespace CarManagement.Models
             }
             catch (Exception)
             {
+                Asserts.isTrue(isOpen, "Error en la apertura de puerta");
                 this.isOpen = false;
             }
         }
@@ -28,6 +30,7 @@ namespace CarManagement.Models
             }
             catch (Exception)
             {
+                Asserts.isFalse(isOpen, "Error en el cierre de puerta");
                 this.isOpen = true;
             }
         }
