@@ -21,7 +21,7 @@ namespace CarManagement.Services
             this.vehicles.Clear();
         }
 
-        public Vehicle get(IEnrollment defaultEnrollment)
+        public Vehicle get(IEnrollment enrollment)
         {
             //Asserts.isTrue(vehicles.Count > 0,"La lista de vehiculos esta vacia");
             Vehicle vehicle;
@@ -30,7 +30,7 @@ namespace CarManagement.Services
             return vehicle;
         }
 
-        public void set(Vehicle motoVehicle)
+        public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(motoVehicle.Enrollment), "A vehicle already exists with the same enrollment");
             vehicles.Add(motoVehicle.Enrollment, motoVehicle);
