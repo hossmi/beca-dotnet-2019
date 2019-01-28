@@ -64,6 +64,8 @@ namespace CarManagement.Models
             }
         }
 
+        public CarColor Color { get; }
+
         public void setWheelsPressure(double pression)
         {
             foreach (Wheel wheel in this.wheels )
