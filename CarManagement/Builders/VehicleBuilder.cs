@@ -59,6 +59,12 @@ namespace CarManagement.Builders
             this.wheelList.Add(new Wheel());
         }
 
+        public void removeWheel()
+        {
+            Asserts.isTrue(wheelList.Count() > 0, "Cannot remove from none wheels");
+            this.wheelList.Remove(wheelList.Last());
+        }
+
         public void setDoors(int doorsCount)
         {
             if (doorsCount > this.doorList.Count)
@@ -98,11 +104,6 @@ namespace CarManagement.Builders
 
             return new Vehicle(this.EngineClone, this.DoorListClone,
                 this.WheelListClone, this.Color, toProvideEnrollment );
-        }
-
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
         }
     }
 }
