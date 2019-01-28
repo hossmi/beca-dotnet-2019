@@ -13,11 +13,6 @@ namespace CarManagement.Models
             this.color = color;
             this.enrollment = enrollment;
         }
-
-        public Vehicle()
-        {
-        }
-
         private List<Wheel> wheels = new List<Wheel>();
         private List<Door> doors = new List<Door>();
         private Engine engine = new Engine();
