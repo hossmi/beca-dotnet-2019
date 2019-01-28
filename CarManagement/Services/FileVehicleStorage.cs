@@ -1,27 +1,38 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Builders;
+using CarManagement.Models;
+using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
     public class FileVehicleStorage : IVehicleStorage
     {
-        public int Count { get; }
+        const string STORAGEFILE = ".\\storage\\vehicles";
+        private IDictionary<IEnrollment, Vehicle> vehicles;
 
-<<<<<<< HEAD
-=======
-        public void clear()
+        public FileVehicleStorage()
         {
-            throw new System.NotImplementedException();
+            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
         }
 
->>>>>>> develop
+        public int Count { get => this.vehicles.Count; }
+
+        public void clear()
+        {
+            this.vehicles.Clear();
+        }
+
         public Vehicle get(IEnrollment defaultEnrollment)
         {
-            throw new System.NotImplementedException();
+            bool hasVehicle = this.vehicles.TryGetValue(defaultEnrollment, out Vehicle returnedVehicle);
+
+            Asserts.isTrue(hasVehicle, "El vehículo no está almacenado");
+
+            return returnedVehicle;
         }
 
         public void set(Vehicle motoVehicle)
         {
-            throw new System.NotImplementedException();
+            this.vehicles.Add(motoVehicle.Enrollment, motoVehicle);
         }
     }
 }

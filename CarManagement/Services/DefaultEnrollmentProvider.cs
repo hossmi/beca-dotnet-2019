@@ -1,96 +1,45 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Builders;
+using CarManagement.Models;
+using System.Diagnostics;
 
-<<<<<<< HEAD
-using System;
-=======
->>>>>>> develop
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-<<<<<<< HEAD
-        private int letter1;
-        private int letter2;
-        private int letter3;
-        private int number;
-        public DefaultEnrollmentProvider()
-        {
-            this.letter1 = 65;
-            this.letter2 = 65;
-            this.letter3 = 65;
-            this.number = -1;
-        }
+        const char firstPossibleChar = 'B';
+        const char lastPossibleChar = 'Z';
+        const int lastValidChar = 20;
+        private readonly char[] validLetterSequence = 
+            {firstPossibleChar,'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
+            'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', lastPossibleChar};
 
-    
-        private class Enrollment : IEnrollment
+        private static int[] lastLettersTracker = new int[3];
+        private static int nextIssuedNumber = 0;
+
+        public IEnrollment getNewEnrollment()
         {
-            public Enrollment(string serial, int number)
+            if(nextIssuedNumber > 9999)
             {
+                nextIssuedNumber = 0;
+
+                if(++lastLettersTracker[0] > lastValidChar)
+                {
+                    lastLettersTracker[0] = 0;
+
+                    if (++lastLettersTracker[1] > lastValidChar)
+                    {
+                        lastLettersTracker[1] = 0;
+
+                        Asserts.isTrue(++lastLettersTracker[2] < lastValidChar,"Limit of enrollments reached");
+                    }
+                }
+            }
+
+            string toIssuedSerial = $"{validLetterSequence[lastLettersTracker[2]]}{validLetterSequence[lastLettersTracker[1]]}{validLetterSequence[lastLettersTracker[0]]}";
             
-                this.Serial = serial;
-                this.Number = number;
-            }
+            //Debug.WriteLine(toIssuedSerial);
 
-            public string Serial { get; }
-
-            public int Number { get; }
-
-            public override string ToString()
-            {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
-            }
-
+            return new Enrollment(nextIssuedNumber++, toIssuedSerial);
         }
-
-
- 
-
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
-        {
-            if (number <= 9999)
-            {
-                number++;
-            }
-            else
-            {
-                number = 0;
-                if (letter3 <= 91)
-                {
-                    letter3++;
-                }
-                else
-                {
-                    number = 0;
-                    letter3 = 0;
-                    if (letter2 <= 91)
-                    {
-                        letter2++;
-                    }
-                    else
-                    {
-                        number = 0;
-                        letter3 = 0;
-                        letter2 = 0;
-                        if (letter1 <= 91)
-                        {
-                            letter1++;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Superado límite de matrículas");
-                        }
-                    }
-                }
-            }
-            string serial = ((Char)(letter1)).ToString() + ((Char)(letter2)).ToString() + ((Char)(letter3)).ToString();
-            return new Enrollment(serial, this.number);
-        }
-
-=======
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
-        {
-            throw new System.NotImplementedException();
-        }
->>>>>>> develop
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-<<<<<<< HEAD
-using System.Collections.Generic;
-=======
->>>>>>> develop
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Services;
@@ -14,22 +10,15 @@ namespace BusinessCore.Tests
     public class VehicleStorareTests
     {
         [TestMethod]
-<<<<<<< HEAD
-        public void TestMethod1()
-=======
         public void fileVehicleStorage_must_persists_vehicles()
->>>>>>> develop
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IVehicleStorage vehicleStorage = new FileVehicleStorage();
 
-<<<<<<< HEAD
-=======
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
 
->>>>>>> develop
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
             vehicleBuilder.setDoors(0);
@@ -37,10 +26,7 @@ namespace BusinessCore.Tests
             Vehicle motoVehicle = vehicleBuilder.build();
 
             vehicleStorage.set(motoVehicle);
-<<<<<<< HEAD
-=======
             Assert.AreEqual(1, vehicleStorage.Count);
->>>>>>> develop
 
             vehicleStorage = new FileVehicleStorage();
             Assert.AreEqual(1, vehicleStorage.Count);
@@ -49,8 +35,6 @@ namespace BusinessCore.Tests
             Assert.IsNotNull(vehicle);
             Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
         }
-<<<<<<< HEAD
-=======
 
         [TestMethod]
         public void inMemoryVehicleStorage_must_be_empty_on_each_instance()
@@ -78,24 +62,10 @@ namespace BusinessCore.Tests
             vehicleStorage = new InMemoryVehicleStorage();
             Assert.AreEqual(0, vehicleStorage.Count);
 
-            try
+            Negassert.mustFail(() =>
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
->>>>>>> develop
     }
 }

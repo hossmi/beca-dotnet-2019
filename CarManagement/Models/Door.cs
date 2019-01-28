@@ -1,55 +1,31 @@
-﻿using System;
-
-namespace CarManagement.Models
+﻿namespace CarManagement.Models
 {
     public class Door
     {
-<<<<<<< HEAD
-        
-        private bool openDoor;
+        public readonly string model;
+        private bool isOpen;
 
-        public Door()
+        public Door(string model = null)
         {
-            this.openDoor = false;
+            this.model = model ?? "standart";
+            this.isOpen = false;
         }
 
-=======
->>>>>>> develop
-        public bool IsOpen
+        public Door(Door door)
         {
-            get
-            {
-<<<<<<< HEAD
-                return this.openDoor;
-=======
-                throw new NotImplementedException();
->>>>>>> develop
-            }
+            this.model = door.model;
+            this.isOpen = door.IsOpen;
         }
+
+        public bool IsOpen { get => isOpen; }
 
         public void open()
         {
-<<<<<<< HEAD
-            this.openDoor = true;
-=======
-            throw new NotImplementedException();
->>>>>>> develop
+            this.isOpen = true;
         }
-
         public void close()
         {
-<<<<<<< HEAD
-            this.openDoor = false;
-        }
-
-        
-
-
-    }
-}
-=======
-            throw new NotImplementedException();
+            this.isOpen = false;
         }
     }
 }
->>>>>>> develop

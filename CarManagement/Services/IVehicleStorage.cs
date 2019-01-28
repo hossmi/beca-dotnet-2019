@@ -11,13 +11,8 @@ namespace CarManagement.Services
     {
         int Count { get; }
 
-<<<<<<< HEAD
-        void set(Vehicle motoVehicle);
-        Vehicle get(IEnrollment defaultEnrollment);
-=======
         void set(Vehicle vehicle);
         Vehicle get(IEnrollment enrollment);
         void clear();
->>>>>>> develop
     }
 }

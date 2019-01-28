@@ -1,101 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
-<<<<<<< HEAD
-using System.Linq;
-=======
->>>>>>> develop
+using CarManagement.Builders;
+using CarManagement.Models;
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
-<<<<<<< HEAD
+        public readonly Engine Engine;
+        private List<Door> doorList;
+        private List<Wheel> wheelList;
         private CarColor color;
-        private IReadOnlyList<Wheel> wheels;
-        private IEnrollment enrollment;
-        private IReadOnlyList<Door> doors;
-        private Engine engine;
 
-       
-        public Vehicle(CarColor color,   List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
+        private readonly IEnrollment enrollment;
+
+        public Vehicle(Engine engine, List<Door> doorList,
+            List<Wheel> wheelList, CarColor color, IEnrollment enrollment)
         {
+            this.Engine = engine;
+            this.doorList = doorList;
+            this.wheelList = wheelList;
             this.color = color;
-            this.wheels = wheels;
             this.enrollment = enrollment;
-            this.doors = doors;
-            this.engine = engine;
         }
-=======
-        private List<Wheel> wheels;
->>>>>>> develop
 
         public int DoorsCount
         {
-            get
-            {
-                return this.doors.Count;
-            }
+            get => doorList.Count;
         }
 
         public int WheelCount
         {
-            get
-            {
-                return this.wheels.Count;
-            }
-        }
-
-        public Engine Engine
-        {
-            get
-            {
-                return this.engine;
-            }
+            get => wheelList.Count;
         }
 
         public IEnrollment Enrollment
         {
-            get
-            {
-                return this.enrollment;
-            }
+            get => this.enrollment;
         }
 
+        public Door[] Doors
+        {
+            get => this.doorList.ToArray();
+        }
         public Wheel[] Wheels
         {
-            get
-            {
-                return this.wheels.ToArray();
-            }
-<<<<<<< HEAD
+            get => this.wheelList.ToArray();
         }
 
-        public Door[] Doors
-=======
-        }
-
-        public Door[] Doors
+        public void setWheelsPressure(double pressure)
         {
-            get
+            foreach( Wheel wheel in this.wheelList)
             {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void setWheelsPressure(double pression)
->>>>>>> develop
-        {
-            get
-            {
-                return this.doors.ToArray();
-            }
-        }
-
-        public void setWheelsPressure(double pression)
-        {
-            foreach (Wheel wheel in this.wheels )
-            {
-                wheel.Pressure = pression;
+               wheel.Pressure = pressure;
             }
         }
     }
