@@ -29,6 +29,7 @@ namespace CarManagement.Models
             }
 
         }
+
         public Wheel[] Wheels
         {
             get
@@ -93,6 +94,7 @@ namespace CarManagement.Models
                 this.engine = value;
             }
         }
+
         public CarColor SetCarColor
         {
             set
