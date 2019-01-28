@@ -46,12 +46,20 @@
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
+<<<<<<< HEAD
     <Compile Include="Models\Wheel.cs" />
+=======
+>>>>>>> develop
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\IEnrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
+    <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DefaultEnrollmentProvider.cs" />
+<<<<<<< HEAD
+=======
+    <Compile Include="Services\InMemoryVehicleStorage.cs" />
+>>>>>>> develop
     <Compile Include="Services\IVehicleStorage.cs" />
     <Compile Include="Services\IEnrollmentProvider.cs" />
     <Compile Include="Services\FileVehicleStorage.cs" />

@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.Linq;
+=======
+>>>>>>> develop
 
 namespace CarManagement.Models
 {
     public class Vehicle
     {
+<<<<<<< HEAD
         private CarColor color;
         private IReadOnlyList<Wheel> wheels;
         private IEnrollment enrollment;
@@ -21,6 +25,9 @@ namespace CarManagement.Models
             this.doors = doors;
             this.engine = engine;
         }
+=======
+        private List<Wheel> wheels;
+>>>>>>> develop
 
         public int DoorsCount
         {
@@ -60,9 +67,23 @@ namespace CarManagement.Models
             {
                 return this.wheels.ToArray();
             }
+<<<<<<< HEAD
         }
 
         public Door[] Doors
+=======
+        }
+
+        public Door[] Doors
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public void setWheelsPressure(double pression)
+>>>>>>> develop
         {
             get
             {

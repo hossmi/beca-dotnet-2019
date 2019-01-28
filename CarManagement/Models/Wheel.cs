@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using CarManagement.Builders;
 using System;
 using System.Collections.Generic;
@@ -30,3 +31,24 @@ namespace CarManagement.Models
         }
     }
 }
+=======
+﻿using System;
+
+namespace CarManagement.Models
+{
+    public class Wheel
+    {
+        public double Pressure
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+    }
+}
+>>>>>>> develop

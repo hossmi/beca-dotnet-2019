@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 ﻿using CarManagement.Builders;
 using System;
+=======
+﻿using System;
+>>>>>>> develop
 
 namespace CarManagement.Models
 {
     public class Engine
     {
+<<<<<<< HEAD
         private int horsePower;
         private bool mode;
 
@@ -26,17 +31,27 @@ namespace CarManagement.Models
 
             }
         }
+=======
+>>>>>>> develop
         public bool IsStarted
         {
             get
             {
+<<<<<<< HEAD
                 return this.mode;
+=======
+                throw new NotImplementedException();
+>>>>>>> develop
             }
         }
 
         public void start()
         {
+<<<<<<< HEAD
             this.mode  = true;
+=======
+            throw new NotImplementedException();
+>>>>>>> develop
         }
     }
 }

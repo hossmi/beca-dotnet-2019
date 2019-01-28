@@ -2,18 +2,15 @@
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class InMemoryVehicleStorage : IVehicleStorage
     {
         public int Count { get; }
 
-<<<<<<< HEAD
-=======
         public void clear()
         {
             throw new System.NotImplementedException();
         }
 
->>>>>>> develop
         public Vehicle get(IEnrollment defaultEnrollment)
         {
             throw new System.NotImplementedException();

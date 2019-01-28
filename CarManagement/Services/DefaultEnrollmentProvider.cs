@@ -1,10 +1,14 @@
 ﻿using CarManagement.Models;
 
+<<<<<<< HEAD
 using System;
+=======
+>>>>>>> develop
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
+<<<<<<< HEAD
         private int letter1;
         private int letter2;
         private int letter3;
@@ -82,5 +86,11 @@ namespace CarManagement.Services
             return new Enrollment(serial, this.number);
         }
 
+=======
+        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        {
+            throw new System.NotImplementedException();
+        }
+>>>>>>> develop
     }
 }

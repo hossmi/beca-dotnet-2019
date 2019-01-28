@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Services;
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+<<<<<<< HEAD
         private int numberWheel;
         private int numberDoor;
         private int engine;
@@ -27,6 +31,15 @@ namespace CarManagement.Builders
 
 
         }
+=======
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
+>>>>>>> develop
         public void addWheel()
         {
             Asserts.isTrue(numberWheel < 4);
@@ -77,6 +90,11 @@ namespace CarManagement.Builders
 
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
 
         public void removeWheel()
