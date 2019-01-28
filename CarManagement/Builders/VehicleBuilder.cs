@@ -26,10 +26,7 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (this.numberWheel>=4)
-            {
-                throw new ArgumentException("YEEEEEEEE ande vas!!! 4 Ruedas como máximo.!");
-            }
+            Asserts.isTrue(this.numberWheel >= 4);
             this.numberWheel++;
             
         }
