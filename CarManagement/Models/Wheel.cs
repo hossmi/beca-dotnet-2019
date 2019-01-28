@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,29 +10,23 @@ namespace CarManagement.Models
 
     public class Wheel
     {
-
+        private double pressure;
         public double Pressure
         {
             set
             {
-                if (value >= 0)
-                {
-                    this.Pressure = value;
-                }
-                else
-                {
-                    throw new ArgumentException("It not negative presure!");
-                }
+                Asserts.isTrue(value >= 0);
+                this.pressure = value;
             }
             get
             {
-                return this.Pressure;
+                return this.pressure;
             }
         }
 
         public Wheel()
         {
-            Pressure = 0;
+            this.pressure = 0;
         }
     }
 }

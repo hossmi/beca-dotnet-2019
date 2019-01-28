@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 
 namespace CarManagement.Models
 {
@@ -9,10 +10,7 @@ namespace CarManagement.Models
 
         public Engine(int horsePower)
         {
-            if (horsePower <= 0)
-            {
-                throw new ArgumentException("Horse power need positive.");
-            } 
+            Asserts.isTrue(horsePower<=0);
             this.horsePower = horsePower;
         }
         public int Model {
@@ -22,14 +20,8 @@ namespace CarManagement.Models
             }
             set
             {
-                if (value>0)
-                {
-                    this.horsePower = value;
-                }
-                else
-                {
-                    throw new ArgumentException("value");
-                }
+                Asserts.isTrue(value>0);
+                this.horsePower = value;
             }
         }
         public bool IsStarted

@@ -29,9 +29,5 @@ namespace CarManagement.Models
         {
             this.openDoor = false;
         }
-
-        
-
-
     }
 }
