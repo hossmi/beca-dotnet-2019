@@ -39,6 +39,8 @@ namespace CarManagement.Models
             get => this.enrollment;
         }
 
+        public CarColor Color { get => this.color; }
+
         public Door[] Doors
         {
             get => this.doorList.ToArray();

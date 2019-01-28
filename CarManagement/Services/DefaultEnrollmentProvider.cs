@@ -6,12 +6,12 @@ namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        const char firstPossibleChar = 'B';
-        const char lastPossibleChar = 'Z';
+        const char FIRSTCHAR = 'B';
+        const char LASTCHAR = 'Z';
         const int lastValidChar = 20;
         private readonly char[] validLetterSequence = 
-            {firstPossibleChar,'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
-            'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', lastPossibleChar};
+            {FIRSTCHAR,'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
+            'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', LASTCHAR};
 
         private static int[] lastLettersTracker = new int[3];
         private static int nextIssuedNumber = 0;
