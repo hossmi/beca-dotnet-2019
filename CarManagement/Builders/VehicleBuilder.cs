@@ -25,15 +25,21 @@ namespace CarManagement.Builders
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
 
-        }
 
+        }
         public void addWheel()
         {
+
+            if(numberWheel >= 4)
+            {
+                throw new ArgumentException("You have enough Wheels.");
+            }
             this.numberWheel++;
         }
 
         public void setDoors(int doorsCount)
         {
+ 
             this.numberDoor = doorsCount;
         }
 
@@ -47,28 +53,30 @@ namespace CarManagement.Builders
             this.color = color;
         }
 
+        public List<T> generateList<T>(int numberItem) where T : class, new()
+        {
+            List<T> items = new List<T>();
+            for (int x = 0; x < numberItem; x++)
+            {
+                items.Add(new T());
+            }
+            return items;
+        }
+
         public Vehicle build()
         {
             //Generamos puertas
-            List<Door> doors = new List<Door>();
-            for (int x = 0; x < this.numberDoor; x++)
-            {
-                doors.Add(new Door());
-            }
-
+            List<Door> doors = generateList<Door>.
+ 
             //Generamos motor
             Engine engine = new Engine(this.engine);
 
             //Generamos ruedas
             List<Wheel> wheels = new List<Wheel>();
-            for (int x = 0; x < this.numberWheel; x++)
-            {
-                wheels.Add(new Wheel());
-            }
 
             //Generamos matricula
-            IEnrollmentProvider enrollmentget = new DefaultEnrollmentProvider(serial, number);
-            IEnrollment enrollment = enrollmentget.getNewEnrollment();
+
+            IEnrollment enrollment = enrollmentProvider .getNewEnrollment();
 
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
