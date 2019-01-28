@@ -27,7 +27,10 @@ namespace CarManagement.Builders
             Asserts.isTrue(counter < 4);
             counter++;
         }
-
+        public void removeWheel()
+        {
+            counter--;
+        }
         public void setDoors(int doorsCount)
         {
             D00rs = doorsCount;
@@ -62,11 +65,6 @@ namespace CarManagement.Builders
             }
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
-        }
-
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
         }
     }
 }
