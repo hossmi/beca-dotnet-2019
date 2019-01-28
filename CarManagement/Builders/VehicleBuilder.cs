@@ -76,5 +76,10 @@ namespace CarManagement.Builders
         {
             throw new NotImplementedException();
         }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
