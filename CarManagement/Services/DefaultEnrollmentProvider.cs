@@ -26,18 +26,13 @@ namespace CarManagement.Services
         }
                             
         private const int TAM_ARRAYS_LETTERS = 3;
-        private const int TAM_ARRAYS_NUMBERS = 4;
 
         private IEnrollment enrollment;
 
         private char[] letters =
         {
-            'A', 'A', 'A'
+            'B', 'B', 'B'
         };
-        /*private char[] numbers =
-        {
-            '0', '0', '0', '0'
-        };*/
         private int finalNumber = 0;
 
         public DefaultEnrollmentProvider()
@@ -64,25 +59,23 @@ namespace CarManagement.Services
         private string generateLetter()
         {
             string lettersAux;
-
+            
             for (int i = TAM_ARRAYS_LETTERS - 1; i > 0; i--)
             {
-                if(letters[i] == '0')
-                {
-                    letters[i] = 'A';
-                    lettersAux = new string(letters);
-                    return lettersAux;
-                }
-
                 if (letters[i] < 'Z')
                 {
+                    if((letters[i]++ == 'E') || (letters[i]++ == 'I') || (letters[i]++ == 'O') || 
+                        (letters[i]++ == 'Q') || (letters[i]++ == 'U'))
+                    {
+                        letters[i]++;
+                    }
                     letters[i]++;
                     lettersAux = new string(letters);
                     return lettersAux;
                 }
                 else if(letters[i] == 'Z')
                 {
-                    letters[i] = 'A';
+                    letters[i] = 'B';
                 }
             }
             lettersAux = new string(letters);
@@ -91,25 +84,6 @@ namespace CarManagement.Services
 
         private int generateNumber()
         {
-            /*string numbersAux;
-            int numberFinal;
-
-            for (int i = TAM_ARRAYS_NUMBERS - 1; i > 0; i--)
-            {
-                if (numbers[i] < '9')
-                {
-                    numbers[i]++;
-                    numbersAux = new string(numbers);
-                    numberFinal = int.Parse(numbersAux);
-                    return numberFinal;
-                }
-                else if (numbers[i] == '9')
-                {
-                    numbers[i] = '0';
-                }
-            }
-            numbersAux = new string(numbers);
-            numberFinal = int.Parse(numbersAux);*/
             finalNumber++;
 
             return finalNumber;
