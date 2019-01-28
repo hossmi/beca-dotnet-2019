@@ -25,7 +25,7 @@ namespace CarManagement.Services
         {
                 int Number = 0;
                 string Serial;
-                string A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                string A = "BCDFGHJKLMNPRSTUVWXYZ";
                 int lenght = A.Length - 1;
                 int i = 0;
                 int i2 = 0;
