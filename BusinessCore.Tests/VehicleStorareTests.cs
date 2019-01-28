@@ -62,23 +62,10 @@ namespace BusinessCore.Tests
             vehicleStorage = new InMemoryVehicleStorage();
             Assert.AreEqual(0, vehicleStorage.Count);
 
-            try
+            Negassert.mustFail(() =>
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
     }
 }
