@@ -32,7 +32,7 @@ namespace CarManagement.Services
  
         }
 
-        public Vehicle get(IEnrollment defaultEnrollment)
+        public Vehicle get(IEnrollment enrollment)
         {
             Vehicle vehicleValor;
             bool hasVehicle = vehicles.TryGetValue(defaultEnrollment, out vehicleValor);
@@ -40,7 +40,7 @@ namespace CarManagement.Services
             return vehicleValor;
         }
 
-        public void set(Vehicle motoVehicle)
+        public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(motoVehicle .Enrollment));
             this.vehicles.Add(motoVehicle.Enrollment, motoVehicle);

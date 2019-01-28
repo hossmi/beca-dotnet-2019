@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Services;
@@ -9,12 +10,20 @@ namespace BusinessCore.Tests
     [TestClass]
     public class VehicleStorareTests
     {
+        public string VehiclesFilePath
+        {
+            get
+            {
+                return Path.Combine(Environment.CurrentDirectory, "Vehicles.xml");
+            }
+        }
+
         [TestMethod]
         public void fileVehicleStorage_must_persists_vehicles()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage();
+            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath);
 
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
@@ -28,7 +37,7 @@ namespace BusinessCore.Tests
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
-            vehicleStorage = new FileVehicleStorage();
+            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath);
             Assert.AreEqual(1, vehicleStorage.Count);
 
             Vehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
@@ -62,23 +71,10 @@ namespace BusinessCore.Tests
             vehicleStorage = new InMemoryVehicleStorage();
             Assert.AreEqual(0, vehicleStorage.Count);
 
-            try
+            Negassert.mustFail(() =>
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
     }
 }
