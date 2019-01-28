@@ -5,7 +5,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         const int MAX_WHEELS = 4;
         private int wheelsCount;
@@ -78,6 +78,11 @@ namespace CarManagement.Builders
         {
             Engine engine = new Engine(power);
             return engine;
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
