@@ -4,7 +4,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private readonly IEnrollmentProvider enrollmentProvider;
 
@@ -38,6 +38,11 @@ namespace CarManagement.Builders
         }
 
         public Vehicle build()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void removeWheel()
         {
             throw new NotImplementedException();
         }

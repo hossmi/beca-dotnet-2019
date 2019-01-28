@@ -8,7 +8,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return true;
             }
         }
 

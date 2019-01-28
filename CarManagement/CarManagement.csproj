@@ -42,10 +42,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builders\Asserts.cs" />
+    <Compile Include="Builders\IVehicleBuilder.cs" />
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
     <Compile Include="Models\Engine.cs" />
+    <Compile Include="Models\IEnrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

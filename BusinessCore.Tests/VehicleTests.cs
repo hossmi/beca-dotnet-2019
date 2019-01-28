@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Services;
@@ -14,13 +15,12 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
-        private const string EVIL_ENROLLMENT = "XXX-0666";
 
         [TestMethod]
         public void builder_default_functionality()
         {
-            IEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider(EVIL_ENROLLMENT);
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -34,11 +34,11 @@ namespace BusinessCore.Tests
             Vehicle vehicle = builder.build();
 
             Assert.IsNotNull(vehicle);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));
+            Assert.IsNotNull(vehicle.Enrollment);
             Assert.AreEqual(2, vehicle.DoorsCount);
             Assert.AreEqual(4, vehicle.WheelCount);
 
-            Assert.AreEqual(EVIL_ENROLLMENT, vehicle.Enrollment);
+            Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
 
             // propiedad de solo lectura 
             // propiedad: array Door
@@ -69,7 +69,7 @@ namespace BusinessCore.Tests
         public void cannot_create_the_same_vechicle_twice()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -90,8 +90,16 @@ namespace BusinessCore.Tests
         public void cannot_add_more_than_4_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
@@ -120,7 +128,7 @@ namespace BusinessCore.Tests
         public void cannot_create_vehicle_without_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             try
             {
@@ -166,7 +174,7 @@ namespace BusinessCore.Tests
         public void enrollment_must_be_always_the_same()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -178,16 +186,32 @@ namespace BusinessCore.Tests
             builder.setColor(CarColor.Red);
 
             Vehicle vehicle = builder.build();
-            string enrollment1 = vehicle.Enrollment;
-            string enrollment2 = vehicle.Enrollment;
+            IEnrollment enrollment1 = vehicle.Enrollment;
+            IEnrollment enrollment2 = vehicle.Enrollment;
             Assert.AreEqual(enrollment1, enrollment2);
+            Assert.AreEqual(enrollment1.ToString(), enrollment2.ToString());
+        }
+
+        [TestMethod]
+        public void enrollments_must_complaint_requested_format()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+
+            Regex fullRegex = new Regex("[A-Z][A-Z][A-Z]-[0-9][0-9][0-9][0-9]");
+            Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
+
+            Regex serialRegex = new Regex("[A-Z][A-Z][A-Z]");
+            Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
+
+            Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);
         }
 
         private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
-            IDictionary<string, Vehicle> vehicles = new Dictionary<string, Vehicle>();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
             builder.addWheel();
             builder.addWheel();
