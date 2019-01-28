@@ -1,23 +1,29 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Builders;
+using CarManagement.Models;
 using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : IVehicleStorage
     {
-        static IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+        private IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
         public int Count
         {
             get
             {
-                return this.vehicles.Count;
+                return vehicles.Count;
             }
         }
 
         public Vehicle get(IEnrollment defaultEnrollment)
         {
-            throw new System.NotImplementedException();
+            Asserts.isTrue(vehicles.Count > 0,"La lista de vehiculos esta vacia");
+
+            Vehicle vehicle;
+            Asserts.isTrue(vehicles.TryGetValue(defaultEnrollment,out vehicle),"No se encuentra el vehiculo");
+
+            return vehicle;
         }
 
         public void set(Vehicle motoVehicle)
