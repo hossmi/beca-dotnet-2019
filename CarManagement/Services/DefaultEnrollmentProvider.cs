@@ -5,16 +5,16 @@ namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        private int number1;
-        private int number2;
-        private int number3;
-        private int number4;
+        private int letter1;
+        private int letter2;
+        private int letter3;
+        private int number;
         public DefaultEnrollmentProvider()
         {
-            this.number1 = -1;
-            this.number2 = -1;
-            this.number3 = -1;
-            this.number4 = -1;
+            this.letter1 = 65;
+            this.letter2 = 65;
+            this.letter3 = 65;
+            this.number = -1;
         }
 
     
@@ -39,43 +39,37 @@ namespace CarManagement.Services
         }
 
 
-        public DefaultEnrollmentProvider(string serial, int number)
-        {
-            this.number1 = -1;
-            this.number2 = -1;
-            this.number3 = -1;
-            this.number4 = -1;
-        }
+ 
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
-            if (number4 <= 9999)
+            if (number <= 9999)
             {
-                number4++;
+                number++;
             }
             else
             {
-                number4 = 0;
-                if (number3 <= 26)
+                number = 0;
+                if (letter3 <= 91)
                 {
-                    number3++;
+                    letter3++;
                 }
                 else
                 {
-                    number4 = 0;
-                    number3 = 0;
-                    if (number2 <= 26)
+                    number = 0;
+                    letter3 = 0;
+                    if (letter2 <= 91)
                     {
-                        number2++;
+                        letter2++;
                     }
                     else
                     {
-                        number4 = 0;
-                        number3 = 0;
-                        number2 = 0;
-                        if (number1 <= 26)
+                        number = 0;
+                        letter3 = 0;
+                        letter2 = 0;
+                        if (letter1 <= 91)
                         {
-                            number1++;
+                            letter1++;
                         }
                         else
                         {
@@ -84,11 +78,8 @@ namespace CarManagement.Services
                     }
                 }
             }
-            number1 += 65;
-            number2 += 65;
-            number3 += 65;
-            string serial = (((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString();
-            return new Enrollment(serial, number4);
+            string serial = ((Char)(letter1)).ToString() + ((Char)(letter2)).ToString() + ((Char)(letter3)).ToString();
+            return new Enrollment(serial, this.number);
         }
 
     }

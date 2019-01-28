@@ -35,7 +35,6 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isTrue(numberDoor < 2);
             this.numberDoor = doorsCount;
         }
 
@@ -69,6 +68,7 @@ namespace CarManagement.Builders
 
             //Generamos ruedas
 
+            Asserts.isTrue(this.numberWheel > 0);
             List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
 
             //Generamos matricula
