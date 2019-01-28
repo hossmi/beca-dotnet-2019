@@ -25,7 +25,10 @@ namespace CarManagement.Services
             }
         }
                             
-        private const int TAM_ARRAYS = 4;
+        private const int TAM_ARRAYS_LETTERS = 3;
+        private const int TAM_ARRAYS_NUMBERS = 4;
+
+        private IEnrollment enrollment;
 
         private char[] letters =
         {
@@ -38,27 +41,30 @@ namespace CarManagement.Services
 
         public DefaultEnrollmentProvider()
         {
-            this.NewEnrollment = new Enrollment(serial: generateLetter(), number: generateNumber());
         }
 
-        public IEnrollment NewEnrollment { get; }
+        public IEnrollment NewEnrollment {
+            get
+            {
+                return enrollment;
+            }
+            set
+            {
+                enrollment = value;
+            }
+                }
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
-            /*string result = "";
-
-            result = generateLetter() + "-" + generateNumber();            
-
-            return result;*/
-
-            return this.NewEnrollment;
+            this.enrollment = new Enrollment(generateLetter(), generateNumber());
+            return this.enrollment;
         }
 
         private string generateLetter()
         {
             string lettersAux;
 
-            for (int i = TAM_ARRAYS - 1; i > 0; i--)
+            for (int i = TAM_ARRAYS_LETTERS - 1; i > 0; i--)
             {
                 if(letters[i] == '0')
                 {
@@ -84,15 +90,17 @@ namespace CarManagement.Services
 
         private int generateNumber()
         {
-            /*string numbersAux;
+            string numbersAux;
+            int numberFinal;
 
-            for (int i = TAM_ARRAYS - 1; i > 0; i--)
+            for (int i = TAM_ARRAYS_NUMBERS - 1; i > 0; i--)
             {
                 if (numbers[i] < '9')
                 {
                     numbers[i]++;
                     numbersAux = new string(numbers);
-                    return numbersAux;
+                    numberFinal = int.Parse(numbersAux);
+                    return numberFinal;
                 }
                 else if (numbers[i] == '9')
                 {
@@ -100,8 +108,8 @@ namespace CarManagement.Services
                 }
             }
             numbersAux = new string(numbers);
-            return numbersAux;*/
-            return 0000;
+            numberFinal = int.Parse(numbersAux);
+            return numberFinal;
         }
 
     }
