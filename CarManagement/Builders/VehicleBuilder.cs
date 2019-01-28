@@ -66,13 +66,13 @@ namespace CarManagement.Builders
         public Vehicle build()
         {
             //Generamos puertas
-            List<Door> doors = generateList<Door>.
- 
+            List<Door> doors = generateList<Door>(this.numberDoor);
+
             //Generamos motor
             Engine engine = new Engine(this.engine);
 
             //Generamos ruedas
-            List<Wheel> wheels = new List<Wheel>();
+            List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
 
             //Generamos matricula
 
