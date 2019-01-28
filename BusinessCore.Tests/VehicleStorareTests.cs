@@ -16,13 +16,15 @@ namespace BusinessCore.Tests
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IVehicleStorage vehicleStorage = new FileVehicleStorage();
 
+            vehicleStorage.clear();
+            Assert.AreEqual(0, vehicleStorage.Count);
+
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
             vehicleBuilder.setDoors(0);
             vehicleBuilder.setEngine(40);
             Vehicle motoVehicle = vehicleBuilder.build();
 
-            Assert.AreEqual(0, vehicleStorage.Count);
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
