@@ -5,7 +5,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private CarColor color;
         private int numberWheels;
@@ -70,6 +70,11 @@ namespace CarManagement.Builders
 
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
             return vehicle;
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
