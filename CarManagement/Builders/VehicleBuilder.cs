@@ -5,7 +5,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private int Horseporwer;
         private List<Door> doors;
@@ -62,6 +62,11 @@ namespace CarManagement.Builders
             }
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
