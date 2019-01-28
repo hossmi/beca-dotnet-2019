@@ -1,10 +1,19 @@
 ﻿using CarManagement.Models;
+using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : IVehicleStorage
     {
-        public int Count { get; }
+        static IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
 
         public Vehicle get(IEnrollment defaultEnrollment)
         {
@@ -13,7 +22,7 @@ namespace CarManagement.Services
 
         public void set(Vehicle motoVehicle)
         {
-            throw new System.NotImplementedException();
+            vehicles.Add(motoVehicle.Enrollment, motoVehicle);
         }
     }
 }
