@@ -9,6 +9,7 @@ namespace CarManagement.Services
         private int number2;
         private int number3;
         private int number4;
+        private string letters;
       
 
         private class Enrollment : IEnrollment
@@ -34,6 +35,7 @@ namespace CarManagement.Services
             this.number2 = -1;
             this.number3 = -1;
             this.number4 = -1;
+            this.letters = "BCDFGHJKLMNPRSTVWXYZ";//20 dígitos
         }
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
@@ -45,7 +47,7 @@ namespace CarManagement.Services
             else
             {
                 number4 = 0;
-                if (number3 <= 26)
+                if (number3 <= 0)
                 {
                     number3++;
                 }
@@ -53,7 +55,7 @@ namespace CarManagement.Services
                 {
                     number4 = 0;
                     number3 = 0;
-                    if (number2 <= 26)
+                    if (number2 <= 91)
                     {
                         number2++;
                     }
@@ -62,7 +64,7 @@ namespace CarManagement.Services
                         number4 = 0;
                         number3 = 0;
                         number2 = 0;
-                        if (number1 <= 26)
+                        if (number1 <= 91)
                         {
                             number1++;
                         }
@@ -73,11 +75,9 @@ namespace CarManagement.Services
                     }
                 }
             }
-            number1 += 65;
-            number2 += 65;
-            number3 += 65;
+            string letters = ((Char)(number1)).ToString() + ((Char)(number2)).ToString() + ((Char)(number3)).ToString();
 
-            return new Enrollment((((Char)(number1)) + ((Char)(number2)) + (Char)(number3)).ToString(),  number4);
+            return new Enrollment(letters,  number4);
         }
     }
 }
