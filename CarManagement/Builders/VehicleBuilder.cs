@@ -29,17 +29,13 @@ namespace CarManagement.Builders
         }
         public void addWheel()
         {
-
-            if(numberWheel >= 4)
-            {
-                throw new ArgumentException("You have enough Wheels.");
-            }
+            Asserts.isTrue(numberWheel < 4);
             this.numberWheel++;
         }
 
         public void setDoors(int doorsCount)
         {
- 
+            Asserts.isTrue(numberDoor < 2);
             this.numberDoor = doorsCount;
         }
 
@@ -72,6 +68,7 @@ namespace CarManagement.Builders
             Engine engine = new Engine(this.engine);
 
             //Generamos ruedas
+
             List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
 
             //Generamos matricula
