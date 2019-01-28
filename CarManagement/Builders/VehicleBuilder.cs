@@ -7,9 +7,12 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
-        private List<Door> doors = new List<Door>();
-        private List<Wheel> wheels = new List<Wheel>();
-        private Engine engine = new Engine();
+        private int counter;
+        private int D00rs;
+        private int horsePorwer;
+        private List<Door> doors;
+        private List<Wheel> wheels;
+        private Engine engine;
         private CarColor color;
         private IEnrollmentProvider enrollmentProvider;
 
@@ -20,32 +23,39 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Wheel wheel = new Wheel();
-            wheels.Add(wheel);
+            counter++;
         }
 
         public void setDoors(int doorsCount)
         {
-            for(int i=0;i< doorsCount;i++)
-            {
-                Door door = new Door();
-                doors.Add(door);
-            }
+            D00rs = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            engine.Horsepower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            this.color = color;
         }
 
         public Vehicle build()
         {
             Vehicle vehicle = new Vehicle();
+            wheels = new List<Wheel>();
+            doors = new List<Door>();
+            engine = new Engine();
+            engine.Horsepower = horsePorwer;
+            for (int i = 0; i < counter; i++)
+            {
+                Wheel wheel = new Wheel();
+                wheels.Add(wheel);
+            }
+            for (int i = 0; i < D00rs; i++)
+            {
+                Door door = new Door();
+                doors.Add(door);
+            }
             vehicle.carcolor = this.color;
             vehicle.cardoor = this.doors;
             vehicle.carwheel = this.wheels;
