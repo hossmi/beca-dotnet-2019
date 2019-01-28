@@ -31,6 +31,12 @@ namespace CarManagement.Builders
             
         }
 
+        public void removeWheel()
+        {
+            Asserts.isTrue(this.numberWheel >0);
+            this.numberWheel--;
+        }
+
         public void setDoors(int doorsCount)
         {
             this.numberDoor = doorsCount;
@@ -77,9 +83,5 @@ namespace CarManagement.Builders
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
 
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
