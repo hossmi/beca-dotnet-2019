@@ -59,10 +59,14 @@ namespace CarManagement.Builders
             this.wheelList.Add(new Wheel());
         }
 
+        //public void removeWheel(Wheel wheel = null)
         public void removeWheel()
         {
             Asserts.isTrue(wheelList.Count() > 0, "Cannot remove from none wheels");
-            this.wheelList.Remove(wheelList.Last());
+
+            //wheel = this.wheelList.Last();
+            //this.wheelList.Remove(wheel);
+            this.wheelList.Remove(this.wheelList.Last());
         }
 
         public void setDoors(int doorsCount)
