@@ -8,7 +8,7 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment defaultEnrollment)
         {
-            throw new System.NotImplementedException();
+            
         }
 
         public void set(Vehicle motoVehicle)
