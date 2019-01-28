@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Models;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -25,7 +27,7 @@ namespace CarManagement.Services
         public void clear()
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
+            //writeToFile(this.filePath);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -36,18 +38,26 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
+            //writeToFile(this.filePath);
+            
         }
 
         private void writeToFile(string filePath)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            throw new NotImplementedException();
+
+            //XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDto));
+            //VehicleDto vehicleDto = new VehicleDto();
+
+            //TextWriter vehiclesWriter = new StreamWriter(filePath);
+            //xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
+            //vehiclesWriter.Close();
         }
 
         private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
+            //TextReader vehiclesReader = new StreamReader(fileFullPath);
         }
 
     }
