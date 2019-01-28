@@ -26,7 +26,7 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(this.numberWheel >= 4);
+            Asserts.isTrue(this.numberWheel < 4);
             this.numberWheel++;
             
         }
