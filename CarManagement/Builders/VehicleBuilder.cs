@@ -25,19 +25,19 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(this.wheelsCount < MAX_WHEELS);
+            Asserts.isTrue(this.wheelsCount < MAX_WHEELS, "Maximum number of wheels reached. Cannot add more wheels.");
             this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isTrue(doorsCount > 0);
+            Asserts.isTrue(doorsCount >= 0,"Cannot create a vehicle with negative doors");
             this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer > 0);
+            Asserts.isTrue(horsePorwer > 0, "Cannot create an engine with 0 or less Horse Power.");
             this.enginePower = horsePorwer;
         }
 
@@ -45,7 +45,7 @@ namespace CarManagement.Builders
         {
             //if (Enum.IsDefined(typeof(CarColor), color) == false)
             //    throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
-            Asserts.isEnumDefined<CarColor>(color);
+            Asserts.isEnumDefined<CarColor>(color,"The selected color does not match.");
             this.colorCode = color;
         }
 
@@ -82,7 +82,8 @@ namespace CarManagement.Builders
 
         public void removeWheel()
         {
-            throw new NotImplementedException();
+            Asserts.isTrue(this.wheelsCount > 0, "The vehicle does not have any more wheels to remove.");
+            this.wheelsCount--;
         }
     }
 }

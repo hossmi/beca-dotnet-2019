@@ -226,12 +226,13 @@ namespace BusinessCore.Tests
             for (int i = 0; i < numberOfVehicles; i++)
             {
                 Vehicle vehicle = builder.build();
-                Debug.Print(vehicle.Enrollment.ToString());
+                //Debug.Print(vehicle.Enrollment.ToString());
                 Assert.IsFalse(vehicles.ContainsKey(vehicle.Enrollment));
                 vehicles.Add(vehicle.Enrollment, vehicle);
                 //Debug.Print(i.ToString());
                 Assert.IsTrue(stopwatch.Elapsed < maxTime);
             }
+
         }
 
     }

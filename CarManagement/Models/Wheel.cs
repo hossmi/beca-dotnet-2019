@@ -15,14 +15,14 @@ namespace CarManagement.Models
         {
             get
             {
-                return pressure;
+                return this.pressure;
             }
         }
 
         public void FillWheel(double pression)
         {
-            Asserts.isTrue(pression > 0);
-            pressure = pression;
+            Asserts.isTrue(pression > 0,"Cannot set pressure lower than 0");
+            this.pressure = pression;
         }
     }
 }

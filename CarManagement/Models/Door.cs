@@ -11,28 +11,14 @@ namespace CarManagement.Models
 
         public void open()
         {
-            try
-            {
-                this.isOpen = true;
-            }
-            catch (Exception)
-            {
-                Asserts.isTrue(isOpen, "Error en la apertura de puerta");
-                this.isOpen = false;
-            }
+            Asserts.isFalse(this.isOpen,"Door is already open.");
+            this.isOpen = true;
         }
 
         public void close()
         {
-            try
-            {
-                this.isOpen = false;
-            }
-            catch (Exception)
-            {
-                Asserts.isFalse(isOpen, "Error en el cierre de puerta");
-                this.isOpen = true;
-            }
+            Asserts.isTrue(this.isOpen,"Door is already close.");
+            this.isOpen = false;
         }
 
         public bool IsOpen

@@ -25,7 +25,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return doors.ToArray();
+                return this.doors.ToArray();
             }
 
         }
@@ -33,7 +33,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.ToArray();
+                return this.wheels.ToArray();
             }
 
         }
@@ -42,7 +42,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return doors.Count;
+                return this.doors.Count;
             }
         }
 
@@ -50,7 +50,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.Count;
+                return this.wheels.Count;
             }
         }
 
@@ -58,7 +58,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return engine;
+                return this.engine;
             }
         }
 
@@ -66,7 +66,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return enrollment;
+                return this.enrollment;
             }
         }
         
@@ -74,7 +74,7 @@ namespace CarManagement.Models
         {
             set
             {
-                wheels = value;
+                this.wheels = value;
             }
         }
 
@@ -82,7 +82,7 @@ namespace CarManagement.Models
         {
             set
             {
-                doors = value;
+                this.doors = value;
             }
         }
 
@@ -90,14 +90,14 @@ namespace CarManagement.Models
         {
             set
             {
-                engine = value;
+                this.engine = value;
             }
         }
         public CarColor SetCarColor
         {
             set
             {
-                color = value;
+                this.color = value;
             }
         }
 
@@ -113,7 +113,7 @@ namespace CarManagement.Models
         {
             set
             {
-                enrollment = value;
+                this.enrollment = value;
             }
         }
     }
