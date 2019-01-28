@@ -69,7 +69,7 @@ namespace CarManagement.Builders
 
         public void removeWheel()
         {
-            throw new NotImplementedException();
+            wheelsCount--;
         }
     }
 }
