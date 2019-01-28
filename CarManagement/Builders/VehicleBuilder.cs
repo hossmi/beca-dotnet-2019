@@ -86,9 +86,6 @@ namespace CarManagement.Builders
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
 
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
