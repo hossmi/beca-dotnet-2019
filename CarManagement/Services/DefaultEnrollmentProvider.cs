@@ -1,37 +1,45 @@
 ﻿using CarManagement.Builders;
 using CarManagement.Models;
+using System.Diagnostics;
 
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        const char FIRSTCHAR = 'A';
-        const char LASTCHAR = 'Z';
+        const char firstPossibleChar = 'B';
+        const char lastPossibleChar = 'Z';
+        const int lastValidChar = 20;
+        private readonly char[] validLetterSequence = 
+            {firstPossibleChar,'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
+            'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', lastPossibleChar};
 
+        private static int[] lastLettersTracker = new int[3];
         private static int nextIssuedNumber = 0;
-        public static readonly char locale = 'A';
-        private static char[] lastIssuedLetters = new char[] {FIRSTCHAR, FIRSTCHAR};
 
-        static public string LastIssuedEnrollment
-        { get => $"{locale}{lastIssuedLetters[1]}{lastIssuedLetters[0]}-{nextIssuedNumber-1}"; }
-
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        public IEnrollment getNewEnrollment()
         {
             if(nextIssuedNumber > 9999)
             {
-                nextIssuedNumber = nextIssuedNumber % 10000;
+                nextIssuedNumber = 0;
 
-                if (lastIssuedLetters[0] == LASTCHAR)
+                if(++lastLettersTracker[0] > lastValidChar)
                 {
-                    lastIssuedLetters[0] = FIRSTCHAR;
-                    Asserts.isTrue(lastIssuedLetters[1] != LASTCHAR, "Number of enrollments issued reached the limit.");
-                    lastIssuedLetters[1]++;
+                    lastLettersTracker[0] = 0;
+
+                    if (++lastLettersTracker[1] > lastValidChar)
+                    {
+                        lastLettersTracker[1] = 0;
+
+                        Asserts.isTrue(++lastLettersTracker[2] < lastValidChar,"Limit of enrollments reached");
+                    }
                 }
-                else
-                    lastIssuedLetters[0]++;
             }
 
-            return new Enrollment(nextIssuedNumber++, $"{locale}{lastIssuedLetters[1]}{lastIssuedLetters[0]}");
+            string toIssuedSerial = $"{validLetterSequence[lastLettersTracker[2]]}{validLetterSequence[lastLettersTracker[1]]}{validLetterSequence[lastLettersTracker[0]]}";
+            
+            //Debug.WriteLine(toIssuedSerial);
+
+            return new Enrollment(nextIssuedNumber++, toIssuedSerial);
         }
     }
 }

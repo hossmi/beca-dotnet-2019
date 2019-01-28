@@ -64,7 +64,7 @@ namespace CarManagement.Builders
         {
             Asserts.isTrue(wheelList.Count() > 0, "Cannot remove from none wheels");
 
-            //wheel = this.wheelList.Last();
+            //wheel = wheel ?? this.wheelList.Last();
             //this.wheelList.Remove(wheel);
             this.wheelList.Remove(this.wheelList.Last());
         }
