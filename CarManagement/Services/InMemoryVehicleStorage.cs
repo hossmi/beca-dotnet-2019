@@ -23,21 +23,6 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment defaultEnrollment)
         {
-            /*bool exist = false;
-            int position = 0;
-
-            for (int i = 0; i < Count && !exist; i++)
-            {
-                if(vehicles[i].Enrollment == defaultEnrollment)
-                {
-                    exist = true;
-                    position = i;
-                }
-            }
-
-            Asserts.isTrue(exist);
-            return vehicles[position];*/
-
             Vehicle vehicle;
             bool exists = vehicles.TryGetValue(defaultEnrollment, out vehicle);
             Asserts.isTrue(exists);
