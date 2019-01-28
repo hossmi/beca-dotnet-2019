@@ -22,14 +22,14 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if(numberWheels < 4)
-            {
-                numberWheels++;
-            }
-            else
-            {
-                throw new Exception("No more wheels can be added");
-            }
+            Asserts.isTrue(numberWheels < 4);
+            numberWheels++;
+        }
+
+        public void removeWheel()
+        {
+            Asserts.isTrue(numberWheels > 0);
+            numberWheels--;
         }
 
         public void setDoors(int doorsCount)
@@ -62,7 +62,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            Asserts.isTrue(numberWheels > 0);
+            Asserts.isTrue(0 < numberWheels && numberWheels <= 4);
 
             Engine engine = new Engine(this.horsePorwer);
             List<Door> doors = create<Door>(this.numberDoors);
@@ -72,14 +72,6 @@ namespace CarManagement.Builders
             return vehicle;
         }
 
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
