@@ -4,21 +4,28 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private string engineType;
+        private int horsePower;
+        private bool startedEngine;
+        public Engine(int horsePower)
+        {
+            startedEngine = false;
+            engineType = "VR";
+            this.horsePower = horsePower;
 
-        private string engineType = "VR";
-        private string engineType1 = "Rotary";
+        }
 
         public bool IsStarted
         {
             get
             {
-                throw new NotImplementedException();
+                return startedEngine;
             }
         }
 
         public void start()
         {
-            throw new NotImplementedException();
+            startedEngine = true;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Services;
 
@@ -17,8 +18,10 @@ namespace CarManagement.Builders
         private int numDoors;
         private int horsePower;
         private CarColor color;
+        private IEnrollment enrollment;
         public void addWheel()
         {
+            Asserts.isTrue(numWheels < 4);
             this.numWheels++;
         }
 
@@ -33,13 +36,21 @@ namespace CarManagement.Builders
         }
 
         public void setColor(CarColor color)
-        {
+        { 
             this.color = color;
         }
 
+
         public Vehicle build()
         {
-            throw new NotImplementedException();
+            List<Wheel> wheel = new List<Wheel>();
+            List<Door> door = new List<Door>();
+            Engine engine = new Engine(horsePower);
+            Vehicle vehicle = new Vehicle(wheel, door, engine, color, enrollment);
+            {
+
+            }
+            return vehicle;
         }
 
         public void removeWheel()

@@ -1,21 +1,22 @@
-﻿using System;
+﻿using CarManagement.Builders;
+using System;
 
 namespace CarManagement.Models
 {
     public class Wheel
     {
-        private string brand;
-        private double height;
-        private double width;
+        
+        private double pressure;
         public double Pressure
         {
             get
             {
-                throw new NotImplementedException();
+                return pressure;
             }
             set
             {
-                throw new NotImplementedException();
+                Asserts.isTrue(value > 0);
+                pressure = value;
             }
         }
     }
