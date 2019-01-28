@@ -32,12 +32,13 @@ namespace CarManagement.Services
 
         private char[] letters =
         {
-            '0', 'A', 'A', 'A'
+            'A', 'A', 'A'
         };
-        private char[] numbers =
+        /*private char[] numbers =
         {
             '0', '0', '0', '0'
-        };
+        };*/
+        private int finalNumber = 0;
 
         public DefaultEnrollmentProvider()
         {
@@ -90,7 +91,7 @@ namespace CarManagement.Services
 
         private int generateNumber()
         {
-            string numbersAux;
+            /*string numbersAux;
             int numberFinal;
 
             for (int i = TAM_ARRAYS_NUMBERS - 1; i > 0; i--)
@@ -108,8 +109,10 @@ namespace CarManagement.Services
                 }
             }
             numbersAux = new string(numbers);
-            numberFinal = int.Parse(numbersAux);
-            return numberFinal;
+            numberFinal = int.Parse(numbersAux);*/
+            finalNumber++;
+
+            return finalNumber;
         }
 
     }
