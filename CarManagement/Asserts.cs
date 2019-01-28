@@ -59,5 +59,11 @@ namespace CarManagement
             isTrue(typeof(TItem).IsEnum, "Parameter value is no an enum.");
             isTrue(Enum.IsDefined(typeof(TItem), value), message);
         }
+
+        public static void fail(string message = null)
+        {
+            message = message ?? ASSERT_FAILED_MESSAGE;
+            throw new AssertsException(message);
+        }
     }
 }
