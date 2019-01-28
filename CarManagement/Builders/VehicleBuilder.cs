@@ -6,7 +6,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private readonly IEnrollmentProvider enrollmentProvider;
         
@@ -98,6 +98,11 @@ namespace CarManagement.Builders
 
             return new Vehicle(this.EngineClone, this.DoorListClone,
                 this.WheelListClone, this.Color, toProvideEnrollment );
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }
