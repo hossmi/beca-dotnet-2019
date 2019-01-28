@@ -10,66 +10,6 @@ namespace CarManagement.Models
         private Engine engine = new Engine();
         private CarColor color;
 
-        public string Abc()
-        {
-            string A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            int lenght = A.Length - 1;
-            int i = 0;
-            int i2 = 0;
-            int i3 = 0;
-            int numi = 0;
-            int numo = 9999;
-            string exit = "";
-
-            while (i <= lenght)
-            {
-                
-                string numi2 = numi.ToString();
-                int countnumi = numi2.Length;
-                if (countnumi == 1)
-                {
-                    exit = A[i] + A[i2] + A[i3] + " - 000" + numi;
-                }
-                else if (countnumi == 2)
-                {
-                    exit = A[i] + A[i2] + A[i3] + " - 00" + numi;
-                }
-                else if (countnumi == 3)
-                {
-                    exit = A[i] + A[i2] + A[i3] + " - 0" + numi;
-                }
-                else if (countnumi == 4)
-                {
-                    exit = A[i] + A[i2] + A[i3] + " - " + numi;
-                }
-                if (numi == numo)
-                {
-                    if (i2 >= lenght && i3 == lenght)
-                    {
-                        i2 = 0;
-                        i3 = 0;
-                        i++;
-                    }
-                    if (i3 == lenght)
-                    {
-                        i3 = 0;
-                        i2++;
-                    }
-                    else
-                    {
-                        i3++;
-                        numi = 0;
-                    }
-                }
-                else
-                {
-                    numi++;
-                }
-            }
-            return exit;
-        }
-
-
         public List<Wheel> carwheel
         {
             set
