@@ -12,10 +12,10 @@ namespace CarManagement.Models
         private List<Wheel> wheelList;
         private CarColor color;
 
-        private readonly string enrollment;
+        private readonly IEnrollment enrollment;
 
         public Vehicle(Engine engine, List<Door> doorList,
-            List<Wheel> wheelList, CarColor color, string enrollment)
+            List<Wheel> wheelList, CarColor color, IEnrollment enrollment)
         {
             this.Engine = engine;
             this.doorList = doorList;
