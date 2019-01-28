@@ -21,7 +21,7 @@ namespace BusinessCore.Tests
         public void builder_default_functionality()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -70,7 +70,7 @@ namespace BusinessCore.Tests
         public void cannot_create_the_same_vechicle_twice()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -91,8 +91,16 @@ namespace BusinessCore.Tests
         public void cannot_add_more_than_4_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
@@ -121,7 +129,7 @@ namespace BusinessCore.Tests
         public void cannot_create_vehicle_without_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             try
             {
@@ -167,7 +175,7 @@ namespace BusinessCore.Tests
         public void enrollment_must_be_always_the_same()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -203,7 +211,7 @@ namespace BusinessCore.Tests
         private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
             builder.addWheel();
