@@ -198,10 +198,10 @@ namespace BusinessCore.Tests
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
 
-            Regex fullRegex = new Regex("[A-Z][A-Z][A-Z]-[0-9][0-9][0-9][0-9]");
+            Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ]-[0-9][0-9][0-9][0-9]");
             Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
 
-            Regex serialRegex = new Regex("[A-Z][A-Z][A-Z]");
+            Regex serialRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ][BCDFGHJKLMNPRSTVWXYZ]");
             Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
 
             Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);
