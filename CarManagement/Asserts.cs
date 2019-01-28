@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CarManagement.Builders
+namespace CarManagement
 {
     class Asserts
     {
