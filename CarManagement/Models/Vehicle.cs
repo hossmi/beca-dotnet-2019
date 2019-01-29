@@ -20,9 +20,7 @@ namespace CarManagement.Models
             this.color = color;
             this.enrollment = enrollment;
         }
-
-        
-
+                
         public int DoorsCount
         {
             get

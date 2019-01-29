@@ -34,12 +34,7 @@ namespace CarManagement.Services
             'B', 'B', 'B'
         };
         private int finalNumber = 0;
-
-        /*public DefaultEnrollmentProvider(IEnrollmentProvider enrollment)
-        {
-            this.enrollment = new Enrollment(enrollment.Serial, enrollment.Number);
-        }*/
-
+        
         public IEnrollment NewEnrollment {
             get
             {

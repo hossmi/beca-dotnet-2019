@@ -20,15 +20,20 @@ namespace CarManagement.Services
 
         public EngineDto convert(Engine engine)
         {
-            EngineDto engineDto = new EngineDto();
-            engineDto.HorsePower = engine.HorsePorwer;
-            engineDto.IsStarted = engine.IsStarted;
+            EngineDto engineDto = new EngineDto
+            {
+                HorsePower = engine.HorsePorwer,
+                IsStarted = engine.IsStarted
+            };
 
             return engineDto;
         }
 
         public Vehicle convert(VehicleDto vehicleDto)
         {
+            //public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
+            //Vehicle vehicle = new Vehicle(vehicleDto.Wheels, vehicleDto.Doors, vehicleDto.Engine, vehicleDto.Color, vehicleDto.Enrollment);
+
             throw new System.NotImplementedException();
         }
 
@@ -53,20 +58,32 @@ namespace CarManagement.Services
 
         public DoorDto convert(Door door)
         {
-            DoorDto doorDto = new DoorDto();
-            doorDto.IsOpen = door.IsOpen;
+            DoorDto doorDto = new DoorDto
+            {
+                IsOpen = door.IsOpen
+            };
 
             return doorDto;
         }
 
         public Wheel convert(WheelDto wheelDto)
         {
-            throw new System.NotImplementedException();
+            Wheel wheel = new Wheel
+            {
+                Pressure = wheelDto.Pressure
+            };
+
+            return wheel;
         }
 
         public WheelDto convert(Wheel wheel)
         {
-            throw new System.NotImplementedException();
+            WheelDto wheelDto = new WheelDto
+            {
+                Pressure = wheel.Pressure
+            };
+
+            return wheelDto;
         }
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
@@ -76,8 +93,10 @@ namespace CarManagement.Services
 
         public EnrollmentDto convert(IEnrollment enrollment)
         {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Serial = enrollment.Serial;
+            EnrollmentDto enrollmentDto = new EnrollmentDto
+            {
+                Serial = enrollment.Serial
+            };
             enrollmentDto.Number = enrollmentDto.Number;
 
             return enrollmentDto;

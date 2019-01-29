@@ -20,7 +20,7 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count => throw new NotImplementedException();
+        public int Count => this.vehicles.Count;
 
         public void clear()
         {
@@ -29,8 +29,7 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle vehicle;
-            bool exists = vehicles.TryGetValue(enrollment, out vehicle);
+            bool exists = vehicles.TryGetValue(enrollment, out Vehicle vehicle);
             Asserts.isTrue(exists);
 
             return vehicle;
@@ -65,7 +64,8 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+            IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(equalityComparer);
 
             if (File.Exists(fileFullPath))
             {
