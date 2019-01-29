@@ -27,7 +27,7 @@ namespace CarManagement.Services
 
             foreach (Vehicle T in list_vehicle)
             {
-                if(enrollment == T.Enrollment);
+                if(enrollment == T.Enrollment)
                 {
                     vehicleFound = true;
                     T2 = T;
