@@ -40,5 +40,8 @@ namespace CarManagement.Services
             this.vehicles.Add(vehicle.Enrollment, vehicle);
             save();
         }
+
+        protected abstract IDictionary<IEnrollment, Vehicle> load();
+        protected abstract void save();
     }
 }
