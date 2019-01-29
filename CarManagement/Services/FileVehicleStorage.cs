@@ -8,19 +8,17 @@ namespace CarManagement.Services
     public class FileVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public int Count { get; }
-
-        public FileVehicleStorage(string fileFullPath)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-
-            if (File.Exists(fileFullPath))
-                this.vehicles = readFromFile(fileFullPath);
-            else
-                this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+            this.vehicles = readFromFile(fileFullPath);
+            this.dtoConverter = dtoConverter;
         }
+
+        public int Count { get; }
 
         public void clear()
         {

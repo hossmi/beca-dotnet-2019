@@ -23,7 +23,8 @@ namespace BusinessCore.Tests
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath);
+            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
+            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
 
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
@@ -37,7 +38,7 @@ namespace BusinessCore.Tests
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
-            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath);
+            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
             Assert.AreEqual(1, vehicleStorage.Count);
 
             Vehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
