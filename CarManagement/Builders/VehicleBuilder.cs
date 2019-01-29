@@ -13,8 +13,8 @@ namespace CarManagement.Builders
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
-        int number = 0;
-        string serial = "";
+        //int number = 0;
+        //string serial = "";
 
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
@@ -83,6 +83,7 @@ namespace CarManagement.Builders
             IEnrollment enrollment = enrollmentProvider .getNew();
 
             //Generamos coche
+
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
 
