@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    class WheelDto
+    public class WheelDto
     {
         public double Pressure { get; set; }
 

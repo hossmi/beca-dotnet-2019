@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    class VehicleDto
+    public class VehicleDto
     {
         public CarColor Color { get; set; }
         public EngineDto Engine { get; set; }
