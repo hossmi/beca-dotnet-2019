@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
+    [Serializable]
     class VehicleDto
     {
         public CarColor Color { get; set; }

@@ -24,14 +24,14 @@ namespace CarManagement.Models
         {
             get
             {
-                return doors.ToArray();
+                return this.doors.ToArray();
             }
         }
         public int DoorsCount
         {
             get
             {
-                return doors.Count;
+                return this.doors.Count;
             }
         }
 
@@ -39,7 +39,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.ToArray();
+                return this.wheels.ToArray();
             }
         }
 
@@ -54,7 +54,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.Count;
+                return this.wheels.Count;
             }
         }
 
@@ -64,7 +64,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return carColor;
+                return this.carColor;
             }
             set
             {

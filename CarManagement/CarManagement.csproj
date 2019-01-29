@@ -57,6 +57,7 @@
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DefaultEnrollmentProvider.cs" />
+    <Compile Include="Services\DTOConverter.cs" />
     <Compile Include="Services\InMemoryVehicleStorage.cs" />
     <Compile Include="Services\IVehicleStorage.cs" />
     <Compile Include="Services\IEnrollmentProvider.cs" />
