@@ -12,52 +12,52 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        Engine IDtoConverter.convert(EngineDto engineDto)
+        public Engine convert(EngineDto engineDto)
         {
             throw new System.NotImplementedException();
         }
 
-        EngineDto IDtoConverter.convert(Engine engine)
+        public EngineDto convert(Engine engine)
         {
             throw new System.NotImplementedException();
         }
 
-        Vehicle IDtoConverter.convert(VehicleDto vehicleDto)
+        public Vehicle convert(VehicleDto vehicleDto)
         {
             throw new System.NotImplementedException();
         }
 
-        VehicleDto IDtoConverter.convert(Vehicle vehicle)
+        public VehicleDto convert(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
         }
 
-        Door IDtoConverter.convert(DoorDto doorDto)
+        public Door convert(DoorDto doorDto)
         {
             throw new System.NotImplementedException();
         }
 
-        DoorDto IDtoConverter.convert(Door door)
+        public DoorDto convert(Door door)
         {
             throw new System.NotImplementedException();
         }
 
-        Wheel IDtoConverter.convert(WheelDto wheelDto)
+        public Wheel convert(WheelDto wheelDto)
         {
             throw new System.NotImplementedException();
         }
 
-        WheelDto IDtoConverter.convert(Wheel wheel)
+        public WheelDto convert(Wheel wheel)
         {
             throw new System.NotImplementedException();
         }
 
-        IEnrollment IDtoConverter.convert(EnrollmentDto enrollmentDto)
+        public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             throw new System.NotImplementedException();
         }
 
-        EnrollmentDto IDtoConverter.convert(IEnrollment enrollment)
+        public EnrollmentDto convert(IEnrollment enrollment)
         {
             throw new System.NotImplementedException();
         }
