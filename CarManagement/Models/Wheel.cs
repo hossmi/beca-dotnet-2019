@@ -1,34 +1,32 @@
 ﻿using CarManagement.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
+
     public class Wheel
     {
-        private string model;
         private double pressure;
-
         public double Pressure
         {
-            get => pressure;
             set
             {
-                Asserts.isTrue(value > 0, "Pressure must be greater than 0");
-                pressure = value;
+                Asserts.isTrue(value >= 0);
+                this.pressure = value;
+            }
+            get
+            {
+                return this.pressure;
             }
         }
 
-        public string Model { get => model; }
-
-        public Wheel(string model = null)
+        public Wheel()
         {
-            this.model = model ?? "standart";
-            this.Pressure = 2.0d;
-        }
-
-        public Wheel(Wheel wheel)
-        {
-            this.model = wheel.model;
-            this.Pressure = wheel.Pressure;
+            this.pressure = 0;
         }
     }
 }

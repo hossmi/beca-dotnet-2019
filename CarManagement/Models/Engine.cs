@@ -1,30 +1,53 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Builders;
+using System;
+
+namespace CarManagement.Models
 {
     public class Engine
     {
-        private string model;
         private int horsePower;
-        private bool isStarted;
+        private bool mode;
 
-        public Engine(int horsePower = 0, string model = null)
+        public Engine(int horsePower)
         {
-            this.model = model ?? "standart";
-            this.horsePower = horsePower < 1 ? 50 : horsePower;
+            Asserts.isTrue(horsePower>0);
+            this.horsePower = horsePower;
+        }
+        public int Model {
+            get
+            {
+                return this.horsePower;
+            }
+            set
+            {
+                Asserts.isTrue(value>0);
+                this.horsePower = value;
+            }
+        }
+        public bool IsStarted
+        {
+            get
+            {
+                return this.mode;
+            }
         }
 
-        public Engine(Engine engine)
+        public int HorsePower
         {
-            this.model = engine.model;
-            this.horsePower = engine.horsePower;
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void start()
         {
-            this.isStarted = true;
+            this.mode  = true;
         }
 
-        public string Model { get => model; }
-        public int HorsePower { get => horsePower; }
-        public bool IsStarted { get => isStarted; }
+        public void stop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

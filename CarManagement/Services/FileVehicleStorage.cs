@@ -1,84 +1,78 @@
-<<<<<<< HEAD
-﻿using CarManagement.Builders;
-using CarManagement.Models;
-using System.Collections.Generic;
-=======
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Models;
->>>>>>> develop
 
 namespace CarManagement.Services
 {
     public class FileVehicleStorage : IVehicleStorage
     {
-<<<<<<< HEAD
-        const string STORAGEFILE = ".\\storage\\vehicles";
-        private IDictionary<IEnrollment, Vehicle> vehicles;
-
-        public FileVehicleStorage()
-        {
-            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
-        }
-
-        public int Count { get => this.vehicles.Count; }
-=======
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public int Count { get; }
->>>>>>> develop
-
-        public FileVehicleStorage(string fileFullPath)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-
-            if (File.Exists(fileFullPath))
-                this.vehicles = readFromFile(fileFullPath);
-            else
-                this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+            this.vehicles = readFromFile(fileFullPath);
+            this.dtoConverter = dtoConverter;
         }
+
+        public int Count { get; }
 
         public void clear()
         {
-<<<<<<< HEAD
-            this.vehicles.Clear();
-=======
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
->>>>>>> develop
+            writeToFile(this.filePath, this.vehicles);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            bool hasVehicle = this.vehicles.TryGetValue(defaultEnrollment, out Vehicle returnedVehicle);
-
-            Asserts.isTrue(hasVehicle, "El vehículo no está almacenado");
-
-            return returnedVehicle;
+            throw new System.NotImplementedException();
         }
 
         public void set(Vehicle vehicle)
         {
-<<<<<<< HEAD
-            this.vehicles.Add(motoVehicle.Enrollment, motoVehicle);
-=======
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
+            writeToFile(this.filePath, this.vehicles);
         }
 
-        private void writeToFile(string filePath)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            throw new NotImplementedException();
+
+            Vehicle[] vehiclesArray = new Vehicle[vehicles.Count];
+            int aux=0;
+            foreach (Vehicle v in  vehicles.Values)
+            {
+                vehiclesArray[aux] = v;
+                aux++;
+            }
+
+            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+            TextWriter writer = new StreamWriter(filePath);
+            ser.Serialize(writer, vehiclesArray);
+            writer.Close();
         }
 
-        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            throw new NotImplementedException();
->>>>>>> develop
-        }
+            IDictionary<IEnrollment, Vehicle> vehicles= new Dictionary<IEnrollment, Vehicle>();
 
+            if (File.Exists(fileFullPath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+                TextReader reader = new StreamReader(fileFullPath);
+                Vehicle[] vehicleArray=(Vehicle[])ser.Deserialize(reader);
+                reader.Close();
+
+                foreach (Vehicle v in vehicleArray)
+                {
+                    vehicles.Add(v.Enrollment, v);
+                }
+            }
+            return vehicles;
+        }
     }
 }
