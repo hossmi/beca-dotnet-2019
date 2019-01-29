@@ -9,7 +9,7 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
-        private double pressure;
+        private double pressure = 1.0;
 
         public double Pressure
         {
@@ -21,7 +21,7 @@ namespace CarManagement.Models
 
         public void FillWheel(double pression)
         {
-            Asserts.isTrue(pression > 0,"Cannot set pressure lower than 0");
+            Asserts.isTrue(pression > 0, "Cannot set pressure lower than 0");
             this.pressure = pression;
         }
     }

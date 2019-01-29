@@ -25,8 +25,8 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
+            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
         }
 
         public void clear()
@@ -37,13 +37,26 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle v;
-            Boolean vehicleFound = false;
+            Vehicle vehicle;
+            bool vehicleFound = false; ;
 
-            vehicleFound = vehicles.TryGetValue(enrollment, out v);
+            foreach (IEnrollment e in vehicles.Keys)
+            {
+                if (Equals(e, enrollment))
+                {
+                    vehicleFound = this.vehicles.TryGetValue(e, out vehicle);
+                    break;
+                }
 
-            Asserts.isTrue(vehicleFound, "Could not find vehicle.");
-            return v;
+            }
+
+            Asserts.isTrue(vehicleFound, "Cannot find vehicle");
+            return vehicle;
+
+            //Asserts.isTrue(vehicles.ContainsKey(enrollment));
+            //bool vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
+            //Asserts.isTrue(vehicleFound, "Cannot find vehicle");
+            //return vehicle;
         }
 
         public void set(Vehicle vehicle)

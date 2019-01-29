@@ -19,8 +19,8 @@ namespace CarManagement.Services
 
             if (engineDto.IsStarted)
                 e.start();
-            else
-                e.stop();
+            //else
+                //e.stop();
 
             return e;
         }
