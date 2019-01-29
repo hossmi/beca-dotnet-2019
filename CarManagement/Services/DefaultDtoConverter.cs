@@ -13,7 +13,7 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        Engine IDtoConverter.convert(EngineDto engineDto)
+        public Engine convert(EngineDto engineDto)
         {
             Engine e = new Engine(engineDto.HorsePower);
 
@@ -25,7 +25,7 @@ namespace CarManagement.Services
             return e;
         }
 
-        EngineDto IDtoConverter.convert(Engine engine)
+        public EngineDto convert(Engine engine)
         {
             EngineDto eDto = new EngineDto();
             eDto.IsStarted = engine.IsStarted;
@@ -34,7 +34,7 @@ namespace CarManagement.Services
             return eDto;
         }
 
-        Vehicle IDtoConverter.convert(VehicleDto vehicleDto)
+        public Vehicle convert(VehicleDto vehicleDto)
         {
             Vehicle v;
 
@@ -62,7 +62,7 @@ namespace CarManagement.Services
             return v;
         }
 
-        VehicleDto IDtoConverter.convert(Vehicle vehicle)
+        public VehicleDto convert(Vehicle vehicle)
         {
             VehicleDto vDto = new VehicleDto();
             vDto.Color = vehicle.Color;
@@ -88,7 +88,7 @@ namespace CarManagement.Services
             return vDto;
         }
 
-        Door IDtoConverter.convert(DoorDto doorDto)
+        public Door convert(DoorDto doorDto)
         {
             Door d = new Door();
 
@@ -100,7 +100,7 @@ namespace CarManagement.Services
             return d;
         }
 
-        DoorDto IDtoConverter.convert(Door door)
+        public DoorDto convert(Door door)
         {
             DoorDto dDto = new DoorDto();
             dDto.IsOpen = door.IsOpen;
@@ -108,7 +108,7 @@ namespace CarManagement.Services
             return dDto;
         }
 
-        Wheel IDtoConverter.convert(WheelDto wheelDto)
+        public Wheel convert(WheelDto wheelDto)
         {
             Wheel w = new Wheel();
             w.FillWheel(wheelDto.Pressure);
@@ -116,19 +116,19 @@ namespace CarManagement.Services
             return w;
         }
 
-        WheelDto IDtoConverter.convert(Wheel wheel)
+        public WheelDto convert(Wheel wheel)
         {
             WheelDto wDto = new WheelDto();
             wDto.Pressure = wheel.Pressure;
             return wDto;
         }
 
-        IEnrollment IDtoConverter.convert(EnrollmentDto enrollmentDto)
+        public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
-        EnrollmentDto IDtoConverter.convert(IEnrollment enrollment)
+        public EnrollmentDto convert(IEnrollment enrollment)
         {
             EnrollmentDto eDto = new EnrollmentDto();
             eDto.Serial = enrollment.Serial;
