@@ -5,13 +5,54 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheels;
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
+        {
+            this.wheels = wheels;
+            this.doors = doors;
+            this.engine = engine;
+            this.color = color;
+            this.enrollment = enrollment;
+        }
+        private List<Wheel> wheels = new List<Wheel>();
+        private List<Door> doors = new List<Door>();
+        private Engine engine = new Engine();
+        private CarColor color;
+        private IEnrollment enrollment;
 
+
+        public List<Wheel> carwheel
+        {
+            set
+            {
+                wheels = value;
+            }
+        }
+        public List<Door> cardoor
+        {
+            set
+            {
+                doors = value;
+            }
+        }
+        public Engine carengine
+        {
+            set
+            {
+                engine = value;
+            }
+        }
+        public CarColor carcolor
+        {
+            set
+            {
+                color = value;
+            }
+        }
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return doors.Count;
             }
         }
 
@@ -19,7 +60,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return wheels.Count;
             }
         }
 
@@ -27,7 +68,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return engine;
             }
         }
 
@@ -35,9 +76,18 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment;
             }
         }
+
+        public Door[] Doors
+        {
+            get
+            {
+                return this.doors.ToArray();
+            }
+        }
+
 
         public Wheel[] Wheels
         {
@@ -46,20 +96,16 @@ namespace CarManagement.Models
                 return this.wheels.ToArray();
             }
         }
-
-        public Door[] Doors
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public CarColor Color { get; }
-
         public void setWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            if (pression > 0)
+            {
+                foreach (Wheel w in wheels)
+                {
+                    w.Pressure = pression;
+                }
+            }
+
         }
     }
 }
