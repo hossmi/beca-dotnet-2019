@@ -23,7 +23,7 @@ namespace CarManagement.Models
             }
         }
 
-        public bool IsStarted { get; private set; }
+        public bool IsStarted { get; set; }
 
         public void start()
         {
@@ -35,6 +35,6 @@ namespace CarManagement.Models
             IsStarted = false;
         }
 
-      
+
     }
 }
