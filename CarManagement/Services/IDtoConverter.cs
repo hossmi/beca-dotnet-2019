@@ -14,6 +14,6 @@ namespace CarManagement.Services
         Wheel convert(WheelDto wheelDto);
         WheelDto convert(Wheel wheel);
         IEnrollment convert(EnrollmentDto enrollmentDto);
-        EnrollmentDto convert(IEnrollment enrollment, IEnrollmentProvider enrollmentProvider);
+        EnrollmentDto convert(IEnrollment enrollment);
     }
 }
