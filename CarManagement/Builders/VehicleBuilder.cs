@@ -52,7 +52,7 @@ namespace CarManagement.Builders
             doors = new List<Door>();
             engine = new Engine();
             engine.Horsepower = Horseporwer;
-            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNew();
             for (int i = 0; i < counter; i++)
             {
                 Wheel wheel = new Wheel();
