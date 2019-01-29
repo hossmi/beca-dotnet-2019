@@ -2,11 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : IVehicleStorage
     {
-        IDictionary<IEnrollment,Vehicle> vehicles;
+        IDictionary<IEnrollment, Vehicle> vehicles;
+
+        public InMemoryVehicleStorage()
+        {
+            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+        }
 
         public int Count {
             get
@@ -32,7 +38,7 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            Asserts.isFalse(vehicles.ContainsKey(vehicle.Enrollment));
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment,vehicle);
         }
     }
