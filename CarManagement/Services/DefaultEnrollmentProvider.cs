@@ -5,30 +5,12 @@ namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        private const char INITIAL_LETTER = 'B';
-        static int number = 0;
-        static char Letter1 = INITIAL_LETTER;
-        static char Letter2 = INITIAL_LETTER;
-        static char Letter3 = INITIAL_LETTER;
-
-        private class Enrollment : IEnrollment
+        IEnrollment IEnrollmentProvider.import(string enrollment)
         {
-            public Enrollment(string serial, int number)
-            {
-                this.Serial = serial;
-                this.Number = number;
-            }
-
-            public string Serial { get; }
-            public int Number { get; }
-
-            public override string ToString()
-            {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
-            }
+            throw new System.NotImplementedException();
         }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             if (number >= 10000)
             {

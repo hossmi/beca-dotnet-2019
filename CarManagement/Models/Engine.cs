@@ -43,5 +43,10 @@ namespace CarManagement.Models
                 return this.horsepower;
             }
         }
+
+        public void stop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
