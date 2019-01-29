@@ -1,13 +1,40 @@
 ﻿using CarManagement.Builders;
 using CarManagement.Models;
+using System;
 
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        IEnrollment IEnrollmentProvider.import(string enrollment)
+
+        private const char INITIAL_LETTER = 'B';
+        static int number = 0;
+        static char Letter1 = INITIAL_LETTER;
+        static char Letter2 = INITIAL_LETTER;
+        static char Letter3 = INITIAL_LETTER;
+
+        private class Enrollment : IEnrollment
         {
-            throw new System.NotImplementedException();
+            public Enrollment(string serial, int number)
+            {
+                this.Serial = serial;
+                this.Number = number;
+            }
+
+            public string Serial { get; }
+            public int Number { get; }
+
+            public override string ToString()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
+        }
+
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            IEnrollment e2 = new Enrollment(serial, number);
+
+            return e2;
         }
 
         IEnrollment IEnrollmentProvider.getNew()
