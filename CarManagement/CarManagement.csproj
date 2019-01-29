@@ -47,6 +47,7 @@
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
     <Compile Include="Models\DTOs\DoorDto.cs" />
+    <Compile Include="Services\DtoConverter.cs" />
     <Compile Include="Models\DTOs\EngineDto.cs" />
     <Compile Include="Models\DTOs\EnrollmentDto.cs" />
     <Compile Include="Models\DTOs\VehicleDto.cs" />
