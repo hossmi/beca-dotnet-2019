@@ -38,11 +38,10 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
-            //writeToFile(this.filePath);
-            
+            writeToFile(this.filePath, this.vehicles);
         }
 
-        private void writeToFile(string filePath)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -54,7 +53,7 @@ namespace CarManagement.Services
             //vehiclesWriter.Close();
         }
 
-        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
             throw new System.NotImplementedException();
             //TextReader vehiclesReader = new StreamReader(fileFullPath);
