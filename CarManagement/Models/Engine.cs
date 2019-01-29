@@ -10,7 +10,7 @@ namespace CarManagement.Models
 
         public Engine(int h)
         {
-            Asserts.isTrue(h > 0,"Cannot create an engine with 0 or less Horse Power.");
+            Asserts.isTrue(h > 0, "Cannot create an engine with 0 or less Horse Power.");
             this.horsepower = h;
             this.isStarted = false;
         }
@@ -33,6 +33,14 @@ namespace CarManagement.Models
             get
             {
                 return this.isStarted;
+            }
+        }
+
+        public int HorsePower
+        {
+            get
+            {
+                return this.horsepower;
             }
         }
     }
