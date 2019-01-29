@@ -1,0 +1,16 @@
+diff a/CarManagement/Models/IEnrollment.cs b/CarManagement/Models/IEnrollment.cs	(rejected hunks)
+@@ -0,0 +1,14 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++
++namespace CarManagement.Models
++{
++    public interface IEnrollment
++    {
++        string Serial { get; }
++        int Number { get; }
++    }
++}
