@@ -26,7 +26,7 @@ namespace CarManagement.Services
             this.vehicles = readFromFile(fileFullPath);
         }
 
-        public int Count { get; }
+
 
         public void clear()
         {
@@ -79,7 +79,7 @@ namespace CarManagement.Services
 
                 foreach (Door door in vehicle.Doors)
                 {
-                    vehicleDto.Doors = Array.CopyTo( vehicle.Doors, 0);
+
                 }
 
             }
