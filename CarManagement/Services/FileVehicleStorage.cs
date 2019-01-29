@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Models;
 
 namespace CarManagement.Services
@@ -40,13 +41,38 @@ namespace CarManagement.Services
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            throw new NotImplementedException();
+
+            Vehicle[] vehiclesArray = new Vehicle[vehicles.Count];
+            int aux=0;
+            foreach (Vehicle v in  vehicles.Values)
+            {
+                vehiclesArray[aux] = v;
+                aux++;
+            }
+
+            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+            TextWriter writer = new StreamWriter(filePath);
+            ser.Serialize(writer, vehiclesArray);
+            writer.Close();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            throw new NotImplementedException();
-        }
+            IDictionary<IEnrollment, Vehicle> vehicles= new Dictionary<IEnrollment, Vehicle>();
 
+            if (File.Exists(fileFullPath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+                TextReader reader = new StreamReader(fileFullPath);
+                Vehicle[] vehicleArray=(Vehicle[])ser.Deserialize(reader);
+                reader.Close();
+
+                foreach (Vehicle v in vehicleArray)
+                {
+                    vehicles.Add(v.Enrollment, v);
+                }
+            }
+            return vehicles;
+        }
     }
 }
