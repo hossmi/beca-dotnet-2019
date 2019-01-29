@@ -25,11 +25,7 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath)
         {
             this.filePath = fileFullPath;
-
-            if (File.Exists(fileFullPath))
-                this.vehicles = readFromFile(fileFullPath);
-            else
-                this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+            this.vehicles = readFromFile(fileFullPath);
         }
 
         public void clear()
