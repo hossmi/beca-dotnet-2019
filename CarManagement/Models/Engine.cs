@@ -8,9 +8,10 @@ namespace CarManagement.Models
         private int horsePower;
         private bool isStarted;
 
-        public Engine(int horsePower = 0, string model = null)
+        public Engine(int horsePower = 0, string model = null, bool started = false)
         {
             this.model = model ?? "standart";
+            this.isStarted = started;
             this.horsePower = horsePower < 1 ? 50 : horsePower;
         }
 

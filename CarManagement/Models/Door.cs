@@ -4,21 +4,27 @@ namespace CarManagement.Models
 {
     public class Door
     {
-        public readonly string model;
         private bool isOpen;
 
-        public Door(string model = null)
+        public Door(string model = null, bool isOpen = false)
         {
-            this.model = model ?? "standart";
-            this.isOpen = false;
+            this.Model = model ?? "standart";
+            this.isOpen = isOpen;
         }
 
         public Door(Door door)
         {
-            this.model = door.model;
+            this.Model = door.Model;
             this.isOpen = door.IsOpen;
         }
 
+        Door(DoorDto doorDto)
+        {
+            this.Model = doorDto.Model;
+            this.isOpen = doorDto.IsOpen;
+        }
+
+        public string Model { get; }
         public bool IsOpen { get => isOpen; }
 
         public void open()

@@ -20,10 +20,10 @@ namespace CarManagement.Models
 
         public string Model { get => model; }
 
-        public Wheel(string model = null)
+        public Wheel(string model = null, double Pressure = 0)
         {
             this.model = model ?? "standart";
-            this.Pressure = 2.0d;
+            this.Pressure = Pressure < 0.1d ? 2.0d : Pressure;
         }
 
         public Wheel(Wheel wheel)
