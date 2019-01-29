@@ -13,12 +13,12 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        Engine IDtoConverter.convert(EngineDto engineDto)
+        public Engine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
 
-        EngineDto IDtoConverter.convert(Engine engine)
+        public EngineDto convert(Engine engine)
         {
             EngineDto engineDto = new EngineDto();
             engineDto.HorsePower = engine.HorsePorwer;
@@ -27,22 +27,22 @@ namespace CarManagement.Services
             return engineDto;
         }
 
-        Vehicle IDtoConverter.convert(VehicleDto vehicleDto)
+        public Vehicle convert(VehicleDto vehicleDto)
         {
             throw new System.NotImplementedException();
         }
 
-        VehicleDto IDtoConverter.convert(Vehicle vehicle)
+        public VehicleDto convert(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
         }
 
-        Door IDtoConverter.convert(DoorDto doorDto)
+        public Door convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
         }
 
-        DoorDto IDtoConverter.convert(Door door)
+        public DoorDto convert(Door door)
         {
             DoorDto doorDto = new DoorDto();
             doorDto.IsOpen = door.IsOpen;
@@ -50,22 +50,22 @@ namespace CarManagement.Services
             return doorDto;
         }
 
-        Wheel IDtoConverter.convert(WheelDto wheelDto)
+        public Wheel convert(WheelDto wheelDto)
         {
             throw new System.NotImplementedException();
         }
 
-        WheelDto IDtoConverter.convert(Wheel wheel)
+        public WheelDto convert(Wheel wheel)
         {
             throw new System.NotImplementedException();
         }
 
-        IEnrollment IDtoConverter.convert(EnrollmentDto enrollmentDto)
+        public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
-        EnrollmentDto IDtoConverter.convert(IEnrollment enrollment)
+        public EnrollmentDto convert(IEnrollment enrollment)
         {
             EnrollmentDto enrollmentDto = new EnrollmentDto();
             enrollmentDto.Serial = enrollment.Serial;
