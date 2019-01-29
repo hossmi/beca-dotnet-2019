@@ -25,7 +25,7 @@ namespace CarManagement.Services
         public void clear()
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
+            writeToFile(this.filePath, this.vehicles);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -36,16 +36,16 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath);
+            writeToFile(this.filePath, this.vehicles);
         }
 
-        private void writeToFile(string filePath)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
             throw new NotImplementedException();
         }
 
-        private IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
             throw new NotImplementedException();
         }
