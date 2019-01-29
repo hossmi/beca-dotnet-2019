@@ -10,18 +10,7 @@ namespace CarManagement.Models.DTOs
     {
         public double Pressure { get; set; }
 
-        public WheelDto(Wheel w)
-        {
-            this.Pressure = w.Pressure;
-        }
 
-        public Wheel ConvertToWheel()
-        {
-            Wheel w = new Wheel();
-            w.FillWheel(this.Pressure);
-
-            return w;
-        }
     }
 }
 
