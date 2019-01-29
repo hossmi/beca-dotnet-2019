@@ -18,15 +18,15 @@ namespace CarManagement.Services
             this.letter3 = 0;
             this.number = -1;
             this.lettersacept = "BCDFGHJKLMNPRSTVWXYZ"; //20
-            this.tamLetterAccept = lettersacept.Length -1;
+            this.tamLetterAccept = lettersacept.Length - 1;
         }
 
-    
+
         private class Enrollment : IEnrollment
         {
             public Enrollment(string serial, int number)
             {
-            
+
                 this.Serial = serial;
                 this.Number = number;
             }
@@ -42,7 +42,7 @@ namespace CarManagement.Services
 
         }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             if (number < 9999)
             {
@@ -83,6 +83,9 @@ namespace CarManagement.Services
             //string serial = ;
             return new Enrollment(lettersacept[letter3].ToString() + lettersacept[letter2].ToString() + lettersacept[letter1].ToString(), number);
         }
-
+        public IEnrollment import(string enrollment)
+        {
+           
+        }
     }
 }

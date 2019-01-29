@@ -80,7 +80,7 @@ namespace CarManagement.Builders
 
             //Generamos matricula
 
-            IEnrollment enrollment = enrollmentProvider .getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider .getNew();
 
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
