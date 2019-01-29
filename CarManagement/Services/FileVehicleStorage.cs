@@ -60,14 +60,21 @@ namespace CarManagement.Services
         {
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
-            string jsonText = System.IO.File.ReadAllText(fileFullPath);
-            List<string> jsonObjects = getIndividualJson(jsonText);
-
-            foreach (string jsonObject in jsonObjects)
+            try
             {
-                VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                Vehicle vehicle = DtoMapper.convert(vehicleDto);
-                vehicles.Add(vehicle.Enrollment, vehicle);
+                string jsonText = System.IO.File.ReadAllText(fileFullPath);
+                List<string> jsonObjects = getIndividualJson(jsonText);
+
+                foreach (string jsonObject in jsonObjects)
+                {
+                    VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
+                    Vehicle vehicle = DtoMapper.convert(vehicleDto);
+                    vehicles.Add(vehicle.Enrollment, vehicle);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                //No problem
             }
 
             return vehicles;
