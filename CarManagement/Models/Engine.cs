@@ -24,5 +24,10 @@ namespace CarManagement.Models
         {
             throw new NotImplementedException();
         }
+
+        public void stop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
