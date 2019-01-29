@@ -46,9 +46,7 @@ namespace CarManagement.Services
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-
-
-
+            
             VehicleDto[] vehiclesDtoAux = new VehicleDto[vehicles.Count];
             int contFor = 0;
             foreach (Vehicle vehicle in vehicles.Values)
@@ -71,13 +69,14 @@ namespace CarManagement.Services
 
             if (File.Exists(fileFullPath))
             {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Vehicle[]));
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDto[]));
                 TextReader vehiclesReader = new StreamReader(fileFullPath);
-                Vehicle[] vehiclesAux = (Vehicle[]) xmlSerializer.Deserialize(vehiclesReader);
+                VehicleDto[] vehiclesDtoAux = (VehicleDto[]) xmlSerializer.Deserialize(vehiclesReader);
                 vehiclesReader.Close();
                 
-                foreach (Vehicle vehicle in vehiclesAux)
-                {                    
+                foreach (VehicleDto vehicleDto in vehiclesDtoAux)
+                {
+                    Vehicle vehicle = dtoConverter.convert(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
