@@ -80,9 +80,9 @@ namespace CarManagement.Services
             string lettersEnrollment = this.letters[number1].ToString() + this.letters[number2].ToString() + this.letters[number3].ToString();
             return new Enrollment(lettersEnrollment,  number4);
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        public IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            throw new System.NotImplementedException();
+            return new Enrollment(serial, number);
         }
 
     }
