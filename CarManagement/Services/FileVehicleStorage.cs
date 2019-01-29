@@ -25,7 +25,7 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath);
+            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
@@ -47,10 +47,10 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, vehicles);
+            writeToFile(this.filePath, vehicles,dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter converter)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -59,7 +59,7 @@ namespace CarManagement.Services
             int i = 0;
             foreach (Vehicle v in vehicles.Values)
             {
-                VehicleDto vehicleDto = converter.convert(v);
+                VehicleDto vehicleDto = dtoConverter.convert(v);
                 vehiclesDtoArray[i] = vehicleDto;
                 i++;
             }
@@ -87,7 +87,7 @@ namespace CarManagement.Services
 
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter converter)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
             IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>();
 
@@ -103,7 +103,7 @@ namespace CarManagement.Services
                 foreach (VehicleDto vDto in vehiclesDtoArray)
                 {
                     //vehicleDictionary.Add(v.Enrollment, v);
-                    Vehicle vehicle = converter.convert(vDto);
+                    Vehicle vehicle = dtoConverter.convert(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
 
                 }
@@ -146,7 +146,5 @@ namespace CarManagement.Services
                 return false;
             }
         }
-
-
     }
 }
