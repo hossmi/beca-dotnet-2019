@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    class EnrollmentDto
+    public class EnrollmentDto
     {
         public string Serial { get; set; }
         public int Number { get; set; }

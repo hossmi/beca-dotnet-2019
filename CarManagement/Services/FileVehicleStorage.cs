@@ -8,12 +8,14 @@ namespace CarManagement.Services
     public class FileVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
             this.vehicles = readFromFile(fileFullPath);
+            this.dtoConverter = dtoConverter;
         }
 
         public int Count { get; }

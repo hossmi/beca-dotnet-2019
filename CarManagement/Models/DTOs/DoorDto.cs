@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    class DoorDto
+    public class DoorDto
     {
         public bool IsOpen { get; set; }
     }
