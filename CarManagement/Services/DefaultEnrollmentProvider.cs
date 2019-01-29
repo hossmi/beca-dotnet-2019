@@ -36,7 +36,7 @@ namespace CarManagement.Services
             this.number2 = 0;
             this.number3 = 0;
             this.number4 = 0;
-            this.letters = "BCDFGHJKLMNPRSTVWXYZ";//20 dígitos
+            this.letters = "BCDFGHJKLMNPRSTVWXYZ";
             this.sizeLetters = this.letters.Length-1;
         }
 
@@ -78,12 +78,12 @@ namespace CarManagement.Services
                 }
             }
             string lettersEnrollment = this.letters[number1].ToString() + this.letters[number2].ToString() + this.letters[number3].ToString();
-            return new Enrollment(lettersEnrollment,  number4);
+            return new Enrollment(lettersEnrollment, number4);
+        }
 
-        public IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
             return new Enrollment(serial, number);
         }
-
     }
 }
