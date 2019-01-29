@@ -45,17 +45,17 @@ namespace CarManagement.Services
 
             foreach (WheelDto w in vehicleDto.Wheels)
             {
-                wheels.Add(IDtoConverter.convert(w));
+                wheels.Add(convert(w));
    
             }
 
             foreach (DoorDto d in vehicleDto.Doors)
             {
-                doors.Add(IDtoConverter.convert(d));
+                doors.Add(convert(d));
             }
-            engine = IDtoConverter.convert(vehicleDto.Engine);
+            engine = convert(vehicleDto.Engine);
 
-            enrollment = IDtoConverter.convert(vehicleDto.Enrollment);
+            enrollment = convert(vehicleDto.Enrollment);
 
             v = new Vehicle(wheels, doors, engine, vehicleDto.Color, enrollment);
 
@@ -66,22 +66,22 @@ namespace CarManagement.Services
         {
             VehicleDto vDto = new VehicleDto();
             vDto.Color = vehicle.Color;
-            vDto.Engine = IDtoConverter.convert(vehicle.Engine);
-            vDto.Enrollment = IDtoConverter.convert(vehicle.Enrollment);
+            vDto.Engine = convert(vehicle.Engine);
+            vDto.Enrollment = convert(vehicle.Enrollment);
             vDto.Wheels = new WheelDto[vehicle.Wheels.Length];
             vDto.Doors = new DoorDto[vehicle.Doors.Length];
 
             int i = 0;
             foreach (Wheel w in vehicle.Wheels)
             {
-                vDto.Wheels[i] = IDtoConverter.convert(w);
+                vDto.Wheels[i] = convert(w);
                 i++;
             }
 
             int j = 0;
             foreach (Door d in vehicle.Doors)
             {
-                vDto.Doors[j] = IDtoConverter.convert(d);
+                vDto.Doors[j] = convert(d);
                 j++;
             }
 
