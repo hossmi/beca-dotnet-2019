@@ -28,17 +28,13 @@ namespace CarManagement.Models
             this.horsePower = engineDto.HorsePower;
         }
 
-        public int HorsePower
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public void start()
         {
             this.isStarted = true;
+        }
+        public void stop()
+        {
+            this.isStarted = false;
         }
 
         public string Model { get => model; }
@@ -48,11 +44,6 @@ namespace CarManagement.Models
         public Engine Clone()
         {
             return new Engine(this);
-        }
-
-        public void stop()
-        {
-            throw new NotImplementedException();
         }
     }
 }

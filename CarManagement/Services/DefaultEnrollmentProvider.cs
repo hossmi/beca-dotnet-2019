@@ -18,18 +18,11 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.getNew()
         {
-            throw new System.NotImplementedException();
-        }
-
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
-
-        public IEnrollment getNewEnrollment()
-        {
-            if(nextIssuedNumber > 9999)
+            if (nextIssuedNumber > 9999)
             {
                 nextIssuedNumber = 0;
 
-                if(++lastLettersTracker[0] > lastValidChar)
+                if (++lastLettersTracker[0] > lastValidChar)
                 {
                     lastLettersTracker[0] = 0;
 
@@ -37,16 +30,23 @@ namespace CarManagement.Services
                     {
                         lastLettersTracker[1] = 0;
 
-                        Asserts.isTrue(++lastLettersTracker[2] < lastValidChar,"Limit of enrollments reached");
+                        Asserts.isTrue(++lastLettersTracker[2] < lastValidChar, "Limit of enrollments reached");
                     }
                 }
             }
 
-            string toIssuedSerial = $"{validLetterSequence[lastLettersTracker[2]]}{validLetterSequence[lastLettersTracker[1]]}{validLetterSequence[lastLettersTracker[0]]}";
-            
+            string toIssuedSerial = $"{validLetterSequence[lastLettersTracker[2]]}" +
+                $"{validLetterSequence[lastLettersTracker[1]]}" +
+                $"{validLetterSequence[lastLettersTracker[0]]}";
+
             //Debug.WriteLine(toIssuedSerial);
 
             return new Enrollment(nextIssuedNumber++, toIssuedSerial);
+        }
+
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            return new Enrollment(number, serial);
         }
     }
 }

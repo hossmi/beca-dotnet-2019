@@ -104,7 +104,7 @@ namespace CarManagement.Builders
         {
             Asserts.isFalse(wheelList.Count() <= 0, $"You cannot build a vehicle with {wheelList.Count()} wheels");
 
-            IEnrollment toProvideEnrollment = this.enrollmentProvider.getNewEnrollment();
+            IEnrollment toProvideEnrollment = this.enrollmentProvider.getNew();
 
             return new Vehicle(this.EngineClone, this.DoorListClone,
                 this.WheelListClone, this.Color, toProvideEnrollment );
