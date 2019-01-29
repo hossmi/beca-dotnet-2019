@@ -24,7 +24,7 @@ namespace CarManagement.Builders
             this.color = CarColor.White;
         }
 
-        public Engine EngineClone { get => new Engine(this.engine); }
+        public Engine EngineClone { get => engine.Clone(); }
         public CarColor Color { get => this.color; }
         public List<Wheel> WheelListClone
         {
@@ -33,7 +33,7 @@ namespace CarManagement.Builders
                 List<Wheel> wheelList = new List<Wheel>();
                 foreach(Wheel wheel in this.wheelList)
                 {
-                    wheelList.Add(new Wheel(wheel));
+                    wheelList.Add(wheel.Clone());
                 }
 
                 return wheelList;
@@ -46,7 +46,7 @@ namespace CarManagement.Builders
                 List<Door> doorList = new List<Door>();
                 foreach (Door door in this.doorList)
                 {
-                    doorList.Add(new Door(door));
+                    doorList.Add(door.Clone());
                 }
 
                 return doorList;

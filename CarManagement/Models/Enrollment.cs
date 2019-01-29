@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Models.DTOs;
+
+namespace CarManagement.Models
 {
     class Enrollment : IEnrollment
     {

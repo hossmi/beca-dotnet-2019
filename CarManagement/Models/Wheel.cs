@@ -1,4 +1,5 @@
 ﻿using CarManagement.Builders;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Models
 {
@@ -29,6 +30,17 @@ namespace CarManagement.Models
         {
             this.model = wheel.model;
             this.Pressure = wheel.Pressure;
+        }
+
+        Wheel(WheelDto wheelDto)
+        {
+            this.model = wheelDto.Model;
+            this.pressure = wheelDto.Pressure;
+        }
+
+        public Wheel Clone()
+        {
+            return new Wheel(this);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Models.DTOs;
+
+namespace CarManagement.Models
 {
     public class Engine
     {
@@ -18,6 +20,13 @@
             this.horsePower = engine.horsePower;
         }
 
+        Engine(EngineDto engineDto)
+        {
+            this.model = engineDto.Model;
+            this.isStarted = engineDto.IsStarted;
+            this.horsePower = engineDto.HorsePower;
+        }
+
         public void start()
         {
             this.isStarted = true;
@@ -26,5 +35,10 @@
         public string Model { get => model; }
         public int HorsePower { get => horsePower; }
         public bool IsStarted { get => isStarted; }
+
+        public Engine Clone()
+        {
+            return new Engine(this);
+        }
     }
 }

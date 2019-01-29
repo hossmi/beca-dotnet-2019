@@ -8,6 +8,7 @@ namespace CarManagement.Models.DTOs
 {
     class WheelDto
     {
+        public string Model { get; set; }
         public double Pressure { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Models.DTOs;
+
+namespace CarManagement.Models
 {
     public class Door
     {
@@ -26,6 +28,11 @@
         public void close()
         {
             this.isOpen = false;
+        }
+
+        public Door Clone()
+        {
+            return new Door(this);
         }
     }
 }

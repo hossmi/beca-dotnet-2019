@@ -23,7 +23,7 @@ namespace CarManagement.Services
 
         public Vehicle get(IEnrollment enrollment)
         {
-            bool hasVehicle = this.vehicles.TryGetValue(defaultEnrollment, out Vehicle returnedVehicle);
+            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out Vehicle returnedVehicle);
 
             Asserts.isTrue(hasVehicle, "El vehículo no está en el diccionario");
 
@@ -32,7 +32,7 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            this.vehicles.Add(motoVehicle.Enrollment, motoVehicle);
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
         }
     }
 }

@@ -8,7 +8,8 @@ namespace CarManagement.Models.DTOs
 {
     class EngineDto
     {
+        public string Model { get; set; }
         public bool IsStarted { get; set; }
-        public double HorsePower { get; set; }
+        public int HorsePower { get; set; }
     }
 }
