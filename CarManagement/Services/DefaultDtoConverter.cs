@@ -34,7 +34,11 @@ namespace CarManagement.Services
         public Door convert(DoorDto doorDto)
         {
             Door door = new Door();
-            door.IsOpen = doorDto.IsOpen;
+            try
+            {
+                door.IsOpen = doorDto.IsOpen;
+            }
+            catch (Exception e) { }
 
             return door;
         }
@@ -95,9 +99,9 @@ namespace CarManagement.Services
 
             Engine engine = convert(vehicleDto.Engine);
             IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            CarColor carColor = vehicleDto.Color;
+            CarColor Color = vehicleDto.Color;
 
-            vehicle = new Vehicle(doors, wheels, engine, enrollment, carColor);
+            vehicle = new Vehicle(doors, wheels, engine, enrollment, Color);
             return vehicle;
         }
 
@@ -108,23 +112,26 @@ namespace CarManagement.Services
             DoorDto[] doorsDto = new DoorDto[vehicle.DoorsCount];
             WheelDto[] wheelsDto = new WheelDto[vehicle.WheelCount];
 
-         
 
-            for (int i = vehicle.Doors.Length - 1; i > 0;i--)
+
+            for (int i = vehicle.DoorsCount - 1; i > 0; i--)
             {
-                doorsDto[i] = vehicle.Doors[i];
+                doorsDto[i] = convert(vehicle.Doors[i]);
             }
 
-                foreach (Wheel wheel in vehicle.Wheels)
-                {
-                    wheels.Add(wheel);
-                }
+            for (int i = vehicle.WheelCount - 1; i > 0; i--)
+            {
+                wheelsDto[i] = convert(vehicle.Wheels[i]);
+            }
 
-            doorsDto = doors.ToArray();
+            EngineDto engineDto = convert(vehicle.Engine);
+            EnrollmentDto enrollmentDto = convert(vehicle.Enrollment);
 
-            Engine engine = convert(vehicleDto.Engine);
-            IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            CarColor carColor = vehicleDto.Color;
+            vehicleDto.Doors = doorsDto;
+            vehicleDto.Wheels = wheelsDto;
+            vehicleDto.Color = vehicle.Color;
+            vehicleDto.Engine = engineDto;
+            vehicleDto.Enrollment = enrollmentDto;
 
             return vehicleDto;
         }
