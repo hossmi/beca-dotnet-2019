@@ -9,12 +9,16 @@ namespace CarManagement.Services
         private int letter2;
         private int letter3;
         private int number;
+        private readonly string lettersacept;
+        private int tamLetterAccept;
         public DefaultEnrollmentProvider()
         {
-            this.letter1 = 65;
-            this.letter2 = 65;
-            this.letter3 = 65;
+            this.letter1 = 0;
+            this.letter2 = 0;
+            this.letter3 = 0;
             this.number = -1;
+            this.lettersacept = "BCDFGHJKLMNPRSTVWXYZ"; //20
+            this.tamLetterAccept = lettersacept.Length -1;
         }
 
     
@@ -38,19 +42,16 @@ namespace CarManagement.Services
 
         }
 
-
- 
-
         IEnrollment IEnrollmentProvider.getNewEnrollment()
         {
-            if (number <= 9999)
+            if (number < 9999)
             {
                 number++;
             }
             else
             {
                 number = 0;
-                if (letter3 <= 91)
+                if (letter3 < this.tamLetterAccept)
                 {
                     letter3++;
                 }
@@ -58,8 +59,9 @@ namespace CarManagement.Services
                 {
                     number = 0;
                     letter3 = 0;
-                    if (letter2 <= 91)
+                    if (letter2 < this.tamLetterAccept)
                     {
+
                         letter2++;
                     }
                     else
@@ -67,7 +69,7 @@ namespace CarManagement.Services
                         number = 0;
                         letter3 = 0;
                         letter2 = 0;
-                        if (letter1 <= 91)
+                        if (letter1 < this.tamLetterAccept)
                         {
                             letter1++;
                         }
@@ -78,8 +80,8 @@ namespace CarManagement.Services
                     }
                 }
             }
-            string serial = ((Char)(letter1)).ToString() + ((Char)(letter2)).ToString() + ((Char)(letter3)).ToString();
-            return new Enrollment(serial, this.number);
+            //string serial = ;
+            return new Enrollment(lettersacept[letter3].ToString() + lettersacept[letter2].ToString() + lettersacept[letter1].ToString(), number);
         }
 
     }
