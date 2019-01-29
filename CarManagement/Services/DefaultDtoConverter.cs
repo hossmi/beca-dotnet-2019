@@ -34,6 +34,8 @@ namespace CarManagement.Services
 
         public VehicleDto convert(Vehicle vehicle)
         {
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto.Doors = new DoorDto[vehicle.DoorsCount];
             throw new System.NotImplementedException();
         }
 
@@ -46,6 +48,7 @@ namespace CarManagement.Services
         {
             DoorDto doorDto = new DoorDto();
             doorDto.IsOpen = door.IsOpen;
+            
 
             return doorDto;
         }
@@ -72,6 +75,11 @@ namespace CarManagement.Services
             enrollmentDto.Number = enrollmentDto.Number;
 
             return enrollmentDto;
+        }
+
+        private DoorDto[] createDoorsDto(Vehicle vehicle)
+        {
+
         }
     }
 }

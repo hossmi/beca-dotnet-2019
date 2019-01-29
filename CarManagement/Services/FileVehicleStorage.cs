@@ -44,8 +44,26 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            throw new System.NotImplementedException();
-            //TextReader vehiclesReader = new StreamReader(fileFullPath);
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+
+            if (File.Exists(fileFullPath))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Vehicle[]));
+                TextReader vehiclesReader = new StreamReader(fileFullPath);
+                Vehicle[] vehiclesAux = (Vehicle[]) xmlSerializer.Deserialize(vehiclesReader);
+                vehiclesReader.Close();
+                
+                foreach (Vehicle vehicle in vehiclesAux)
+                {                    
+                    vehicles.Add(vehicle.Enrollment, vehicle);
+                }
+            }
+            else
+            {
+                return vehicles;
+            }
+
+            return vehicles;
         }
 
         /*
@@ -92,6 +110,22 @@ namespace CarManagement.Services
             vehiclesWriter.Close();
         }
         */
+
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles)
+        {
+            Vehicle[] vehiclesAux = new Vehicle[vehicles.Count];
+            int contFor = 0;
+            foreach(Vehicle vehicle in vehicles.Values)
+            {
+                vehiclesAux[contFor] = vehicle;
+                contFor++;
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(vehiclesAux.GetType());
+            TextWriter vehiclesWriter = new StreamWriter(filePath);
+            xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
+            vehiclesWriter.Close();
+        }
 
     }
 }
