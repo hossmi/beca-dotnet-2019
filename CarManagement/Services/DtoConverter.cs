@@ -7,129 +7,129 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    static class DtoConverter
+    class DtoConverter 
     {
-        static public DoorDto Convert(Door d)
-        {
-            DoorDto dDto =new DoorDto();
-            dDto.IsOpen = d.IsOpen;
+        //static public DoorDto Convert(Door d)
+        //{
+        //    DoorDto dDto =new DoorDto();
+        //    dDto.IsOpen = d.IsOpen;
 
-            return dDto;
-        }
+        //    return dDto;
+        //}
 
-        static public Door Convert(DoorDto dDto)
-        {
-            Door d = new Door();
+        //static public Door Convert(DoorDto dDto)
+        //{
+        //    Door d = new Door();
 
-            if (dDto.IsOpen)
-                d.open();
-            else
-                d.close();
+        //    if (dDto.IsOpen)
+        //        d.open();
+        //    else
+        //        d.close();
 
-            return d;
-        }
+        //    return d;
+        //}
 
-        static public WheelDto Convert(Wheel w)
-        {
-            WheelDto wDto = new WheelDto();
-            wDto.Pressure = w.Pressure;
-            return wDto;
-        }
+        //static public WheelDto Convert(Wheel w)
+        //{
+        //    WheelDto wDto = new WheelDto();
+        //    wDto.Pressure = w.Pressure;
+        //    return wDto;
+        //}
 
-        static public Wheel Convert(WheelDto wDto)
-        {
-            Wheel w = new Wheel();
-            w.FillWheel(wDto.Pressure);
+        //static public Wheel Convert(WheelDto wDto)
+        //{
+        //    Wheel w = new Wheel();
+        //    w.FillWheel(wDto.Pressure);
 
-            return w;
-        }
+        //    return w;
+        //}
 
-        static public EngineDto Convert(Engine e)
-        {
-            EngineDto eDto = new EngineDto();
-            eDto.IsStarted = e.IsStarted;
-            eDto.HorsePower = e.HorsePower;
+        //static public EngineDto Convert(Engine e)
+        //{
+        //    EngineDto eDto = new EngineDto();
+        //    eDto.IsStarted = e.IsStarted;
+        //    eDto.HorsePower = e.HorsePower;
 
-            return eDto;
-        }
+        //    return eDto;
+        //}
 
-        static public Engine Convert(EngineDto eDto)
-        {
-            Engine e = new Engine(eDto.HorsePower);
+        //static public Engine Convert(EngineDto eDto)
+        //{
+        //    Engine e = new Engine(eDto.HorsePower);
 
-            if (eDto.IsStarted)
-                e.start();
-            else
-                e.stop();
+        //    if (eDto.IsStarted)
+        //        e.start();
+        //    else
+        //        e.stop();
 
-            return e;
-        }
+        //    return e;
+        //}
 
-        static public EnrollmentDto Convert(IEnrollment e)
-        {
-            EnrollmentDto eDto = new EnrollmentDto();
-            eDto.Serial = e.Serial;
-            eDto.Number = e.Number;
+        //static public EnrollmentDto Convert(IEnrollment e)
+        //{
+        //    EnrollmentDto eDto = new EnrollmentDto();
+        //    eDto.Serial = e.Serial;
+        //    eDto.Number = e.Number;
 
-            return eDto;
-        }
+        //    return eDto;
+        //}
 
-        static public IEnrollment Convert(EnrollmentDto eDto, IEnrollmentProvider enrollmentProvider)
-        {
-            return enrollmentProvider.import(eDto.Serial, eDto.Number);
-        }
+        //static public IEnrollment Convert(EnrollmentDto eDto, IEnrollmentProvider enrollmentProvider)
+        //{
+        //    return enrollmentProvider.import(eDto.Serial, eDto.Number);
+        //}
 
-        static public VehicleDto Convert(Vehicle v)
-        {
-            VehicleDto vDto = new VehicleDto();
-            vDto.Color = v.Color;
-            vDto.Engine = Convert(v.Engine);
-            vDto.Enrollment = Convert(v.Enrollment);
-            vDto.Wheels = new WheelDto[v.Wheels.Length];
-            vDto.Doors = new DoorDto[v.Doors.Length];
+        //static public VehicleDto Convert(Vehicle v)
+        //{
+        //    VehicleDto vDto = new VehicleDto();
+        //    vDto.Color = v.Color;
+        //    vDto.Engine = Convert(v.Engine);
+        //    vDto.Enrollment = Convert(v.Enrollment);
+        //    vDto.Wheels = new WheelDto[v.Wheels.Length];
+        //    vDto.Doors = new DoorDto[v.Doors.Length];
 
-            int i = 0;
-            foreach (Wheel w in v.Wheels)
-            {
-                vDto.Wheels[i] = Convert(w);
-                i++;
-            }
+        //    int i = 0;
+        //    foreach (Wheel w in v.Wheels)
+        //    {
+        //        vDto.Wheels[i] = Convert(w);
+        //        i++;
+        //    }
 
-            int j = 0;
-            foreach (Door d in v.Doors)
-            {
-                vDto.Doors[j] = Convert(d);
-                j++;
-            }
+        //    int j = 0;
+        //    foreach (Door d in v.Doors)
+        //    {
+        //        vDto.Doors[j] = Convert(d);
+        //        j++;
+        //    }
 
-            return vDto;
-        }
+        //    return vDto;
+        //}
 
-        static public Vehicle Convert(VehicleDto vDto)
-        {
-            Vehicle v;
+        //static public Vehicle Convert(VehicleDto vDto)
+        //{
+        //    Vehicle v;
 
-            List<Wheel> wheels = new List<Wheel>();
-            List<Door> doors = new List<Door>();
-            Engine engine;
-            IEnrollment enrollment;
+        //    List<Wheel> wheels = new List<Wheel>();
+        //    List<Door> doors = new List<Door>();
+        //    Engine engine;
+        //    IEnrollment enrollment;
 
-            foreach (WheelDto w in vDto.Wheels)
-            {
-                wheels.Add(Convert(w));
-            }
+        //    foreach (WheelDto w in vDto.Wheels)
+        //    {
+        //        wheels.Add(Convert(w));
+        //    }
 
-            foreach (DoorDto d in vDto.Doors)
-            {
-                doors.Add(Convert(d));
-            }
-            engine = Convert(vDto.Engine);
+        //    foreach (DoorDto d in vDto.Doors)
+        //    {
+        //        doors.Add(Convert(d));
+        //    }
+        //    engine = Convert(vDto.Engine);
 
-            enrollment = Convert(vDto.Enrollment,);
+        //    enrollment = Convert(vDto.Enrollment,);
 
-            v = new Vehicle(wheels, doors, engine, vDto.Color, enrollment);
+        //    v = new Vehicle(wheels, doors, engine, vDto.Color, enrollment);
 
-            return v;
-        }
+        //    return v;
+        //}
     }
 }

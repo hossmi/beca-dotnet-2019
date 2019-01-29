@@ -50,16 +50,19 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            VehicleDto vDTO = DtoConverter.Convert(vehicle);
-
-
+            vehicles.Add(vehicle.Enrollment,vehicle);
+            writeToFile(this.filePath, vehicles);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
-            //foreach()
+            foreach (KeyValuePair<IEnrollment, Vehicle> item in vehicles)
+            {
+                
+            }
+
 
             //throw new NotImplementedException();
         }
