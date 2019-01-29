@@ -50,7 +50,7 @@ namespace CarManagement.Services
             writeToFile(this.filePath, vehicles);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter converter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -59,7 +59,7 @@ namespace CarManagement.Services
             int i = 0;
             foreach (Vehicle v in vehicles.Values)
             {
-                VehicleDto vehicleDto = dtoConverter.convert(v);
+                VehicleDto vehicleDto = converter.convert(v);
                 vehiclesDtoArray[i] = vehicleDto;
                 i++;
             }
@@ -87,7 +87,7 @@ namespace CarManagement.Services
 
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter converter)
         {
             IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>();
 
@@ -103,7 +103,7 @@ namespace CarManagement.Services
                 foreach (VehicleDto vDto in vehiclesDtoArray)
                 {
                     //vehicleDictionary.Add(v.Enrollment, v);
-                    Vehicle vehicle = dtoConverter.convert(vDto);
+                    Vehicle vehicle = converter.convert(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
 
                 }
