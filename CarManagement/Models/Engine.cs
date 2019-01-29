@@ -14,19 +14,13 @@ namespace CarManagement.Models
             this.horsePower = horsePower;
 
         }
-        public int Model
+        public Engine(int horsePower, bool IsStarted)
         {
-            get
-            {
-                return this.horsePower;
-            }
-            set
-            {
-                Asserts.isTrue(value > 0);
-                this.horsePower = value;
+            Asserts.isTrue(horsePower > 0);
+            this.horsePower = horsePower;
 
-            }
         }
+
         public bool IsStarted
         {
             get
@@ -39,7 +33,13 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.horsePower;
+            }
+            set
+            {
+                Asserts.isTrue(value > 0);
+                this.horsePower = value;
+
             }
         }
 

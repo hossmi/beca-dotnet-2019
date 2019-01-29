@@ -7,10 +7,15 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
-
+    
     public class Wheel
     {
+
         double pressure = 0;
+        public Wheel(double pressure)
+        {
+
+        }
         public double Pressure
         {
             set

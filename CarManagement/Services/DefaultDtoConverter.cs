@@ -6,15 +6,17 @@ namespace CarManagement.Services
     public class DefaultDtoConverter : IDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
+        
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
+            
         }
 
         public Engine convert(EngineDto engineDto)
         {
-            throw new System.NotImplementedException();
+            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
 
         public EngineDto convert(Engine engine)
@@ -34,7 +36,7 @@ namespace CarManagement.Services
 
         public Door convert(DoorDto doorDto)
         {
-            throw new System.NotImplementedException();
+            return new Door(doorDto.IsOpen);
         }
 
         public DoorDto convert(Door door)
@@ -44,7 +46,7 @@ namespace CarManagement.Services
 
         public Wheel convert(WheelDto wheelDto)
         {
-            throw new System.NotImplementedException();
+            return new Wheel(wheelDto.Pressure);
         }
 
         public WheelDto convert(Wheel wheel)
@@ -54,7 +56,7 @@ namespace CarManagement.Services
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            throw new System.NotImplementedException();
+            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)

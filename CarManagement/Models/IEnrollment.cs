@@ -8,6 +8,7 @@ namespace CarManagement.Models
 {
     public interface IEnrollment
     {
+
         string Serial { get; }
         int Number { get; }
     }
