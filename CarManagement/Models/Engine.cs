@@ -34,5 +34,10 @@ namespace CarManagement.Models
         {
             IsStarted = false;
         }
+
+        public void stop()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

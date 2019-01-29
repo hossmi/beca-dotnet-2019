@@ -30,9 +30,14 @@ namespace BusinessCore.Tests
 
         public IEnrollment DefaultEnrollment { get; }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             return this.DefaultEnrollment;
+        }
+
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

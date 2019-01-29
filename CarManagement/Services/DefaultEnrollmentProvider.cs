@@ -35,6 +35,12 @@ namespace CarManagement.Services
         }
 
         IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
             IEnrollment enrollment;
             string serial = "";
