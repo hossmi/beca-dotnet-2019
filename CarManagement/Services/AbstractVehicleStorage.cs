@@ -13,24 +13,32 @@ namespace CarManagement.Services
 
         public AbstractVehicleStorage()
         {
-
+            this.vehicles = load();
         }
 
-        public int Count { get; }
+        public int Count { get => this.vehicles.Count; }
 
         public void clear()
         {
-            throw new NotImplementedException();
+            this.vehicles.Clear();
+            save();
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            throw new NotImplementedException();
+            Vehicle vehicleResult;
+
+            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
+            Asserts.isTrue(vehicleExists);
+
+            return vehicleResult;
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new NotImplementedException();
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
+            save();
         }
     }
 }
