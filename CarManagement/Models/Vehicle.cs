@@ -70,7 +70,10 @@ namespace CarManagement.Models
             }
         }
 
-        
+        public CarColor getColor()
+        {
+            return color;
+        }
 
         public void setWheelsPressure(double pression)
         {

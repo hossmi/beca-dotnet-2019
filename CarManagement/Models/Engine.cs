@@ -13,6 +13,12 @@ namespace CarManagement.Models
             this.horsePorwer = horsePorwer;
         }
 
+        public Engine(int horsePorwer, bool startEngine)
+        {
+            this.startEngine = startEngine;
+            this.horsePorwer = horsePorwer;
+        }
+
         public bool IsStarted
         {
             get
@@ -48,7 +54,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            this.startEngine = false;
         }
     }
 }

@@ -11,6 +11,11 @@ namespace CarManagement.Models
             this.openDoor = false;
         }
 
+        public Door(bool openDoor)
+        {
+            this.openDoor = openDoor;
+        }
+
         public void open()
         {
             this.openDoor = true;

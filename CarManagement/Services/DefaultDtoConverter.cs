@@ -1,5 +1,6 @@
 ﻿using CarManagement.Models;
 using CarManagement.Models.DTOs;
+using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
@@ -14,12 +15,16 @@ namespace CarManagement.Services
 
         Engine IDtoConverter.convert(EngineDto engineDto)
         {
-            throw new System.NotImplementedException();
+            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
 
         EngineDto IDtoConverter.convert(Engine engine)
         {
-            throw new System.NotImplementedException();
+            EngineDto engineDto = new EngineDto();
+            engineDto.HorsePower = engine.HorsePorwer;
+            engineDto.IsStarted = engine.IsStarted;
+
+            return engineDto;
         }
 
         Vehicle IDtoConverter.convert(VehicleDto vehicleDto)
@@ -34,12 +39,15 @@ namespace CarManagement.Services
 
         Door IDtoConverter.convert(DoorDto doorDto)
         {
-            throw new System.NotImplementedException();
+            return new Door(doorDto.IsOpen);
         }
 
         DoorDto IDtoConverter.convert(Door door)
         {
-            throw new System.NotImplementedException();
+            DoorDto doorDto = new DoorDto();
+            doorDto.IsOpen = door.IsOpen;
+
+            return doorDto;
         }
 
         Wheel IDtoConverter.convert(WheelDto wheelDto)
@@ -54,12 +62,16 @@ namespace CarManagement.Services
 
         IEnrollment IDtoConverter.convert(EnrollmentDto enrollmentDto)
         {
-            throw new System.NotImplementedException();
+            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
         EnrollmentDto IDtoConverter.convert(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            EnrollmentDto enrollmentDto = new EnrollmentDto();
+            enrollmentDto.Serial = enrollment.Serial;
+            enrollmentDto.Number = enrollmentDto.Number;
+
+            return enrollmentDto;
         }
     }
 }

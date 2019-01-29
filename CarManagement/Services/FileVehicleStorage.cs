@@ -25,7 +25,31 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
+        public int Count => throw new NotImplementedException();
+
+        public void clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Vehicle get(IEnrollment enrollment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void set(Vehicle vehicle)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        {
+            throw new System.NotImplementedException();
+            //TextReader vehiclesReader = new StreamReader(fileFullPath);
+        }
+
+        /*
+         * private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
         {
             throw new System.NotImplementedException();
         }
@@ -48,7 +72,7 @@ namespace CarManagement.Services
             StreamReader vehiclesReader = new StreamReader(this.filePath);
             VehicleDto vehicleDto = (VehicleDto)xmlDesSerializer.Deserialize(vehiclesReader);
             Vehicle vehicle = vehicleDto;
-            return vehicle;*/
+            return vehicle;
         }
 
         public void set(Vehicle vehicle)
@@ -65,14 +89,9 @@ namespace CarManagement.Services
 
             StreamWriter vehiclesWriter = new StreamWriter(filePath);
             xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
-            vehiclesWriter.Close();*/
+            vehiclesWriter.Close();
         }
-
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
-        {
-            throw new System.NotImplementedException();
-            //TextReader vehiclesReader = new StreamReader(fileFullPath);
-        }
+        */
 
     }
 }

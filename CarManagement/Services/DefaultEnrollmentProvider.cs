@@ -35,9 +35,10 @@ namespace CarManagement.Services
         };
         private int finalNumber = 0;
 
-        public DefaultEnrollmentProvider()
+        /*public DefaultEnrollmentProvider(IEnrollmentProvider enrollment)
         {
-        }
+            this.enrollment = new Enrollment(enrollment.Serial, enrollment.Number);
+        }*/
 
         public IEnrollment NewEnrollment {
             get
@@ -84,7 +85,7 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            throw new System.NotImplementedException();
+            return new Enrollment(serial, number);
         }
 
         private int generateNumber()
