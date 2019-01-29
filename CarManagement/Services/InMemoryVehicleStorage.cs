@@ -7,6 +7,12 @@ namespace CarManagement.Services
     public class InMemoryVehicleStorage : IVehicleStorage
     {
         IDictionary<IEnrollment, Vehicle> vehicles;
+
+        public InMemoryVehicleStorage()
+        {
+            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+        }
+
         public int Count {
             get
             {
@@ -23,7 +29,7 @@ namespace CarManagement.Services
         public Vehicle get(IEnrollment defaultEnrollment)
         {
             Vehicle vehicle;
-            bool hasVehicle = vehicles.TryGetValue(defaultEnrollment,out vehicle);
+            bool hasVehicle = this.vehicles.TryGetValue(defaultEnrollment,out vehicle);
             Asserts.isTrue(hasVehicle);
             return vehicle;
         }
@@ -32,9 +38,6 @@ namespace CarManagement.Services
             this.vehicles.Clear();
         }
 
-        public InMemoryVehicleStorage()
-        {
-            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
-        }
+        
     }
 }
