@@ -168,7 +168,7 @@ namespace BusinessCore.Tests
         public void enrollments_must_complaint_requested_format()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNew();
 
             Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}-[0-9]{4}");
             Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
