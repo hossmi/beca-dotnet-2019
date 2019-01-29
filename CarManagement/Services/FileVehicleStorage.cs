@@ -24,20 +24,34 @@ namespace CarManagement.Services
                 this.vehicles = new Dictionary<IEnrollment, Vehicle>();
         }
 
-        public void clear()
+        private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
         {
             throw new System.NotImplementedException();
-            //writeToFile(this.filePath);
+        }
+
+        private static Vehicle createVehicle()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void clear()
+        {
+            vehicles.Clear();
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
             throw new System.NotImplementedException();
+            /*XmlSerializer xmlDesSerializer = new XmlSerializer(typeof(VehicleDto));
+            
+            StreamReader vehiclesReader = new StreamReader(this.filePath);
+            VehicleDto vehicleDto = (VehicleDto)xmlDesSerializer.Deserialize(vehiclesReader);
+            Vehicle vehicle = vehicleDto;
+            return vehicle;*/
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
             writeToFile(this.filePath, this.vehicles);
         }
 
@@ -45,12 +59,12 @@ namespace CarManagement.Services
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
-            //XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDto));
-            //VehicleDto vehicleDto = new VehicleDto();
+            /*XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDto));
+            VehicleDto vehicleDto = new VehicleDto();
 
-            //TextWriter vehiclesWriter = new StreamWriter(filePath);
-            //xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
-            //vehiclesWriter.Close();
+            StreamWriter vehiclesWriter = new StreamWriter(filePath);
+            xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
+            vehiclesWriter.Close();*/
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
