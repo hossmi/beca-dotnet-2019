@@ -10,7 +10,7 @@ namespace CarManagement.Models
 
         public Engine(int horsePower)
         {
-            Asserts.isTrue(horsePower<=0);
+            Asserts.isTrue(horsePower>0);
             this.horsePower = horsePower;
         }
         public int Model {
