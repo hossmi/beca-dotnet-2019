@@ -21,7 +21,7 @@ namespace CarManagement.Services
                 this.vehicles = readFromFile(fileFullPath);
             else
                 this.vehicles = new Dictionary<IEnrollment, Vehicle>();*/
-            this.vehicles = readFromFile(fileFullPath);
+            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
@@ -70,6 +70,7 @@ namespace CarManagement.Services
          * private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
         {
             throw new System.NotImplementedException();
+            
         }
 
         private static Vehicle createVehicle()
@@ -95,10 +96,11 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            writeToFile(this.filePath, this.vehicles);
+            throw new System.NotImplementedException();
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -111,7 +113,7 @@ namespace CarManagement.Services
         }
         */
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             Vehicle[] vehiclesAux = new Vehicle[vehicles.Count];
             int contFor = 0;
