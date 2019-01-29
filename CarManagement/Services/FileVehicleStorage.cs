@@ -10,6 +10,7 @@ namespace CarManagement.Services
     public class FileVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public int Count
@@ -24,6 +25,7 @@ namespace CarManagement.Services
         {
             this.filePath = fileFullPath;
             this.vehicles = readFromFile(fileFullPath);
+            this.dtoConverter = dtoConverter;
         }
 
 
