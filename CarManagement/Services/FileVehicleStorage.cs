@@ -16,28 +16,35 @@ namespace CarManagement.Services
             this.vehicles = readFromFile(fileFullPath);
         }
 
-        public int Count { get; }
+        public int Count { get => vehicles.Count; }
 
         public void clear()
         {
-            throw new System.NotImplementedException();
+            vehicles.Clear();
             writeToFile(this.filePath, this.vehicles);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out Vehicle returnedVehicle);
+
+            Asserts.isTrue(hasVehicle, "El vehículo no está en el diccionario");
+
+            return returnedVehicle;
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
+            vehicles.Add(vehicle.Enrollment, vehicle);
             writeToFile(this.filePath, this.vehicles);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
+            foreach (KeyValuePair<IEnrollment, Vehicle> entry in vehicles)
+            {
+                throw new NotImplementedException();
+            }
             throw new NotImplementedException();
         }
 

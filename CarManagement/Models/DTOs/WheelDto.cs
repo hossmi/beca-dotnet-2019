@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
+    [Serializable]
     class WheelDto
     {
         public string Model { get; set; }
