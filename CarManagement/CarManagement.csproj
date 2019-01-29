@@ -41,11 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\Asserts.cs" />
+    <Compile Include="Asserts.cs" />
     <Compile Include="Builders\IVehicleBuilder.cs" />
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
+    <Compile Include="Models\DTOs\DoorDto.cs" />
+    <Compile Include="Models\DTOs\EngineDto.cs" />
+    <Compile Include="Models\DTOs\EnrollmentDto.cs" />
+    <Compile Include="Models\DTOs\VehicleDto.cs" />
+    <Compile Include="Models\DTOs\WheelDto.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\IEnrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
