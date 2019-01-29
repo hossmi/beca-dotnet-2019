@@ -58,7 +58,7 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
             try
             {
