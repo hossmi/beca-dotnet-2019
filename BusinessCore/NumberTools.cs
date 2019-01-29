@@ -10,12 +10,32 @@ namespace BusinessCore
     {
         public static long factorial(long n)
         {
-            throw new NotImplementedException();
+            long nfactorial = 1;
+
+            for (int i = 1; i<=n; i++)
+            {
+                nfactorial = nfactorial * i;
+            }
+
+            return nfactorial;
         }
 
         public static int fibonacci(int n)
         {
-            throw new NotImplementedException();
+            int nfibonacci =  n;
+
+            if (n != 0 && n!=1)
+            {
+                nfibonacci = fibonacci(n - 1) + fibonacci(n - 2);
+            }
+            else
+            {
+                if (n == 0)
+                { nfibonacci = 0; }
+                else
+                { nfibonacci = 1; }
+            }
+            return nfibonacci;
         }
     }
 }
