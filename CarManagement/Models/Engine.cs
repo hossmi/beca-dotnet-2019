@@ -13,6 +13,14 @@ namespace CarManagement.Models
             Asserts.isTrue(horsePower>0);
             this.horsePower = horsePower;
         }
+
+        public Engine(int horsePower,bool mode)
+        {
+            Asserts.isTrue(horsePower>0);
+            this.horsePower = horsePower;
+            this.mode = mode;
+        }
+
         public int Model {
             get
             {
@@ -47,7 +55,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            this.mode=false;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CarManagement.Services
 
         public Engine convert(EngineDto engineDto)
         {
-            throw new System.NotImplementedException();
+            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
 
         public EngineDto convert(Engine engine)
