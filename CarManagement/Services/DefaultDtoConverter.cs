@@ -57,7 +57,7 @@ namespace CarManagement.Services
             throw new System.NotImplementedException();
         }
 
-        EnrollmentDto IDtoConverter.convert(IEnrollment enrollment, IEnrollmentProvider enrollmentProvider)
+        EnrollmentDto IDtoConverter.convert(IEnrollment enrollment)
         {
             throw new System.NotImplementedException();
         }
