@@ -10,11 +10,10 @@ namespace CarManagement.Services
     public class FileVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public int Count { get; }
-
-        public FileVehicleStorage(string fileFullPath)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
 
@@ -23,6 +22,7 @@ namespace CarManagement.Services
             else
                 this.vehicles = new Dictionary<IEnrollment, Vehicle>();*/
             this.vehicles = readFromFile(fileFullPath);
+            this.dtoConverter = dtoConverter;
         }
 
         private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
