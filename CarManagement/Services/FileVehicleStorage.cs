@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Models;
 
 namespace CarManagement.Services
@@ -10,6 +11,7 @@ namespace CarManagement.Services
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
+        private List<Vehicle> vehicle = new List<Vehicle>();
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
@@ -18,17 +20,35 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get
+            {
+                return vehicle.Count;
+            }
+        }
 
         public void clear()
         {
-            throw new System.NotImplementedException();
+            vehicle.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            Vehicle T2 = new Vehicle();
+            bool vehicleFound = false;
+
+            foreach (Vehicle T in vehicle)
+            {
+                if (enrollment == T.Enrollment)
+                {
+                    vehicleFound = true;
+                    T2 = T;
+                }
+            }
+            Asserts.isTrue(vehicleFound);
+            return T2;
         }
 
         public void set(Vehicle vehicle)
@@ -39,6 +59,14 @@ namespace CarManagement.Services
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
+            /*Vehicle[] vehicle = new Vehicle[this.vehicle.Count];
+            int temp = 0;
+            foreach (Vehicle vehicleArr in vehicle)
+            {
+                vehicle[temp] = vehicleArr;
+                temp++;
+            }
+            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));*/
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
             throw new NotImplementedException();
         }
