@@ -49,7 +49,7 @@
     <Compile Include="Models\DTOs\DoorDto.cs" />
     <Compile Include="Models\DTOs\EngineDto.cs" />
     <Compile Include="Models\DTOs\EnrollmentDto.cs" />
-    <Compile Include="Models\DTOs\MapsDto.cs" />
+    <Compile Include="Models\MapsDto.cs" />
     <Compile Include="Models\DTOs\VehicleDto.cs" />
     <Compile Include="Models\DTOs\WheelDto.cs" />
     <Compile Include="Models\Engine.cs" />

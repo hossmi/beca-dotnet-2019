@@ -68,7 +68,7 @@ namespace CarManagement.Builders
             List<Door> doors = create<Door>(this.numberDoors);
             List<Wheel> wheels = create<Wheel>(this.numberWheels);
 
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNewEnrollment());
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNew());
             return vehicle;
         }
 

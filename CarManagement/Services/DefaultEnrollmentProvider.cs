@@ -50,7 +50,7 @@ namespace CarManagement.Services
             }
                 }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             this.enrollment = new Enrollment(generateLetter(), generateNumber());
             return this.enrollment;
