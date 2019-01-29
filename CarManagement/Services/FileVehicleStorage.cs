@@ -10,8 +10,6 @@ namespace CarManagement.Services
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly string filePath;
 
-        public int Count { get; }
-
         public FileVehicleStorage(string fileFullPath)
         {
             this.filePath = fileFullPath;
@@ -21,6 +19,8 @@ namespace CarManagement.Services
             else
                 this.vehicles = new Dictionary<IEnrollment, Vehicle>();
         }
+
+        public int Count { get; }
 
         public void clear()
         {
