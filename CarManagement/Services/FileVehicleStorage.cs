@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using CarManagement.Models;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -22,42 +23,49 @@ namespace CarManagement.Services
         public int Count { get; }
 
         public void clear()
-
         {
-            throw new System.NotImplementedException();
+            this.vehicles.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            Vehicle vehicle;
+            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle);
+            Asserts.isTrue(hasVehicle);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+            return vehicle;
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+            throw new System.NotImplementedException();
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
-            Vehicle[] listVehicles = new Vehicle[vehicles.Count];
+            VehicleDto[] listVehicles = new VehicleDto[vehicles.Count];
             int aux = 0;
-            foreach(Vehicle v  in vehicles.Values)
+            foreach (Vehicle v in vehicles.Values)
             {
-                listVehicles[aux] = v;
+
+                listVehicles[aux] = dtoConverter.convert(v);
                 aux++;
             }
-            XmlSerializer ser = new XmlSerializer(typeof (Vehicle[]));
+            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
             TextWriter writer = new StreamWriter(filePath);
             ser.Serialize(writer, listVehicles);
             writer.Close();
 
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
 
 
         {
@@ -65,22 +73,22 @@ namespace CarManagement.Services
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
-                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
-                TextReader reader = new StreamReader(fileFullPath );
-                Vehicle[] listVehicle=(Vehicle[])ser.Deserialize(reader); //guardo lo que he leido en un array de vehiculos.
+                XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+                TextReader reader = new StreamReader(fileFullPath);
+                VehicleDto[] listVehicle = (VehicleDto[])ser.Deserialize(reader); //guardo lo que he leido en un array de vehiculos.
                 reader.Close();
-                
-                foreach (Vehicle v in listVehicle )
+
+                foreach (VehicleDto v in listVehicle)
                 {
-                    vehicles.Add(v.Enrollment, v);
+
+                    Vehicle vehicle = dtoConverter.convert(v);
+                    vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
             return vehicles;
-                
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
-        {
-            throw new NotImplementedException();
-        }
 
+
+
+        }
     }
 }
