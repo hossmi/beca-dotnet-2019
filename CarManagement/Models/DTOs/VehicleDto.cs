@@ -37,7 +37,7 @@ namespace CarManagement.Models.DTOs
             }
         }
 
-        public Vehicle ConvertToVehicle()
+        public Vehicle ConvertToVehicle(VehicleDto vDto)
         {
             Vehicle v;
 
@@ -46,20 +46,20 @@ namespace CarManagement.Models.DTOs
             Engine engine;
             IEnrollment enrollment;
 
-            foreach (WheelDto w in this.Wheels)
+            foreach (WheelDto w in vDto.Wheels)
             {
                 wheels.Add(w.ConvertToWheel());
             }
 
-            foreach (DoorDto d in this.Doors)
+            foreach (DoorDto d in vDto.Doors)
             {
                 doors.Add(d.ConvertToDoor());
             }
-            engine = this.Engine.ConvertToEngine();
+            engine = vDto.Engine.ConvertToEngine();
 
 
-            v = new Vehicle(wheels, doors, engine, this.Color, enrollment);
-                       
+            v = new Vehicle(wheels, doors, engine, vDto.Color, enrollment);
+
             return v;
         }
     }

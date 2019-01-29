@@ -104,5 +104,14 @@ namespace CarManagement.Services
             }
         }
 
+        public VehicleDto ConvertToVehicleDto(Vehicle v)
+        {
+            VehicleDto vDto = new VehicleDto(v);
+
+            return vDto;
+        }
+
+
+
     }
 }
