@@ -20,7 +20,7 @@ namespace CarManagement.Services
                 this.Serial = serial;
                 this.Number = number;
             }
-
+            
             public string Serial{get;}
             public int Number{get;}
 
@@ -40,7 +40,7 @@ namespace CarManagement.Services
             this.sizeLetters = this.letters.Length-1;
         }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             if (number4 <= 9999)
             {
@@ -81,5 +81,6 @@ namespace CarManagement.Services
 
             return new Enrollment(lettersEnrollment,  number4);
         }
+
     }
 }
