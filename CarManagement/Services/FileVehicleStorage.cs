@@ -39,7 +39,9 @@ namespace CarManagement.Services
         {
             Vehicle v;
             Boolean vehicleFound = false;
-            vehicleFound = this.vehicles.TryGetValue(enrollment, out v);
+
+            vehicleFound = vehicles.TryGetValue(enrollment, out v);
+
             Asserts.isTrue(vehicleFound, "Could not find vehicle.");
             return v;
         }
@@ -47,10 +49,10 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, vehicles,dtoConverter);
+            writeToFile(this.filePath, vehicles, dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
@@ -59,8 +61,7 @@ namespace CarManagement.Services
             int i = 0;
             foreach (Vehicle v in vehicles.Values)
             {
-                VehicleDto vehicleDto = dtoConverter.convert(v);
-                vehiclesDtoArray[i] = vehicleDto;
+                vehiclesDtoArray[i] = dtoConverter.convert(v);
                 i++;
             }
 
@@ -68,28 +69,11 @@ namespace CarManagement.Services
             TextWriter writer = new StreamWriter(filePath);
             ser.Serialize(writer, vehiclesDtoArray);
             writer.Close();
-
-
-            //XmlSerializer serializer = new XmlSerializer(typeof(Vehicle[]));
-            //FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate);
-
-            //foreach (KeyValuePair<IEnrollment, Vehicle> item in vehicles)
-            //{
-            //    //Vehicle vehicle = item.Value;
-
-            //    VehicleDto vehicleDto = dtoConverter.convert(item.Value);
-
-            //    serializer.Serialize(fs, vehicleDto);
-
-            //}
-
-            //fs.Close();
-
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>();
+            IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(fileFullPath))
             {
@@ -98,8 +82,6 @@ namespace CarManagement.Services
                 VehicleDto[] vehiclesDtoArray = (VehicleDto[])ser.Deserialize(reader);
                 reader.Close();
 
-
-
                 foreach (VehicleDto vDto in vehiclesDtoArray)
                 {
                     //vehicleDictionary.Add(v.Enrollment, v);
@@ -107,44 +89,14 @@ namespace CarManagement.Services
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
 
                 }
-
-
             }
-            //else
-            //{
-            //    //FileStream fs = new FileStream(fileFullPath, FileMode.CreateNew);
-            //    ////File.Create(fileFullPath);
-            //    //fs.Flush();
-            //    //fs.Close();
-            //    return new Dictionary<IEnrollment, Vehicle>();
-            //}
 
             return vehicleDictionary;
         }
 
-        private static bool Serialize<T>(T value, ref string serializeXml)
-        {
-            if (value == null)
-            {
-                return false;
-            }
-            try
-            {
-                XmlSerializer xmlserializer = new XmlSerializer(typeof(T));
-                StringWriter stringWriter = new StringWriter();
-                XmlWriter writer = XmlWriter.Create(stringWriter);
 
-                xmlserializer.Serialize(writer, value);
-
-                serializeXml = stringWriter.ToString();
-
-                writer.Close();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
     }
 }
+
+
+    
