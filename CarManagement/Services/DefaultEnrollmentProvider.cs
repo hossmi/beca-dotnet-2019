@@ -16,6 +16,13 @@ namespace CarManagement.Services
         private static int[] lastLettersTracker = new int[3];
         private static int nextIssuedNumber = 0;
 
+        IEnrollment IEnrollmentProvider.getNew()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+
         public IEnrollment getNewEnrollment()
         {
             if(nextIssuedNumber > 9999)
