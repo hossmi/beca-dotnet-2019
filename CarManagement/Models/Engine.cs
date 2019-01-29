@@ -17,15 +17,8 @@ namespace CarManagement.Models
 
         public void start()
         {
-            try
-            {
-                //Insert Start instructions here
-                this.isStarted = true;
-            }
-            catch (Exception)
-            {
-                this.isStarted = false;
-            }
+            Asserts.isFalse(this.isStarted, "Engine is already started.");
+            this.isStarted = true;
         }
 
         public bool IsStarted
@@ -46,7 +39,8 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            Asserts.isTrue(this.isStarted, "Engine is already stopped.");
+            this.isStarted = false;
         }
     }
 }
