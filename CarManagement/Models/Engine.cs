@@ -38,5 +38,9 @@ namespace CarManagement.Models
         {
             this.mode  = true;
         }
+        public void stop()
+        {
+            this.mode = false;
+        }
     }
 }
