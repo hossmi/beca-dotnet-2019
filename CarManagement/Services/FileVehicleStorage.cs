@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Models.DTOs;
+using CarManagement.Services;
 
 namespace CarManagement.Services
 {
@@ -32,7 +33,7 @@ namespace CarManagement.Services
         {
             //throw new System.NotImplementedException();
             vehicles.Clear();
-            File.Delete(filePath);
+            //File.Delete(filePath);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -47,7 +48,7 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            VehicleDto vDTO;
+            VehicleDto vDTO = DtoConverter.Convert(vehicle);
 
 
         }
@@ -94,19 +95,11 @@ namespace CarManagement.Services
                 writer.Close();
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
         }
-
-        public VehicleDto ConvertToVehicleDto(Vehicle v)
-        {
-            VehicleDto vDto = new VehicleDto(v);
-
-            return vDto;
-        }
-
 
 
     }

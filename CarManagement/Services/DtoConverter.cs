@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CarManagement.Models.DTOs
 {
-    class DtoConverter
+    static class DtoConverter
     {
-        public DoorDto Convert(Door d)
+        static public DoorDto Convert(Door d)
         {
             DoorDto dDto =new DoorDto();
             dDto.IsOpen = d.IsOpen;
@@ -16,7 +17,7 @@ namespace CarManagement.Models.DTOs
             return dDto;
         }
 
-        public Door Convert(DoorDto dDto)
+        static public Door Convert(DoorDto dDto)
         {
             Door d = new Door();
 
@@ -28,14 +29,14 @@ namespace CarManagement.Models.DTOs
             return d;
         }
 
-        public WheelDto Convert(Wheel w)
+        static public WheelDto Convert(Wheel w)
         {
             WheelDto wDto = new WheelDto();
             wDto.Pressure = w.Pressure;
             return wDto;
         }
 
-        public Wheel Convert(WheelDto wDto)
+        static public Wheel Convert(WheelDto wDto)
         {
             Wheel w = new Wheel();
             w.FillWheel(wDto.Pressure);
@@ -43,7 +44,7 @@ namespace CarManagement.Models.DTOs
             return w;
         }
 
-        public EngineDto Convert(Engine e)
+        static public EngineDto Convert(Engine e)
         {
             EngineDto eDto = new EngineDto();
             eDto.IsStarted = e.IsStarted;
@@ -52,7 +53,7 @@ namespace CarManagement.Models.DTOs
             return eDto;
         }
 
-        public Engine Convert(EngineDto eDto)
+        static public Engine Convert(EngineDto eDto)
         {
             Engine e = new Engine(eDto.HorsePower);
 
@@ -64,7 +65,7 @@ namespace CarManagement.Models.DTOs
             return e;
         }
 
-        public EnrollmentDto Convert(IEnrollment e)
+        static public EnrollmentDto Convert(IEnrollment e)
         {
             EnrollmentDto eDto = new EnrollmentDto();
             eDto.Serial = e.Serial;
@@ -73,14 +74,12 @@ namespace CarManagement.Models.DTOs
             return eDto;
         }
 
-        public IEnrollment Convert(EnrollmentDto eDto)
+        static public IEnrollment Convert(EnrollmentDto eDto, IEnrollmentProvider enrollmentProvider)
         {
-            eDto.
-
-            return e;
+            return enrollmentProvider.import(eDto.Serial, eDto.Number);
         }
-        
-        public VehicleDto Convert(Vehicle v)
+
+        static public VehicleDto Convert(Vehicle v)
         {
             VehicleDto vDto = new VehicleDto();
             vDto.Color = v.Color;
@@ -106,7 +105,7 @@ namespace CarManagement.Models.DTOs
             return vDto;
         }
 
-        public Vehicle Convert(VehicleDto vDto)
+        static public Vehicle Convert(VehicleDto vDto)
         {
             Vehicle v;
 
@@ -126,7 +125,7 @@ namespace CarManagement.Models.DTOs
             }
             engine = Convert(vDto.Engine);
 
-            enrollment = Convert(vDto.Enrollment);
+            enrollment = Convert(vDto.Enrollment,);
 
             v = new Vehicle(wheels, doors, engine, vDto.Color, enrollment);
 
