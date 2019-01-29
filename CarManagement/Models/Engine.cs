@@ -21,6 +21,14 @@ namespace CarManagement.Models
             }
         }
 
+        public int HorsePower
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void start()
         {
             startEngine = true;
@@ -36,6 +44,11 @@ namespace CarManagement.Models
             {
                 horsePorwer = value;
             }
+        }
+
+        public void stop()
+        {
+            throw new NotImplementedException();
         }
     }
 }

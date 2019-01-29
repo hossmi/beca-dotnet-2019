@@ -82,6 +82,11 @@ namespace CarManagement.Services
             return lettersAux;
         }
 
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private int generateNumber()
         {
             finalNumber++;

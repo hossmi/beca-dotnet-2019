@@ -18,10 +18,11 @@ namespace CarManagement.Services
         {
             this.filePath = fileFullPath;
 
-            if (File.Exists(fileFullPath))
+            /*if (File.Exists(fileFullPath))
                 this.vehicles = readFromFile(fileFullPath);
             else
-                this.vehicles = new Dictionary<IEnrollment, Vehicle>();
+                this.vehicles = new Dictionary<IEnrollment, Vehicle>();*/
+            this.vehicles = readFromFile(fileFullPath);
         }
 
         private static VehicleDto createVehicleDto(IDictionary<IEnrollment, Vehicle> vehicles)
