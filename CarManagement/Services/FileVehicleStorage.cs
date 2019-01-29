@@ -14,7 +14,7 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath);
+            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
@@ -23,7 +23,7 @@ namespace CarManagement.Services
         public void clear()
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath, this.vehicles);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -34,16 +34,16 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
-            writeToFile(this.filePath, this.vehicles);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
             throw new NotImplementedException();
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
             throw new NotImplementedException();
         }
