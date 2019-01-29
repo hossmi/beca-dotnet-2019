@@ -23,15 +23,18 @@ namespace CarManagement.Services
         public Vehicle get(IEnrollment enrollment)
         {
             Vehicle T2 = new Vehicle();
+            bool vehicleFound = false;
+
             foreach (Vehicle T in list_vehicle)
             {
-                Asserts.isTrue(enrollment == T.Enrollment);
-                T2 = T;
-                /*if (enrollment == T.Enrollment)
+                if(enrollment == T.Enrollment);
                 {
+                    vehicleFound = true;
                     T2 = T;
-                }*/
+                }
+
             }
+            Asserts.isTrue(vehicleFound);
             return T2;
         }
 
