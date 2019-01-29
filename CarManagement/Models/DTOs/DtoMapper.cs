@@ -80,5 +80,21 @@ namespace CarManagement.Models.DTOs
             return vehicleDto;
 
         }
+        public static Vehicle convert(VehicleDto vehicle)
+        {
+            List<Door> doors = new List<Door>();
+            foreach (DoorDto door in vehicle.Doors)
+            {
+                doors.Add(convert(door));
+            }
+
+            List<Wheel> wheels = new List<Wheel>();
+            foreach (WheelDto wheel in vehicle.Wheels)
+            {
+                wheels.Add(convert(wheel));
+            }
+
+            return new Vehicle(convert(vehicle.Engine), doors, wheels, vehicle.Color, convert(vehicle.Enrollment));
+        }
     }
 }

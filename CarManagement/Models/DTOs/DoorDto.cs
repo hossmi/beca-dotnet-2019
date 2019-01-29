@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarManagement.Models.DTOs
 {
     [Serializable]
-    class DoorDto
+    public class DoorDto
     {
         public string Model { get; set; }
         public bool IsOpen { get; set; }

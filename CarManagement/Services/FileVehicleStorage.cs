@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using CarManagement.Models;
+using CarManagement.Models.DTOs;
+using Newtonsoft.Json;
 
 namespace CarManagement.Services
 {
@@ -43,16 +46,54 @@ namespace CarManagement.Services
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
         {
+            string jsonText = "";
+
             foreach (KeyValuePair<IEnrollment, Vehicle> entry in vehicles)
             {
-                throw new NotImplementedException();
+                VehicleDto savedVehicle = DtoMapper.convert(entry.Value);
+                jsonText += JsonConvert.SerializeObject(savedVehicle);
             }
-            throw new NotImplementedException();
+            System.IO.File.WriteAllText(filePath, jsonText);
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
         {
-            throw new NotImplementedException();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+
+            string jsonText = System.IO.File.ReadAllText(fileFullPath);
+            List<string> jsonObjects = getIndividualJson(jsonText);
+
+            foreach (string jsonObject in jsonObjects)
+            {
+                VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
+                Vehicle vehicle = DtoMapper.convert(vehicleDto);
+                vehicles.Add(vehicle.Enrollment, vehicle);
+            }
+
+            return vehicles;
+        }
+
+        private static List<string> getIndividualJson(String jsonText)
+        {
+            int BracketCount = 0;
+            List<string> JsonItems = new List<string>();
+            StringBuilder Json = new StringBuilder();
+
+            foreach (char cIndex in jsonText)
+            {
+                if (cIndex == '{')
+                    ++BracketCount;
+                else if (cIndex == '}')
+                    --BracketCount;
+                Json.Append(cIndex);
+
+                if (BracketCount == 0 && cIndex != ' ')
+                {
+                    JsonItems.Add(Json.ToString());
+                    Json = new StringBuilder();
+                }
+            }
+            return JsonItems;
         }
 
     }

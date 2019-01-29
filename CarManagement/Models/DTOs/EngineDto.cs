@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarManagement.Models.DTOs
 {
     [Serializable]
-    class EngineDto
+    public class EngineDto
     {
         public string Model { get; set; }
         public bool IsStarted { get; set; }

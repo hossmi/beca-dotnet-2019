@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace CarManagement.Models.DTOs
 {
     [Serializable]
-    class WheelDto
+    public class WheelDto
     {
         public string Model { get; set; }
         public double Pressure { get; set; }
