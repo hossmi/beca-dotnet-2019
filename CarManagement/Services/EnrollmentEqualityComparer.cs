@@ -23,7 +23,7 @@ namespace CarManagement.Services
 
         public int GetHashCode(IEnrollment obj)
         {
-            return obj.Number.GetHashCode();
+            return obj.GetHashCode();
         }
     }
 }
