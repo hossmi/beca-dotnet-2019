@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using CarManagement.Builders;
 using CarManagement.Models;
 using CarManagement.Services;
@@ -9,12 +11,22 @@ namespace BusinessCore.Tests
     [TestClass]
     public class VehicleStorareTests
     {
+        public string VehiclesFilePath
+        {
+            get
+            {
+                return Path.Combine(Environment.CurrentDirectory, "Vehicles.xml");
+            }
+        }
+
         [TestMethod]
         public void fileVehicleStorage_must_persists_vehicles()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage();
+            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
+            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
 
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
@@ -28,12 +40,12 @@ namespace BusinessCore.Tests
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
-            vehicleStorage = new FileVehicleStorage();
+            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
             Assert.AreEqual(1, vehicleStorage.Count);
 
             Vehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
             Assert.IsNotNull(vehicle);
-            Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
+            Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
         }
 
         [TestMethod]
@@ -42,6 +54,7 @@ namespace BusinessCore.Tests
             Vehicle vehicle, motoVehicle;
 
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
 
@@ -57,7 +70,7 @@ namespace BusinessCore.Tests
 
             vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
             Assert.IsNotNull(vehicle);
-            Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
+            Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
 
             vehicleStorage = new InMemoryVehicleStorage();
             Assert.AreEqual(0, vehicleStorage.Count);

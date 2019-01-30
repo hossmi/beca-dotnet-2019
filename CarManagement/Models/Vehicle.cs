@@ -68,6 +68,8 @@ namespace CarManagement.Models
             }
         }
 
+        public CarColor Color { get; }
+
         public void setWheelsPressure(double pression)
         {
             for (int i = 0; i < this.WheelCount; i++)
