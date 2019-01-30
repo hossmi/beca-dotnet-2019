@@ -10,6 +10,7 @@ namespace CarManagement.Models
 
         public Engine(int horsePower = 0, string model = null, bool started = false)
         {
+            Asserts.isTrue(horsePower >= 0, "Negative horse power would be counterproductive, wouldn't it?");
             this.model = model ?? "standart";
             this.isStarted = started;
             this.horsePower = horsePower < 1 ? 50 : horsePower;
@@ -37,9 +38,9 @@ namespace CarManagement.Models
             this.isStarted = false;
         }
 
-        public string Model { get => model; }
-        public int HorsePower { get => horsePower; }
-        public bool IsStarted { get => isStarted; }
+        public string Model { get => this.model; }
+        public int HorsePower { get => this.horsePower; }
+        public bool IsStarted { get => this.isStarted; }
 
         public Engine Clone()
         {
