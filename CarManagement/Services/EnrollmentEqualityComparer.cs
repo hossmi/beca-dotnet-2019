@@ -11,9 +11,14 @@ namespace CarManagement.Services
     {
         public bool Equals(IEnrollment x, IEnrollment y)
         {
-            return (x.Serial == y.Serial && x.Number == y.Number);
+            if (x.Serial == y.Serial && x.Number == y.Number)
+            {
+                // return (x.Serial == y.Serial && x.Number == y.Number);
+                return true;
+            }
+            return false;
         }
-
+        
         public int GetHashCode(IEnrollment obj)
         {
             return obj.ToString().GetHashCode();
