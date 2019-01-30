@@ -10,13 +10,11 @@ namespace BusinessCore.Tests
     public class EpicSimpleVehicleTests
     {
         [TestMethod]
-        public void Wheels_Shall_Be_Different_Entities()
+        public void Vehicle_entities_shall_not_share_wheels()
         {
             DefaultEnrollmentProvider provider = new DefaultEnrollmentProvider();
             VehicleBuilder builder = new VehicleBuilder(provider);
 
-            builder.addWheel();
-            builder.addWheel();
             builder.addWheel();
             builder.setDoors(3);
             builder.setEngine(12);
@@ -28,8 +26,6 @@ namespace BusinessCore.Tests
             vehicle1.setWheelsPressure(1.1);
 
             Assert.IsFalse(vehicle0.Wheels[0].Pressure == vehicle1.Wheels[0].Pressure);
-            Assert.IsFalse(vehicle0.Wheels[1].Pressure == vehicle1.Wheels[0].Pressure);
-            Assert.IsFalse(vehicle0.Wheels[2].Pressure == vehicle1.Wheels[0].Pressure);
         }
     }
 }
