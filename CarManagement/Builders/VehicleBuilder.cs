@@ -22,19 +22,19 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(numberWheels < 4);
-            numberWheels++;
+            Asserts.isTrue(this.numberWheels < 4);
+            this.numberWheels++;
         }
 
         public void removeWheel()
         {
-            Asserts.isTrue(numberWheels > 0);
-            numberWheels--;
+            Asserts.isTrue(this.numberWheels > 0);
+            this.numberWheels--;
         }
 
         public void setDoors(int doorsCount)
         {
-            numberDoors = doorsCount;
+            this.numberDoors = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
@@ -62,13 +62,13 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            Asserts.isTrue(0 < numberWheels && numberWheels <= 4);
+            Asserts.isTrue(0 < this.numberWheels && this.numberWheels <= 4);
 
             Engine engine = new Engine(this.horsePorwer);
             List<Door> doors = create<Door>(this.numberDoors);
             List<Wheel> wheels = create<Wheel>(this.numberWheels);
 
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollmentProvider.getNew());
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, this.enrollmentProvider.getNew());
             return vehicle;
         }
 
