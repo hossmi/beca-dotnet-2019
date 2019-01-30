@@ -11,7 +11,8 @@ namespace CarManagement.Services
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
-        private List<Vehicle> vehicle = new List<Vehicle>();
+        private List<Vehicle> listvehicle = new List<Vehicle>();
+
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
@@ -24,43 +25,32 @@ namespace CarManagement.Services
         {
             get
             {
-                return this.vehicle.Count;
+                return this.vehicles.Count;
             }
         }
 
         public void clear()
         {
-            this.vehicle.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+            this.vehicles.Clear();
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle T2 = new Vehicle();
-            bool vehicleFound = false;
-
-            foreach (Vehicle T in this.vehicle)
-            {
-                if (enrollment == T.Enrollment)
-                {
-                    vehicleFound = true;
-                    T2 = T;
-                }
-            }
-            Asserts.isTrue(vehicleFound);
-            return T2;
+            Vehicle vehicle;
+            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicle);
+            Asserts.isTrue(vehicleExists);
+            return vehicle;
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
-            /*Vehicle[] vehicle = new Vehicle[this.vehicle.Count];
-            int temp = 0;
+            /*int temp = 0;
             foreach (Vehicle vehicleArr in vehicle)
             {
                 vehicle[temp] = vehicleArr;
