@@ -15,7 +15,7 @@ namespace CarManagement.Models
         {
             set
             {
-                Asserts.isTrue(value >= 0);
+                Asserts.isTrue(value >= 1);
                 this.pressure = value;
             }
             get
@@ -26,12 +26,12 @@ namespace CarManagement.Models
 
         public Wheel()
         {
-            this.pressure = 0;
+            this.pressure = 1;
         }
 
         internal void FillWheel(double pressure)
         {
-            Asserts.isTrue(pressure >= 0);
+            Asserts.isTrue(pressure >= 1);
             this.pressure = pressure;
         }
     }
