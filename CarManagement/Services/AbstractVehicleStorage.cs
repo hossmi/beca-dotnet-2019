@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CarManagement.Models;
 
 namespace CarManagement.Services
@@ -11,13 +8,19 @@ namespace CarManagement.Services
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
 
-        public AbstractVehicleStorage()
+        public AbstractVehicleStorage(IDictionary<IEnrollment, Vehicle> initialVehicles)
         {
-            this.vehicles = load();
-            Asserts.isNotNull(this.vehicles);
+            Asserts.isNotNull(initialVehicles);
+            this.vehicles = initialVehicles;
         }
 
-        public int Count { get => this.vehicles.Count; }
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
 
         public void clear()
         {
@@ -42,7 +45,6 @@ namespace CarManagement.Services
             save(this.vehicles.Values);
         }
 
-        protected abstract IDictionary<IEnrollment, Vehicle> load();
         protected abstract void save(IEnumerable<Vehicle> vehicles);
     }
 }

@@ -49,6 +49,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="amunozeverisTests.cs" />
+    <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="FakeEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
     <Compile Include="NumberToolsTests.cs" />
