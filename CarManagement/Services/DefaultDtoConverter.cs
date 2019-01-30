@@ -14,23 +14,21 @@ namespace CarManagement.Services
 
         public Engine convert(EngineDto engineDto)
         {
+            return convertEngine(engineDto);
+        }
+
+        private Engine convertEngine(EngineDto engineDto)
+        {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
 
         public EngineDto convert(Engine engine)
         {
+            
             throw new System.NotImplementedException();
         }
 
-        public Vehicle convert(VehicleDto vehicleDto)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public VehicleDto convert(Vehicle vehicle)
-        {
-            throw new System.NotImplementedException();
-        }
+        
 
         public Door convert(DoorDto doorDto)
         {
@@ -58,6 +56,17 @@ namespace CarManagement.Services
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Vehicle convert(VehicleDto vehicleDto)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+        public VehicleDto convert(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
         }
