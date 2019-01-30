@@ -38,6 +38,11 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
+        public Vehicle[] getAll()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
