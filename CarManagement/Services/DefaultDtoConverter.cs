@@ -97,9 +97,10 @@ namespace CarManagement.Services
         {
             EnrollmentDto enrollmentDto = new EnrollmentDto
             {
-                Serial = enrollment.Serial
+                Serial = enrollment.Serial,
+                Number = enrollment.Number,
             };
-            enrollmentDto.Number = enrollmentDto.Number;
+            
 
             return enrollmentDto;
         }
