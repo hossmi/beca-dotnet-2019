@@ -63,7 +63,6 @@ namespace BusinessCore.Tests
             builder.setColor(CarColor.Black);
 
             Vehicle vehicle = builder.build();
-
         }
     }
 }

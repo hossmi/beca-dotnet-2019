@@ -8,6 +8,7 @@ namespace CarManagement.Builders
     public class VehicleBuilder : IVehicleBuilder
     {
         const int MAX_WHEELS = 4;
+        const int MAX_DOORS = 6;
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
@@ -32,6 +33,7 @@ namespace CarManagement.Builders
         public void setDoors(int doorsCount)
         {
             Asserts.isTrue(doorsCount >= 0,"Cannot create a vehicle with negative doors");
+            Asserts.isTrue(doorsCount <= MAX_DOORS, $"Cannot create a vehicle with more than {MAX_DOORS} doors");
             this.doorsCount = doorsCount;
         }
 
