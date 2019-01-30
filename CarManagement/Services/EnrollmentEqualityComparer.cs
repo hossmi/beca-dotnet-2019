@@ -17,7 +17,7 @@ namespace CarManagement.Services
 
         public int GetHashCode(IEnrollment obj)
         {
-            return obj.ToString();
+            return (obj.Serial.ToString() && obj.Number.ToString());
         }
     }
 }

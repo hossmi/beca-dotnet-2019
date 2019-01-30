@@ -119,7 +119,6 @@ namespace CarManagement.Services
                 dtoWheelsList.Add(convert(wheel));
             }
             vehicleDto.Wheels = dtoWheelsList.ToArray();
-            
 
             return vehicleDto;
 
