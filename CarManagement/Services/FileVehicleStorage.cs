@@ -47,18 +47,18 @@ namespace CarManagement.Services
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
 
-            VehicleDto[] vehiclesArray = new VehicleDto[vehicles.Count];
+            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
             int aux = 0;
             foreach (Vehicle v in vehicles.Values)
-            { 
-                vehiclesArray[aux] = dtoConverter.convert(v);
+            {
+                vehiclesDto[aux] = dtoConverter.convert(v);
                 aux++;
             }
 
 
             XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
             TextWriter writer = new StreamWriter(filePath);
-            ser.Serialize(writer, vehiclesArray);
+            ser.Serialize(writer, vehiclesDto);
             writer.Close();
         }
 
