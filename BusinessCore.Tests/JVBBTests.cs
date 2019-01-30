@@ -10,7 +10,7 @@ namespace BusinessCore.Tests
     public class JVBBTests
     {
         [TestMethod]
-        public void WrongBuildRequests _01()
+        public void WrongBuildRequests_01()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
