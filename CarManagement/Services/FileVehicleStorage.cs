@@ -29,10 +29,8 @@ namespace CarManagement.Services
                 TextReader reader = new StreamReader(this.filePath);
                 List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)ser.Deserialize(reader);
                 reader.Close();
-
                 foreach (VehicleDto vDto in vehiclesDtoList)
                 {
-                    //vehicleDictionary.Add(v.Enrollment, v);
                     Vehicle vehicle = this.dtoConverter.convert(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
                 }
@@ -43,16 +41,12 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            //VehicleDto[] vehiclesDtoArray = new VehicleDto[vehicles];
-
             List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
 
             foreach (Vehicle v in vehicles)
             {
                 vehiclesDtoList.Add(this.dtoConverter.convert(v));
             }
-
-
             XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
             TextWriter writer = new StreamWriter(this.filePath);
             ser.Serialize(writer, vehiclesDtoList);
