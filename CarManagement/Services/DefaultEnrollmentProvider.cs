@@ -18,7 +18,7 @@ namespace CarManagement.Services
             this.letter3 = 0;
             this.number = -1;
             this.lettersacept = "BCDFGHJKLMNPRSTVWXYZ"; //20
-            this.tamLetterAccept = lettersacept.Length -1;
+            this.tamLetterAccept = this.lettersacept.Length -1;
         }
 
     
@@ -44,34 +44,34 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.getNew()
         {
-            if (number < 9999)
+            if (this.number < 9999)
             {
-                number++;
+                this.number++;
             }
             else
             {
-                number = 0;
-                if (letter3 < this.tamLetterAccept)
+                this.number = 0;
+                if (this.letter3 < this.tamLetterAccept)
                 {
-                    letter3++;
+                    this.letter3++;
                 }
                 else
                 {
-                    number = 0;
-                    letter3 = 0;
-                    if (letter2 < this.tamLetterAccept)
+                    this.number = 0;
+                    this. letter3 = 0;
+                    if (this.letter2 < this.tamLetterAccept)
                     {
 
-                        letter2++;
+                        this.letter2++;
                     }
                     else
                     {
-                        number = 0;
-                        letter3 = 0;
-                        letter2 = 0;
-                        if (letter1 < this.tamLetterAccept)
+                        this.number = 0;
+                        this.letter3 = 0;
+                        this.letter2 = 0;
+                        if (this.letter1 < this.tamLetterAccept)
                         {
-                            letter1++;
+                            this.letter1++;
                         }
                         else
                         {
@@ -81,7 +81,7 @@ namespace CarManagement.Services
                 }
             }
             //string serial = ;
-            return new Enrollment(lettersacept[letter3].ToString() + lettersacept[letter2].ToString() + lettersacept[letter1].ToString(), number);
+            return new Enrollment(this.lettersacept[this.letter3].ToString() + this.lettersacept[this.letter2].ToString() + this.lettersacept[this.letter1].ToString(), this.number);
         }
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
