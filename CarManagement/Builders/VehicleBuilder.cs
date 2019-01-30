@@ -34,6 +34,7 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
+            Asserts.isTrue(0 <= doorsCount && doorsCount < 7);
             this.numberDoors = doorsCount;
         }
 
