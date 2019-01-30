@@ -85,7 +85,6 @@ namespace CarManagement.Services
             List<Door> listDoor = new List<Door>();
             IEnrollment enrollment = convertTo(vehicleDto.Enrollment);
             Engine engine = convertTo(vehicleDto.Engine);
-
             foreach (WheelDto wheelsDto in vehicleDto.Wheels)
             {
                 Wheel setwheel = convertTo(wheelsDto);
@@ -98,14 +97,30 @@ namespace CarManagement.Services
                 listDoor.Add(setdoor);
 
             }
-
             return new Vehicle(vehicleDto.Color, listWheels, enrollment, listDoor, engine);
         }
 
         public VehicleDto convert(Vehicle vehicle)
         {
 
-            VehicleDto  vehicleDto = convert(vehicle);
+            
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto.Color = vehicle.Color;
+            vehicleDto.Enrollment = convertTo(vehicle.Enrollment);
+            List<DoorDto> dtoDoorsList = new List<DoorDto>();
+            foreach (Door door in vehicle.Doors)
+            {
+                dtoDoorsList.Add(convert(door));
+            }
+            vehicleDto.Doors = dtoDoorsList.ToArray();
+            List<WheelDto> dtoWheelsList = new List<WheelDto>();
+            foreach (Wheel wheel in vehicle.Wheels)
+            {
+                dtoWheelsList.Add(convert(wheel));
+            }
+            vehicleDto.Wheels = dtoWheelsList.ToArray();
+            
+
             return vehicleDto;
 
         }
@@ -118,7 +133,6 @@ namespace CarManagement.Services
             return new Wheel(wheelDto.Pressure);
 
         }
-
         private Door convertTo(DoorDto doorDto)
         {
             Door toMemory = new Door();
@@ -133,6 +147,13 @@ namespace CarManagement.Services
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
+        public EnrollmentDto convertTo(IEnrollment enrollment)
+        {
+            EnrollmentDto toDto = new EnrollmentDto();
+            toDto.Number = enrollment.Number;
+            toDto.Serial = enrollment.Serial;
+            return toDto;
+        }
         private Engine convertTo(EngineDto engineDto)
         {
             Engine toMemory = new Engine(engineDto.HorsePower);
@@ -143,5 +164,19 @@ namespace CarManagement.Services
             toMemory.stop();
             return toMemory;
         }
+        private DoorDto converTo(Door door)
+        {
+            DoorDto toDto = new DoorDto();
+            toDto.IsOpen = door.IsOpen;
+            return toDto;
+
+        }
+        private WheelDto converTo(Wheel wheel)
+        {
+            WheelDto toDto = new WheelDto();
+            toDto.Pressure = wheel.Pressure;
+            return toDto;
+        }
+
     }
 }
