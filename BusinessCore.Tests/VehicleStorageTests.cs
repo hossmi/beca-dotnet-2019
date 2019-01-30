@@ -93,8 +93,14 @@ namespace BusinessCore.Tests
         public void vehicleStoarge_implementations_must_return_6_items()
         {
             ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
+            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
+
+            IVehicleStorage[] vehicleStorages = new IVehicleStorage[]
+            {
+                new InMemoryVehicleStorage(),
+                new FileVehicleStorage(this.VehiclesFilePath, dtoConverter),
+            };
 
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
@@ -105,11 +111,15 @@ namespace BusinessCore.Tests
             for (int i = 0; i < enrollmentProvider.Count; i++)
             {
                 Vehicle vehicle = vehicleBuilder.build();
-                vehicleStorage.set(vehicle);
+                foreach (IVehicleStorage vehicleStorage in vehicleStorages)
+                    vehicleStorage.set(vehicle);
             }
 
-            Vehicle[] vehicles = vehicleStorage.getAll();
-            Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
+            foreach (IVehicleStorage vehicleStorage in vehicleStorages)
+            {
+                Vehicle[] vehicles = vehicleStorage.getAll();
+                Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
+            }
         }
     }
 }
