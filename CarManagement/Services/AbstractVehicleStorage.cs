@@ -1,31 +1,29 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using CarManagement.Models;
 
 namespace CarManagement.Services
 {
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
-        private IDictionary<IEnrollment, Vehicle> vehicles;
-        private bool loaded;
+        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
 
-        public AbstractVehicleStorage()
+        public AbstractVehicleStorage(IDictionary<IEnrollment, Vehicle> initialVehicles)
         {
-            this.vehicles = null;
-            this.loaded = false;
+            Asserts.isNotNull(initialVehicles);
+            this.vehicles = initialVehicles;
         }
 
         public int Count
         {
             get
             {
-                enruseLoad();
                 return this.vehicles.Count;
             }
         }
 
         public void clear()
         {
-            enruseLoad();
             this.vehicles.Clear();
             save(this.vehicles.Values);
         }
@@ -33,8 +31,6 @@ namespace CarManagement.Services
         public Vehicle get(IEnrollment enrollment)
         {
             Vehicle vehicleResult;
-
-            enruseLoad();
 
             bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
             Asserts.isTrue(vehicleExists);
@@ -44,24 +40,11 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            enruseLoad();
-
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
             save(this.vehicles.Values);
         }
 
-        private void enruseLoad()
-        {
-            if (this.loaded == false)
-            {
-                this.vehicles = load();
-                Asserts.isNotNull(this.vehicles);
-                this.loaded = true;
-            }
-        }
-
-        protected abstract IDictionary<IEnrollment, Vehicle> load();
         protected abstract void save(IEnumerable<Vehicle> vehicles);
     }
 }
