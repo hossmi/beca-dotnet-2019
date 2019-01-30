@@ -40,23 +40,23 @@ namespace CarManagement.Services
             Vehicle vehicle;
             bool vehicleFound = false; ;
 
-            foreach (IEnrollment e in vehicles.Keys)
-            {
-                if (Equals(e, enrollment))
-                {
-                    vehicleFound = this.vehicles.TryGetValue(e, out vehicle);
-                    break;
-                }
+            //foreach (IEnrollment e in vehicles.Keys)
+            //{
+            //    if (Equals(e, enrollment))
+            //    {
+            //        vehicleFound = this.vehicles.TryGetValue(e, out vehicle);
+            //        break;
+            //    }
 
-            }
+            //}
 
-            Asserts.isTrue(vehicleFound, "Cannot find vehicle");
-            return vehicle;
-
-            //Asserts.isTrue(vehicles.ContainsKey(enrollment));
-            //bool vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
             //Asserts.isTrue(vehicleFound, "Cannot find vehicle");
             //return vehicle;
+
+            Asserts.isTrue(vehicles.ContainsKey(enrollment));
+            vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
+            Asserts.isTrue(vehicleFound, "Cannot find vehicle");
+            return vehicle;
         }
 
         public void set(Vehicle vehicle)
