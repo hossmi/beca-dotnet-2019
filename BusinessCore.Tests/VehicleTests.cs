@@ -15,7 +15,12 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
-        private const int HARDCORE = 10 * LARGE;
+        private readonly Random random;
+
+        public VehicleTests()
+        {
+            this.random = new Random(DateTime.UtcNow.Millisecond);
+        }
 
         [TestMethod]
         public void builder_default_functionality()
@@ -107,6 +112,25 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             Negassert.mustFail(() => builder.addWheel());
+        }
+
+        [TestMethod]
+        public void doors_must_be_between_0_and_6()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+
+            for (int i = 0; i < MEDIUM; i++)
+            {
+                int doorsCount = this.random.Next(7, int.MaxValue);
+                Negassert.mustFail(() => builder.setDoors(doorsCount));
+            }
+
+            for (int i = 0; i < MEDIUM; i++)
+            {
+                int doorsCount = this.random.Next(int.MinValue, 0);
+                Negassert.mustFail(() => builder.setDoors(doorsCount));
+            }
         }
 
         [TestMethod]
