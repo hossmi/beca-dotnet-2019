@@ -8,106 +8,56 @@ using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public int Count
-        {
-            get
-            {
-                return this.vehicles.Count;
-            }
-        }
-
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base()
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
         }
-
-        public void clear()
-        {
-            this.vehicles.Clear();
-            //File.Delete(filePath);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            Vehicle vehicle;
-            bool vehicleFound = false; ;
-
-            //foreach (IEnrollment e in vehicles.Keys)
-            //{
-            //    if (Equals(e, enrollment))
-            //    {
-            //        vehicleFound = this.vehicles.TryGetValue(e, out vehicle);
-            //        break;
-            //    }
-
-            //}
-
-            //Asserts.isTrue(vehicleFound, "Cannot find vehicle");
-            //return vehicle;
-
-            //Asserts.isTrue(vehicles.ContainsKey(enrollment));
-            vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
-            Asserts.isTrue(vehicleFound, "Cannot find vehicle");
-            return vehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-
-            VehicleDto[] vehiclesDtoArray = new VehicleDto[vehicles.Count];
-
-            int i = 0;
-            foreach (Vehicle v in vehicles.Values)
-            {
-                vehiclesDtoArray[i] = dtoConverter.convert(v);
-                i++;
-            }
-
-            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter writer = new StreamWriter(filePath);
-            ser.Serialize(writer, vehiclesDtoArray);
-            writer.Close();
-        }
-
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+        
+        protected override IDictionary<IEnrollment, Vehicle> load()
         {
             IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-            if (File.Exists(fileFullPath))
+            if (File.Exists(this.filePath))
             {
-                XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-                TextReader reader = new StreamReader(fileFullPath);
-                VehicleDto[] vehiclesDtoArray = (VehicleDto[])ser.Deserialize(reader);
+                XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
+                TextReader reader = new StreamReader(this.filePath);
+                List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)ser.Deserialize(reader);
                 reader.Close();
 
-                foreach (VehicleDto vDto in vehiclesDtoArray)
+                foreach (VehicleDto vDto in vehiclesDtoList)
                 {
                     //vehicleDictionary.Add(v.Enrollment, v);
-                    Vehicle vehicle = dtoConverter.convert(vDto);
+                    Vehicle vehicle = this.dtoConverter.convert(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
-
                 }
             }
 
             return vehicleDictionary;
         }
 
+        protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+            //VehicleDto[] vehiclesDtoArray = new VehicleDto[vehicles];
 
+            List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
+
+            foreach (Vehicle v in vehicles)
+            {
+                vehiclesDtoList.Add(this.dtoConverter.convert(v));
+            }
+
+
+            XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
+            TextWriter writer = new StreamWriter(this.filePath);
+            ser.Serialize(writer, vehiclesDtoList);
+            writer.Close();
+        }
     }
 }
 
