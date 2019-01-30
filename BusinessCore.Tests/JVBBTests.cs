@@ -22,12 +22,15 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             Negassert.mustFail(() => builder.setDoors(-27));
+            builder.setDoors(5);
             Negassert.mustFail(() => builder.setEngine(-40));
+            Negassert.mustFail(() => builder.setEngine(0));
+            builder.setEngine(100);
             Negassert.mustFail(() => builder.setColor((CarColor)27));
 
             Vehicle vehicle = builder.build();
 
-            vehicle.Engine.stop();
+            Negassert.mustFail(() => vehicle.Engine.stop());
 
             vehicle.Engine.start();
             Negassert.mustFail(() => vehicle.Engine.start());
