@@ -4,13 +4,7 @@ namespace CarManagement.Models
 {
     public class Door
     {
-
-        public Door(bool IsOpen)
-        {
-
-        }
-
-
+        bool openDoor;
         public Door()
         {
             this.openDoor = false;

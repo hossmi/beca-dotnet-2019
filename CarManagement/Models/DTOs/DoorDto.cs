@@ -8,6 +8,7 @@ namespace CarManagement.Models.DTOs
 {
     public class DoorDto
     {
+
         public bool IsOpen { get; set; }
     }
 }

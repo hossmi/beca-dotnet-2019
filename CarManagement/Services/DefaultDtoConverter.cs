@@ -1,12 +1,13 @@
 ﻿using CarManagement.Models;
 using CarManagement.Models.DTOs;
+using System;
+using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
     public class DefaultDtoConverter : IDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
-        
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
@@ -16,58 +17,131 @@ namespace CarManagement.Services
 
         public Engine convert(EngineDto engineDto)
         {
-            return new EngineDto( )
+            Engine toMemory = new Engine(engineDto .HorsePower);
+            if (engineDto .IsStarted == true)
             {
-
-                HorsePower = engineDto.HorsePower,
-                IsStarted = engineDto.IsStarted,
-
-            };
+                toMemory.start(); 
+            }
+            toMemory.stop();
+            return toMemory;
         }
 
         public EngineDto convert(Engine engine)
         {
-            throw new System.NotImplementedException();
-        }
+            EngineDto toDto = new EngineDto();
+            toDto.HorsePower = engine.HorsePower;
+            toDto.IsStarted  = engine.IsStarted;
+            return toDto;
 
-        public Vehicle convert(VehicleDto vehicleDto)
-        {
-            throw new System.NotImplementedException();
         }
-
-        public VehicleDto convert(Vehicle vehicle)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public Door convert(DoorDto doorDto)
         {
-            return new Door(doorDto.IsOpen);
+            Door toMemory = new Door();
+            if (doorDto.IsOpen == true)
+            {
+                toMemory.open();
+            }
+            toMemory.close();
+            return toMemory;
         }
 
         public DoorDto convert(Door door)
         {
-            throw new System.NotImplementedException();
+            DoorDto toDto = new DoorDto ();
+            toDto.IsOpen = door.IsOpen;
+            return toDto;
+       
         }
 
         public Wheel convert(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Pressure);
-        }
 
+        }
+       
         public WheelDto convert(Wheel wheel)
         {
-            throw new System.NotImplementedException();
+            WheelDto toDto = new WheelDto();
+            toDto.Pressure = wheel.Pressure;
+            return toDto;
         }
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
-        public EnrollmentDto convert(IEnrollment enrollment)
+        public EnrollmentDto  convert(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            EnrollmentDto toDto = new EnrollmentDto();
+            toDto.Number = enrollment.Number;
+            toDto.Serial = enrollment.Serial;
+            return toDto;           
+        }
+
+        public Vehicle convert(VehicleDto vehicleDto)
+        {
+            List<Wheel> listWheels = new List<Wheel>();
+            List<Door> listDoor = new List<Door>();
+            IEnrollment enrollment = convertTo(vehicleDto.Enrollment);
+            Engine engine = convertTo(vehicleDto.Engine);
+
+            foreach (WheelDto wheelsDto in vehicleDto.Wheels)
+            {
+                Wheel setwheel = convertTo(wheelsDto);
+                listWheels.Add(setwheel);
+
+            }
+            foreach (DoorDto doorDto in vehicleDto.Doors)
+            {
+                Door setdoor = convertTo(doorDto);
+                listDoor.Add(setdoor);
+
+            }
+
+            return new Vehicle(vehicleDto.Color, listWheels, enrollment, listDoor, engine);
+        }
+
+        public VehicleDto convert(Vehicle vehicle)
+        {
+
+            VehicleDto  vehicleDto = convert(vehicle);
+            return vehicleDto;
+
+        }
+
+
+
+        //Metodos privados
+        private Wheel convertTo(WheelDto wheelDto)
+        {
+            return new Wheel(wheelDto.Pressure);
+
+        }
+
+        private Door convertTo(DoorDto doorDto)
+        {
+            Door toMemory = new Door();
+            if (doorDto.IsOpen == true)
+            {
+                toMemory.open();
+            }
+            toMemory.close();
+            return toMemory;
+        }
+        private IEnrollment convertTo(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+        }
+        private Engine convertTo(EngineDto engineDto)
+        {
+            Engine toMemory = new Engine(engineDto.HorsePower);
+            if (engineDto.IsStarted == true)
+            {
+                toMemory.start();
+            }
+            toMemory.stop();
+            return toMemory;
         }
     }
 }
