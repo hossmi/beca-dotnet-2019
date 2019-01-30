@@ -14,6 +14,7 @@ namespace CarManagement.Services
         public AbstractVehicleStorage()
         {
             this.vehicles = load();
+            Asserts.isNotNull(this.vehicles);
         }
 
         public int Count { get => this.vehicles.Count; }
@@ -21,7 +22,7 @@ namespace CarManagement.Services
         public void clear()
         {
             this.vehicles.Clear();
-            save();
+            save(this.vehicles.Values);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -38,10 +39,10 @@ namespace CarManagement.Services
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
-            save();
+            save(this.vehicles.Values);
         }
 
         protected abstract IDictionary<IEnrollment, Vehicle> load();
-        protected abstract void save();
+        protected abstract void save(IEnumerable<Vehicle> vehicles);
     }
 }
