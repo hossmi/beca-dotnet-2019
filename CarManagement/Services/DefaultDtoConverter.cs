@@ -22,13 +22,10 @@ namespace CarManagement.Services
 
         public EngineDto convert(Engine engine)
         {
-            return new EngineDto
-            {
-                HorsePower = engine.HorsePower,
-                IsStarted = engine.IsStarted
-            };
+            return convertToEngineDto(engine);
         }
 
+        
 
 
         public Door convert(DoorDto doorDto)
@@ -112,17 +109,33 @@ namespace CarManagement.Services
 
         private VehicleDto convertToVehicleDto(Vehicle vehicle)
         {
-            return new VehicleDto
-            {
-                Color = vehicle.Color,
-                Doors = vehicle.Doors,
+            CarColor color = vehicle.Color;
 
+            EngineDto engineDto = convertToEngineDto(vehicle.Engine);
+
+            EnrollmentDto enrollmentDto = convertToIEnrollmentDto(vehicle.Enrollment);
+            return new VehicleDto();
+        }
+
+        private EnrollmentDto convertToIEnrollmentDto(IEnrollment enrollment)
+        {
+            return new EnrollmentDto
+            {
+                 
             };
         }
 
         private static Engine convertToEngine(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+        }
+        private EngineDto convertToEngineDto(Engine engine)
+        {
+            return new EngineDto
+            {
+                HorsePower = engine.HorsePower,
+                IsStarted = engine.IsStarted
+            };
         }
 
         private static Door convertToDoor(DoorDto doorDto)
