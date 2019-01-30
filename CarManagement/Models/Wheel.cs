@@ -28,5 +28,11 @@ namespace CarManagement.Models
         {
             this.pressure = 0;
         }
+
+        internal void FillWheel(double pressure)
+        {
+            Asserts.isTrue(pressure >= 0);
+            this.pressure = pressure;
+        }
     }
 }

@@ -7,6 +7,7 @@ namespace CarManagement.Models
     {
         private int horsePower;
         private bool mode;
+        private bool isStarted;
 
         public Engine(int horsePower)
         {
@@ -36,7 +37,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.horsePower;
             }
         }
 
@@ -47,7 +48,8 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            Asserts.isTrue(this.isStarted);
+            this.isStarted = false;
         }
     }
 }

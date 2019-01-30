@@ -38,13 +38,14 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isTrue(doorsCount >= 0, "Cannot create a vehicle with negative value doors");
-            Asserts.isTrue(doorsCount <= 6, $"Cannot create a vehicle with more than 6 doors");
+            Asserts.isTrue(doorsCount >= 0);
+            Asserts.isTrue(doorsCount <= 6);
             this.numberDoor = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
+            Asserts.isTrue(horsePorwer >= 0);
             this.engine = horsePorwer;
         }
 
@@ -65,19 +66,19 @@ namespace CarManagement.Builders
         public Vehicle build()
         {
             Asserts.isTrue(this.numberWheel >0);
-            //Generamos puertas
+            //Generate doors
             List<Door> doors=createList<Door>(this.numberDoor);
 
-            //Generamos motor
+            //Generate engine
             Engine engine = new Engine(this.engine);
 
-            //Generamos ruedas
+            //Generate wheels
             List<Wheel> wheels=createList<Wheel>(this.numberWheel);
 
-            //Generamos matricula
+            //Generate enrollment
             IEnrollment enrollment = this.enrollmentProvider.getNew();
 
-            //Generamos coche
+            //Generate vehicle
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
     }
