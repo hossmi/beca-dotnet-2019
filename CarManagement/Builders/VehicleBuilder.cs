@@ -24,21 +24,21 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(counter < 4);
-            counter++;
+            Asserts.isTrue(this.counter < 4);
+            this.counter++;
         }
         public void removeWheel()
         {
-            counter--;
+            this.counter--;
         }
         public void setDoors(int doorsCount)
         {
-            D00rs = doorsCount;
+            this.D00rs = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            Horseporwer = horsePorwer;
+            this.Horseporwer = horsePorwer;
         }
 
         public void setColor(CarColor color)
@@ -47,23 +47,24 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            Asserts.isTrue(counter > 0);
-            wheels = new List<Wheel>();
-            doors = new List<Door>();
-            engine = new Engine();
-            engine.Horsepower = Horseporwer;
-            IEnrollment enrollment = enrollmentProvider.getNew();
-            for (int i = 0; i < counter; i++)
+            Asserts.isTrue(this.counter > 0);
+            this.wheels = new List<Wheel>();
+            this.doors = new List<Door>();
+            this.engine = new Engine();
+            this.engine.Horsepower = this.Horseporwer;
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
+            for (int i = 0; i < this.counter; i++)
             {
                 Wheel wheel = new Wheel();
-                wheels.Add(wheel);
+                this.wheels.Add(wheel);
             }
-            for (int i = 0; i < D00rs; i++)
+            Asserts.isTrue(this.D00rs > 0 && this.D00rs <= 6);
+            for (int i = 0; i < this.D00rs; i++)
             {
                 Door door = new Door();
-                doors.Add(door);
+                this.doors.Add(door);
             }
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+            Vehicle vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, enrollment);
             return vehicle;
         }
     }
