@@ -49,11 +49,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Compile Include="amunozeverisTests.cs" />
-=======
     <Compile Include="EpicSimpleVehicleTests.cs" />
->>>>>>> e81acd1f1d7ab576893580154697314e509768d0
     <Compile Include="FakeEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
     <Compile Include="NumberToolsTests.cs" />

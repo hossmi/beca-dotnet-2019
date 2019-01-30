@@ -15,7 +15,6 @@ namespace BusinessCore.Tests
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
-
             builder.setColor(CarColor.Black);
             builder.setDoors(4);
             builder.setEngine(60);
@@ -23,30 +22,16 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             Vehicle vehicle = builder.build();
-            vehicle.setWheelsPressure(-20);
-
-            foreach (Wheel wheel in vehicle.Wheels)
-            {
-                Assert.IsTrue(wheel.Pressure >= 0);
-            }
+            Negassert.mustFail(() => vehicle.setWheelsPressure(-50));
         }
 
         [TestMethod]
         public void engine_horse_power_can_not_be_negative()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);           
 
-
-            builder.setColor(CarColor.Black);
-            builder.setDoors(2);
-            builder.setEngine(-50);
-            builder.addWheel();
-            builder.addWheel();
-
-            Vehicle vehicle = builder.build();
-
-            Assert.IsTrue(vehicle.Engine.HorsePower >= 0);
+            Negassert.mustFail(() => builder.setEngine(-70));
         }
     }
 }
