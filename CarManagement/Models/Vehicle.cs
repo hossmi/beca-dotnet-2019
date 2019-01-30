@@ -107,7 +107,7 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            foreach (Wheel w in wheels)
+            foreach (Wheel w in this.wheels)
             {
                 w.FillWheel(pression);
             }

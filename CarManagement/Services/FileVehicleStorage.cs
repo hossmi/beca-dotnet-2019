@@ -31,7 +31,7 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            vehicles.Clear();
+            this.vehicles.Clear();
             //File.Delete(filePath);
         }
 
@@ -61,8 +61,8 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, vehicles, dtoConverter);
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)

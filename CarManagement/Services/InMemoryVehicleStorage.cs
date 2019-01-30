@@ -33,7 +33,7 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment), "A vehicle already exists with the same enrollment");
-            vehicles.Add(vehicle.Enrollment, vehicle);
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
         }
     }
 }

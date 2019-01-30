@@ -125,7 +125,7 @@ namespace CarManagement.Services
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)

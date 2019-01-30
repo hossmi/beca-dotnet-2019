@@ -53,12 +53,12 @@ namespace CarManagement.Builders
         {
             Asserts.isTrue(this.wheelsCount > 0);
 
-            List<Wheel> wheels = CreateObject<Wheel>(wheelsCount);
-            List<Door> doors = CreateObject<Door>(doorsCount);
-            Engine engine = CreateEngine(enginePower);
-            IEnrollment enrollment = enrollmentProvider.getNew();
+            List<Wheel> wheels = CreateObject<Wheel>(this.wheelsCount);
+            List<Door> doors = CreateObject<Door>(this.doorsCount);
+            Engine engine = CreateEngine(this.enginePower);
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
 
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, colorCode, enrollment);
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.colorCode, enrollment);
 
             return vehicle;
         }

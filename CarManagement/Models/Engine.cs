@@ -5,12 +5,16 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private const int MAXPOWER = 4000;
+        private const int MINPOWER = 1;
+
         private int horsepower;
         private bool isStarted;
 
         public Engine(int h)
         {
-            Asserts.isTrue(h > 0, "Cannot create an engine with 0 or less Horse Power.");
+            Asserts.isTrue(h >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
+            Asserts.isTrue(h <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
             this.horsepower = h;
             //this.isStarted = false;
         }
