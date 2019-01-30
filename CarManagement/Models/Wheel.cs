@@ -11,12 +11,12 @@ namespace CarManagement.Models
         {
             get
             {
-                return pressure;
+                return this.pressure;
             }
             set
             {
                 Asserts.isTrue(value > 0);
-                pressure = value;
+                this.pressure = value;
             }
         }
     }

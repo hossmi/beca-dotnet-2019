@@ -21,7 +21,7 @@ namespace CarManagement.Builders
         private IEnrollment enrollment;
         public void addWheel()
         {
-            Asserts.isTrue(numWheels < 4);
+            Asserts.isTrue(this.numWheels < 4);
             this.numWheels++;
         }
 
@@ -45,8 +45,8 @@ namespace CarManagement.Builders
         {
             List<Wheel> wheel = new List<Wheel>();
             List<Door> door = new List<Door>();
-            Engine engine = new Engine(horsePower);
-            Vehicle vehicle = new Vehicle(wheel, door, engine, color, enrollment);
+            Engine engine = new Engine(this.horsePower);
+            Vehicle vehicle = new Vehicle(wheel, door, engine, this.color, this.enrollment);
             {
 
             }

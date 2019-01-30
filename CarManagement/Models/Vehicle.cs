@@ -23,7 +23,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return door.Count;
+                return this.door.Count;
             }
         }
 
@@ -31,7 +31,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.Count;
+                return this.wheels.Count;
             }
         }
 

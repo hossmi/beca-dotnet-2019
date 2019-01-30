@@ -9,8 +9,8 @@ namespace CarManagement.Models
         private bool startedEngine;
         public Engine(int horsePower)
         {
-            startedEngine = false;
-            engineType = "VR";
+            this.startedEngine = false;
+            this.engineType = "VR";
             this.horsePower = horsePower;
 
         }
@@ -19,7 +19,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return startedEngine;
+                return this.startedEngine;
             }
         }
 
@@ -33,7 +33,7 @@ namespace CarManagement.Models
 
         public void start()
         {
-            startedEngine = true;
+            this.startedEngine = true;
         }
 
         public void stop()

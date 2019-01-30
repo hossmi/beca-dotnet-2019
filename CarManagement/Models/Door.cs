@@ -8,24 +8,24 @@ namespace CarManagement.Models
         private bool openedDoor;
         public Door()
         {
-            openedDoor = false;
+            this.openedDoor = false;
         }
         public bool IsOpen
         {
             get
             {
-                return openedDoor;
+                return this.openedDoor;
             }
         }
 
         public void open()
         {
-            openedDoor = true;
+            this.openedDoor = true;
         }
 
         public void close()
         {
-            openedDoor = false;
+            this.openedDoor = false;
         }
     }
 }
