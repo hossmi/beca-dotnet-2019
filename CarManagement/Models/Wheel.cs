@@ -5,6 +5,9 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+        private const string NOT_ENOUGH_PRESSURE = "Pressure must be greater than 0";
+        private const string DEFAULT_MODEL = "standart";
+
         private string model;
         private double pressure;
 
@@ -13,7 +16,7 @@ namespace CarManagement.Models
             get => this.pressure;
             set
             {
-                Asserts.isTrue(value > 0, "Pressure must be greater than 0");
+                Asserts.isTrue(value > 0, NOT_ENOUGH_PRESSURE);
                 this.pressure = value;
             }
         }
@@ -22,9 +25,9 @@ namespace CarManagement.Models
 
         public Wheel(string model = null, double Pressure = 0)
         {
-            Asserts.isTrue(Pressure >= 0,"Pressure must be greater or equal to 14*7 + 23*2 - (2^7 + 16)");
-            this.model = model ?? "standart";
-            this.Pressure = Pressure < 0.01d ? 2.0d : Pressure;
+            Asserts.isTrue(Pressure >= 0, NOT_ENOUGH_PRESSURE);
+            this.model = model ?? DEFAULT_MODEL;
+            this.Pressure = Pressure <= 0 ? 2.0d : Pressure;
         }
 
         public Wheel(Wheel wheel)
