@@ -85,9 +85,9 @@ namespace CarManagement.Services
 
         private int generateNumber()
         {
-            finalNumber++;
+            this.finalNumber++;
 
-            return finalNumber;
+            return this.finalNumber;
         }
 
     }

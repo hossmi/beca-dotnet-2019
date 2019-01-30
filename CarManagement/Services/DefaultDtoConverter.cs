@@ -88,7 +88,9 @@ namespace CarManagement.Services
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            IEnrollment enrollment = this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+
+            return enrollment;
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)
@@ -118,7 +120,8 @@ namespace CarManagement.Services
             List<Door> doors = new List<Door>();
             for(int i = 0; i < vehicleDto.Doors.Length; i++)
             {
-                doors[i] = convert(vehicleDto.Doors[i]);
+                //doors[i] = convert(vehicleDto.Doors[i]);
+                doors.Add(convert(vehicleDto.Doors[i]));
             }
 
             return doors;
@@ -140,7 +143,8 @@ namespace CarManagement.Services
             List<Wheel> wheels = new List<Wheel>();
             for (int i = 0; i < vehicleDto.Wheels.Length; i++)
             {
-                wheels[i] = convert(vehicleDto.Wheels[i]);
+                //wheels[i] = convert(vehicleDto.Wheels[i]);
+                wheels.Add(convert(vehicleDto.Wheels[i]));
             }
 
             return wheels;

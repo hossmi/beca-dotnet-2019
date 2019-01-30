@@ -15,9 +15,9 @@ namespace CarManagement.Services
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
-            this.filePath = fileFullPath;            
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
+            this.filePath = fileFullPath;            
+            this.vehicles = readFromFile(fileFullPath, dtoConverter);
         }
 
         public int Count => this.vehicles.Count;
@@ -25,11 +25,14 @@ namespace CarManagement.Services
         public void clear()
         {
             this.vehicles.Clear();
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            bool exists = vehicles.TryGetValue(enrollment, out Vehicle vehicle);
+            //IDictionary<IEnrollment, Vehicle> vehiclesAux = readFromFile(this.filePath, this.dtoConverter);
+            //vehiclesAux = readFromFile(this.filePath, this.dtoConverter);
+            bool exists = this.vehicles.TryGetValue(enrollment, out Vehicle vehicle);
             Asserts.isTrue(exists);
 
             return vehicle;
@@ -37,9 +40,10 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            bool exists = vehicles.ContainsKey(vehicle.Enrollment);
+            bool exists = this.vehicles.ContainsKey(vehicle.Enrollment);
             Asserts.isFalse(exists);
             this.vehicles.Add(vehicle.Enrollment, vehicle);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
@@ -58,14 +62,15 @@ namespace CarManagement.Services
             //XmlSerializer xmlSerializer = new XmlSerializer(typeof(VehicleDto[]));
             XmlSerializer xmlSerializer = new XmlSerializer(vehiclesDtoAux.GetType());
             TextWriter vehiclesWriter = new StreamWriter(filePath);
-            xmlSerializer.Serialize(vehiclesWriter, xmlSerializer);
+            xmlSerializer.Serialize(vehiclesWriter, vehiclesDtoAux);
             vehiclesWriter.Close();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(equalityComparer);
+            //IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
+            //IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(equalityComparer);
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(fileFullPath))
             {
@@ -79,10 +84,6 @@ namespace CarManagement.Services
                     Vehicle vehicle = dtoConverter.convert(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
-            }
-            else
-            {
-                return vehicles;
             }
 
             return vehicles;
