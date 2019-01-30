@@ -16,7 +16,13 @@ namespace CarManagement.Services
 
         public Engine convert(EngineDto engineDto)
         {
-            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+            return new EngineDto( )
+            {
+
+                HorsePower = engineDto.HorsePower,
+                IsStarted = engineDto.IsStarted,
+
+            };
         }
 
         public EngineDto convert(Engine engine)

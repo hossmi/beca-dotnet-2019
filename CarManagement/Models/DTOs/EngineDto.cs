@@ -8,6 +8,7 @@ namespace CarManagement.Models.DTOs
 {
     public class EngineDto
     {
+        
         public EngineDto(bool isStarted, int horsePower)
         {
             IsStarted = isStarted;
