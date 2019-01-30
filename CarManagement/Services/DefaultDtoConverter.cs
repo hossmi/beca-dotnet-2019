@@ -35,7 +35,7 @@ namespace CarManagement.Services
 
         public DoorDto convert(Door door)
         {
-            return convertDootDto(door);
+            return convertToDoorDto(door);
         }
 
        

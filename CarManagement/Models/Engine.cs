@@ -50,6 +50,7 @@ namespace CarManagement.Models
 
         public void start()
         {
+            Asserts.isFalse(this.IsStarted);
             this.mode  = true;
         }
 

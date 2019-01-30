@@ -38,12 +38,14 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
+            Asserts.isTrue( doorsCount>=0 && doorsCount <=6);
             this.numberDoor = doorsCount;
         }
 
-        public void setEngine(int horsePorwer)
+        public void setEngine(int horsePower)
         {
-            this.engine = horsePorwer;
+            Asserts.isTrue(horsePower > 0);
+            this.engine = horsePower;
         }
 
         public void setColor(CarColor color)
