@@ -9,9 +9,13 @@ namespace CarManagement.Services
 {
     public class EnrollmentEqualityComparer : IEqualityComparer<IEnrollment>
     {
-        public bool Equals(IEnrollment x, IEnrollment y)
+        public bool Equals(IEnrollment y, IEnrollment x)
         {
-            throw new NotImplementedException();
+            if (y.Serial == x.Serial && y.Number == x.Number)
+            {
+                return true;
+            }
+            return false;
         }
 
         public int GetHashCode(IEnrollment obj)
