@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using CarManagement.Models;
 using CarManagement.Models.DTOs;
@@ -12,7 +13,8 @@ namespace CarManagement.Services
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base(load(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) 
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
             this.dtoConverter = dtoConverter;
             this.filePath = fileFullPath;
@@ -21,26 +23,15 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            IDictionary<IEnrollment, Vehicle> vehiclesDictionary = new Dictionary<IEnrollment, Vehicle>();
-
-            foreach (Vehicle vehicle in vehicles)
-            {
-                vehiclesDictionary.Add(vehicle.Enrollment, vehicle);
-            }
-
-            writeToFile(this.filePath, vehiclesDictionary, this.dtoConverter);
+            writeToFile(this.filePath, vehicles, this.dtoConverter);
         }
 
-        private static IDictionary<IEnrollment, Vehicle> load(string fileFullPath, IDtoConverter dtoConverter)
+        
+        private static void writeToFile(string filePath, IEnumerable<Vehicle> vehicles, IDtoConverter dtoConverter)
         {
-            return readFromFile(fileFullPath, dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            VehicleDto[] vehiclesDtoAux = new VehicleDto[vehicles.Count];
+            VehicleDto[] vehiclesDtoAux = new VehicleDto[vehicles.Count()];
             int contFor = 0;
-            foreach (Vehicle vehicle in vehicles.Values)
+            foreach (Vehicle vehicle in vehicles)
             {
                 VehicleDto vehicleDto = dtoConverter.convert(vehicle);
                 vehiclesDtoAux[contFor] = vehicleDto;
