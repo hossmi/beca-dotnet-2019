@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="amunozeverisTests.cs" />
+    <Compile Include="ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="SingleEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
