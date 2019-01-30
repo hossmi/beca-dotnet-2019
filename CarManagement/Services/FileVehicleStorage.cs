@@ -53,7 +53,7 @@ namespace CarManagement.Services
             //Asserts.isTrue(vehicleFound, "Cannot find vehicle");
             //return vehicle;
 
-            Asserts.isTrue(vehicles.ContainsKey(enrollment));
+            //Asserts.isTrue(vehicles.ContainsKey(enrollment));
             vehicleFound = this.vehicles.TryGetValue(enrollment, out vehicle);
             Asserts.isTrue(vehicleFound, "Cannot find vehicle");
             return vehicle;
