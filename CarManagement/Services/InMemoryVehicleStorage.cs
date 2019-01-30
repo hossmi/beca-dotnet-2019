@@ -11,13 +11,13 @@ namespace CarManagement.Services
         public int Count {
             get
             {
-                return list_vehicle.Count;
+                return this.list_vehicle.Count;
             }
         }
 
         public void clear()
         {
-            list_vehicle.Clear();
+            this.list_vehicle.Clear();
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -25,7 +25,7 @@ namespace CarManagement.Services
             Vehicle T2 = new Vehicle();
             bool vehicleFound = false;
 
-            foreach (Vehicle T in list_vehicle)
+            foreach (Vehicle T in this.list_vehicle)
             {
                 if(enrollment == T.Enrollment)
                 {
@@ -40,7 +40,7 @@ namespace CarManagement.Services
 
         public void set(Vehicle vehicle)
         {
-            list_vehicle.Add(vehicle);
+            this.list_vehicle.Add(vehicle);
         }
     }
 }

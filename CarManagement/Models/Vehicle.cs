@@ -29,35 +29,35 @@ namespace CarManagement.Models
         {
             set
             {
-                wheels = value;
+                this.wheels = value;
             }
         }
         public List<Door> cardoor
         {
             set
             {
-                doors = value;
+                this.doors = value;
             }
         }
         public Engine carengine
         {
             set
             {
-                engine = value;
+                this.engine = value;
             }
         }
         public CarColor carcolor
         {
             set
             {
-                color = value;
+                this.color = value;
             }
         }
         public int DoorsCount
         {
             get
             {
-                return doors.Count;
+                return this.doors.Count;
             }
         }
 
@@ -65,7 +65,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.Count;
+                return this.wheels.Count;
             }
         }
 
@@ -73,7 +73,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return engine;
+                return this.engine;
             }
         }
 
@@ -105,7 +105,7 @@ namespace CarManagement.Models
         {
             if (pression > 0)
             {
-                foreach (Wheel w in wheels)
+                foreach (Wheel w in this.wheels)
                 {
                     w.Pressure = pression;
                 }

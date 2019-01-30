@@ -11,18 +11,18 @@ namespace CarManagement.Models
         {
             get
             {
-                return horsepower;
+                return this.horsepower;
             }
             set
             {
-                horsepower = value;
+                this.horsepower = value;
             }
         }
         public bool IsStarted
         {
             get
             {
-                return isStart;
+                return this.isStart;
             }
         }
 
@@ -36,7 +36,7 @@ namespace CarManagement.Models
 
         public void start()
         {
-            isStart = true;
+            this.isStart = true;
         }
 
         public void stop()

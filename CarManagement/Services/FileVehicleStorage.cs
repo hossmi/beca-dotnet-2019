@@ -24,13 +24,13 @@ namespace CarManagement.Services
         {
             get
             {
-                return vehicle.Count;
+                return this.vehicle.Count;
             }
         }
 
         public void clear()
         {
-            vehicle.Clear();
+            this.vehicle.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
@@ -39,7 +39,7 @@ namespace CarManagement.Services
             Vehicle T2 = new Vehicle();
             bool vehicleFound = false;
 
-            foreach (Vehicle T in vehicle)
+            foreach (Vehicle T in this.vehicle)
             {
                 if (enrollment == T.Enrollment)
                 {
