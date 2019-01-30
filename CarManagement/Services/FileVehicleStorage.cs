@@ -12,15 +12,11 @@ namespace CarManagement.Services
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base()
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base(load(fileFullPath, dtoConverter))
         {
             this.dtoConverter = dtoConverter;
             this.filePath = fileFullPath;
-        }
 
-        protected override IDictionary<IEnrollment, Vehicle> load()
-        {
-            return readFromFile(this.filePath, this.dtoConverter);
         }
 
         protected override void save(IEnumerable<Vehicle> vehicles)
@@ -33,6 +29,11 @@ namespace CarManagement.Services
             }
 
             writeToFile(this.filePath, vehiclesDictionary, this.dtoConverter);
+        }
+
+        private static IDictionary<IEnrollment, Vehicle> load(string fileFullPath, IDtoConverter dtoConverter)
+        {
+            return readFromFile(fileFullPath, dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
