@@ -42,15 +42,28 @@ namespace BusinessCore.Tests
 
         }
 
-        //[TestMethod]
-        //public void BrainDamagedBuilder_02()
-        //{
-        //    FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
-        //    IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+        [TestMethod]
+        public void CreateMonsterVehicle_01()
+        {
+            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
-        //    builder.addWheel();
-        //    builder.setDoors(3);
-                                                  
-        //}
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            Negassert.mustFail(() => builder.addWheel());
+
+            Negassert.mustFail(() => builder.setDoors(int.MaxValue));
+            builder.setDoors(5);
+
+            Negassert.mustFail(() => builder.setEngine(int.MaxValue));
+            builder.setEngine(2000);
+
+            builder.setColor(CarColor.Black);
+
+            Vehicle vehicle = builder.build();
+
+        }
     }
 }
