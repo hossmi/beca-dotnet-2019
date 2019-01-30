@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class VehicleStorareTests
+    public class VehicleStorageTests
     {
         public string VehiclesFilePath
         {
@@ -23,14 +23,14 @@ namespace BusinessCore.Tests
         [TestCleanup]
         public void initialize()
         {
-            if(File.Exists(this.VehiclesFilePath))
+            if (File.Exists(this.VehiclesFilePath))
                 File.Delete(this.VehiclesFilePath);
         }
 
         [TestMethod]
         public void fileVehicleStorage_must_persists_vehicles()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
@@ -61,7 +61,7 @@ namespace BusinessCore.Tests
         {
             Vehicle vehicle, motoVehicle;
 
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
@@ -87,6 +87,29 @@ namespace BusinessCore.Tests
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
             });
+        }
+
+        [TestMethod]
+        public void vehicleStoarge_implementations_must_return_6_items()
+        {
+            ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
+            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+            IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
+
+            vehicleBuilder.addWheel();
+            vehicleBuilder.addWheel();
+            vehicleBuilder.setColor(CarColor.Blue);
+            vehicleBuilder.setDoors(0);
+            vehicleBuilder.setEngine(40);
+
+            for (int i = 0; i < enrollmentProvider.Count; i++)
+            {
+                Vehicle vehicle = vehicleBuilder.build();
+                vehicleStorage.set(vehicle);
+            }
+
+            Vehicle[] vehicles = vehicleStorage.getAll();
+            Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
         }
     }
 }
