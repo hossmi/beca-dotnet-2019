@@ -10,7 +10,7 @@ namespace BusinessCore.Tests
     public class JVBBTests
     {
         [TestMethod]
-        public void BrainDamagedBuilder_01()
+        public void WrongBuildRequests _01()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
@@ -41,16 +41,5 @@ namespace BusinessCore.Tests
             vehicle.setWheelsPressure(2);
 
         }
-
-        //[TestMethod]
-        //public void BrainDamagedBuilder_02()
-        //{
-        //    FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
-        //    IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
-
-        //    builder.addWheel();
-        //    builder.setDoors(3);
-
-        //}
     }
 }
