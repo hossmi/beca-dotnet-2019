@@ -17,7 +17,9 @@ namespace CarManagement.Services
         public Engine convert(EngineDto engineDto)
         {
             Engine engine = new Engine(engineDto.HorsePower);
-            engine.IsStarted = engineDto.IsStarted;
+
+            if (engineDto != null)
+                engine.IsStarted = engineDto.IsStarted;
 
             return engine;
         }
@@ -34,11 +36,9 @@ namespace CarManagement.Services
         public Door convert(DoorDto doorDto)
         {
             Door door = new Door();
-            try
-            {
+
+            if (doorDto != null)
                 door.IsOpen = doorDto.IsOpen;
-            }
-            catch (Exception e) { }
 
             return door;
         }
@@ -54,7 +54,9 @@ namespace CarManagement.Services
         public Wheel convert(WheelDto wheelDto)
         {
             Wheel wheel = new Wheel();
-            wheel.Pressure = wheelDto.Pressure;
+
+            if (wheelDto != null)
+                wheel.Pressure = wheelDto.Pressure;
 
             return wheel;
         }
