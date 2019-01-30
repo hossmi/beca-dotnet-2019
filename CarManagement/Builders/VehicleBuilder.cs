@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Services;
 
@@ -9,6 +8,8 @@ namespace CarManagement.Builders
     {
         const int MAX_WHEELS = 4;
         const int MAX_DOORS = 6;
+        const int MAXPOWER = 4000;
+        const int MINPOWER = 1;
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
@@ -39,7 +40,8 @@ namespace CarManagement.Builders
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer > 0, "Cannot create an engine with 0 or less Horse Power.");
+            Asserts.isTrue(horsePorwer >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
+            Asserts.isTrue(horsePorwer <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
             this.enginePower = horsePorwer;
         }
 
