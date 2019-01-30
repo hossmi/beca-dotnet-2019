@@ -12,7 +12,7 @@ namespace CarManagement.Services
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base()
         {
             this.dtoConverter = dtoConverter;
             this.filePath = fileFullPath;
@@ -25,12 +25,14 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            /*foreach (Vehicle vehicle in vehicles)
+            IDictionary<IEnrollment, Vehicle> vehiclesDictionary = new Dictionary<IEnrollment, Vehicle>();
+
+            foreach (Vehicle vehicle in vehicles)
             {
+                vehiclesDictionary.Add(vehicle.Enrollment, vehicle);
+            }
 
-            }*/
-
-            //writeToFile(this.filePath, vehicles, this.dtoConverter);
+            writeToFile(this.filePath, vehiclesDictionary, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
@@ -69,34 +71,6 @@ namespace CarManagement.Services
             }
 
             return vehicles;
-        }
-
-        /*public int Count => this.vehicles.Count;
-
-        public void clear()
-        {
-            this.vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            bool exists = this.vehicles.TryGetValue(enrollment, out Vehicle vehicle);
-            Asserts.isTrue(exists);
-
-            return vehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            bool exists = this.vehicles.ContainsKey(vehicle.Enrollment);
-            Asserts.isFalse(exists);
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        */
-
-
+        }        
     }
 }
