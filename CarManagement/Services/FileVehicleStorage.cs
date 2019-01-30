@@ -13,31 +13,14 @@ namespace CarManagement.Services
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base(load(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
+
+
         }
-        
-        protected override IDictionary<IEnrollment, Vehicle> load()
-        {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-            if (File.Exists(this.filePath))
-            {
-                string jsonText = System.IO.File.ReadAllText(this.filePath);
-                List<string> jsonObjects = getIndividualJson(jsonText);
-
-                foreach (string jsonObject in jsonObjects)
-                {
-                    VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                    Vehicle vehicle = this.dtoConverter.convert(vehicleDto);
-                    vehicles.Add(vehicle.Enrollment, vehicle);
-                }
-            }
-
-            return vehicles;
-        }
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
             string jsonText = "";
@@ -49,27 +32,46 @@ namespace CarManagement.Services
             }
             System.IO.File.WriteAllText(this.filePath, jsonText);
         }
+        private static IDictionary<IEnrollment, Vehicle> load(String filePath, IDtoConverter dtoConverter)
+        {
+            Dictionary<IEnrollment, Vehicle>  initialVehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+
+            if (File.Exists(filePath))
+            {
+                string jsonText = System.IO.File.ReadAllText(filePath);
+                List<string> jsonObjects = getIndividualJson(jsonText);
+
+                foreach (string jsonObject in jsonObjects)
+                {
+                    VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
+                    Vehicle vehicle = dtoConverter.convert(vehicleDto);
+                    initialVehicles.Add(vehicle.Enrollment, vehicle);
+                }
+            }
+
+            return initialVehicles;
+        }
         private static List<string> getIndividualJson(String jsonText)
         {
             int BracketCount = 0;
-            List<string> JsonItems = new List<string>();
+            List<string> JsonObjects = new List<string>();
             StringBuilder Json = new StringBuilder();
 
-            foreach (char cIndex in jsonText)
+            foreach (char cCursor in jsonText)
             {
-                if (cIndex == '{')
+                if (cCursor == '{')
                     ++BracketCount;
-                else if (cIndex == '}')
+                else if (cCursor == '}')
                     --BracketCount;
-                Json.Append(cIndex);
+                Json.Append(cCursor);
 
-                if (BracketCount == 0 && cIndex != ' ')
+                if (BracketCount == 0 && cCursor != ' ')
                 {
-                    JsonItems.Add(Json.ToString());
+                    JsonObjects.Add(Json.ToString());
                     Json = new StringBuilder();
                 }
             }
-            return JsonItems;
+            return JsonObjects;
         }
     }
 }
