@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    [TestCategory ("JVBB Tests")]
+    [TestCategory("JVBB Tests")]
     public class JVBBTests
     {
         [TestMethod]
@@ -22,21 +22,35 @@ namespace BusinessCore.Tests
             builder.addWheel();
 
             Negassert.mustFail(() => builder.setDoors(-27));
+            builder.setDoors(5);
             Negassert.mustFail(() => builder.setEngine(-40));
+            Negassert.mustFail(() => builder.setEngine(0));
+            builder.setEngine(100);
             Negassert.mustFail(() => builder.setColor((CarColor)27));
 
             Vehicle vehicle = builder.build();
 
-            vehicle.Engine.stop();
+            Negassert.mustFail(() => vehicle.Engine.stop());
 
             vehicle.Engine.start();
             Negassert.mustFail(() => vehicle.Engine.start());
 
             Negassert.mustFail(() => vehicle.setWheelsPressure(-1));
-            Negassert.mustFail(() => vehicle.setWheelsPressure(0));
-            Negassert.mustFail(() => vehicle.setWheelsPressure(0.99));
+            vehicle.setWheelsPressure(0);
+            vehicle.setWheelsPressure(0.99);
             vehicle.setWheelsPressure(2);
 
         }
+
+        //[TestMethod]
+        //public void BrainDamagedBuilder_02()
+        //{
+        //    FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+        //    IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+
+        //    builder.addWheel();
+        //    builder.setDoors(3);
+
+        //}
     }
 }
