@@ -20,12 +20,12 @@ namespace CarManagement.Services
 
         public EngineDto convert(Engine engine)
         {
-            EngineDto engineDto = new EngineDto();
-            engineDto.HorsePower = engine.HorsePower;
-            engineDto.Model = engine.Model;
-            engineDto.IsStarted = engine.IsStarted;
-
-            return engineDto;
+            return new EngineDto
+            {
+                HorsePower = engine.HorsePower,
+                Model = engine.Model,
+                IsStarted = engine.IsStarted
+            };
         }
 
         public Vehicle convert(VehicleDto vehicleDto)
@@ -47,10 +47,12 @@ namespace CarManagement.Services
 
         public VehicleDto convert(Vehicle vehicle)
         {
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto.Color = vehicle.Color;
-            vehicleDto.Engine = convert(vehicle.Engine);
-            vehicleDto.Enrollment = convert(vehicle.Enrollment);
+            VehicleDto vehicleDto = new VehicleDto
+            {
+                Color = vehicle.Color,
+                Engine = convert(vehicle.Engine),
+                Enrollment = convert(vehicle.Enrollment)
+            };
             List<DoorDto> dtoDoorsList = new List<DoorDto>();
             foreach (Door door in vehicle.Doors)
             {
@@ -75,11 +77,11 @@ namespace CarManagement.Services
 
         public DoorDto convert(Door door)
         {
-            DoorDto doorDto = new DoorDto();
-            doorDto.IsOpen = door.IsOpen;
-            doorDto.Model = door.Model;
-
-            return doorDto;
+            return new DoorDto
+            {
+                IsOpen = door.IsOpen,
+                Model = door.Model
+            };
         }
 
         public Wheel convert(WheelDto wheelDto)
@@ -89,11 +91,11 @@ namespace CarManagement.Services
 
         public WheelDto convert(Wheel wheel)
         {
-            WheelDto wheelDto = new WheelDto();
-            wheelDto.Model = wheel.Model;
-            wheelDto.Pressure = wheel.Pressure;
-
-            return wheelDto;
+            return new WheelDto
+            {
+                Model = wheel.Model,
+                Pressure = wheel.Pressure
+            };
         }
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
@@ -103,11 +105,11 @@ namespace CarManagement.Services
 
         public EnrollmentDto convert(IEnrollment enrollment)
         {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Serial = enrollment.Serial;
-            enrollmentDto.Number = enrollment.Number;
-
-            return enrollmentDto;
+            return new EnrollmentDto
+            {
+                Serial = enrollment.Serial,
+                Number = enrollment.Number
+            };
         }
     }
 }

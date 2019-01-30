@@ -17,7 +17,7 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath);
+            this.vehicles = readFromFile(fileFullPath, dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
@@ -26,7 +26,7 @@ namespace CarManagement.Services
         public void clear()
         {
             vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
@@ -41,26 +41,26 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter converter)
         {
             string jsonText = "";
 
             foreach (KeyValuePair<IEnrollment, Vehicle> entry in vehicles)
             {
-                VehicleDto savedVehicle = DtoMapper.convert(entry.Value);
+                VehicleDto savedVehicle = converter.convert(entry.Value);
                 jsonText += JsonConvert.SerializeObject(savedVehicle);
             }
             System.IO.File.WriteAllText(filePath, jsonText);
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter converter)
         {
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-            try
+            if (File.Exists(fileFullPath))
             {
                 string jsonText = System.IO.File.ReadAllText(fileFullPath);
                 List<string> jsonObjects = getIndividualJson(jsonText);
@@ -68,13 +68,9 @@ namespace CarManagement.Services
                 foreach (string jsonObject in jsonObjects)
                 {
                     VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                    Vehicle vehicle = DtoMapper.convert(vehicleDto);
+                    Vehicle vehicle = converter.convert(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
-            }
-            catch (FileNotFoundException)
-            {
-                //No problem
             }
 
             return vehicles;
