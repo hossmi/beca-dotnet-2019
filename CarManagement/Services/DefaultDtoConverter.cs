@@ -12,33 +12,37 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
+
         public Engine convert(EngineDto engineDto)
         {
             return convertEngine(engineDto);
         }
 
-        private Engine convertEngine(EngineDto engineDto)
-        {
-            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
-        }
-
         public EngineDto convert(Engine engine)
         {
-            
-            throw new System.NotImplementedException();
+            return new EngineDto
+            {
+                HorsePower = engine.HorsePower,
+                IsStarted = engine.IsStarted
+            };
         }
 
         
 
         public Door convert(DoorDto doorDto)
         {
-            throw new System.NotImplementedException();
+            return convertDoor(doorDto);
         }
 
         public DoorDto convert(Door door)
         {
-            throw new System.NotImplementedException();
+            return new DoorDto
+            {
+                IsOpen = door.IsOpen
+            };
         }
+
+
 
         public Wheel convert(WheelDto wheelDto)
         {
@@ -50,6 +54,8 @@ namespace CarManagement.Services
             throw new System.NotImplementedException();
         }
 
+
+
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             throw new System.NotImplementedException();
@@ -60,6 +66,8 @@ namespace CarManagement.Services
             throw new System.NotImplementedException();
         }
 
+
+
         public Vehicle convert(VehicleDto vehicleDto)
         {
             throw new System.NotImplementedException();
@@ -69,6 +77,18 @@ namespace CarManagement.Services
         public VehicleDto convert(Vehicle vehicle)
         {
             throw new System.NotImplementedException();
+        }
+
+        
+
+        private static Engine convertEngine(EngineDto engineDto)
+        {
+            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+        }
+
+        private static Door convertDoor(DoorDto doorDto)
+        {
+            return new Door(doorDto.IsOpen);
         }
     }
 }
