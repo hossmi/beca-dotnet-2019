@@ -8,74 +8,47 @@ using Newtonsoft.Json;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, dtoConverter);
             this.dtoConverter = dtoConverter;
         }
-
-        public int Count { get => vehicles.Count; }
-
-        public void clear()
-        {
-            vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out Vehicle returnedVehicle);
-
-            Asserts.isTrue(hasVehicle, "El vehículo no está en el diccionario");
-
-            return returnedVehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter converter)
-        {
-            string jsonText = "";
-
-            foreach (KeyValuePair<IEnrollment, Vehicle> entry in vehicles)
-            {
-                VehicleDto savedVehicle = converter.convert(entry.Value);
-                jsonText += JsonConvert.SerializeObject(savedVehicle);
-            }
-            System.IO.File.WriteAllText(filePath, jsonText);
-        }
-
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter converter)
+        
+        protected override IDictionary<IEnrollment, Vehicle> load()
         {
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-            if (File.Exists(fileFullPath))
+            if (File.Exists(this.filePath))
             {
-                string jsonText = System.IO.File.ReadAllText(fileFullPath);
+                string jsonText = System.IO.File.ReadAllText(this.filePath);
                 List<string> jsonObjects = getIndividualJson(jsonText);
 
                 foreach (string jsonObject in jsonObjects)
                 {
                     VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                    Vehicle vehicle = converter.convert(vehicleDto);
+                    Vehicle vehicle = this.dtoConverter.convert(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
 
             return vehicles;
         }
+        protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+            string jsonText = "";
 
+            foreach (Vehicle vehicle in vehicles)
+            {
+                VehicleDto savedVehicle = this.dtoConverter.convert(vehicle);
+                jsonText += JsonConvert.SerializeObject(savedVehicle);
+            }
+            System.IO.File.WriteAllText(this.filePath, jsonText);
+        }
         private static List<string> getIndividualJson(String jsonText)
         {
             int BracketCount = 0;
@@ -98,6 +71,5 @@ namespace CarManagement.Services
             }
             return JsonItems;
         }
-
     }
 }

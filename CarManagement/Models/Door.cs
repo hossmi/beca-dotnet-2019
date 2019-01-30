@@ -25,14 +25,16 @@ namespace CarManagement.Models
         }
 
         public string Model { get; }
-        public bool IsOpen { get => isOpen; }
+        public bool IsOpen { get => this.isOpen; }
 
         public void open()
         {
+            Asserts.isTrue(this.isOpen == true , "You cannot open an opened door");
             this.isOpen = true;
         }
         public void close()
         {
+            Asserts.isTrue(this.isOpen == false, "You cannot close a closed door");
             this.isOpen = false;
         }
 
