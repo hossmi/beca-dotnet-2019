@@ -6,16 +6,14 @@ namespace CarManagement.Models
     {
         private double pression;
 
-        
-
         public double Pressure {
             get
             {
-                return pression;
+                return this.pression;
             }
             set
             {
-                pression = value;
+                this.pression = value;
             }
         }
     }

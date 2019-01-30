@@ -40,6 +40,7 @@ namespace CarManagement.Builders
 
         public void setEngine(int horsePorwer)
         {
+            Asserts.isTrue(horsePorwer > 0);
             this.horsePorwer = horsePorwer;
         }
 

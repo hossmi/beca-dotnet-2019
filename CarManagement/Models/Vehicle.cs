@@ -25,7 +25,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return doors.Count;
+                return this.doors.Count;
             }
         }
 
@@ -33,7 +33,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.Count;
+                return this.wheels.Count;
             }
         }
 
@@ -41,7 +41,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return engine;
+                return this.engine;
             }
         }
 
@@ -49,7 +49,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return enrollment;
+                return this.enrollment;
             }
         }
 
@@ -57,27 +57,28 @@ namespace CarManagement.Models
         {
             get
             {
-                return wheels.ToArray();
+                return this.wheels.ToArray();
             }
         }
         public Door[] Doors
         {
             get
             {
-                return doors.ToArray();
+                return this.doors.ToArray();
             }
         }
 
         public CarColor getColor()
         {
-            return color;
+            return this.color;
         }
 
         public void setWheelsPressure(double pression)
         {
-            for(int i = 0; i < WheelCount; i++)
+            Asserts.isTrue(pression > 0);
+            for(int i = 0; i < this.WheelCount; i++)
             {
-                Wheels[i].Pressure = pression;
+                this.Wheels[i].Pressure = pression;
             }
         }
         
