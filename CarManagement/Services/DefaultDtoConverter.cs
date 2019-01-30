@@ -31,10 +31,10 @@ namespace CarManagement.Services
 
         public Vehicle convert(VehicleDto vehicleDto)
         {
-            //public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
-            //Vehicle vehicle = new Vehicle(vehicleDto.Wheels, vehicleDto.Doors, vehicleDto.Engine, vehicleDto.Color, vehicleDto.Enrollment);
+            Vehicle vehicle = new Vehicle(createWheels(vehicleDto), createDoors(vehicleDto), 
+                convert(vehicleDto.Engine), vehicleDto.Color, convert(vehicleDto.Enrollment));
 
-            throw new System.NotImplementedException();
+            return vehicle;
         }
 
         public VehicleDto convert(Vehicle vehicle)
@@ -113,6 +113,17 @@ namespace CarManagement.Services
             return doorsDto;
         }
 
+        private List<Door> createDoors(VehicleDto vehicleDto)
+        {
+            List<Door> doors = new List<Door>();
+            for(int i = 0; i < vehicleDto.Doors.Length; i++)
+            {
+                doors[i] = convert(vehicleDto.Doors[i]);
+            }
+
+            return doors;
+        }
+
         private WheelDto[] createWheelDto(Vehicle vehicle)
         {
             WheelDto[] wheelsDto = new WheelDto[vehicle.WheelCount];
@@ -122,6 +133,17 @@ namespace CarManagement.Services
             }
 
             return wheelsDto;
+        }
+
+        private List<Wheel> createWheels(VehicleDto vehicleDto)
+        {
+            List<Wheel> wheels = new List<Wheel>();
+            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+            {
+                wheels[i] = convert(vehicleDto.Wheels[i]);
+            }
+
+            return wheels;
         }
     }
 }
