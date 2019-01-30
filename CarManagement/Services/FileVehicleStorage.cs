@@ -17,12 +17,12 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+        protected override void save(IEnumerable<Vehicle> vehicles)
         {
             throw new NotImplementedException();
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
             throw new NotImplementedException();
         }
