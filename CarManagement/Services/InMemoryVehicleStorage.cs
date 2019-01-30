@@ -6,6 +6,10 @@ namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
+        public InMemoryVehicleStorage() : base(new Dictionary<IEnrollment, Vehicle>())
+        {
+        }
+
         //private IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
         //public int Count
@@ -36,10 +40,10 @@ namespace CarManagement.Services
         //    this.vehicles.Add(vehicle.Enrollment, vehicle);
         //}
 
-        protected override IDictionary<IEnrollment, Vehicle> load()
-        {
-            return new Dictionary<IEnrollment, Vehicle>();
-        }
+        //protected override IDictionary<IEnrollment, Vehicle> load()
+        //{
+        //    return new Dictionary<IEnrollment, Vehicle>();
+        //}
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
