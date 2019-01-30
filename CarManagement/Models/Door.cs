@@ -29,12 +29,12 @@ namespace CarManagement.Models
 
         public void open()
         {
-            Asserts.isTrue(this.isOpen == true , "You cannot open an opened door");
+            Asserts.isFalse(this.isOpen , "You cannot open an opened door");
             this.isOpen = true;
         }
         public void close()
         {
-            Asserts.isTrue(this.isOpen == false, "You cannot close a closed door");
+            Asserts.isTrue(this.isOpen , "You cannot close a closed door");
             this.isOpen = false;
         }
 

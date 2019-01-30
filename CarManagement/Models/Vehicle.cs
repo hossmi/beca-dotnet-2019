@@ -26,12 +26,12 @@ namespace CarManagement.Models
         public Engine Engine { get; }
         public int DoorsCount
         {
-            get => doorList.Count;
+            get => this.doorList.Count;
         }
 
         public int WheelCount
         {
-            get => wheelList.Count;
+            get => this.wheelList.Count;
         }
 
         public IEnrollment Enrollment

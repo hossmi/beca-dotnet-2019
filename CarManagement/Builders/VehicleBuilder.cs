@@ -24,7 +24,7 @@ namespace CarManagement.Builders
             this.color = CarColor.White;
         }
 
-        public Engine EngineClone { get => engine.Clone(); }
+        public Engine EngineClone { get => this.engine.Clone(); }
         public CarColor Color { get => this.color; }
         public List<Wheel> WheelListClone
         {
@@ -55,14 +55,14 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(wheelList.Count() < 4, "Cannot add more than 4 wheels");
+            Asserts.isTrue(this.wheelList.Count() < 4, "Cannot add more than 4 wheels");
             this.wheelList.Add(new Wheel());
         }
 
         //public void removeWheel(Wheel wheel = null)
         public void removeWheel()
         {
-            Asserts.isTrue(wheelList.Count() > 0, "Cannot remove from none wheels");
+            Asserts.isTrue(this.wheelList.Count() > 0, "Cannot remove from none wheels");
 
             //wheel = wheel ?? this.wheelList.Last();
             //this.wheelList.Remove(wheel);
@@ -71,6 +71,7 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
+            Asserts.isFalse( doorsCount >= 6,"You cannot have more than 6 doors");
             if (doorsCount > this.doorList.Count)
             {
                 doorsCount = doorsCount - this.doorList.Count;
@@ -102,7 +103,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            Asserts.isFalse(wheelList.Count() <= 0, $"You cannot build a vehicle with {wheelList.Count()} wheels");
+            Asserts.isFalse(this.wheelList.Count() <= 0, $"You cannot build a vehicle with {this.wheelList.Count()} wheels");
 
             IEnrollment toProvideEnrollment = this.enrollmentProvider.getNew();
 
