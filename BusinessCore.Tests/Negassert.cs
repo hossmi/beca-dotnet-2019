@@ -25,10 +25,5 @@ namespace BusinessCore.Tests
                 //good
             }
         }
-
-        internal static void mustFail(object v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
