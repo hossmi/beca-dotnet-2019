@@ -7,6 +7,10 @@ namespace CarManagement.Models
     {
         private int horsePower;
         private bool mode;
+        public Engine()
+        {
+            this.horsePower = 1;
+        }
 
         public Engine(int horsePower)
         {
