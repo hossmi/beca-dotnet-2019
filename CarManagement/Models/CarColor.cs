@@ -8,6 +8,6 @@
         White,
         Black,
         Green,
-        Yellow,
+        Yellow
     }
 }

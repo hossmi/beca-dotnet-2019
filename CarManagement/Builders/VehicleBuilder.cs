@@ -50,6 +50,7 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
+            Asserts.isEnumDefined(color);
             this.color = color;
         }
 
