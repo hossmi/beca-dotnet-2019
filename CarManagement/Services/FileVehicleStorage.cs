@@ -77,8 +77,8 @@ namespace CarManagement.Services
 
         
         {
-            EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentEC);
+            //EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
