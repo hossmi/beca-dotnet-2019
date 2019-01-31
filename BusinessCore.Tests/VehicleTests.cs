@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void builder_default_functionality()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
