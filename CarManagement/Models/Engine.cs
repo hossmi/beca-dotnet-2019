@@ -28,7 +28,6 @@ namespace CarManagement.Models
             }
             set
             {
-                
                 setHorsePower(value);
             }
         }
