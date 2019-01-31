@@ -14,12 +14,6 @@ namespace CarManagement.Models
             this.horsePower = horsePower;
 
         }
-        public Engine(int horsePower, bool IsStarted)
-        {
-            Asserts.isTrue(horsePower > 0);
-            this.horsePower = horsePower;
-
-        }
 
         public bool IsStarted
         {
