@@ -7,58 +7,22 @@ using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count { get; }
-
-        public void clear()
+        protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            this.vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            Vehicle vehicle;
-            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle);
-            Asserts.isTrue(hasVehicle);
-            return vehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-
-            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
-            int aux=0;
-            foreach (Vehicle v in  vehicles.Values)
-            {
-                vehiclesDto[aux] = dtoConverter.convert(v);
-                aux++;
-            }
-
-            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter writer = new StreamWriter(filePath);
-            ser.Serialize(writer, vehiclesDto);
-            writer.Close();
+            throw new NotImplementedException();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)

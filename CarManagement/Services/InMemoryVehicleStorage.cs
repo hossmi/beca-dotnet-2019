@@ -1,12 +1,27 @@
-﻿using CarManagement.Builders;
-using CarManagement.Models;
+﻿using System;
 using System.Collections.Generic;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
-    public class InMemoryVehicleStorage : IVehicleStorage
+    public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
-        IDictionary<IEnrollment, Vehicle> vehicles;
+        public InMemoryVehicleStorage() 
+            : base(load())
+        {
+        }
+
+        protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+        }
+
+        private static IDictionary<IEnrollment, Vehicle> load()
+        {
+            return new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+        }
+
+        /*
+         * IDictionary<IEnrollment, Vehicle> vehicles;
 
         public InMemoryVehicleStorage()
         {
@@ -37,7 +52,9 @@ namespace CarManagement.Services
         {
             this.vehicles.Clear();
         }
+        */
 
         
     }
 }
+ 
