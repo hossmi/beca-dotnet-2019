@@ -41,7 +41,6 @@ namespace CarManagement.Services
             Vehicle vehicle;
             bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle);
             Asserts.isTrue(hasVehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
             return vehicle;
         }
 
@@ -56,6 +55,8 @@ namespace CarManagement.Services
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
+
+
 
             VehicleDto[] listVehicles = new VehicleDto[vehicles.Count];
             int aux = 0;
@@ -74,9 +75,10 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
 
-
+        
         {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+            EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentEC);
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
