@@ -23,7 +23,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return startEngine;
+                return this.startEngine;
             }
         }
 
@@ -37,25 +37,25 @@ namespace CarManagement.Models
 
         public void start()
         {
-            Asserts.isFalse(startEngine);
-            startEngine = true;
+            Asserts.isFalse(this.startEngine);
+            this.startEngine = true;
         }
 
         public int HorsePorwer
         {
             get
             {
-                return horsePorwer;
+                return this.horsePorwer;
             }
             set
             {
-                horsePorwer = value;
+                this.horsePorwer = value;
             }
         }
 
         public void stop()
         {
-            Asserts.isTrue(startEngine);
+            Asserts.isTrue(this.startEngine);
             this.startEngine = false;
         }
     }

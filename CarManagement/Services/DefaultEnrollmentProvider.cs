@@ -9,7 +9,6 @@ namespace CarManagement.Services
     {
         private class Enrollment : IEnrollment
         {
-
             public Enrollment(string serial, int number)
             {
                 this.Serial = serial;
@@ -38,11 +37,11 @@ namespace CarManagement.Services
         public IEnrollment NewEnrollment {
             get
             {
-                return enrollment;
+                return this.enrollment;
             }
             set
             {
-                enrollment = value;
+                this.enrollment = value;
             }
                 }
 
@@ -58,23 +57,23 @@ namespace CarManagement.Services
             
             for (int i = TAM_ARRAYS_LETTERS - 1; i > 0; i--)
             {
-                if (letters[i] < 'Z')
+                if (this.letters[i] < 'Z')
                 {
-                    if((letters[i]++ == 'E') || (letters[i]++ == 'I') || (letters[i]++ == 'O') || 
-                        (letters[i]++ == 'Q') || (letters[i]++ == 'U'))
+                    if((this.letters[i]++ == 'E') || (this.letters[i]++ == 'I') || (this.letters[i]++ == 'O') || 
+                        (this.letters[i]++ == 'Q') || (this.letters[i]++ == 'U'))
                     {
-                        letters[i]++;
+                        this.letters[i]++;
                     }
-                    letters[i]++;
-                    lettersAux = new string(letters);
+                    this.letters[i]++;
+                    lettersAux = new string(this.letters);
                     return lettersAux;
                 }
-                else if(letters[i] == 'Z')
+                else if(this.letters[i] == 'Z')
                 {
-                    letters[i] = 'B';
+                    this.letters[i] = 'B';
                 }
             }
-            lettersAux = new string(letters);
+            lettersAux = new string(this.letters);
             return lettersAux;
         }
 

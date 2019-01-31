@@ -18,7 +18,6 @@ namespace CarManagement.Services
         {
             this.dtoConverter = dtoConverter;
             this.filePath = fileFullPath;
-
         }
 
         protected override void save(IEnumerable<Vehicle> vehicles)
