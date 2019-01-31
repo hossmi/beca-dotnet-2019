@@ -84,7 +84,6 @@ namespace CarManagement.Services
             List<Wheel> listWheels = new List<Wheel>();
             List<Door> listDoor = new List<Door>();
             IEnrollment enrollment = convertTo(vehicleDto.Enrollment);
-            Engine engine = convertTo(vehicleDto.Engine);
             foreach (WheelDto wheelsDto in vehicleDto.Wheels)
             {
                 Wheel setwheel = convertTo(wheelsDto);
@@ -97,6 +96,9 @@ namespace CarManagement.Services
                 listDoor.Add(setdoor);
 
             }
+            Engine engine = convertTo(vehicleDto.Engine);
+    
+      
             return new Vehicle(vehicleDto.Color, listWheels, enrollment, listDoor, engine);
         }
 
