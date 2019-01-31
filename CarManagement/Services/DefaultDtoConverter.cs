@@ -144,7 +144,7 @@ namespace CarManagement.Services
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
-        public EnrollmentDto convertTo(IEnrollment enrollment)
+        private EnrollmentDto convertTo(IEnrollment enrollment)
         {
             EnrollmentDto toDto = new EnrollmentDto();
             toDto.Number = enrollment.Number;
@@ -153,7 +153,8 @@ namespace CarManagement.Services
         }
         private Engine convertTo(EngineDto engineDto)
         {
-            Engine toMemory = new Engine(engineDto.HorsePower);
+
+            Engine toMemory = new Engine(engineDto .HorsePower);
             if (engineDto.IsStarted == true)
             {
                 toMemory.start();
