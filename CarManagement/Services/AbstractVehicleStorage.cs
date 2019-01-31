@@ -40,7 +40,9 @@ namespace CarManagement.Services
 
         public Vehicle[] getAll()
         {
-            throw new System.NotImplementedException();
+            Vehicle[] vehicles = new Vehicle[this.vehicles.Count];
+            this.vehicles.Values.CopyTo(vehicles, 0);
+            return vehicles;
         }
 
         public void set(Vehicle vehicle)
