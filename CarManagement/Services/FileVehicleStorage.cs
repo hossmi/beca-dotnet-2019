@@ -1,69 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
 using CarManagement.Models;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
+
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(load(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
+
         }
 
-        public int Count
+        protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            get
+            List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
+
+            foreach (Vehicle v in vehicles)
             {
-                return this.vehicles.Count;
+                vehiclesDtoList.Add(this.dtoConverter.convert(v));
             }
+            XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
+            TextWriter writer = new StreamWriter(this.filePath);
+            ser.Serialize(writer, vehiclesDtoList);
+            writer.Close();
         }
 
-        public void clear()
+        private static IDictionary<IEnrollment, Vehicle> load(string filePath, IDtoConverter dtoConverter)
         {
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-            this.vehicles.Clear();
-        }
+            IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-        public Vehicle get(IEnrollment enrollment)
-        {
-            Vehicle vehicle;
-            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicle);
-            Asserts.isTrue(vehicleExists);
-            return vehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            int temp = 0;
-            List<Vehicle> vehicle = new List<Vehicle>();
-            foreach (Vehicle vehicleArr in vehicle)
+            if (File.Exists(filePath))
             {
-                vehicle[temp] = vehicleArr;
-                temp++;
+                XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
+                TextReader reader = new StreamReader(filePath);
+                List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)ser.Deserialize(reader);
+                reader.Close();
+                foreach (VehicleDto vDto in vehiclesDtoList)
+                {
+                    Vehicle vehicle = dtoConverter.convert(vDto);
+                    vehicleDictionary.Add(vehicle.Enrollment, vehicle);
+                }
             }
-            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            //throw new NotImplementedException();
-        }
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
-        {
-            
-            throw new NotImplementedException();
+            return vehicleDictionary;
         }
-
     }
 }

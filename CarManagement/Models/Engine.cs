@@ -26,13 +26,13 @@ namespace CarManagement.Models
             }
         }
 
-        public int HorsePower
+        /*public int HorsePower
         {
             get
             {
                 throw new NotImplementedException();
             }
-        }
+        }*/
 
         public void start()
         {
@@ -41,7 +41,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            this.isStart = false;
         }
     }
 }
