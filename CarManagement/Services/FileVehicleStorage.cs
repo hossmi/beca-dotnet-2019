@@ -16,8 +16,9 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
+             this.dtoConverter = dtoConverter;
             this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
-            this.dtoConverter = dtoConverter;
+           
         }
 
         public int Count { get; }
@@ -73,7 +74,7 @@ namespace CarManagement.Services
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
-                XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
                 TextReader reader = new StreamReader(fileFullPath);
                 VehicleDto[] listVehicle = (VehicleDto[])ser.Deserialize(reader); //guardo lo que he leido en un array de vehiculos.
                 reader.Close();
@@ -85,6 +86,7 @@ namespace CarManagement.Services
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
+           
             return vehicles;
 
 
