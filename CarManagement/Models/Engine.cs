@@ -28,8 +28,8 @@ namespace CarManagement.Models
             }
             set
             {
-                Asserts.isTrue(value>0);
-                this.horsePower = value;
+                
+                setHorsePower(value);
             }
         }
         public bool IsStarted
@@ -44,7 +44,11 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.horsePower;
+            }
+            set
+            {
+                setHorsePower(value);
             }
         }
 
@@ -58,6 +62,12 @@ namespace CarManagement.Models
         {
             Asserts.isTrue(this.IsStarted);
             this.mode = false;
+        }
+
+        private void setHorsePower(int horsePower)
+        {
+            Asserts.isTrue(horsePower > 0);
+            this.horsePower = horsePower;
         }
     }
 }
