@@ -109,6 +109,7 @@ namespace CarManagement.Services
             VehicleDto vehicleDto = new VehicleDto();
             vehicleDto.Color = vehicle.Color;
             vehicleDto.Enrollment = convertTo(vehicle.Enrollment);
+            vehicleDto.Engine = convertTo(vehicle.Engine);
             List<DoorDto> dtoDoorsList = new List<DoorDto>();
             foreach (Door door in vehicle.Doors)
             {
@@ -152,6 +153,15 @@ namespace CarManagement.Services
             toDto.Number = enrollment.Number;
             toDto.Serial = enrollment.Serial;
             return toDto;
+        }
+
+        private EngineDto convertTo(Engine engine)
+        {
+            EngineDto toDto = new EngineDto();
+            toDto.HorsePower = engine.HorsePower;
+            toDto.IsStarted = engine.IsStarted;
+            return toDto;
+
         }
         private Engine convertTo(EngineDto engineDto)
         {
