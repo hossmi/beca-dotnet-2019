@@ -56,7 +56,8 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            this.mode=false;
+            Asserts.isTrue(this.IsStarted);
+            this.mode = false;
         }
     }
 }
