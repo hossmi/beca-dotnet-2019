@@ -23,25 +23,26 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            Asserts.isTrue(File.Exists(this.filePath));
+            //Asserts.isTrue(File.Exists(this.filePath));
             if (File.Exists(this.filePath)== false)
             {
                 File.Create(this.filePath);
             }
-            XmlSerializer serialiser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter fileStream = new StreamWriter(this.filePath);
 
-            VehicleDto[] vehicleDto = new VehicleDto[vehicles.Count()];
+            XmlSerializer serialiserXml = new XmlSerializer(typeof(VehicleDto[]));
+            
+            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
             int aux = 0;
             foreach (Vehicle v in vehicles)
             {
-                vehicleDto[aux] = dtoConverter.convert(v);
+                vehiclesDto[aux] = dtoConverter.convert(v);
                 aux++;
             }
-            serialiser.Serialize(fileStream, vehicleDto);
 
-            fileStream.Close();
+            TextWriter fileWriter = new StreamWriter(this.filePath);
+            serialiserXml.Serialize(fileWriter, vehiclesDto);
 
+            fileWriter.Close();
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
