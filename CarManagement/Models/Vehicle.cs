@@ -12,10 +12,6 @@ namespace CarManagement.Models
         private IReadOnlyList<Door> doors;
         private Engine engine;
 
-        public Vehicle()
-        {
-                    
-        }
         public Vehicle(IEnrollment enrollment)
         {
             this.enrollment = enrollment;
