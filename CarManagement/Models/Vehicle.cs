@@ -14,6 +14,11 @@ namespace CarManagement.Models
             this.enrollment = enrollment;
         }
 
+        public Vehicle(bool v1, bool v2, Engine engine1, object engine2, CarColor carColor, object color1, IEnrollment enrollment1, IEnrollment enrollment2)
+        {
+            this.carcolor = carColor;
+        }
+
         public Vehicle()
         {
         }
