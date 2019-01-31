@@ -21,7 +21,7 @@ namespace CarManagement.Builders
         {
             this.numberWheel = 0;
             this.numberDoor = 0;
-            this.engine = 0;
+            this.engine = 1;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
 
