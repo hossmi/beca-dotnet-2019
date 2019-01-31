@@ -9,6 +9,7 @@ namespace CarManagement.Services
 {
     public class EnrollmentEqualityComparer : IEqualityComparer<IEnrollment>
     {
+        
         public bool Equals(IEnrollment x, IEnrollment y)
         {
             return GetHashCode(x) == GetHashCode(y);

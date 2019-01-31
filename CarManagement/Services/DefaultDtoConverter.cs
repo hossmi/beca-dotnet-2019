@@ -130,7 +130,8 @@ namespace CarManagement.Services
         {
             return new EnrollmentDto
             {
-                 
+                Number = enrollment.Number,
+                Serial = enrollment.Serial,
             };
         }
         private IEnrollment convertToIEnrollment(EnrollmentDto enrollmentDto)
