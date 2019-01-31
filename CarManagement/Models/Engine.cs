@@ -37,6 +37,7 @@ namespace CarManagement.Models
 
         public void start()
         {
+            Asserts.isFalse(startEngine);
             startEngine = true;
         }
 
@@ -54,6 +55,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
+            Asserts.isTrue(startEngine);
             this.startEngine = false;
         }
     }

@@ -75,7 +75,7 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            Asserts.isTrue(pression > 0);
+            Asserts.isTrue(pression >= 0);
             for(int i = 0; i < this.WheelCount; i++)
             {
                 this.Wheels[i].Pressure = pression;
