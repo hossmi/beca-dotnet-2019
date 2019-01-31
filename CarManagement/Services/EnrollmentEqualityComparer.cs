@@ -20,7 +20,7 @@ namespace CarManagement.Services
 
         public int GetHashCode(IEnrollment obj)
         {
-            throw new NotImplementedException();
+            return (($"{obj.Serial}-{obj.Number.ToString("0000")}").GetHashCode());
         }
     }
 }
