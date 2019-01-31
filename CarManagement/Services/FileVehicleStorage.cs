@@ -10,7 +10,6 @@ namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
@@ -23,44 +22,7 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            //Asserts.isTrue(File.Exists(this.filePath));
-            if (File.Exists(this.filePath)== false)
-            {
-                File.Create(this.filePath);
-            }
-
-            XmlSerializer serialiserXml = new XmlSerializer(typeof(VehicleDto[]));
-            
-            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
-            int aux = 0;
-            foreach (Vehicle v in vehicles)
-            {
-                vehiclesDto[aux] = dtoConverter.convert(v);
-                aux++;
-            }
-
-            TextWriter fileWriter = new StreamWriter(this.filePath);
-            serialiserXml.Serialize(fileWriter, vehiclesDto);
-
-            fileWriter.Close();
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-
-            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
-            int aux = 0;
-            foreach (Vehicle v in vehicles.Values)
-            {
-                vehiclesDto[aux] = dtoConverter.convert(v);
-                aux++;
-            }
-
-            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter writer = new StreamWriter(filePath);
-            ser.Serialize(writer, vehiclesDto);
-            writer.Close();
+            writeToFile(this.filePath, vehicles, this.dtoConverter);
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
@@ -81,6 +43,23 @@ namespace CarManagement.Services
                 }
             }
             return vehicles;
+        }
+
+        private static void writeToFile(string filePath, IEnumerable<Vehicle> vehicles, IDtoConverter dtoConverter)
+        {
+            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
+            int aux = 0;
+            foreach (Vehicle vehicle in vehicles)
+            {
+                VehicleDto vehicleDto = dtoConverter.convert(vehicle);
+                vehiclesDto[aux] = vehicleDto;
+                aux++;
+            }
+
+            XmlSerializer xmlSerializer = new XmlSerializer(vehiclesDto.GetType());
+            TextWriter vehiclesWriter = new StreamWriter(filePath);
+            xmlSerializer.Serialize(vehiclesWriter, vehiclesDto);
+            vehiclesWriter.Close();
         }
     }
 }
