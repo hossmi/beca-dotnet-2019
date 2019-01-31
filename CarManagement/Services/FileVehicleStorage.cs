@@ -18,7 +18,7 @@ namespace CarManagement.Services
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
             this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
-           
+         
         }
 
         public int Count
@@ -79,7 +79,7 @@ namespace CarManagement.Services
         
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentEC);
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
