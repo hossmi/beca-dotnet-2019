@@ -16,12 +16,18 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-             this.dtoConverter = dtoConverter;
+            this.dtoConverter = dtoConverter;
             this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
            
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
 
         public void clear()
         {
@@ -44,7 +50,7 @@ namespace CarManagement.Services
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-            throw new System.NotImplementedException();
+            
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
@@ -53,13 +59,13 @@ namespace CarManagement.Services
 
             VehicleDto[] listVehicles = new VehicleDto[vehicles.Count];
             int aux = 0;
-            foreach (Vehicle v in vehicles.Values)
+            foreach (Vehicle vehicle in vehicles.Values)
             {
 
-                listVehicles[aux] = dtoConverter.convert(v);
+                listVehicles[aux] = dtoConverter.convert(vehicle);
                 aux++;
             }
-            XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
             TextWriter writer = new StreamWriter(filePath);
             ser.Serialize(writer, listVehicles);
             writer.Close();
@@ -74,7 +80,7 @@ namespace CarManagement.Services
             // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
-                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+                XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
                 TextReader reader = new StreamReader(fileFullPath);
                 VehicleDto[] listVehicle = (VehicleDto[])ser.Deserialize(reader); //guardo lo que he leido en un array de vehiculos.
                 reader.Close();
