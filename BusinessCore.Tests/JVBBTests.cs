@@ -12,7 +12,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void WrongBuildRequests_01()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             Negassert.mustFail(() => builder.removeWheel());

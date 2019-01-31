@@ -12,7 +12,6 @@ namespace CarManagement.Services
         private readonly string letters;
         private readonly int sizeLetters;
 
-
         private class Enrollment : IEnrollment
         {
             public Enrollment(string serial, int number)
