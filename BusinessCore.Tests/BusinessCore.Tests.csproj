@@ -49,8 +49,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="amunozeverisTests.cs" />
+    <Compile Include="ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
-    <Compile Include="FakeEnrollmentProvider.cs" />
+    <Compile Include="SingleEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
     <Compile Include="NumberToolsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

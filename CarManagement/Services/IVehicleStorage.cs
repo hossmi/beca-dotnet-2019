@@ -14,5 +14,6 @@ namespace CarManagement.Services
         void set(Vehicle vehicle);
         Vehicle get(IEnrollment enrollment);
         void clear();
+        Vehicle[] getAll();
     }
 }
