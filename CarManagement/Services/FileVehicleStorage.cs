@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using CarManagement.Models;
 using CarManagement.Models.DTOs;
@@ -22,7 +23,43 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            throw new NotImplementedException();
+            Asserts.isTrue(File.Exists(this.filePath));
+            if (File.Exists(this.filePath)== false)
+            {
+                File.Create(this.filePath);
+            }
+            XmlSerializer serialiser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter fileStream = new StreamWriter(this.filePath);
+
+            VehicleDto[] vehicleDto = new VehicleDto[vehicles.Count()];
+            int aux = 0;
+            foreach (Vehicle v in vehicles)
+            {
+                vehicleDto[aux] = dtoConverter.convert(v);
+                aux++;
+            }
+            serialiser.Serialize(fileStream, vehicleDto);
+
+            fileStream.Close();
+
+        }
+
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
+        {
+            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
+
+            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
+            int aux = 0;
+            foreach (Vehicle v in vehicles.Values)
+            {
+                vehiclesDto[aux] = dtoConverter.convert(v);
+                aux++;
+            }
+
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(filePath);
+            ser.Serialize(writer, vehiclesDto);
+            writer.Close();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
