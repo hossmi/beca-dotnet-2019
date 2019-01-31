@@ -20,6 +20,73 @@ namespace BusinessCore.Tests
             }
         }
 
+        public bool SameVehicle(Vehicle v1, Vehicle v2)
+        {
+            bool isSameVehicle = true;
+
+            if (v1.Color == v2.Color)
+            {
+
+                if (isSameVehicle && v1.WheelCount == v2.WheelCount)
+                {
+                    for (int i = 0; i < v1.WheelCount; i++)
+                    {
+                        if (v1.Wheels[i].Pressure == v2.Wheels[i].Pressure)
+                        {
+                        }
+                        else
+                        {
+                            isSameVehicle = false;
+                            break;
+                        }
+                    }
+
+                    if (isSameVehicle && v1.DoorsCount == v2.DoorsCount)
+                    {
+                        for (int i = 0; i < v1.DoorsCount; i++)
+                        {
+                            if (v1.Doors[i].IsOpen == v2.Doors[i].IsOpen)
+                            {
+                            }
+                            else
+                            {
+                                isSameVehicle = false;
+                                break;
+                            }
+                        }
+                        if (isSameVehicle && v1.Engine.HorsePower == v2.Engine.HorsePower && v1.Engine.IsStarted == v2.Engine.IsStarted)
+                        {
+                            if (isSameVehicle && v1.Enrollment.Number == v2.Enrollment.Number && v1.Enrollment.Serial == v2.Enrollment.Serial)
+                            {
+
+                            }
+                            else
+                            {
+                                isSameVehicle = false;
+                            }
+                        }
+                        else
+                        {
+                            isSameVehicle = false;
+                        }
+                    }
+                    else
+                    {
+                        isSameVehicle = false;
+                    }
+                }
+                else
+                {
+                    isSameVehicle = false;
+                }
+            }
+            else
+            {
+                isSameVehicle = false;
+            }
+            return isSameVehicle;
+        }
+
         [TestInitialize]
         [TestCleanup]
         public void initialize()
@@ -27,11 +94,11 @@ namespace BusinessCore.Tests
             if (File.Exists(this.VehiclesFilePath))
                 File.Delete(this.VehiclesFilePath);
         }
-        
+
         [TestMethod]
         public void WrongBuildRequests_01()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             Negassert.mustFail(() => builder.removeWheel());
@@ -66,7 +133,7 @@ namespace BusinessCore.Tests
         {
             Vehicle motoVehicle;
 
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
@@ -94,8 +161,8 @@ namespace BusinessCore.Tests
             Assert.IsNotNull(vehicleFileStorage);
 
             Assert.AreEqual(memoryVehicleA, memoryVehicleB);
-            Assert.AreEqual(memoryVehicleA, fileVehicle);
-            Assert.AreEqual(memoryVehicleB, fileVehicle);
+            Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle));
+            Assert.IsTrue(SameVehicle(memoryVehicleB, fileVehicle));
 
         }
 
