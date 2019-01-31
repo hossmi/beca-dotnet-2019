@@ -7,15 +7,15 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder : IVehicleBuilder
     {
-        private int Horseporwer;
         private List<Door> doors;
         private List<Wheel> wheels;
         private Engine engine;
         private CarColor color;
-        private int horsepower;
+        private int horsePorwer;
         private IEnrollmentProvider enrollmentProvider;
-        private int counter;
-        private int D00rs;
+        private IEnrollment enrollment;
+        private int doorsCount;
+        private int wheelCounter = 0;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -24,47 +24,50 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(this.counter < 4);
-            this.counter++;
+            Asserts.isTrue(this.wheelCounter < 4);
+            this.wheelCounter++;
         }
         public void removeWheel()
         {
-            this.counter--;
+            Asserts.isTrue(this.wheelCounter >= 0);
+            this.wheelCounter--;
         }
+
         public void setDoors(int doorsCount)
         {
-            this.D00rs = doorsCount;
+            Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
+            this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            this.Horseporwer = horsePorwer;
+            Asserts.isTrue(horsePorwer >= 0);
+            this.horsePorwer = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
+            this.color = color;
         }
 
         public Vehicle build()
         {
-            Asserts.isTrue(this.counter > 0);
+            Asserts.isTrue(this.wheelCounter > 0);
             this.wheels = new List<Wheel>();
             this.doors = new List<Door>();
             this.engine = new Engine();
-            this.engine.Horsepower = this.Horseporwer;
-            IEnrollment enrollment = this.enrollmentProvider.getNew();
-            for (int i = 0; i < this.counter; i++)
+            this.enrollment = this.enrollmentProvider.getNew();
+            for (int i = 0; i < this.wheelCounter; i++)
             {
                 Wheel wheel = new Wheel();
                 this.wheels.Add(wheel);
             }
-            Asserts.isTrue(this.D00rs > 0 && this.D00rs <= 6);
-            for (int i = 0; i < this.D00rs; i++)
+            for (int i = 0; i < this.doorsCount; i++)
             {
                 Door door = new Door();
                 this.doors.Add(door);
             }
-            Vehicle vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, enrollment);
+            Vehicle vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
             return vehicle;
         }
     }
