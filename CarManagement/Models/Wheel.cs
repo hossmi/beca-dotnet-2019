@@ -9,11 +9,11 @@ namespace CarManagement.Models
         {
             get
             {
-                return pressure;
+                return this.pressure;
             }
             set
             {
-                pressure = value;
+                this.pressure = value;
             }
         }
     }
