@@ -1,6 +1,6 @@
-﻿using CarManagement.Builders;
-using CarManagement.Models;
-using System;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
@@ -24,7 +24,7 @@ namespace CarManagement.Services
             public string Serial { get; }
             public int Number { get; }
 
-            public string Print()
+            public override string ToString()
             {
                 return $"{this.Serial}-{this.Number.ToString("0000")}";
             }

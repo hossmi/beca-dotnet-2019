@@ -1,145 +1,97 @@
-﻿using CarManagement.Core;
+﻿using System.Collections.Generic;
+using CarManagement.Core;
 using CarManagement.Core.Models;
-using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
-using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
-    public class DefaultDtoConverter : IDtoConverter
+    public class VehicleBuilder : IVehicleBuilder
     {
-        private IEnrollmentProvider enrollmentProvider;
-        private IVehicleBuilder vehicleBuilder;
+        const int MAX_WHEELS = 4;
+        const int MAX_DOORS = 6;
+        const int MAXPOWER = 4000;
+        const int MINPOWER = 1;
+        private int wheelsCount;
+        private int doorsCount;
+        private int enginePower;
+        private bool engineStarted;
+        private CarColor colorCode;
+        private readonly IEnrollmentProvider enrollmentProvider;
 
-        public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
-            this.vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-
+            this.wheelsCount = 0;
+            this.doorsCount = 0;
+            this.enginePower = 0;
+            this.colorCode = 0;
         }
 
-        public IEngine convert(EngineDto engineDto)
+        public void addWheel()
         {
-            IEngine e = new Engine(engineDto.HorsePower);
-
-           if (engineDto.IsStarted)
-                e.start();
-            //else
-            //e.stop();
-            
-            return e;
+            Asserts.isTrue(this.wheelsCount < MAX_WHEELS, "Maximum number of wheels reached. Cannot add more wheels.");
+            this.wheelsCount++;
         }
 
-        public EngineDto convert(IEngine engine)
+        public void setDoors(int doorsCount)
         {
-            EngineDto eDto = new EngineDto();
-            eDto.IsStarted = engine.IsStarted;
-            eDto.HorsePower = engine.HorsePower;
-
-            return eDto;
+            Asserts.isTrue(doorsCount >= 0,"Cannot create a vehicle with negative doors");
+            Asserts.isTrue(doorsCount <= MAX_DOORS, $"Cannot create a vehicle with more than {MAX_DOORS} doors");
+            this.doorsCount = doorsCount;
         }
 
-        public IVehicle convert(VehicleDto vehicleDto)
+        public void setEngine(int horsePorwer)
         {
-            IVehicle v;
+            Asserts.isTrue(horsePorwer >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
+            Asserts.isTrue(horsePorwer <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
+            this.enginePower = horsePorwer;
+        }
+        
+        public void setColor(CarColor color)
+        {
+            //if (Enum.IsDefined(typeof(CarColor), color) == false)
+            //    throw new ArgumentException($"Parameter {nameof(color)} has not a valid value.");
+            Asserts.isEnumDefined<CarColor>(color,"The selected color does not match.");
+            this.colorCode = color;
+        }
 
-            List<IWheel> wheels = new List<IWheel>();
-            List<IDoor> doors = new List<IDoor>();
-            IEngine engine;
-            IEnrollment enrollment;
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.wheelsCount > 0);
 
-            foreach (WheelDto w in vehicleDto.Wheels)
+            List<IWheel> wheels = CreateObject<IWheel, Wheel>(this.wheelsCount);
+            List<IDoor> doors = CreateObject<IDoor, Door>(this.doorsCount);
+            Engine engine = CreateEngine(this.enginePower);
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
+
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.colorCode, enrollment);
+
+            return vehicle;
+        }
+
+        private List<TInterface> CreateObject<TInterface, TInstance>(int count) 
+            where TInstance : class, TInterface, new()
+            where TInterface : class
+        {
+            List<TInterface> list = new List<TInterface>();
+            for (int i = 0; i < count; i++)
             {
-                wheels.Add(convert(w));
-
+                TInterface obj = new TInstance();
+                list.Add(obj);
             }
-
-            foreach (DoorDto d in vehicleDto.Doors)
-            {
-                doors.Add(convert(d));
-            }
-            engine = convert(vehicleDto.Engine);
-
-            enrollment = convert(vehicleDto.Enrollment);
-
-            v = new Vehicle(wheels, doors, engine, vehicleDto.Color, enrollment);
-
-            return v;
+            return list;
         }
 
-        public VehicleDto convert(IVehicle vehicle)
+        private Engine CreateEngine(int power)
         {
-            VehicleDto vDto = new VehicleDto();
-            vDto.Color = vehicle.Color;
-            vDto.Engine = convert(vehicle.Engine);
-            vDto.Enrollment = convert(vehicle.Enrollment);
-            vDto.Wheels = new WheelDto[vehicle.Wheels.Length];
-            vDto.Doors = new DoorDto[vehicle.Doors.Length];
-
-            int i = 0;
-            foreach (IWheel w in vehicle.Wheels)
-            {
-                vDto.Wheels[i] = convert(w);
-                i++;
-            }
-
-            int j = 0;
-            foreach (IDoor d in vehicle.Doors)
-            {
-                vDto.Doors[j] = convert(d);
-                j++;
-            }
-
-            return vDto;
+            Engine engine = new Engine(power);
+            return engine;
         }
 
-        public IDoor convert(DoorDto doorDto)
+        public void removeWheel()
         {
-            IDoor d = new Door();
-
-            if (doorDto.IsOpen)
-                d.open();
-            else
-                d.close();
-
-            return d;
-        }
-
-        public DoorDto convert(IDoor door)
-        {
-            DoorDto dDto = new DoorDto();
-            dDto.IsOpen = door.IsOpen;
-
-            return dDto;
-        }
-
-        public IWheel convert(WheelDto wheelDto)
-        {
-            IWheel w = new Wheel();
-            w.Pressure = wheelDto.Pressure;
-
-            return w;
-        }
-
-        public WheelDto convert(IWheel wheel)
-        {
-            WheelDto wDto = new WheelDto();
-            wDto.Pressure = wheel.Pressure;
-            return wDto;
-        }
-
-        public IEnrollment convert(EnrollmentDto enrollmentDto)
-        {
-            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        }
-
-        public EnrollmentDto convert(IEnrollment enrollment)
-        {
-            EnrollmentDto eDto = new EnrollmentDto();
-            eDto.Serial = enrollment.Serial;
-            eDto.Number = enrollment.Number;
-
-            return eDto;
+            Asserts.isTrue(this.wheelsCount > 0, "The vehicle does not have any more wheels to remove.");
+            this.wheelsCount--;
         }
 
         private class Wheel : IWheel
@@ -160,7 +112,7 @@ namespace CarManagement.Services
             }
         }
 
-        private class Door : IDoor
+        private class Door: IDoor 
         {
             private bool isOpen = false;
 
@@ -185,7 +137,7 @@ namespace CarManagement.Services
             }
         }
 
-        private class Engine : IEngine
+        private class Engine : IEngine 
         {
 
             private const int MAXPOWER = 4000;
@@ -235,12 +187,12 @@ namespace CarManagement.Services
         {
             private List<IDoor> doors;
             private List<IWheel> wheels;
-            private IEngine engine;
+            private Engine engine;
             private CarColor color;
             private IEnrollment enrollment;
             private CarColor colorCode;
 
-            public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor colorCode, IEnrollment enrollment)
+            public Vehicle(List<IWheel> wheels, List<IDoor> doors, Engine engine, CarColor colorCode, IEnrollment enrollment)
             {
                 this.wheels = wheels;
                 this.doors = doors;
@@ -333,7 +285,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
 
     }
 }
