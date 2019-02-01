@@ -1,12 +1,12 @@
 ﻿using System;
-<<<<<<< HEAD:CarManagement/Builders/VehicleBuilder.cs
+
 using System.Collections.Generic;
-using CarManagement.Models;
+
 using CarManagement.Services;
-=======
+
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
->>>>>>> develop:CarManagement/Services/VehicleBuilder.cs
+
 
 namespace CarManagement.Services
 {
@@ -45,12 +45,12 @@ namespace CarManagement.Services
             this.color = color;
         }
 
-<<<<<<< HEAD:CarManagement/Builders/VehicleBuilder.cs
+
 
         public Vehicle build()
-=======
+
         public IVehicle build()
->>>>>>> develop:CarManagement/Services/VehicleBuilder.cs
+
         {
             List<Wheel> wheel = new List<Wheel>();
             List<Door> door = new List<Door>();
