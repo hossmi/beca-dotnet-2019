@@ -40,9 +40,16 @@ namespace CarManagement.Services
 
         public Vehicle[] getAll()
         {
-            Vehicle[] vehiclesArray = new Vehicle()[];
+            Vehicle[] vehicleArray = new Vehicle[this.vehicles.Count];
 
-            return vehiclesArray;
+            int i = 0;
+            foreach (Vehicle v in this.vehicles.Values)
+            {
+                vehicleArray[i] = v;
+                i++;
+            }
+            
+            return vehicleArray;
         }
 
         public void set(Vehicle vehicle)

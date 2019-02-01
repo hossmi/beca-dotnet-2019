@@ -54,8 +54,6 @@ namespace CarManagement.Services
 
             return vehicleDictionary;
         }
-
-
     }
 }
 
