@@ -52,10 +52,10 @@ namespace CarManagement.Services
                 }
             }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
-        {
-            throw new NotImplementedException();
+            return vehicleDictionary;
         }
+
+
     }
 }
 

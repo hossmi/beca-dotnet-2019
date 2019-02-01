@@ -40,7 +40,9 @@ namespace CarManagement.Services
 
         public Vehicle[] getAll()
         {
-            throw new System.NotImplementedException();
+            Vehicle[] vehiclesArray = new Vehicle()[];
+
+            return vehiclesArray;
         }
 
         public void set(Vehicle vehicle)
