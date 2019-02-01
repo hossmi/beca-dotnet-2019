@@ -10,14 +10,14 @@ namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDtoConverter dtoConverter;
+        private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
-            : base(readFromFile(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
+            : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
@@ -25,7 +25,7 @@ namespace CarManagement.Services
             writeToFile(this.filePath, vehicles, this.dtoConverter);
         }
 
-        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             EnrollmentEqualityComparer enrollmentEqualityComparer = new EnrollmentEqualityComparer();
             IDictionary<IEnrollment, IVehicle> vehicles= new Dictionary<IEnrollment, IVehicle>(enrollmentEqualityComparer);
