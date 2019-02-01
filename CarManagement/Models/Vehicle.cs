@@ -5,6 +5,14 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
+        private List<Wheel> wheels = new List<Wheel>();
+        private List<Door> doors = new List<Door>();
+        private int doorsCount;
+        private int wheelsCount;
+        private Engine engine = new Engine();
+        private CarColor color;
+        private IEnrollment enrollment;
+
         public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
         {
             this.wheels = wheels;
@@ -14,48 +22,18 @@ namespace CarManagement.Models
             this.enrollment = enrollment;
         }
 
-        public Vehicle(bool v1, bool v2, Engine engine1, object engine2, CarColor carColor, object color1, IEnrollment enrollment1, IEnrollment enrollment2)
-        {
-            this.carcolor = carColor;
-        }
-
         public Vehicle()
         {
         }
-
-        private List<Wheel> wheels = new List<Wheel>();
-        private List<Door> doors = new List<Door>();
-        private Engine engine = new Engine();
-        private CarColor color;
-        private IEnrollment enrollment;
-
-
-        public List<Wheel> carwheel
-        {
-            set
-            {
-                this.wheels = value;
-            }
-        }
-        public List<Door> cardoor
-        {
-            set
-            {
-                this.doors = value;
-            }
-        }
-        public Engine carengine
-        {
-            set
-            {
-                this.engine = value;
-            }
-        }
-        public CarColor carcolor
+        public CarColor carolor
         {
             set
             {
                 this.color = value;
+            }
+            get
+            {
+                return this.color;
             }
         }
         public int DoorsCount
@@ -63,6 +41,10 @@ namespace CarManagement.Models
             get
             {
                 return this.doors.Count;
+            }
+            set
+            {
+                this.doorsCount = value;
             }
         }
 
@@ -72,6 +54,10 @@ namespace CarManagement.Models
             {
                 return this.wheels.Count;
             }
+            set
+            {
+                this.wheelsCount = value;
+            }
         }
 
         public Engine Engine
@@ -79,6 +65,10 @@ namespace CarManagement.Models
             get
             {
                 return this.engine;
+            }
+            set
+            {
+                this.engine = value;
             }
         }
 
@@ -98,7 +88,6 @@ namespace CarManagement.Models
             }
         }
 
-
         public Wheel[] Wheels
         {
             get
@@ -113,7 +102,6 @@ namespace CarManagement.Models
             {
                 wheel.Pressure = pression;
             }
-
         }
     }
 }
