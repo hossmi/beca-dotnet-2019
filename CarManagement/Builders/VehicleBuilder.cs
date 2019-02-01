@@ -20,24 +20,33 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (wheelsCount >= 4)
+            if (this.wheelsCount >= 4)
                 throw new InvalidOperationException("Can not add more than 4 wheels.");
             this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            this.doorsCount = doorsCount;
+            if (doorsCount < 0 || doorsCount > 6)
+                throw new ArgumentException("Doors number must be between 0 and 6");
+            else
+                this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePower)
         {
-            this.horsePower = horsePower;
+            if (horsePower <= 0)
+                throw new ArgumentException("Horse power must be over 0.");
+            else
+                this.horsePower = horsePower;
         }
 
         public void setColor(CarColor color)
         {
-            this.carColor = color;
+            if (Enum.IsDefined(typeof(CarColor), color) == false)
+                throw new ArgumentException("Color value is not valid.");
+            else
+                this.carColor = color;
         }
 
 

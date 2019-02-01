@@ -70,7 +70,7 @@ namespace CarManagement.Models
             {
                 if (Enum.IsDefined(typeof(CarColor), value) == false)
                     throw new ArgumentException("Unexpected car color value.");
-                carColor = value;
+                this.carColor = value;
             }
         }
 
@@ -78,8 +78,11 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            foreach (Wheel wheel in wheels)
-                wheel.Pressure = pression;
+            if (pression <= 0)
+                throw new ArgumentException("Wheels pressure must be over 0.");
+            else
+                foreach (Wheel wheel in this.wheels)
+                    wheel.Pressure = pression;
         }
     }
 }
