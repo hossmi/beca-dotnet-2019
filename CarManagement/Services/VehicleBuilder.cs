@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 
@@ -52,7 +53,7 @@ namespace CarManagement.Services
             List<Wheel> wheels = createElementsList<Wheel>(this.wheelsCount);
             List<Door> doors = createElementsList<Door>(this.doorsCount);
             Engine engine = new Engine(this.horsePower);
-            IEnrollment enrollment = enrollmentProvider.getNew();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
 
             Vehicle vehicle = new Vehicle(doors, wheels, engine, enrollment, this.carColor);
             return vehicle;

@@ -32,7 +32,7 @@ namespace CarManagement.Services
             return engineDto;
         }
 
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
             Door door = new Door();
 
@@ -50,7 +50,7 @@ namespace CarManagement.Services
             return doorDto;
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             Wheel wheel = new Wheel();
 
@@ -60,7 +60,7 @@ namespace CarManagement.Services
             return wheel;
         }
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             WheelDto wheelDto = new WheelDto();
             wheelDto.Pressure = wheel.Pressure;
@@ -84,7 +84,7 @@ namespace CarManagement.Services
 
         public IVehicle convert(VehicleDto vehicleDto)
         {
-            Vehicle vehicle;
+            IVehicle vehicle;
             List<Door> doors = new List<Door>();
             List<Wheel> wheels = new List<Wheel>();
 
@@ -98,7 +98,7 @@ namespace CarManagement.Services
                 wheels.Add(convert(wheelDto));
             }
 
-            Engine engine = convert(vehicleDto.Engine);
+            IEngine engine = convert(vehicleDto.Engine);
             IEnrollment enrollment = convert(vehicleDto.Enrollment);
             CarColor Color = vehicleDto.Color;
 

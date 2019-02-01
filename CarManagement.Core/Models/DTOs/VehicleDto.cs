@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Core.Models.DTOs
+﻿using System;
+
+namespace CarManagement.Core.Models.DTOs
 {
     [Serializable]
     public class VehicleDto
