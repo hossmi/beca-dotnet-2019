@@ -150,21 +150,22 @@ namespace CarManagement.Services
                 }
             }
 
-            public int HorsePower
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
             public void start()
             {
                 Asserts.isFalse(this.startEngine);
                 this.startEngine = true;
             }
 
-            public int HorsePorwer
+            public int HorsePower
+            {
+                get
+                {
+                    return this.horsePorwer;
+                }
+            }
+
+
+            /*public int HorsePorwer
             {
                 get
                 {
@@ -174,7 +175,7 @@ namespace CarManagement.Services
                 {
                     this.horsePorwer = value;
                 }
-            }
+            }*/
 
             public void stop()
             {
