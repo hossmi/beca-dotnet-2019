@@ -1,7 +1,6 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
-using System;
-using System.Collections.Generic;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
@@ -14,36 +13,31 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
-            Engine engine = new Engine(engineDto.HorsePower);
-
-            if (engineDto != null)
-                engine.IsStarted = engineDto.IsStarted;
-
-            return engine;
+            throw new System.NotImplementedException();
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
-            EngineDto engineDto = new EngineDto();
-            engineDto.HorsePower = engine.HorsePower;
-            engineDto.IsStarted = engine.IsStarted;
-
-            return engineDto;
+            throw new System.NotImplementedException();
         }
 
-        public Door convert(DoorDto doorDto)
+        public IVehicle convert(VehicleDto vehicleDto)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public VehicleDto convert(IVehicle vehicle)
         {
             Door door = new Door();
 
-            if (doorDto != null)
-                door.IsOpen = doorDto.IsOpen;
-
-            return door;
+        public IDoor convert(DoorDto doorDto)
+        {
+            throw new System.NotImplementedException();
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             DoorDto doorDto = new DoorDto();
             doorDto.IsOpen = door.IsOpen;
@@ -51,7 +45,7 @@ namespace CarManagement.Services
             return doorDto;
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             Wheel wheel = new Wheel();
 
@@ -61,7 +55,7 @@ namespace CarManagement.Services
             return wheel;
         }
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             WheelDto wheelDto = new WheelDto();
             wheelDto.Pressure = wheel.Pressure;

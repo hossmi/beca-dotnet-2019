@@ -1,40 +1,23 @@
-﻿using CarManagement.Builders;
-using CarManagement.Models;
+﻿using System;
 using System.Collections.Generic;
+using CarManagement.Core.Models;
 
 namespace CarManagement.Services
 {
-    public class InMemoryVehicleStorage : IVehicleStorage
+    public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
-        private IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
-
-        public int Count
+        public InMemoryVehicleStorage() 
+            : base(load())
         {
-            get
-            {
-                return this.vehicles.Count;
-            }
         }
 
-        public void clear()
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            vehicles.Clear();
         }
 
-        public Vehicle get(IEnrollment enrollment)
+        private static IDictionary<IEnrollment, IVehicle> load()
         {
-            Vehicle listedVehicle;
-
-            bool vehicleIsListed = vehicles.TryGetValue(enrollment, out listedVehicle);
-            Asserts.isTrue(vehicleIsListed);
-
-            return listedVehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            vehicles.Add(vehicle.Enrollment, vehicle);
+            return new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
         }
     }
 }

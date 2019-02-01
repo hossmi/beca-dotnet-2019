@@ -1,100 +1,30 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
-using CarManagement.Models;
-using CarManagement.Models.DTOs;
+﻿using System;
+using System.Collections.Generic;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public int Count
-        {
-            get
-            {
-                return this.vehicles.Count;
-            }
-        }
-
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
-            this.dtoConverter = dtoConverter;
             this.filePath = fileFullPath;
-
-            if (File.Exists(fileFullPath))
-                this.vehicles = readFromFile(fileFullPath, dtoConverter);
-            else
-                this.vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+            this.dtoConverter = dtoConverter;
         }
 
-        public void clear()
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            this.vehicles.Clear();
-
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+            throw new NotImplementedException();
         }
 
-        public Vehicle get(IEnrollment enrollment)
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            Vehicle listedVehicle;
-
-            bool vehicleIsListed = this.vehicles.TryGetValue(enrollment, out listedVehicle);
-            Asserts.isTrue(vehicleIsListed);
-
-            return listedVehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,
-            Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
-            int i = 0;
-
-            foreach (Vehicle vehicle in vehicles.Values)
-            {
-                vehiclesDto[i] = dtoConverter.convert(vehicle);
-                i++;
-            }
-
-            using (var writer = new StreamWriter(filePath))
-            {
-                var serializer = new XmlSerializer(typeof(VehicleDto[]));
-                serializer.Serialize(writer, vehiclesDto);
-                writer.Flush();
-            }
-        }
-
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath,
-            IDtoConverter dtoConverter)
-        {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
-            Vehicle vehicle;
-            VehicleDto[] vehiclesDto;
-
-            using (var stream = File.OpenRead(fileFullPath))
-            {
-                var serializer = new XmlSerializer(typeof(VehicleDto[]));
-                vehiclesDto = serializer.Deserialize(stream) as VehicleDto[];
-            }
-
-            foreach (VehicleDto vehicleDto in vehiclesDto)
-            {
-                vehicle = dtoConverter.convert(vehicleDto);
-                vehicles.Add(vehicle.Enrollment, vehicle);
-            }
-            return vehicles;
+            throw new NotImplementedException();
         }
     }
 }
