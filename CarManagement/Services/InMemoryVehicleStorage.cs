@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using CarManagement.Models;
 using System.Collections;
-using System.Collections.Generic;
+
 
 
 namespace CarManagement.Services
@@ -11,32 +11,15 @@ namespace CarManagement.Services
     {
         IDictionary<IEnrollment, Vehicle> vehicles;
 
-        public InMemoryVehicleStorage()
-        {
-            this.vehicles = new Dictionary<IEnrollment, Vehicle>();
-        }
-
-        public int Count {
-            get
-            {
-                return this.vehicles.Count;
-            }
-
-        }
-
-        public void clear()
-            //public InMemoryVehicleStorage() 
-            //: base(load())
+          public InMemoryVehicleStorage() : base(load())
         {
            this.vehicles.Clear();
         }
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            Vehicle vehicle;
-            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle);
-            Asserts.isTrue(hasVehicle);
-            return vehicle;
+
+            load(this.vehicles );
 
         }
 
