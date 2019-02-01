@@ -20,73 +20,6 @@ namespace BusinessCore.Tests
             }
         }
 
-        public bool SameVehicle(Vehicle v1, Vehicle v2)
-        {
-            bool isSameVehicle = true;
-
-            if (v1.Color == v2.Color)
-            {
-
-                if (isSameVehicle && v1.WheelCount == v2.WheelCount)
-                {
-                    for (int i = 0; i < v1.WheelCount; i++)
-                    {
-                        if (v1.Wheels[i].Pressure == v2.Wheels[i].Pressure)
-                        {
-                        }
-                        else
-                        {
-                            isSameVehicle = false;
-                            break;
-                        }
-                    }
-
-                    if (isSameVehicle && v1.DoorsCount == v2.DoorsCount)
-                    {
-                        for (int i = 0; i < v1.DoorsCount; i++)
-                        {
-                            if (v1.Doors[i].IsOpen == v2.Doors[i].IsOpen)
-                            {
-                            }
-                            else
-                            {
-                                isSameVehicle = false;
-                                break;
-                            }
-                        }
-                        if (isSameVehicle && v1.Engine.HorsePower == v2.Engine.HorsePower && v1.Engine.IsStarted == v2.Engine.IsStarted)
-                        {
-                            if (isSameVehicle && v1.Enrollment.Number == v2.Enrollment.Number && v1.Enrollment.Serial == v2.Enrollment.Serial)
-                            {
-
-                            }
-                            else
-                            {
-                                isSameVehicle = false;
-                            }
-                        }
-                        else
-                        {
-                            isSameVehicle = false;
-                        }
-                    }
-                    else
-                    {
-                        isSameVehicle = false;
-                    }
-                }
-                else
-                {
-                    isSameVehicle = false;
-                }
-            }
-            else
-            {
-                isSameVehicle = false;
-            }
-            return isSameVehicle;
-        }
-
         [TestInitialize]
         [TestCleanup]
         public void initialize()
@@ -158,8 +91,39 @@ namespace BusinessCore.Tests
             Assert.IsNotNull(memoryVehicleA);
             Assert.IsNotNull(vehicleFileStorage);
 
-            Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle));
+            Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle, equalityComparer));
         }
 
+        private static bool SameVehicle(Vehicle v1, Vehicle v2, IEqualityComparer<IEnrollment> enrollmentComparer)
+        {
+
+            if (v1.Color != v2.Color)
+                return false;
+
+            if (v1.WheelCount != v2.WheelCount)
+                return false;
+
+            for (int i = 0; i < v1.WheelCount; i++)
+                if (v1.Wheels[i].Pressure != v2.Wheels[i].Pressure)
+                    return false;
+
+            if (v1.DoorsCount != v2.DoorsCount)
+                return false;
+
+            for (int i = 0; i < v1.DoorsCount; i++)
+                if (v1.Doors[i].IsOpen != v2.Doors[i].IsOpen)
+                    return false;
+
+            if (v1.Engine.HorsePower != v2.Engine.HorsePower)
+                return false;
+
+            if (v1.Engine.IsStarted != v2.Engine.IsStarted)
+                return false;
+
+            if (enrollmentComparer.Equals(v1.Enrollment, v2.Enrollment) == false)
+                return false;
+
+            return true;
+        }
     }
 }
