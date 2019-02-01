@@ -16,7 +16,7 @@ namespace CarManagement.Models
             get => this.pressure;
             set
             {
-                Asserts.isTrue(value > 0, NOT_ENOUGH_PRESSURE);
+                Asserts.isTrue(value >= 0, NOT_ENOUGH_PRESSURE);
                 this.pressure = value;
             }
         }

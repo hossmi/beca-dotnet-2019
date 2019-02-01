@@ -72,7 +72,7 @@ namespace CarManagement.Builders
         public void setDoors(int doorsCount)
         {
             Asserts.isFalse( doorsCount >= 6,"You cannot have more than 6 doors");
-            Asserts.isFalse(doorsCount < 0, "You cannot have more than 6 doors");
+            Asserts.isFalse(doorsCount < 0, "You cannot have less than 0 doors");
             if (doorsCount > this.doorList.Count)
             {
                 doorsCount = doorsCount - this.doorList.Count;

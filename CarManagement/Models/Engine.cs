@@ -8,12 +8,12 @@ namespace CarManagement.Models
         private int horsePower;
         private bool isStarted;
 
-        public Engine(int horsePower = 0, string model = null, bool started = false)
+        public Engine(int horsePower = 50, string model = null, bool started = false)
         {
-            Asserts.isTrue(horsePower >= 0, "Negative horse power would be counterproductive, wouldn't it?");
+            Asserts.isTrue(horsePower > 0, "Negative or none horse power would be counterproductive, wouldn't it?");
             this.model = model ?? "standart";
             this.isStarted = started;
-            this.horsePower = horsePower < 1 ? 50 : horsePower;
+            this.horsePower = horsePower;
         }
 
         public Engine(Engine engine)
@@ -31,10 +31,12 @@ namespace CarManagement.Models
 
         public void start()
         {
+            Asserts.isFalse(this.isStarted,"Cannot start a started engine");
             this.isStarted = true;
         }
         public void stop()
         {
+            Asserts.isTrue(this.isStarted, "Cannot stop a stoped engine");
             this.isStarted = false;
         }
 
