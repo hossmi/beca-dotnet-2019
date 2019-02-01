@@ -1,6 +1,6 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
-using System;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 using System.Collections.Generic;
 
 namespace CarManagement.Services
@@ -15,12 +15,12 @@ namespace CarManagement.Services
         }
 
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
             return convertToEngine(engineDto);
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
             return convertToEngineDto(engine);
         }
@@ -28,25 +28,25 @@ namespace CarManagement.Services
         
 
 
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
             return convertToDoor(doorDto);
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             return convertToDoorDto(door);
         }
 
        
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             return convertToWheel(wheelDto);
         }
 
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             return convertToWheelDto(wheel);
         }
@@ -64,32 +64,32 @@ namespace CarManagement.Services
 
 
 
-        public Vehicle convert(VehicleDto vehicleDto)
+        public IVehicle convert(VehicleDto vehicleDto)
         {
             CarColor color = vehicleDto.Color;
 
-            List<Wheel> wheels = new List<Wheel>();
+            List<IWheel> wheels = new List<IWheel>();
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
             {
-                Wheel r = convertToWheel(wheelDto);
+                IWheel r = convertToWheel(wheelDto);
                 wheels.Add(r);
             }
 
             IEnrollment enrollment = convertToIEnrollment(vehicleDto.Enrollment);
 
-            List<Door> doors = new List<Door>();
+            List<IDoor> doors = new List<IDoor>();
             foreach (DoorDto doorDto in vehicleDto.Doors)
             {
-                Door door = convertToDoor(doorDto);
+                IDoor door = convertToDoor(doorDto);
                 doors.Add(door);
             }
 
-            Engine engine = convertToEngine(vehicleDto.Engine);
+            IEngine engine = convertToEngine(vehicleDto.Engine);
 
             return new Vehicle(color, wheels, enrollment, doors, engine);
         }
 
-        public VehicleDto convert(Vehicle vehicle)
+        public VehicleDto convert(IVehicle vehicle)
         {
             CarColor color = vehicle.Color;
 
@@ -97,18 +97,18 @@ namespace CarManagement.Services
 
             EnrollmentDto enrollmentDto = convertToIEnrollmentDto(vehicle.Enrollment);
 
-            WheelDto[] wheelDtos = new WheelDto[vehicle.WheelCount];
+            WheelDto[] wheelDtos = new WheelDto[vehicle.Wheels.Length];
             int auxWheel = 0;
-            foreach (Wheel wheen in vehicle.Wheels)
+            foreach (IWheel wheen in vehicle.Wheels)
             {
                 WheelDto wheelDto = convertToWheelDto(wheen);
                 wheelDtos[auxWheel] = wheelDto;
                 auxWheel++;
             }
 
-            DoorDto[] doorDtos = new DoorDto[vehicle.DoorsCount];
+            DoorDto[] doorDtos = new DoorDto[vehicle.Doors.Length];
             int auxDoor = 0;
-            foreach (Door door in vehicle.Doors)
+            foreach (IDoor door in vehicle.Doors)
             {
                 DoorDto doorDto = convertToDoorDto(door);
                 doorDtos[auxDoor] = doorDto;
@@ -140,11 +140,11 @@ namespace CarManagement.Services
                                                   enrollmentDto.Number);
         }
 
-        private static Engine convertToEngine(EngineDto engineDto)
+        private static IEngine convertToEngine(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
-        private static EngineDto convertToEngineDto(Engine engine)
+        private static EngineDto convertToEngineDto(IEngine engine)
         {
             return new EngineDto
             {
@@ -153,23 +153,23 @@ namespace CarManagement.Services
             };
         }
 
-        private static DoorDto convertToDoorDto(Door door)
+        private static DoorDto convertToDoorDto(IDoor door)
         {
             return new DoorDto
             {
                 IsOpen = door.IsOpen
             };
         }
-        private static Door convertToDoor(DoorDto doorDto)
+        private static IDoor convertToDoor(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
         }
 
-        private static Wheel convertToWheel(WheelDto wheelDto)
+        private static IWheel convertToWheel(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Pressure);
         }
-        private static WheelDto convertToWheelDto(Wheel wheel)
+        private static WheelDto convertToWheelDto(IWheel wheel)
         {
             return new WheelDto
             {

@@ -1,6 +1,5 @@
-﻿using System;
-using CarManagement.Builders;
-using CarManagement.Models;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -47,7 +46,7 @@ namespace BusinessCore.Tests
             builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
             vehicle.Doors[0].open();
             Negassert.mustFail(() => vehicle.Doors[0].open());
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarManagement.Models;
+using CarManagement.Core.Models;
 
 namespace CarManagement.Services
 {
@@ -11,15 +11,15 @@ namespace CarManagement.Services
         {
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
 
         }
 
-        private static IDictionary<IEnrollment, Vehicle> load()
+        private static IDictionary<IEnrollment, IVehicle> load()
         {
-            return new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
-        }        
+            return new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
+        }
     }
 }
  
