@@ -30,7 +30,7 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            Asserts.isTrue(numberWheel < 4);
+            Asserts.isTrue(this.numberWheel < 4);
             this.numberWheel++;
         }
 
@@ -42,16 +42,20 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
+            //Asserts.isTrue(0 < doorsCount && doorsCount <= 6);
             this.numberDoor = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
+
+            Asserts.isTrue(horsePorwer > 0);
             this.engine = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
+           // Asserts.isTrue((CarColor )0 < color && color < (CarColor) 7);
             this.color = color;
         }
 
@@ -68,9 +72,11 @@ namespace CarManagement.Builders
         public Vehicle build()
         {
             //Generamos puertas
+        
             List<Door> doors = generateList<Door>(this.numberDoor);
 
             //Generamos motor
+            
             Engine engine = new Engine(this.engine);
 
             //Generamos ruedas
@@ -80,7 +86,7 @@ namespace CarManagement.Builders
 
             //Generamos matricula
 
-            IEnrollment enrollment = enrollmentProvider .getNew();
+            IEnrollment enrollment = this.enrollmentProvider .getNew();
 
             //Generamos coche
 
