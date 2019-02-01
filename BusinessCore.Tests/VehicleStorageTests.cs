@@ -33,8 +33,7 @@ namespace BusinessCore.Tests
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
+            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
@@ -48,7 +47,7 @@ namespace BusinessCore.Tests
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
 
-            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
+            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
             Assert.AreEqual(1, vehicleStorage.Count);
 
             IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
@@ -93,13 +92,12 @@ namespace BusinessCore.Tests
         public void vehicleStoarge_implementations_must_return_6_items()
         {
             ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
-            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
 
             IVehicleStorage[] vehicleStorages = new IVehicleStorage[]
             {
                 new InMemoryVehicleStorage(),
-                new FileVehicleStorage(this.VehiclesFilePath, dtoConverter),
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder),
             };
 
             vehicleBuilder.addWheel();
