@@ -29,7 +29,7 @@ namespace CarManagement.Models
         {
             get
             {
-                return this.mode;
+                return this.isStarted;
             }
         }
 
@@ -43,7 +43,8 @@ namespace CarManagement.Models
 
         public void start()
         {
-            this.mode  = true;
+            Asserts.isFalse(this.isStarted);
+            this.isStarted  = true;
         }
 
         public void stop()

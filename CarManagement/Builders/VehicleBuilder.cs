@@ -45,12 +45,13 @@ namespace CarManagement.Builders
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer >= 0);
+            Asserts.isTrue(horsePorwer > 0);
             this.engine = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
+            Asserts.isEnumDefined<CarColor>(color); //Si el valor es numerico devolver el color correspondiente
             this.color = color;
         }
 
