@@ -12,12 +12,10 @@ namespace CarManagement.Services
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
-            : base(load(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter): base(load(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
-
         }
 
         protected override void save(IEnumerable<Vehicle> vehicles)

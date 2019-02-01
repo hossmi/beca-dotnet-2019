@@ -38,6 +38,20 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
+        public Vehicle[] getAll()
+        {
+            Vehicle[] vehicleArray = new Vehicle[this.vehicles.Count];
+
+            int i = 0;
+            foreach (Vehicle v in this.vehicles.Values)
+            {
+                vehicleArray[i] = v;
+                i++;
+            }
+
+            return vehicleArray;
+        }
+
         public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
