@@ -2,8 +2,6 @@
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using System.Collections.Generic;
-using CarManagement.Models;
-using CarManagement.Services;
 using CarManagement.Core;
 
 namespace CarManagement.Services
@@ -218,7 +216,7 @@ namespace CarManagement.Services
                 }
             }
 
-            private IEngine Engine
+            public IEngine Engine
             {
                 get
                 {
@@ -257,8 +255,6 @@ namespace CarManagement.Services
                 }
             }
 
-            //IEngine IVehicle.Engine => throw new NotImplementedException();
-
             public void setWheelsPressure(double pression)
             {
                 Asserts.isTrue(pression >= 0);
@@ -267,10 +263,9 @@ namespace CarManagement.Services
                     this.Wheels[i].Pressure = pression;
                 }
             }
-
         }
 
-        public class Wheel : IWheel
+        private class Wheel : IWheel
         {
             private double pression;
 
