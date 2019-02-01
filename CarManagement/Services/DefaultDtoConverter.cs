@@ -1,6 +1,6 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
-using System.Collections.Generic;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
@@ -13,140 +13,54 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
-            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+            throw new System.NotImplementedException();
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
-            EngineDto engineDto = new EngineDto
-            {
-                HorsePower = engine.HorsePorwer,
-                IsStarted = engine.IsStarted
-            };
-
-            return engineDto;
+            throw new System.NotImplementedException();
         }
 
-        public Vehicle convert(VehicleDto vehicleDto)
+        public IVehicle convert(VehicleDto vehicleDto)
         {
-            Vehicle vehicle = new Vehicle(createWheels(vehicleDto), createDoors(vehicleDto), 
-                convert(vehicleDto.Engine), vehicleDto.Color, convert(vehicleDto.Enrollment));
-
-            return vehicle;
+            throw new System.NotImplementedException();
         }
 
-        public VehicleDto convert(Vehicle vehicle)
+        public VehicleDto convert(IVehicle vehicle)
         {
-            VehicleDto vehicleDto = new VehicleDto
-            {
-                Doors = createDoorsDto(vehicle),
-                Wheels = createWheelDto(vehicle),
-                Engine = convert(vehicle.Engine),
-                Enrollment = convert(vehicle.Enrollment),
-                Color = vehicle.getColor()
-            };
-
-            return vehicleDto;
+            throw new System.NotImplementedException();
         }
 
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
-            return new Door(doorDto.IsOpen);
+            throw new System.NotImplementedException();
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
-            DoorDto doorDto = new DoorDto
-            {
-                IsOpen = door.IsOpen
-            };
-
-            return doorDto;
+            throw new System.NotImplementedException();
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
-            Wheel wheel = new Wheel
-            {
-                Pressure = wheelDto.Pressure
-            };
-
-            return wheel;
+            throw new System.NotImplementedException();
         }
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
-            WheelDto wheelDto = new WheelDto
-            {
-                Pressure = wheel.Pressure
-            };
-
-            return wheelDto;
+            throw new System.NotImplementedException();
         }
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            IEnrollment enrollment = this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-
-            return enrollment;
+            throw new System.NotImplementedException();
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)
         {
-            EnrollmentDto enrollmentDto = new EnrollmentDto
-            {
-                Serial = enrollment.Serial,
-                Number = enrollment.Number,
-            };
-            
-
-            return enrollmentDto;
-        }
-
-        private DoorDto[] createDoorsDto(Vehicle vehicle)
-        {
-            DoorDto[] doorsDto = new DoorDto[vehicle.DoorsCount];
-            for(int i = 0; i < vehicle.DoorsCount; i++)
-            {
-                doorsDto[i] = convert(vehicle.Doors[i]);
-            }
-
-            return doorsDto;
-        }
-
-        private List<Door> createDoors(VehicleDto vehicleDto)
-        {
-            List<Door> doors = new List<Door>();
-            for(int i = 0; i < vehicleDto.Doors.Length; i++)
-            {
-                doors.Add(convert(vehicleDto.Doors[i]));
-            }
-
-            return doors;
-        }
-
-        private WheelDto[] createWheelDto(Vehicle vehicle)
-        {
-            WheelDto[] wheelsDto = new WheelDto[vehicle.WheelCount];
-            for (int i = 0; i < vehicle.WheelCount; i++)
-            {
-                wheelsDto[i] = convert(vehicle.Wheels[i]);
-            }
-
-            return wheelsDto;
-        }
-
-        private List<Wheel> createWheels(VehicleDto vehicleDto)
-        {
-            List<Wheel> wheels = new List<Wheel>();
-            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
-            {
-                wheels.Add(convert(vehicleDto.Wheels[i]));
-            }
-
-            return wheels;
+            throw new System.NotImplementedException();
         }
     }
 }

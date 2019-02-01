@@ -2,6 +2,8 @@
 using CarManagement.Services;
 using System;
 using System.Text;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -20,7 +22,7 @@ namespace CarManagement.Services
             this.filePath = fileFullPath;
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
             writeToFile(this.filePath, vehicles, this.dtoConverter);
         }
@@ -42,8 +44,8 @@ namespace CarManagement.Services
             xmlSerializer.Serialize(vehiclesWriter, vehiclesDtoAux);
             vehiclesWriter.Close();
         }
-                
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 

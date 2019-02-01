@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace BusinessCore.Tests
 {

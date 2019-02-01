@@ -1,12 +1,12 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Core.Models;
 
-namespace CarManagement.Builders
+namespace CarManagement.Core.Services
 {
     public interface IVehicleBuilder
     {
         void addWheel();
         void removeWheel();
-        Vehicle build();
+        IVehicle build();
         void setColor(CarColor color);
         void setDoors(int doorsCount);
         void setEngine(int horsePorwer);

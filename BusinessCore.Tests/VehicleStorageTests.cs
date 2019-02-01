@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using CarManagement.Builders;
-using CarManagement.Models;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -43,7 +43,7 @@ namespace BusinessCore.Tests
             vehicleBuilder.addWheel();
             vehicleBuilder.setDoors(0);
             vehicleBuilder.setEngine(40);
-            Vehicle motoVehicle = vehicleBuilder.build();
+            IVehicle motoVehicle = vehicleBuilder.build();
 
             vehicleStorage.set(motoVehicle);
             Assert.AreEqual(1, vehicleStorage.Count);
@@ -51,7 +51,7 @@ namespace BusinessCore.Tests
             vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
             Assert.AreEqual(1, vehicleStorage.Count);
 
-            Vehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
+            IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
             Assert.IsNotNull(vehicle);
             Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
         }
@@ -59,7 +59,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void inMemoryVehicleStorage_must_be_empty_on_each_instance()
         {
-            Vehicle vehicle, motoVehicle;
+            IVehicle vehicle, motoVehicle;
 
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
@@ -110,14 +110,14 @@ namespace BusinessCore.Tests
 
             for (int i = 0; i < enrollmentProvider.Count; i++)
             {
-                Vehicle vehicle = vehicleBuilder.build();
+                IVehicle vehicle = vehicleBuilder.build();
                 foreach (IVehicleStorage vehicleStorage in vehicleStorages)
                     vehicleStorage.set(vehicle);
             }
 
             foreach (IVehicleStorage vehicleStorage in vehicleStorages)
             {
-                Vehicle[] vehicles = vehicleStorage.getAll();
+                IVehicle[] vehicles = vehicleStorage.getAll();
                 Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
             }
         }
