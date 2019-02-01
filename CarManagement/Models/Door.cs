@@ -18,11 +18,13 @@ namespace CarManagement.Models
 
         public void open()
         {
+            Asserts.isFalse(this.openDoor);
             this.openDoor = true;
         }
 
         public void close()
         {
+            Asserts.isTrue(this.openDoor);
             this.openDoor = false;
         }
 
