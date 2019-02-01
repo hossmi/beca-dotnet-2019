@@ -9,33 +9,19 @@ namespace CarManagement.Models
         private List<Door> doors = new List<Door>();
         private int doorsCount;
         private int wheelsCount;
-        private Engine engine = new Engine();
-        private CarColor color;
-        private IEnrollment enrollment;
+        public CarColor carColor { set; get; }
+        public Engine Engine { get; set; }
+        public IEnrollment Enrollment { get; }
 
         public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
         {
             this.wheels = wheels;
             this.doors = doors;
-            this.engine = engine;
-            this.color = color;
-            this.enrollment = enrollment;
+            this.Engine = engine;
+            this.carColor = color;
+            this.Enrollment = enrollment;
         }
-
-        public Vehicle()
-        {
-        }
-        public CarColor carolor
-        {
-            set
-            {
-                this.color = value;
-            }
-            get
-            {
-                return this.color;
-            }
-        }
+        
         public int DoorsCount
         {
             get
@@ -57,26 +43,6 @@ namespace CarManagement.Models
             set
             {
                 this.wheelsCount = value;
-            }
-        }
-
-        public Engine Engine
-        {
-            get
-            {
-                return this.engine;
-            }
-            set
-            {
-                this.engine = value;
-            }
-        }
-
-        public IEnrollment Enrollment
-        {
-            get
-            {
-                return this.enrollment;
             }
         }
 

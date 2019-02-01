@@ -6,6 +6,15 @@ namespace CarManagement.Services
     public class DefaultDtoConverter : IDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
+        private EnrollmentDto enrollmentDto = new EnrollmentDto();
+        private VehicleDto vehicleDto = new VehicleDto();
+        private EngineDto engineDto = new EngineDto();
+        private Engine engine = new Engine();
+        private DoorDto doorDto = new DoorDto();
+        private Door door = new Door();
+        private WheelDto wheelDto = new WheelDto();
+        private Wheel wheel = new Wheel();
+
 
         //Memoria ->Fichero
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
@@ -16,17 +25,17 @@ namespace CarManagement.Services
         //Fichero ->Memoria
         public Engine convert(EngineDto engineDto)
         {
-            throw new System.NotImplementedException();
+            this.engine.Horsepower = engineDto.HorsePower;
+            this.engine.IsStarted = engineDto.IsStarted;
+            return this.engine;
         }
 
         //Memoria ->Fichero
         public EngineDto convert(Engine engine)
         {
-            EngineDto engineDto = new EngineDto();
-            engineDto.HorsePower = engine.Horsepower;
-            engineDto.IsStarted = engine.IsStarted;
-
-            return engineDto;
+            this.engineDto.HorsePower = engine.Horsepower;
+            this.engineDto.IsStarted = engine.IsStarted;
+            return this.engineDto;
         }
 
         //Fichero ->Memoria
@@ -38,38 +47,40 @@ namespace CarManagement.Services
         //Memoria ->Fichero
         public VehicleDto convert(Vehicle vehicle)
         {
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto.Color = vehicle.carcolor;
-            vehicleDto.Doors = vehicle.Doors;
-            return vehicleDto;
+            this.vehicleDto.Color = vehicle.carColor;
+            //this.vehicleDto.Doors = vehicle.Doors;
+            return this.vehicleDto;
         }
 
         //Fichero ->Memoria
         public Door convert(DoorDto doorDto)
         {
-            throw new System.NotImplementedException();
+            if(doorDto.IsOpen == true)
+            {
+                this.door.open();
+            }
+            return this.door;
         }
 
         //Memoria ->Fichero
         public DoorDto convert(Door door)
         {
-            DoorDto doorDto = new DoorDto();
-            doorDto.IsOpen = door.IsOpen;
-            return doorDto;
+            this.doorDto.IsOpen = door.IsOpen;
+            return this.doorDto;
         }
 
         //Fichero ->Memoria
         public Wheel convert(WheelDto wheelDto)
         {
-            throw new System.NotImplementedException();
+            this.wheel.Pressure = wheelDto.Pressure;
+            return this.wheel;
         }
 
         //Memoria ->Fichero
         public WheelDto convert(Wheel wheel)
         {
-            WheelDto wheelDto = new WheelDto();
-            wheelDto.Pressure = wheel.Pressure;
-            return wheelDto;
+            this.wheelDto.Pressure = wheel.Pressure;
+            return this.wheelDto;
         }
 
         //Fichero ->Memoria
@@ -81,10 +92,9 @@ namespace CarManagement.Services
         //Memoria ->Fichero
         public EnrollmentDto convert(IEnrollment enrollment)
         {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Number = enrollment.Number;
-            enrollmentDto.Serial = enrollment.Serial;
-            return enrollmentDto;
+            this.enrollmentDto.Number = enrollment.Number;
+            this.enrollmentDto.Serial = enrollment.Serial;
+            return this.enrollmentDto;
         }
     }
 }

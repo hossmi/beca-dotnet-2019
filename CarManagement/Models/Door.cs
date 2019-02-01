@@ -8,17 +8,17 @@ namespace CarManagement.Models
 
         public void open()
         {
-            isOpen = true;
+            this.isOpen = true;
         }
         public void close()
         {
-            isOpen = false;
+            this.isOpen = false;
         }
         public bool IsOpen
         {
             get
             {
-                return isOpen;
+                return this.isOpen;
             }
         }
     }

@@ -24,15 +24,11 @@ namespace CarManagement.Models
             {
                 return this.isStart;
             }
-        }
-
-        /*public int HorsePower
-        {
-            get
+            set
             {
-                throw new NotImplementedException();
+                this.isStart = value;
             }
-        }*/
+        }
 
         public void start()
         {
