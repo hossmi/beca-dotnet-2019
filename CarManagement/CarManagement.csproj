@@ -51,10 +51,7 @@
     <Compile Include="Services\FileVehicleStorage.cs" />
     <Compile Include="Extensions\Vehicles\VehicleExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Builders\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">
       <Project>{39975372-AA61-4A08-82A4-60479C44F079}</Project>
