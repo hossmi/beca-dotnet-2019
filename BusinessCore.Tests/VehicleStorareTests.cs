@@ -19,6 +19,14 @@ namespace BusinessCore.Tests
             }
         }
 
+        [TestInitialize]
+        [TestCleanup]
+        public void initialize()
+        {
+            if(File.Exists(this.VehiclesFilePath))
+                File.Delete(this.VehiclesFilePath);
+        }
+
         [TestMethod]
         public void fileVehicleStorage_must_persists_vehicles()
         {

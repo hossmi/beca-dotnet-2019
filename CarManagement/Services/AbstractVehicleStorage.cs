@@ -7,9 +7,12 @@ namespace CarManagement.Services
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
-        private IDictionary<IEnrollment, Vehicle> dictionary;
 
-     
+        public AbstractVehicleStorage(IDictionary<IEnrollment, Vehicle> initialVehicles)
+        {
+            Asserts.isNotNull(initialVehicles);
+            this.vehicles = initialVehicles;
+        }
 
         public int Count
         {
@@ -35,11 +38,6 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public Vehicle[] getAll()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
@@ -48,6 +46,5 @@ namespace CarManagement.Services
         }
 
         protected abstract void save(IEnumerable<Vehicle> vehicles);
-
     }
 }
