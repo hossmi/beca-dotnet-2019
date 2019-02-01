@@ -43,10 +43,13 @@ namespace CarManagement.Models
 
         public void start()
         {
+            Asserts.isTrue(this.mode == false);
             this.mode = true;
         }
         public void stop()
+
         {
+            //Asserts.isTrue(this.mode == true);
             this.mode = false;
         }
     }
