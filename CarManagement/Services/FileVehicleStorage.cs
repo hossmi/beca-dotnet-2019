@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using CarManagement.Models;
-using CarManagement.Models.DTOs;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -28,11 +26,11 @@ namespace CarManagement.Services
         }
 
         
-        private static void writeToFile(string filePath, IEnumerable<Vehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, IDtoConverter dtoConverter)
         {
             VehicleDto[] vehiclesDtoAux = new VehicleDto[vehicles.Count()];
             int contFor = 0;
-            foreach (Vehicle vehicle in vehicles)
+            foreach (IVehicle vehicle in vehicles)
             {
                 VehicleDto vehicleDto = dtoConverter.convert(vehicle);
                 vehiclesDtoAux[contFor] = vehicleDto;
@@ -47,7 +45,7 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+            IDictionary<IEnrollment, IVehicle> vehicles = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(fileFullPath))
             {
@@ -58,7 +56,7 @@ namespace CarManagement.Services
 
                 foreach (VehicleDto vehicleDto in vehiclesDtoAux)
                 {
-                    Vehicle vehicle = dtoConverter.convert(vehicleDto);
+                    IVehicle vehicle = dtoConverter.convert(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
