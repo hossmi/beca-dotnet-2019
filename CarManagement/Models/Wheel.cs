@@ -1,13 +1,13 @@
 ﻿using CarManagement.Core;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Wheel
+    public class Wheel : IWheel
     {
         private const string NOT_ENOUGH_PRESSURE = "Pressure must be greater than 0";
-
-        private string model;
+        
         private double pressure;
 
         public double Pressure
@@ -19,8 +19,6 @@ namespace CarManagement.Models
                 this.pressure = value;
             }
         }
-
-        public string Model { get => this.model; }
 
         public Wheel(double Pressure = 0)
         {

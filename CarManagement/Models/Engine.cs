@@ -1,9 +1,10 @@
 ﻿using CarManagement.Core;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Engine
+    public class Engine : IEngine
     {
         private string model;
         private int horsePower;

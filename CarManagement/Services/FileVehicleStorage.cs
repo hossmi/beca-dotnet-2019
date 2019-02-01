@@ -45,7 +45,7 @@ namespace CarManagement.Services
                 foreach (string jsonObject in jsonObjects)
                 {
                     VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                    Vehicle vehicle = dtoConverter.convert(vehicleDto);
+                    IVehicle vehicle = dtoConverter.convert(vehicleDto);
                     initialVehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }

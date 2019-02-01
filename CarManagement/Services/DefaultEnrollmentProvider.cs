@@ -1,5 +1,7 @@
-﻿using CarManagement.Core.Models;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
@@ -34,9 +36,9 @@ namespace CarManagement.Services
                 }
             }
 
-            string toIssuedSerial = $"{validLetterSequence[lastLettersTracker[2]]}" +
-                $"{validLetterSequence[lastLettersTracker[1]]}" +
-                $"{validLetterSequence[lastLettersTracker[0]]}";
+            string toIssuedSerial = $"{this.validLetterSequence[lastLettersTracker[2]]}" +
+                $"{this.validLetterSequence[lastLettersTracker[1]]}" +
+                $"{this.validLetterSequence[lastLettersTracker[0]]}";
 
             //Debug.WriteLine(toIssuedSerial);
 

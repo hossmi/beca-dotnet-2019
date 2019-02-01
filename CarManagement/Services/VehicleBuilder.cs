@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Core;
+using System.Linq;
 
 namespace CarManagement.Services
 {
@@ -16,26 +18,26 @@ namespace CarManagement.Services
         private readonly IEnrollmentProvider enrollmentProvider;
         
         private Engine engine;
-        private List<Door> doorList;
-        private List<Wheel> wheelList;
+        private readonly List<IDoor> doorList;
+        private readonly List<IWheel> wheelList;
         private CarColor color;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
             this.engine = new Engine();
-            this.doorList = new List<Door>();
-            this.wheelList = new List<Wheel>();
+            this.doorList = new List<IDoor>();
+            this.wheelList = new List<IWheel>();
             this.color = CarColor.White;
         }
 
         public Engine EngineClone { get => this.engine.Clone(); }
         public CarColor Color { get => this.color; }
-        public List<Wheel> WheelListClone
+        public List<IWheel> WheelListClone
         {
             get
             {
-                List<Wheel> wheelList = new List<Wheel>();
+                List<IWheel> wheelList = new List<IWheel>();
                 foreach(Wheel wheel in this.wheelList)
                 {
                     wheelList.Add(wheel.Clone());
@@ -44,11 +46,11 @@ namespace CarManagement.Services
                 return wheelList;
             }
         }
-        public List<Door> DoorListClone
+        public List<IDoor> DoorListClone
         {
             get
             {
-                List<Door> doorList = new List<Door>();
+                List<IDoor> doorList = new List<IDoor>();
                 foreach (Door door in this.doorList)
                 {
                     doorList.Add(door.Clone());

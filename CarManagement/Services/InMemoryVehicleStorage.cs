@@ -7,7 +7,7 @@ namespace CarManagement.Services
     public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
         public InMemoryVehicleStorage() 
-            : base(new Dictionary<IEnrollment, Vehicle>())
+            : base(new Dictionary<IEnrollment, IVehicle>())
         {
             //No need
         }

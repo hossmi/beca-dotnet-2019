@@ -1,9 +1,10 @@
 ﻿using CarManagement.Core;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Door
+    public class Door : IDoor
     {
         private const string ALREADY_OPENED_DOOR = "You cannot open an opened door";
         private const string ALREADY_CLOSED_DOOR = "You cannot close a closed door";

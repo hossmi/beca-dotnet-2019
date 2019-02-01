@@ -2,6 +2,7 @@
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Models;
 
 namespace CarManagement.Services
 {
@@ -26,14 +27,12 @@ namespace CarManagement.Services
         public void clear()
         {
             this.vehicles.Clear();
-            save(this.vehicles.Values);
+            this.save(this.vehicles.Values);
         }
 
         public IVehicle get(IEnrollment enrollment)
         {
-            IVehicle vehicleResult;
-
-            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
+            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out IVehicle vehicleResult);
             Asserts.isTrue(vehicleExists);
 
             return vehicleResult;
@@ -41,9 +40,9 @@ namespace CarManagement.Services
 
         public IVehicle[] getAll()
         {
-            List<Vehicle> vehiclesList = new List<Vehicle>();
+            List<IVehicle> vehiclesList = new List<IVehicle>();
 
-            foreach (KeyValuePair<IEnrollment, Vehicle> entry in this.vehicles)
+            foreach (KeyValuePair<IEnrollment, IVehicle> entry in this.vehicles)
             {
                 vehiclesList.Add(entry.Value);
             }
@@ -55,7 +54,7 @@ namespace CarManagement.Services
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
-            save(this.vehicles.Values);
+            this.save(this.vehicles.Values);
         }
 
         protected abstract void save(IEnumerable<IVehicle> vehicles);

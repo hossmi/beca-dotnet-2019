@@ -5,24 +5,24 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Vehicle
+    public class Vehicle : IVehicle
     {
-        private List<Door> doorList;
-        private List<Wheel> wheelList;
+        private readonly IEngine engine;
+        private readonly List<IDoor> doorList;
+        private readonly List<IWheel> wheelList;
         private CarColor color;
 
         private readonly IEnrollment enrollment;
 
-        public Vehicle(Engine engine, List<Door> doorList,
-            List<Wheel> wheelList, CarColor color, IEnrollment enrollment)
+        public Vehicle(IEngine engine, List<IDoor> doorList,
+            List<IWheel> wheelList, CarColor color, IEnrollment enrollment)
         {
-            this.Engine = engine;
+            this.engine = engine;
             this.doorList = doorList;
             this.wheelList = wheelList;
             this.color = color;
             this.enrollment = enrollment;
         }
-        public Engine Engine { get; }
         public int DoorsCount
         {
             get => this.doorList.Count;
@@ -40,13 +40,16 @@ namespace CarManagement.Models
 
         public CarColor Color { get => this.color; }
 
-        public Door[] Doors
-        {
-            get => this.doorList.ToArray();
-        }
-        public Wheel[] Wheels
+        IEngine IVehicle.Engine { get; }
+
+        IWheel[] IVehicle.Wheels
         {
             get => this.wheelList.ToArray();
+        }
+
+        IDoor[] IVehicle.Doors
+        {
+            get => this.doorList.ToArray();
         }
 
         public void setWheelsPressure(double pressure)
