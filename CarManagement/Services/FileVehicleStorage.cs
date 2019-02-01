@@ -37,27 +37,27 @@ namespace CarManagement.Services
 
         }
 
-        public Vehicle get(IEnrollment enrollment) //me pasan matricula
+        public Vehicle get(IEnrollment enrollment) 
         {
-            Vehicle vehicle; // declaro un objeto veiculo
-            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle); // miro si con esa matricula tengo 
-                                                                                  // datos del vehiculo(En teoria true)
-            Asserts.isTrue(hasVehicle);  // BOOOOM peta porque hasvehiculo es false entonces me dice que no hay vehiclo.                                        
+            Vehicle vehicle; 
+            bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle); 
+                                                                                  
+            Asserts.isTrue(hasVehicle);                                       
             return vehicle;
         }
 
-        public void set(Vehicle vehicle) // me pasan un vehicle
+        public void set(Vehicle vehicle) 
         {
-            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment)); //pregunto si tengo una matricula registrada igual
-            this.vehicles.Add(vehicle.Enrollment, vehicle); // guardo vehiculo con matricula en diccionario
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter); // escribo el xml con los datos del vehiclo
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment)); 
+            this.vehicles.Add(vehicle.Enrollment, vehicle); 
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter); 
             
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            //Cambio para el upgrade.
+          
 
 
             VehicleDto[] listVehicles = new VehicleDto[vehicles.Count];
