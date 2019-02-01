@@ -77,8 +77,11 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
+            Asserts.isTrue(pression >= 0);
+
             foreach (Wheel wheel in this.wheels )
             {
+               
                 wheel.Pressure = pression;
             }
         }
