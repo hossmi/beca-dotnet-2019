@@ -10,7 +10,7 @@ namespace BusinessCore.Tests
     public class CeliaVehicleTest
     {
         [TestMethod]
-        public void cannot_removeWheell_if_there_is_no()
+        public void cannot_remove_wheel_if_there_are_not_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void cannot_setDoors_15()
+        public void cannot_set_15_doors()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
@@ -35,7 +35,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void cannot_openDoor_twice()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
