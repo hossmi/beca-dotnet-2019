@@ -7,13 +7,14 @@ using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
