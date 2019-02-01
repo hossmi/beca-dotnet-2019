@@ -22,46 +22,11 @@ namespace CarManagement.Services
             this.vehicles = load(fileFullPath, this.dtoConverter);
         }
 
-        //public int Count
-        //{
-        //    get
-        //    {
-        //        return this.vehicles.Count;
-        //    }
-        //}
-
-        //public void clear()
-        //{
-        //    this.vehicles.Clear();
-        //    writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-
-        //}
-
-        //public Vehicle get(IEnrollment enrollment) 
-        //{
-        //    Vehicle vehicle; 
-        //    bool hasVehicle = this.vehicles.TryGetValue(enrollment, out vehicle); 
-
-        //    Asserts.isTrue(hasVehicle);                                       
-        //    return vehicle;
-        //}
-
-        //public void set(Vehicle vehicle) 
-        ////{
-        ////    Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment)); 
-        ////    this.vehicles.Add(vehicle.Enrollment, vehicle); 
-        ////    writeToFile(this.filePath, this.vehicles, this.dtoConverter); 
-
-        ////}
-
-
         private static IDictionary<IEnrollment, Vehicle> load(string fileFullPath, IDtoConverter dtoConverter)
-
 
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentEC);
-            // te pasan una ruta y 
             if (File.Exists(fileFullPath) == true)
             {
                 XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
@@ -76,10 +41,7 @@ namespace CarManagement.Services
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
-
             return vehicles;
-
-
 
         }
 
@@ -98,7 +60,7 @@ namespace CarManagement.Services
             TextWriter writer = new StreamWriter(this.filePath);
             ser.Serialize(writer, listVehicles);
             writer.Close();
-            vehicles = (IEnumerable<Vehicle>)listVehicles.Clone();
+            
 
         }
     }
