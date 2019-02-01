@@ -13,8 +13,7 @@ namespace CarManagement.Builders
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
-        //int number = 0;
-        //string serial = "";
+
 
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
