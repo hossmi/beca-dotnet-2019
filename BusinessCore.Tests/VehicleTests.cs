@@ -185,7 +185,7 @@ namespace BusinessCore.Tests
             IEnrollment enrollment1 = vehicle.Enrollment;
             IEnrollment enrollment2 = vehicle.Enrollment;
             Assert.AreEqual(enrollment1, enrollment2);
-            Assert.AreEqual(enrollment1.ToString(), enrollment2.ToString());
+            Assert.AreEqual(enrollment1.Print(), enrollment2.Print());
         }
 
         [TestMethod]
@@ -195,7 +195,7 @@ namespace BusinessCore.Tests
             IEnrollment enrollment = enrollmentProvider.getNew();
 
             Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}-[0-9]{4}");
-            Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
+            Assert.IsTrue(fullRegex.IsMatch(enrollment.Print()));
 
             Regex serialRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}");
             Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));

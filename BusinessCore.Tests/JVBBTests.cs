@@ -138,8 +138,8 @@ namespace BusinessCore.Tests
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
             IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
-            IVehicleStorage vehicleMemoryStorageA = new InMemoryVehicleStorage();
-            IVehicleStorage vehicleMemoryStorageB = new InMemoryVehicleStorage();
+            IVehicleStorage vehicleMemoryStorage = new InMemoryVehicleStorage();
+
 
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
@@ -148,22 +148,17 @@ namespace BusinessCore.Tests
             motoVehicle = vehicleBuilder.build();
 
             vehicleFileStorage.set(motoVehicle);
-            vehicleMemoryStorageA.set(motoVehicle);
-            vehicleMemoryStorageB.set(motoVehicle);
+            vehicleMemoryStorage.set(motoVehicle);
+
             vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
 
-            Vehicle memoryVehicleA = vehicleMemoryStorageA.get(enrollmentProvider.DefaultEnrollment);
-            Vehicle memoryVehicleB = vehicleMemoryStorageB.get(enrollmentProvider.DefaultEnrollment);
+            Vehicle memoryVehicleA = vehicleMemoryStorage.get(enrollmentProvider.DefaultEnrollment);
             Vehicle fileVehicle = vehicleFileStorage.get(enrollmentProvider.DefaultEnrollment);
 
             Assert.IsNotNull(memoryVehicleA);
-            Assert.IsNotNull(memoryVehicleB);
             Assert.IsNotNull(vehicleFileStorage);
 
-            Assert.AreEqual(memoryVehicleA, memoryVehicleB);
             Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle));
-            Assert.IsTrue(SameVehicle(memoryVehicleB, fileVehicle));
-
         }
 
     }
