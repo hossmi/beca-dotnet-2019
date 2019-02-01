@@ -1,5 +1,6 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
@@ -12,42 +13,42 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
             throw new System.NotImplementedException();
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
             throw new System.NotImplementedException();
         }
 
-        public Vehicle convert(VehicleDto vehicleDto)
+        public IVehicle convert(VehicleDto vehicleDto)
         {
             throw new System.NotImplementedException();
         }
 
-        public VehicleDto convert(Vehicle vehicle)
+        public VehicleDto convert(IVehicle vehicle)
         {
             throw new System.NotImplementedException();
         }
 
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
             throw new System.NotImplementedException();
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             throw new System.NotImplementedException();
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             throw new System.NotImplementedException();
         }
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             throw new System.NotImplementedException();
         }

@@ -66,6 +66,10 @@
       <Project>{9dcd9a54-59f9-4855-b242-7335c9fe7a49}</Project>
       <Name>BusinessCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">
+      <Project>{39975372-AA61-4A08-82A4-60479C44F079}</Project>
+      <Name>CarManagement.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CarManagement\CarManagement.csproj">
       <Project>{6542EE62-2A8A-4BAF-869F-4427B0416032}</Project>
       <Name>CarManagement</Name>
