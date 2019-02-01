@@ -1,0 +1,53 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using CarManagement.Models;
+
+namespace CarManagement.Services
+{
+    public abstract class AbstractVehicleStorage : IVehicleStorage
+    {
+        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private IDictionary<IEnrollment, Vehicle> dictionary;
+
+     
+
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
+
+        public void clear()
+        {
+            this.vehicles.Clear();
+            save(this.vehicles.Values);
+        }
+
+        public Vehicle get(IEnrollment enrollment)
+        {
+            Vehicle vehicleResult;
+
+            bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
+            Asserts.isTrue(vehicleExists);
+
+            return vehicleResult;
+        }
+
+        public Vehicle[] getAll()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void set(Vehicle vehicle)
+        {
+            Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
+            save(this.vehicles.Values);
+        }
+
+        protected abstract void save(IEnumerable<Vehicle> vehicles);
+
+    }
+}
