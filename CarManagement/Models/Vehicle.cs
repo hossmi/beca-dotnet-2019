@@ -7,7 +7,6 @@ namespace CarManagement.Models
 {
     class Vehicle : IVehicle
     {
-        private readonly IEngine engine;
         private readonly List<IDoor> doorList;
         private readonly List<IWheel> wheelList;
         private CarColor color;
@@ -17,7 +16,7 @@ namespace CarManagement.Models
         public Vehicle(IEngine engine, List<IDoor> doorList,
             List<IWheel> wheelList, CarColor color, IEnrollment enrollment)
         {
-            this.engine = engine;
+            this.Engine = engine;
             this.doorList = doorList;
             this.wheelList = wheelList;
             this.color = color;
@@ -40,14 +39,14 @@ namespace CarManagement.Models
 
         public CarColor Color { get => this.color; }
 
-        IEngine IVehicle.Engine { get; }
+        public IEngine Engine { get; }
 
-        IWheel[] IVehicle.Wheels
+        public IWheel[] Wheels
         {
             get => this.wheelList.ToArray();
         }
 
-        IDoor[] IVehicle.Doors
+        public IDoor[] Doors
         {
             get => this.doorList.ToArray();
         }
