@@ -1,8 +1,8 @@
-﻿using System;
-using CarManagement.Builders;
-using CarManagement.Models;
-using CarManagement.Services;
+﻿using CarManagement.Extensions.Vehicles;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CarManagement.Services;
 
 namespace BusinessCore.Tests
 {
@@ -21,7 +21,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
             Negassert.mustFail(() => vehicle.setWheelsPressure(-50));
         }
 

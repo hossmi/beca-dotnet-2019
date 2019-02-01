@@ -1,8 +1,7 @@
-﻿using System;
-using CarManagement.Builders;
-using CarManagement.Models;
-using CarManagement.Services;
+﻿using CarManagement.Extensions.Vehicles;
+using CarManagement.Core.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CarManagement.Services;
 
 namespace BusinessCore.Tests
 {
@@ -19,8 +18,8 @@ namespace BusinessCore.Tests
             builder.setDoors(3);
             builder.setEngine(12);
 
-            Vehicle vehicle0 = builder.build();
-            Vehicle vehicle1 = builder.build();
+            IVehicle vehicle0 = builder.build();
+            IVehicle vehicle1 = builder.build();
 
             vehicle0.setWheelsPressure(3.2);
             vehicle1.setWheelsPressure(1.1);

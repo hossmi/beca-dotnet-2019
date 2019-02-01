@@ -1,5 +1,6 @@
 ﻿using CarManagement.Models;
 using System.Collections.Generic;
+using CarManagement.Core.Models;
 
 namespace CarManagement.Services
 {
@@ -11,7 +12,7 @@ namespace CarManagement.Services
             //No need
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
             //Nope
         }

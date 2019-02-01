@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
-namespace CarManagement.Builders
+namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
@@ -107,7 +107,7 @@ namespace CarManagement.Builders
             this.color = color;
         }
 
-        public Vehicle build()
+        public IVehicle build()
         {
             Asserts.isFalse(this.wheelList.Count() <= 0, $"You cannot build a vehicle with {this.wheelList.Count()} wheels");
 

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CarManagement.Models;
-using CarManagement.Models.DTOs;
 using Newtonsoft.Json;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -20,7 +22,7 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
             string jsonText = "";
 
@@ -31,9 +33,9 @@ namespace CarManagement.Services
             }
             System.IO.File.WriteAllText(this.filePath, jsonText);
         }
-        private static IDictionary<IEnrollment, Vehicle> load(String filePath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> load(String filePath, IDtoConverter dtoConverter)
         {
-            Dictionary<IEnrollment, Vehicle>  initialVehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+            Dictionary<IEnrollment, IVehicle>  initialVehicles = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(filePath))
             {

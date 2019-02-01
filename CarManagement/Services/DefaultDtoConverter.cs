@@ -1,6 +1,8 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
+using CarManagement.Models;
 using System.Collections.Generic;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
@@ -13,12 +15,12 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.Model, engineDto.IsStarted);
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
             return new EngineDto
             {
@@ -28,7 +30,7 @@ namespace CarManagement.Services
             };
         }
 
-        public Vehicle convert(VehicleDto vehicleDto)
+        public IVehicle convert(VehicleDto vehicleDto)
         {
             List<Door> doors = new List<Door>();
             foreach (DoorDto door in vehicleDto.Doors)
@@ -45,7 +47,7 @@ namespace CarManagement.Services
             return new Vehicle(convert(vehicleDto.Engine), doors, wheels, vehicleDto.Color, convert(vehicleDto.Enrollment));
         }
 
-        public VehicleDto convert(Vehicle vehicle)
+        public VehicleDto convert(IVehicle vehicle)
         {
             VehicleDto vehicleDto = new VehicleDto
             {
@@ -70,12 +72,12 @@ namespace CarManagement.Services
             return vehicleDto;
         }
 
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.Model, doorDto.IsOpen);
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             return new DoorDto
             {
@@ -84,12 +86,12 @@ namespace CarManagement.Services
             };
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Model, wheelDto.Pressure);
         }
 
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             return new WheelDto
             {

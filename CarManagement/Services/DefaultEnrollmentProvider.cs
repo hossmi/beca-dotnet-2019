@@ -1,4 +1,5 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {

@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
-using CarManagement.Models;
+using CarManagement.Core;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDictionary<IEnrollment, IVehicle> vehicles;
 
-        public AbstractVehicleStorage(IDictionary<IEnrollment, Vehicle> initialVehicles)
+        public AbstractVehicleStorage(IDictionary<IEnrollment, IVehicle> initialVehicles)
         {
             Asserts.isNotNull(initialVehicles);
             this.vehicles = initialVehicles;
@@ -27,9 +29,9 @@ namespace CarManagement.Services
             save(this.vehicles.Values);
         }
 
-        public Vehicle get(IEnrollment enrollment)
+        public IVehicle get(IEnrollment enrollment)
         {
-            Vehicle vehicleResult;
+            IVehicle vehicleResult;
 
             bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
             Asserts.isTrue(vehicleExists);
@@ -37,7 +39,7 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public Vehicle[] getAll()
+        public IVehicle[] getAll()
         {
             List<Vehicle> vehiclesList = new List<Vehicle>();
 
@@ -49,13 +51,13 @@ namespace CarManagement.Services
             return vehiclesList.ToArray();
         }
 
-        public void set(Vehicle vehicle)
+        public void set(IVehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
             save(this.vehicles.Values);
         }
 
-        protected abstract void save(IEnumerable<Vehicle> vehicles);
+        protected abstract void save(IEnumerable<IVehicle> vehicles);
     }
 }
