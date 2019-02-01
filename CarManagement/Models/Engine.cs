@@ -4,7 +4,7 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Engine : IEngine
+    class Engine : IEngine
     {
         private string model;
         private int horsePower;

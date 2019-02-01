@@ -4,7 +4,7 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Wheel : IWheel
+    class Wheel : IWheel
     {
         private const string NOT_ENOUGH_PRESSURE = "Pressure must be greater than 0";
         

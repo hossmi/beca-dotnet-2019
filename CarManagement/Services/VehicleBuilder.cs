@@ -31,7 +31,7 @@ namespace CarManagement.Services
             this.color = CarColor.White;
         }
 
-        public Engine EngineClone { get => this.engine.Clone(); }
+        public IEngine EngineClone { get => this.engine.Clone(); }
         public CarColor Color { get => this.color; }
         public List<IWheel> WheelListClone
         {

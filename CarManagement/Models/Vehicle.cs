@@ -5,7 +5,7 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
-    public class Vehicle : IVehicle
+    class Vehicle : IVehicle
     {
         private readonly IEngine engine;
         private readonly List<IDoor> doorList;
