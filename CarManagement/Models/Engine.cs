@@ -6,7 +6,6 @@ namespace CarManagement.Models
 {
     class Engine : IEngine
     {
-        private string model;
         private int horsePower;
         private bool isStarted;
 
@@ -19,7 +18,6 @@ namespace CarManagement.Models
 
         public Engine(Engine engine)
         {
-            this.model = engine.model;
             this.horsePower = engine.horsePower;
         }
 
