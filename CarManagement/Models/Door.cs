@@ -14,6 +14,7 @@ namespace CarManagement.Models
 
         public Door(bool openClose)
         {
+            Asserts.isFalse(this.openDoor);
             this.openDoor = openClose;
         }
 
@@ -27,11 +28,13 @@ namespace CarManagement.Models
 
         public void open()
         {
+            Asserts.isFalse(this.IsOpen);
             this.openDoor = true;
         }
 
         public void close()
         {
+            Asserts.isTrue(this.openDoor);
             this.openDoor = false;
         }
     }
