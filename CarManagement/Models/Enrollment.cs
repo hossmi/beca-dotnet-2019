@@ -1,6 +1,4 @@
-﻿using CarManagement.Models.DTOs;
-
-namespace CarManagement.Models
+﻿namespace CarManagement.Models
 {
     class Enrollment : IEnrollment
     {
