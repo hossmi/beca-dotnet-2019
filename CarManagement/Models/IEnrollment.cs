@@ -10,5 +10,6 @@ namespace CarManagement.Models
     {
         string Serial { get; }
         int Number { get; }
+        string Print();
     }
 }

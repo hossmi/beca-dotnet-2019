@@ -74,6 +74,11 @@ namespace BusinessCore.Tests
         {
             public string Serial { get; set; }
             public int Number { get; set; }
+
+            public string Print()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
         }
     }
 }
