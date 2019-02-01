@@ -28,7 +28,7 @@ namespace CarManagement.Services
             if (File.Exists(fileFullPath))
                 this.vehicles = readFromFile(fileFullPath, dtoConverter);
             else
-                vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+                this.vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
         }
 
         public void clear()
@@ -42,7 +42,7 @@ namespace CarManagement.Services
         {
             Vehicle listedVehicle;
 
-            bool vehicleIsListed = vehicles.TryGetValue(enrollment, out listedVehicle);
+            bool vehicleIsListed = this.vehicles.TryGetValue(enrollment, out listedVehicle);
             Asserts.isTrue(vehicleIsListed);
 
             return listedVehicle;
@@ -51,7 +51,7 @@ namespace CarManagement.Services
         public void set(Vehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
-            vehicles.Add(vehicle.Enrollment, vehicle);
+            this.vehicles.Add(vehicle.Enrollment, vehicle);
 
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
