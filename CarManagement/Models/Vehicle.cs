@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarManagement.Builders;
-using CarManagement.Models;
-using CarManagement.Models.DTOs;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {

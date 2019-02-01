@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Models
+﻿using CarManagement.Core.Models;
+
+namespace CarManagement.Models
 {
     class Enrollment : IEnrollment
     {

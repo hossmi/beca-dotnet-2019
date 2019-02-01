@@ -1,4 +1,5 @@
-﻿using CarManagement.Models.DTOs;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
@@ -8,10 +9,9 @@ namespace CarManagement.Models
         private int horsePower;
         private bool isStarted;
 
-        public Engine(int horsePower = 50, string model = null, bool started = false)
+        public Engine(int horsePower = 50, bool started = false)
         {
             Asserts.isTrue(horsePower > 0, "Negative or none horse power would be counterproductive, wouldn't it?");
-            this.model = model ?? "standart";
             this.isStarted = started;
             this.horsePower = horsePower;
         }
@@ -24,7 +24,6 @@ namespace CarManagement.Models
 
         Engine(EngineDto engineDto)
         {
-            this.model = engineDto.Model;
             this.isStarted = engineDto.IsStarted;
             this.horsePower = engineDto.HorsePower;
         }
@@ -39,8 +38,6 @@ namespace CarManagement.Models
             Asserts.isTrue(this.isStarted, "Cannot stop a stoped engine");
             this.isStarted = false;
         }
-
-        public string Model { get => this.model; }
         public int HorsePower { get => this.horsePower; }
         public bool IsStarted { get => this.isStarted; }
 

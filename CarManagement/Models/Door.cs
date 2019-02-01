@@ -1,34 +1,29 @@
-﻿using CarManagement.Models.DTOs;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
     public class Door
     {
-        private const string DEFAULT_MODEL = "standart";
         private const string ALREADY_OPENED_DOOR = "You cannot open an opened door";
         private const string ALREADY_CLOSED_DOOR = "You cannot close a closed door";
 
         private bool isOpen;
 
-        public Door(string model = null, bool isOpen = false)
+        public Door(bool isOpen = false)
         {
-            this.Model = model ?? DEFAULT_MODEL;
             this.isOpen = isOpen;
         }
 
         public Door(Door door)
         {
-            this.Model = door.Model;
             this.isOpen = door.IsOpen;
         }
 
         Door(DoorDto doorDto)
         {
-            this.Model = doorDto.Model;
             this.isOpen = doorDto.IsOpen;
         }
-
-        public string Model { get; }
         public bool IsOpen { get => this.isOpen; }
 
         public void open()
