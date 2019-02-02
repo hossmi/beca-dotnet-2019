@@ -6,7 +6,22 @@ using System.Threading.Tasks;
 
 namespace BusinessCore
 {
-    public class Class1
+    public class Numeros
     {
+        public class Uno
+        {
+            int numero = 1;
+            Dos dos = new Dos();
+
+
+        }
+        public int GetUno()
+        {
+
+        }
+        private class Dos
+        {
+            int numero = 2;
+        }
     }
 }

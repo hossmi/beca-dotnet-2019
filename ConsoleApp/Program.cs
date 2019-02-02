@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,6 @@ namespace ConsoleApp
         {
             Console.WriteLine("Hola mundo.");
         }
+        Uno uno = new Uno();
     }
 }
