@@ -1,11 +1,11 @@
-﻿using CarManagement.Models;
-using CarManagement.Models.DTOs;
-using System;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
-    public class DefaultDtoConverter : IDtoConverter
+    public class DefaultDtoConverter 
     {
         private IEnrollmentProvider enrollmentProvider;
 
@@ -15,9 +15,9 @@ namespace CarManagement.Services
             
         }
 
-        public Engine convert(EngineDto engineDto)
+        public IEngine convert(EngineDto engineDto)
         {
-            Engine toMemory = new Engine(engineDto .HorsePower);
+            IEngine toMemory = new Engine(engineDto .HorsePower);
             if (engineDto .IsStarted == true)
             {
                 toMemory.start(); 
@@ -26,7 +26,7 @@ namespace CarManagement.Services
             return toMemory;
         }
 
-        public EngineDto convert(Engine engine)
+        public EngineDto convert(IEngine engine)
         {
             EngineDto toDto = new EngineDto();
             toDto.HorsePower = engine.HorsePower;
@@ -34,9 +34,9 @@ namespace CarManagement.Services
             return toDto;
 
         }
-        public Door convert(DoorDto doorDto)
+        public IDoor convert(DoorDto doorDto)
         {
-            Door toMemory = new Door();
+            IDoor toMemory = new Door();
             if (doorDto.IsOpen == true)
             {
                 toMemory.open();
@@ -45,7 +45,7 @@ namespace CarManagement.Services
             return toMemory;
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             DoorDto toDto = new DoorDto ();
             toDto.IsOpen = door.IsOpen;
@@ -53,13 +53,13 @@ namespace CarManagement.Services
        
         }
 
-        public Wheel convert(WheelDto wheelDto)
+        public IWheel convert(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Pressure);
 
         }
        
-        public WheelDto convert(Wheel wheel)
+        public WheelDto convert(IWheel wheel)
         {
             WheelDto toDto = new WheelDto();
             toDto.Pressure = wheel.Pressure;
@@ -79,30 +79,30 @@ namespace CarManagement.Services
             return toDto;           
         }
 
-        public Vehicle convert(VehicleDto vehicleDto)
+        public IVehicle convert(VehicleDto vehicleDto)
         {
-            List<Wheel> listWheels = new List<Wheel>();
-            List<Door> listDoor = new List<Door>();
+            List<IWheel> listWheels = new List<IWheel>();
+            List<IDoor> listDoor = new List<IDoor>();
             IEnrollment enrollment = convertTo(vehicleDto.Enrollment);
             foreach (WheelDto wheelsDto in vehicleDto.Wheels)
             {
-                Wheel setwheel = convertTo(wheelsDto);
+                IWheel setwheel = convertTo(wheelsDto);
                 listWheels.Add(setwheel);
 
             }
             foreach (DoorDto doorDto in vehicleDto.Doors)
             {
-                Door setdoor = convertTo(doorDto);
+                IDoor setdoor = convertTo(doorDto);
                 listDoor.Add(setdoor);
 
             }
-            Engine engine = convertTo(vehicleDto.Engine);
+            IEngine engine = convertTo(vehicleDto.Engine);
     
       
             return new Vehicle(vehicleDto.Color, listWheels, enrollment, listDoor, engine);
         }
 
-        public VehicleDto convert(Vehicle vehicle)
+        public VehicleDto convert(IVehicle vehicle)
         {
 
             
@@ -111,13 +111,13 @@ namespace CarManagement.Services
             vehicleDto.Enrollment = convertTo(vehicle.Enrollment);
             vehicleDto.Engine = convertTo(vehicle.Engine);
             List<DoorDto> dtoDoorsList = new List<DoorDto>();
-            foreach (Door door in vehicle.Doors)
+            foreach (IDoor door in vehicle.Doors)
             {
                 dtoDoorsList.Add(convert(door));
             }
             vehicleDto.Doors = dtoDoorsList.ToArray();
             List<WheelDto> dtoWheelsList = new List<WheelDto>();
-            foreach (Wheel wheel in vehicle.Wheels)
+            foreach (IWheel wheel in vehicle.Wheels)
             {
                 dtoWheelsList.Add(convert(wheel));
             }
@@ -128,14 +128,14 @@ namespace CarManagement.Services
         }
 
         //Metodos privados
-        private Wheel convertTo(WheelDto wheelDto)
+        private IWheel convertTo(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Pressure);
 
         }
-        private Door convertTo(DoorDto doorDto)
+        private IDoor convertTo(DoorDto doorDto)
         {
-            Door toMemory = new Door();
+            IDoor toMemory = new Door();
             if (doorDto.IsOpen == true)
             {
                 toMemory.open();
@@ -155,7 +155,7 @@ namespace CarManagement.Services
             return toDto;
         }
 
-        private EngineDto convertTo(Engine engine)
+        private EngineDto convertTo(IEngine engine)
         {
             EngineDto toDto = new EngineDto();
             toDto.HorsePower = engine.HorsePower;
@@ -163,10 +163,10 @@ namespace CarManagement.Services
             return toDto;
 
         }
-        private Engine convertTo(EngineDto engineDto)
+        private IEngine convertTo(EngineDto engineDto)
         {
 
-            Engine toMemory = new Engine(engineDto .HorsePower);
+            IEngine toMemory = new Engine(engineDto .HorsePower);
             if (engineDto.IsStarted == true)
             {
                 toMemory.start();
@@ -174,14 +174,14 @@ namespace CarManagement.Services
             toMemory.stop();
             return toMemory;
         }
-        private DoorDto converTo(Door door)
+        private DoorDto converTo(IDoor door)
         {
             DoorDto toDto = new DoorDto();
             toDto.IsOpen = door.IsOpen;
             return toDto;
 
         }
-        private WheelDto converTo(Wheel wheel)
+        private WheelDto converTo(IWheel wheel)
         {
             WheelDto toDto = new WheelDto();
             toDto.Pressure = wheel.Pressure;
