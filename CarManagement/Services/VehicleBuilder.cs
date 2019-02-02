@@ -1,111 +1,127 @@
 ﻿using System;
+using System.Collections.Generic;
+using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
-//Comentario pre commit de la muerte
-
-
-namespace CarManagement.Builders
 {
-    public class VehicleBuilder : IVehicleBuilder
+    //Comentario pre commit de la muerte
+
+
+    namespace CarManagement.Builders
     {
-        private int numberWheel;
-        private int numberDoor;
-        private int engine;
-        private CarColor color;
-        private readonly IEnrollmentProvider enrollmentProvider;
-
-
-
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        public class VehicleBuilder : IVehicleBuilder
         {
-            this.numberWheel = 0;
-            this.numberDoor = 0;
-            this.engine = 1;
-            this.color = CarColor.Red;
-            this.enrollmentProvider = enrollmentProvider;
+            private int numberWheel;
+            private int numberDoor;
+            private int engine;
+            private CarColor color;
+            private readonly IEnrollmentProvider enrollmentProvider;
 
 
-        }
 
-        public void addWheel()
-        {
-            Asserts.isTrue(this.numberWheel < 4);
-            this.numberWheel++;
-        }
-
-        public void removeWheel()
-        {
-            Asserts.isTrue(this.numberWheel > 0);
-            this.numberWheel--;
-        }
-
-        public void setDoors(int doorsCount)
-        {
-            //Asserts.isTrue(0 < doorsCount && doorsCount <= 6);
-            this.numberDoor = doorsCount;
-        }
-
-        public void setEngine(int horsePorwer)
-        {
-
-            Asserts.isTrue(horsePorwer > 0);
-            this.engine = horsePorwer;
-        }
-
-        public void setColor(CarColor color)
-        {
-           // Asserts.isTrue((CarColor )0 < color && color < (CarColor) 7);
-            this.color = color;
-        }
-
-        public List<T> generateList<T>(int numberItem) where T : class, new()
-        {
-            List<T> items = new List<T>();
-            for (int x = 0; x < numberItem; x++)
+            public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
             {
-                items.Add(new T());
+                this.numberWheel = 0;
+                this.numberDoor = 0;
+                this.engine = 1;
+                this.color = CarColor.Red;
+                this.enrollmentProvider = enrollmentProvider;
+
+
             }
-            return items;
-        public IVehicle build()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Vehicle build()
-        {
-            //Generamos puertas
-        
-            List<Door> doors = generateList<Door>(this.numberDoor);
+            public void addWheel()
+            {
+                Asserts.isTrue(this.numberWheel < 4);
+                this.numberWheel++;
+            }
 
-            //Generamos motor
-            
-            Engine engine = new Engine(this.engine);
+            public void removeWheel()
+            {
+                Asserts.isTrue(this.numberWheel > 0);
+                this.numberWheel--;
+            }
 
-            //Generamos ruedas
+            public void setDoors(int doorsCount)
+            {
+                //Asserts.isTrue(0 < doorsCount && doorsCount <= 6);
+                this.numberDoor = doorsCount;
+            }
 
-            Asserts.isTrue(this.numberWheel > 0);
-            List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
+            public void setEngine(int horsePorwer)
+            {
 
-            //Generamos matricula
+                Asserts.isTrue(horsePorwer > 0);
+                this.engine = horsePorwer;
+            }
 
-            IEnrollment enrollment = this.enrollmentProvider .getNew();
+            public void setColor(CarColor color)
+            {
+                // Asserts.isTrue((CarColor )0 < color && color < (CarColor) 7);
+                this.color = color;
+            }
 
-            //Generamos coche
+            public List<T> generateList<T>(int numberItem) where T : class, new()
+            {
+                List<T> items = new List<T>();
+                for (int x = 0; x < numberItem; x++)
+                {
+                    items.Add(new T());
+                }
+                return items;
 
-            return new Vehicle(this.color, wheels, enrollment, doors, engine);
-        }
+                IVehicle build()
+                {
+                    //Generamos puertas
 
-        public IVehicle import(VehicleDto vehicleDto)
-        {
-            throw new NotImplementedException();
-        }
+                    List<IDoor> doors = generateList<IDoor>(numberDoor);
 
-        public VehicleDto export(IVehicle vehicleDto)
-        {
-            throw new NotImplementedException();
+                    //Generamos motor
+
+                    IEngine engine = new IEngine(this.engine);
+
+                    //Generamos ruedas
+
+                    Asserts.isTrue(this.numberWheel > 0);
+                    List<IWheel> wheels = generateList<IWheel>(this.numberWheel);
+
+                    //Generamos matricula
+
+                    IEnrollment enrollment = this.enrollmentProvider.getNew();
+
+                    //Generamos coche
+
+                    return new Vehicle(this.color, wheels, enrollment, doors, engine);
+                }
+
+                IVehicle import(VehicleDto vehicleDto)
+                {
+                    throw new NotImplementedException();
+                }
+
+                VehicleDto export(IVehicle vehicleDto)
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public IVehicle build()
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicle import(VehicleDto vehicleDto)
+            {
+                throw new NotImplementedException();
+            }
+
+            public VehicleDto export(IVehicle vehicleDto)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
