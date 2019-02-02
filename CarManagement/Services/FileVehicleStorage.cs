@@ -12,7 +12,7 @@ namespace CarManagement.Services
     public class FileVehicleStorage : AbstractVehicleStorage
     {
 
-        private IDtoConverter  dtoConverter;
+        private readonly IDtoConverter  dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath ,IDtoConverter dtoConverter )
