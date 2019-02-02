@@ -42,7 +42,7 @@ namespace CarManagement.Services
         public IVehicle[] getAll()
         {
   
-            Vehicle[] vehicleArray = new Vehicle[this.vehicles.Count];
+            IVehicle[] vehicleArray = new IVehicle[this.vehicles.Count];
             this.vehicles.Values.CopyTo(vehicleArray,0);
             return vehicleArray;
        
