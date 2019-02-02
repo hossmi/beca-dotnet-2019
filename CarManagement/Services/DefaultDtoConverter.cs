@@ -1,6 +1,7 @@
 ﻿using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using CarManagement.Services.CarManagement.Builders;
 using System.Collections.Generic;
 
 namespace CarManagement.Services
@@ -8,11 +9,13 @@ namespace CarManagement.Services
     public class DefaultDtoConverter : IDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
+        private IVehicleBuilder vehicleBuilder;
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
-            
+            this.vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+
         }
 
         public IEngine convert(EngineDto engineDto)
