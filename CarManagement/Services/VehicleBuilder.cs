@@ -65,14 +65,17 @@ namespace CarManagement.Services
                 this.color = color;
             }
 
-            public List<T> generateList<T>(int numberItem) where T : class, new()
+          private List<TInterface> CreateObject<TInterface, TInstance>(int count)
+          where TInstance : class, TInterface, new()
+          where TInterface : class
             {
-                List<T> items = new List<T>();
-                for (int x = 0; x < numberItem; x++)
+                List<TInterface> list = new List<TInterface>();
+                for (int i = 0; i < count; i++)
                 {
-                    items.Add(new T());
+                    TInterface obj = new TInstance();
+                    list.Add(obj);
                 }
-                return items;
+                return list;
             }
 
             public IVehicle build()
@@ -81,7 +84,7 @@ namespace CarManagement.Services
 
                 //Generamos puertas
                 Asserts.isTrue(this.numberWheel > 0);
-                List<Door> doors = generateList<Door>(numberDoor);
+                List<IDoor> doors = generateList<IDoor>(this.numberDoor);
 
                 //Generamos motor
 
@@ -90,7 +93,7 @@ namespace CarManagement.Services
                 //Generamos ruedas
 
                 Asserts.isTrue(this.numberWheel > 0);
-                List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
+                List<IWheel> wheels = generateList<IWheel>(this.numberWheel);
 
                 //Generamos matricula
 
