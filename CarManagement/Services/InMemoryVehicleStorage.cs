@@ -8,11 +8,11 @@ namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
-             public InMemoryVehicleStorage() : base(new Dictionary<IEnrollment,Vehicle>())
+             public InMemoryVehicleStorage() : base(new Dictionary<IEnrollment,IVehicle>())
         {
           
         }
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
 
         }
