@@ -11,13 +11,21 @@ namespace BusinessCore
         public class Uno
         {
             int numero = 1;
-            Dos dos = new Dos();
+
+            public int getNumero()
+            {
+                return this.numero;
+            }
 
 
         }
+
+        Uno uno;//declarar
+        Uno uno2 = new Uno();//instanciar
+        int numero = 2; //inicializar
         public int GetUno()
         {
-
+            return uno2.getNumero();
         }
         private class Dos
         {
