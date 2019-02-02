@@ -134,13 +134,13 @@ namespace CarManagement.Services
             private class Vehicle : IVehicle
             {
                 private CarColor color;
-                private IReadOnlyList<Wheel> wheels;
+                private IReadOnlyList<IWheel> wheels;
                 private IEnrollment enrollment;
-                private IReadOnlyList<Door> doors;
+                private IReadOnlyList<IDoor> doors;
                 private Engine engine;
 
 
-                public Vehicle(CarColor color, List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
+                public Vehicle(CarColor color, List<IWheel> wheels, IEnrollment enrollment, List<IDoor> doors, Engine engine)
                 {
                     this.color = color;
                     this.wheels = wheels;
