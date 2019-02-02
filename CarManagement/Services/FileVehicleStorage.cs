@@ -16,7 +16,7 @@ namespace CarManagement.Services
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath ,IDtoConverter dtoConverter )
-            : base(load(fileFullPath ,dtoConverter ))
+            : base(load(fileFullPath , dtoConverter ))
         {
             this.filePath = fileFullPath;
             this.dtoConverter  = dtoConverter;
