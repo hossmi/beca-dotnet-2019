@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
@@ -72,45 +73,228 @@ namespace CarManagement.Services
                     items.Add(new T());
                 }
                 return items;
-
-                IVehicle build()
-                {
-                    //Generamos puertas
-
-                    List<IDoor> doors = generateList<IDoor>(numberDoor);
-
-                    //Generamos motor
-
-                    IEngine engine = new IEngine(this.engine);
-
-                    //Generamos ruedas
-
-                    Asserts.isTrue(this.numberWheel > 0);
-                    List<IWheel> wheels = generateList<IWheel>(this.numberWheel);
-
-                    //Generamos matricula
-
-                    IEnrollment enrollment = this.enrollmentProvider.getNew();
-
-                    //Generamos coche
-
-                    return new Vehicle(this.color, wheels, enrollment, doors, engine);
-                }
-
-                IVehicle import(VehicleDto vehicleDto)
-                {
-                    throw new NotImplementedException();
-                }
-
-                VehicleDto export(IVehicle vehicleDto)
-                {
-                    throw new NotImplementedException();
-                }
             }
 
             public IVehicle build()
             {
-                throw new NotImplementedException();
+
+
+                //Generamos puertas
+                Asserts.isTrue(this.numberWheel > 0);
+                List<Door> doors = generateList<Door>(numberDoor);
+
+                //Generamos motor
+
+                Engine engine = new Engine(this.engine);
+
+                //Generamos ruedas
+
+                Asserts.isTrue(this.numberWheel > 0);
+                List<Wheel> wheels = generateList<Wheel>(this.numberWheel);
+
+                //Generamos matricula
+
+                IEnrollment enrollment = this.enrollmentProvider.getNew();
+
+                //Generamos coche
+
+                return new Vehicle(this.color, wheels, enrollment, doors, engine);
+
+            }
+            private class Wheel : IWheel
+            {
+                private double pressure;
+                public double Pressure
+                {
+                    set
+                    {
+                        Asserts.isTrue(value >= 0);
+                        this.pressure = value;
+                    }
+                    get
+                    {
+                        return this.pressure;
+                    }
+                }
+
+                public Wheel()
+                {
+                    this.pressure = 0;
+                }
+
+                public Wheel(double pressure)
+                {
+                    this.Pressure = pressure;
+                }
+            }
+
+            private class Vehicle : IVehicle
+            {
+                private CarColor color;
+                private IReadOnlyList<Wheel> wheels;
+                private IEnrollment enrollment;
+                private IReadOnlyList<Door> doors;
+                private Engine engine;
+
+
+                public Vehicle(CarColor color, List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
+                {
+                    this.color = color;
+                    this.wheels = wheels;
+                    this.enrollment = enrollment;
+                    this.doors = doors;
+                    this.engine = engine;
+                }
+
+                public IEngine Engine
+                {
+                    get
+                    {
+                        return this.engine;
+                    }
+                }
+
+                public IEnrollment Enrollment { get { return this.enrollment; } }
+
+                public IWheel[] Wheels
+                {
+                    get
+                    {
+                        IWheel[] wheelsArray = new IWheel[this.wheels.Count];
+
+                        for (int i = 0; i < this.wheels.Count; i++)
+                        {
+                            wheelsArray[i] = this.wheels[i];
+                        }
+
+                        return wheelsArray;
+                    }
+                }
+
+                public IDoor[] Doors
+                {
+                    get
+                    {
+                        return this.doors
+                            .Cast<IDoor>()
+                            .ToArray();
+                    }
+                }
+
+                public CarColor Color { get; }
+
+                public void setWheelsPressure(double pression)
+                {
+                    foreach (Wheel wheel in this.wheels)
+                    {
+                        wheel.Pressure = pression;
+                    }
+                }
+            }
+
+            private class Engine : IEngine
+            {
+                private int horsePower;
+                private bool mode;
+
+                public Engine(int horsePower)
+                {
+                    Asserts.isTrue(horsePower > 0);
+                    this.horsePower = horsePower;
+                }
+
+                public Engine(int horsePower, bool mode)
+                {
+                    Asserts.isTrue(horsePower > 0);
+                    this.horsePower = horsePower;
+                    this.mode = mode;
+                }
+
+                public int Model
+                {
+                    get
+                    {
+                        return this.horsePower;
+                    }
+                    set
+                    {
+                        setHorsePower(value);
+                    }
+                }
+                public bool IsStarted
+                {
+                    get
+                    {
+                        return this.mode;
+                    }
+                }
+
+                public int HorsePower
+                {
+                    get
+                    {
+                        return this.horsePower;
+                    }
+                    set
+                    {
+                        setHorsePower(value);
+                    }
+                }
+
+                public void start()
+                {
+                    Asserts.isFalse(this.IsStarted);
+                    this.mode = true;
+                }
+
+                public void stop()
+                {
+                    Asserts.isTrue(this.IsStarted);
+                    this.mode = false;
+                }
+
+                private void setHorsePower(int horsePower)
+                {
+                    Asserts.isTrue(horsePower > 0);
+                    this.horsePower = horsePower;
+                }
+            }
+
+            private class Door : IDoor
+            {
+
+                private bool openDoor;
+
+                public Door()
+                {
+                    this.openDoor = false;
+                }
+
+                public Door(bool openClose)
+                {
+                    Asserts.isFalse(this.openDoor);
+                    this.openDoor = openClose;
+                }
+
+                public bool IsOpen
+                {
+                    get
+                    {
+                        return this.openDoor;
+                    }
+                }
+
+                public void open()
+                {
+                    Asserts.isFalse(this.IsOpen);
+                    this.openDoor = true;
+                }
+
+                public void close()
+                {
+                    Asserts.isTrue(this.openDoor);
+                    this.openDoor = false;
+                }
             }
 
             public IVehicle import(VehicleDto vehicleDto)
