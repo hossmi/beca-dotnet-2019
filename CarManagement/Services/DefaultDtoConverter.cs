@@ -9,12 +9,12 @@ namespace CarManagement.Services
     public class DefaultDtoConverter : IDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
-        private IVehicleBuilder vehicleBuilder;
+
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
-            this.vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+   
 
         }
 
