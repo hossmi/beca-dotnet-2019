@@ -65,7 +65,7 @@ namespace CarManagement.Services
                 this.color = color;
             }
 
-          private List<TInterface> CreateObject<TInterface, TInstance>(int count)
+          private List<TInterface> generateList<TInterface, TInstance>(int count)
           where TInstance : class, TInterface, new()
           where TInterface : class
             {
@@ -84,7 +84,7 @@ namespace CarManagement.Services
 
                 //Generamos puertas
                 Asserts.isTrue(this.numberWheel > 0);
-                List<IDoor> doors = generateList<IDoor>(this.numberDoor);
+                List<IDoor> doors = generateList<IDoor,Door>(this.numberDoor);
 
                 //Generamos motor
 
@@ -93,7 +93,7 @@ namespace CarManagement.Services
                 //Generamos ruedas
 
                 Asserts.isTrue(this.numberWheel > 0);
-                List<IWheel> wheels = generateList<IWheel>(this.numberWheel);
+                List<IWheel> wheels = generateList<IWheel,Wheel>(this.numberWheel);
 
                 //Generamos matricula
 
