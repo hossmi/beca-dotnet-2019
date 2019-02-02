@@ -37,7 +37,7 @@ namespace CarManagement.Services
             writer.Close();
         }
 
-        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IVehicleBuilder vehicleBuilder)
+        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IDtoConverter dtoConverter )
 
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
