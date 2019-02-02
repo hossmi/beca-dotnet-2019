@@ -9,17 +9,32 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : AbstractVehicleStorage, DefaultDtoConverter
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IVehicleBuilder vehicleBuilder;
-        private DefaultDtoConverter dtoConverter;
+
+        private IDtoConverter  dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath ,IVehicleBuilder vehicleBuilder)
-            : base(load(fileFullPath ,vehicleBuilder))
+        public FileVehicleStorage(string fileFullPath ,IDtoConverter dtoConverter )
+            : base(load(fileFullPath ,dtoConverter ))
         {
             this.filePath = fileFullPath;
-            this.vehicleBuilder = vehicleBuilder;
+            this.dtoConverter  = dtoConverter;
+        }
+        protected override void save(IEnumerable<IVehicle> vehicles)
+        {
+            VehicleDto[] listVehicles = new VehicleDto[vehicles.Count<IVehicle>()];
+            int aux = 0;
+            foreach (IVehicle vehicle in vehicles.AsEnumerable())
+            {
+
+                listVehicles[aux] = this.dtoConverter.convert(vehicle);
+                aux++;
+            }
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(this.filePath);
+            ser.Serialize(writer, listVehicles);
+            writer.Close();
         }
 
         private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IVehicleBuilder vehicleBuilder)
@@ -45,22 +60,6 @@ namespace CarManagement.Services
 
         }
 
-
-        protected override void save(IEnumerable<IVehicle> vehicles)
-        {
-            VehicleDto[] listVehicles = new VehicleDto[vehicles.Count<IVehicle>()];
-            int aux = 0;
-            foreach (IVehicle vehicle in vehicles.AsEnumerable())
-            {
-
-                listVehicles[aux] = this.dtoConverter.convert(vehicle);
-                aux++;
-            }
-            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter writer = new StreamWriter(this.filePath);
-            ser.Serialize(writer, listVehicles);
-            writer.Close();
-        }
     }
 }
 
