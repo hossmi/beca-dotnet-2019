@@ -3,7 +3,7 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    internal interface IDtoConverter
+    public interface IDtoConverter
     {
         IEngine convert(EngineDto engineDto);
         EngineDto convert(IEngine engine);
