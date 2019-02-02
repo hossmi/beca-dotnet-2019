@@ -8,10 +8,11 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : AbstractVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage,   DefaultDtoConverter
     {
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
+        private DefaultDtoConverter dtoConverter;
 
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
             : base(readFromFile(fileFullPath, vehicleBuilder))
