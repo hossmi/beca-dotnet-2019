@@ -9,23 +9,20 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : AbstractVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage, DefaultDtoConverter
     {
         private readonly IVehicleBuilder vehicleBuilder;
-        private readonly IDictionary<IEnrollment, IVehicle> vehicles;
-        private readonly IDtoConverter dtoConverter;
+        private DefaultDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath ,IVehicleBuilder vehicleBuilder)
             : base(load(fileFullPath ,vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
-            this.vehicles = load(fileFullPath, this.dtoConverter, vehicleBuilder );
             this.vehicleBuilder = vehicleBuilder;
         }
 
-        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath, IDtoConverter dtoConverter, IVehicleBuilder vehicleBuilder)
+        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IVehicleBuilder vehicleBuilder)
 
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
@@ -37,10 +34,10 @@ namespace CarManagement.Services
                 VehicleDto[] listVehicle = (VehicleDto[])ser.Deserialize(reader);
                 reader.Close();
 
-                foreach (VehicleDto v in listVehicle)
+                foreach (VehicleDto ToIvehcile in listVehicle)
                 {
 
-                    IVehicle vehicle = dtoConverter.convert(v);
+                    IVehicle vehicle = dtoConverter.convert(ToIvehcile);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
