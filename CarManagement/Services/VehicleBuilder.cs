@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
+namespace CarManagement.Services
 //Comentario pre commit de la muerte
 
 
@@ -68,6 +69,9 @@ namespace CarManagement.Builders
                 items.Add(new T());
             }
             return items;
+        public IVehicle build()
+        {
+            throw new NotImplementedException();
         }
 
         public Vehicle build()
@@ -94,6 +98,14 @@ namespace CarManagement.Builders
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
 
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
 
+        public VehicleDto export(IVehicle vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
