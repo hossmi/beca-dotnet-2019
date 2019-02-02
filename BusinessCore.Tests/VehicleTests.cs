@@ -31,11 +31,11 @@ namespace BusinessCore.Tests
             Vehicle vehicle = builder.build();
 
             Assert.IsNotNull(vehicle);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));
+            //Assert.IsFalse(string.IsNullOrWhiteSpace(vehicle.Enrollment));
             Assert.AreEqual(2, vehicle.DoorsCount);
             Assert.AreEqual(4, vehicle.WheelCount);
 
-            string matricula = vehicle.Enrollment;
+         //   string matricula = vehicle.Enrollment;
 
             // propiedad de solo lectura 
             // propiedad: array Door

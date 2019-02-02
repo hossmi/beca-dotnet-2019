@@ -4,15 +4,23 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+
+        private double presurre;
+        public Wheel()
+        {
+            Pressure = 0;
+            this.presurre = 0;
+        }
+
         public double Pressure
         {
             get
             {
-                throw new NotImplementedException();
+                return this.presurre;
             }
             set
             {
-                throw new NotImplementedException();
+                this.presurre = value;
             }
         }
     }
