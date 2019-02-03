@@ -40,6 +40,16 @@ namespace CarManagement.Services
             this.sizeLetters = this.letters.Length-1;
         }
 
+        public DefaultEnrollmentProvider(IEnrollment enrollment)
+        {
+            this.number1 = 0;
+            this.number2 = 0;
+            this.number3 = 0;
+            this.number4 = 0;
+            this.letters = "BCDFGHJKLMNPRSTVWXYZ";
+            this.sizeLetters = this.letters.Length - 1;
+        }
+
         IEnrollment IEnrollmentProvider.getNew()
         {
             if (number4 <= 9999)

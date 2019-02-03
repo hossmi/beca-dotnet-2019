@@ -15,6 +15,7 @@ namespace CarManagement.Services
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
+        private readonly DefaultDtoConverter defaultDtoConverter;
 
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
@@ -281,14 +282,16 @@ namespace CarManagement.Services
             }
         }
 
+
+
         public IVehicle import(VehicleDto vehicleDto)
         {
-            throw new NotImplementedException();
+            return defaultDtoConverter.convert(vehicleDto);
         }
 
         public VehicleDto export(IVehicle vehicleDto)
         {
-            throw new NotImplementedException();
+            return defaultDtoConverter.convert(vehicleDto);
         }
     }
 }

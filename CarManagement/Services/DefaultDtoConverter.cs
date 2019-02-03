@@ -8,6 +8,10 @@ namespace CarManagement.Services
     public class DefaultDtoConverter 
     {
         private IEnrollmentProvider enrollmentProvider;
+        private IEnrollment enrollment;
+        private VehicleBuilder VehicleBuilder;
+
+
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
@@ -26,8 +30,6 @@ namespace CarManagement.Services
         }
 
         
-
-
         public IDoor convert(DoorDto doorDto)
         {
             return convertToDoor(doorDto);
@@ -44,7 +46,6 @@ namespace CarManagement.Services
         {
             return convertToWheel(wheelDto);
         }
-
 
         public WheelDto convert(IWheel wheel)
         {
@@ -85,6 +86,8 @@ namespace CarManagement.Services
             }
 
             IEngine engine = convertToEngine(vehicleDto.Engine);
+
+            IVehicle vehicle = 
 
             return new Vehicle(color, wheels, enrollment, doors, engine);
         }
@@ -176,8 +179,5 @@ namespace CarManagement.Services
                 Pressure = wheel.Pressure
             };
         }
-
-        
-
     }
 }
