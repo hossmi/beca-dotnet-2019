@@ -8,14 +8,14 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : AbstractVehicleStorage,   DefaultDtoConverter
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
-        private DefaultDtoConverter dtoConverter;
+        private DefaultDtoConverter defaultDtoConverter;
 
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
-            : base(readFromFile(fileFullPath, vehicleBuilder))
+            : base(readFromFile(fileFullPath, vehicleBuilder, defaultDtoConverter))
         {
             this.filePath = fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
@@ -23,10 +23,10 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            writeToFile(this.filePath, vehicles, this.dtoConverter);
+            writeToFile(this.filePath, vehicles, this.defaultDtoConverter);
         }
 
-        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder, DefaultDtoConverter defaultDtoConverter )
         {
             EnrollmentEqualityComparer enrollmentEqualityComparer = new EnrollmentEqualityComparer();
             IDictionary<IEnrollment, IVehicle> vehicles= new Dictionary<IEnrollment, IVehicle>(enrollmentEqualityComparer);
@@ -40,14 +40,14 @@ namespace CarManagement.Services
 
                 foreach (VehicleDto vDto in vehicleArray)
                 {
-                    IVehicle vehicle = dtoConverter.convert(vDto);
+                    IVehicle vehicle = defaultDtoConverter.convert(vDto);
                     vehicles.Add(vehicle.Enrollment,vehicle);
                 }
             }
             return vehicles;
         }
 
-        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, DefaultDtoConverter dtoConverter)
         {
             VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
             int aux = 0;
