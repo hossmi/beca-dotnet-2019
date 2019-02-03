@@ -57,6 +57,11 @@ namespace CarManagement.Services
             this.color = color;
         }
 
+        public IWheel convert(WheelDto weelDto)
+        {
+            return new Wheel(weelDto.Pressure);
+        }
+
         public List<T> createList<T>(int numberItem) where T : class, new()
         {
             List<T> items = new List<T>();
@@ -112,6 +117,7 @@ namespace CarManagement.Services
                 this.Pressure = pressure;
             }
         }
+        
 
         private class Vehicle : IVehicle
         {

@@ -9,7 +9,7 @@ namespace CarManagement.Services
     {
         private IEnrollmentProvider enrollmentProvider;
         private IEnrollment enrollment;
-        private VehicleBuilder VehicleBuilder;
+        private VehicleBuilder vehicleBuilder;
 
 
 
@@ -168,9 +168,9 @@ namespace CarManagement.Services
             return new Door(doorDto.IsOpen);
         }
 
-        private static IWheel convertToWheel(WheelDto wheelDto)
+        private IWheel convertToWheel(WheelDto wheelDto)
         {
-            return new Wheel(wheelDto.Pressure);
+            return this.vehicleBuilder.convert(wheelDto);
         }
         private static WheelDto convertToWheelDto(IWheel wheel)
         {
