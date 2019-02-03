@@ -130,8 +130,7 @@ namespace CarManagement.Services
             private IReadOnlyList<Wheel> wheels;
             private readonly IEnrollment enrollment;
             private IReadOnlyList<Door> doors;
-            private Engine engine;
-
+            private readonly Engine engine;
 
             public Vehicle(CarColor color, List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
             {
@@ -245,7 +244,7 @@ namespace CarManagement.Services
             public void stop()
             {
                 Asserts.isTrue(this.IsStarted);
-                this.mode = false;
+                this.isStarted = false;
             }
 
             private void setHorsePower(int horsePower)

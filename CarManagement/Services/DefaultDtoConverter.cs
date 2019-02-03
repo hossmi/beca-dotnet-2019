@@ -67,27 +67,7 @@ namespace CarManagement.Services
 
         public IVehicle convert(VehicleDto vehicleDto)
         {
-            CarColor color = vehicleDto.Color;
-
-            List<IWheel> wheels = new List<IWheel>();
-            foreach (WheelDto wheelDto in vehicleDto.Wheels)
-            {
-                IWheel r = convertToWheel(wheelDto);
-                wheels.Add(r);
-            }
-
-            IEnrollment enrollment = convertToIEnrollment(vehicleDto.Enrollment);
-
-            List<IDoor> doors = new List<IDoor>();
-            foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
-                IDoor door = convertToDoor(doorDto);
-                doors.Add(door);
-            }
-
-            IEngine engine = convertToEngine(vehicleDto.Engine);
-
-            return this.vehicleBuilder.convert();// (color, wheels, enrollment, doors, engine);
+            return this.vehicleBuilder.convert(vehicleDto);
         }
         public VehicleDto convert(IVehicle vehicle)
         {
