@@ -61,6 +61,32 @@ namespace CarManagement.Services
         {
             return new Wheel(weelDto.Pressure);
         }
+        public IDoor convert(DoorDto doorDto)
+        {
+            return new Door(doorDto.IsOpen);
+        }
+        public IEngine convert(EngineDto engineDto)
+        {
+            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+        }
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.numberWheel > 0);
+            //Generamos puertas
+            List<Door> doors = createList<Door>(this.numberDoor);
+
+            //Generamos motor
+            Engine engine = new Engine(this.engine);
+
+            //Generamos ruedas
+            List<Wheel> wheels = createList<Wheel>(this.numberWheel);
+
+            //Generamos matricula
+            IEnrollment enrollment = enrollmentProvider.getNew();
+
+            //Generamos coche
+            return new Vehicle(this.color, wheels, enrollment, doors, engine);
+        }
 
         public List<T> createList<T>(int numberItem) where T : class, new()
         {
@@ -72,25 +98,7 @@ namespace CarManagement.Services
             return items;
         }
 
-        public IVehicle build()
-        {
-            Asserts.isTrue(this.numberWheel >0);
-            //Generamos puertas
-            List<Door> doors=createList<Door>(this.numberDoor);
-
-            //Generamos motor
-            Engine engine = new Engine(this.engine);
-
-            //Generamos ruedas
-            List<Wheel> wheels=createList<Wheel>(this.numberWheel);
-
-            //Generamos matricula
-            IEnrollment enrollment = enrollmentProvider.getNew();
-
-            //Generamos coche
-            return new Vehicle(this.color, wheels, enrollment, doors, engine);
-        }
-
+        
         private class Wheel :IWheel
         {
             private double pressure;
@@ -118,7 +126,6 @@ namespace CarManagement.Services
             }
         }
         
-
         private class Vehicle : IVehicle
         {
             private CarColor color;
@@ -186,37 +193,29 @@ namespace CarManagement.Services
         private class Engine: IEngine
         {
             private int horsePower;
-            private bool mode;
+            private bool isStarted;
+
 
             public Engine(int horsePower)
             {
                 Asserts.isTrue(horsePower > 0);
                 this.horsePower = horsePower;
+                this.isStarted = false;
             }
 
-            public Engine(int horsePower, bool mode)
+            public Engine(int horsePower, bool isIstarted)
             {
                 Asserts.isTrue(horsePower > 0);
                 this.horsePower = horsePower;
-                this.mode = mode;
+                this.isStarted = isIstarted;
             }
 
-            public int Model
-            {
-                get
-                {
-                    return this.horsePower;
-                }
-                set
-                {
-                    setHorsePower(value);
-                }
-            }
+           
             public bool IsStarted
             {
                 get
                 {
-                    return this.mode;
+                    return this.isStarted;
                 }
             }
 
@@ -235,7 +234,7 @@ namespace CarManagement.Services
             public void start()
             {
                 Asserts.isFalse(this.IsStarted);
-                this.mode = true;
+                this.isStarted = true;
             }
 
             public void stop()
@@ -289,7 +288,6 @@ namespace CarManagement.Services
         }
 
 
-
         public IVehicle import(VehicleDto vehicleDto)
         {
             CarColor color = vehicleDto.Color;
@@ -303,17 +301,16 @@ namespace CarManagement.Services
 
             IEnrollment enrollment = defaultDtoConverter.convert(vehicleDto.Enrollment);
 
-            List<IDoor> doors = new List<IDoor>();
+            List<Door> doors = new List<Door>();
             foreach (DoorDto doorDto in vehicleDto.Doors)
             {
-                IDoor door = defaultDtoConverter.convert(doorDto);
+                Door door = new Door(doorDto.IsOpen);
                 doors.Add(door);
             }
 
-            IEngine engine = defaultDtoConverter.convert(vehicleDto.Engine);
+            Engine engine = new Engine(vehicleDto.Engine.HorsePower);
 
-            IVehicle vehicle = new Vehicle(color, wheels , enrollment , doors, engine);
-            return defaultDtoConverter.convert(vehicleDto);
+            return new Vehicle(color, wheels, enrollment, doors, engine);
         }
 
         public VehicleDto export(IVehicle vehicleDto)

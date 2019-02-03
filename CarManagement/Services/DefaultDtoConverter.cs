@@ -87,11 +87,8 @@ namespace CarManagement.Services
 
             IEngine engine = convertToEngine(vehicleDto.Engine);
 
-            
-
-            return new Vehicle(color, wheels, enrollment, doors, engine);
+            return this.vehicleBuilder.convert(color, wheels, enrollment, doors, engine);
         }
-
         public VehicleDto convert(IVehicle vehicle)
         {
             CarColor color = vehicle.Color;
@@ -127,8 +124,12 @@ namespace CarManagement.Services
                 Doors = doorDtos
             };
         }
-       
 
+        private IEnrollment convertToIEnrollment(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial,
+                                                  enrollmentDto.Number);
+        }
         private static EnrollmentDto convertToIEnrollmentDto(IEnrollment enrollment)
         {
             return new EnrollmentDto
@@ -137,15 +138,10 @@ namespace CarManagement.Services
                 Serial = enrollment.Serial,
             };
         }
-        private IEnrollment convertToIEnrollment(EnrollmentDto enrollmentDto)
+        
+        private IEngine convertToEngine(EngineDto engineDto)
         {
-            return this.enrollmentProvider.import(enrollmentDto.Serial,
-                                                  enrollmentDto.Number);
-        }
-
-        private static IEngine convertToEngine(EngineDto engineDto)
-        {
-            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+            return this.vehicleBuilder.convert(engineDto);
         }
         private static EngineDto convertToEngineDto(IEngine engine)
         {
@@ -156,6 +152,10 @@ namespace CarManagement.Services
             };
         }
 
+        private IDoor convertToDoor(DoorDto doorDto)
+        {
+            return this.vehicleBuilder.convert(doorDto);
+        }
         private static DoorDto convertToDoorDto(IDoor door)
         {
             return new DoorDto
@@ -163,11 +163,7 @@ namespace CarManagement.Services
                 IsOpen = door.IsOpen
             };
         }
-        private static IDoor convertToDoor(DoorDto doorDto)
-        {
-            return new Door(doorDto.IsOpen);
-        }
-
+        
         private IWheel convertToWheel(WheelDto wheelDto)
         {
             return this.vehicleBuilder.convert(wheelDto);
