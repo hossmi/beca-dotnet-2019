@@ -87,7 +87,7 @@ namespace CarManagement.Services
 
             IEngine engine = convertToEngine(vehicleDto.Engine);
 
-            return this.vehicleBuilder.convert(color, wheels, enrollment, doors, engine);
+            return this.vehicleBuilder.convert();// (color, wheels, enrollment, doors, engine);
         }
         public VehicleDto convert(IVehicle vehicle)
         {

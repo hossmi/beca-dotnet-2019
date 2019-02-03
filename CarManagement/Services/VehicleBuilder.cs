@@ -32,25 +32,21 @@ namespace CarManagement.Services
             Asserts.isTrue(this.numberWheel < 4);
             this.numberWheel++;
         }
-
         public void removeWheel()
         {
             Asserts.isTrue(this.numberWheel >0);
             this.numberWheel--;
         }
-
         public void setDoors(int doorsCount)
         {
             Asserts.isTrue( doorsCount>=0 && doorsCount <=6);
             this.numberDoor = doorsCount;
         }
-
         public void setEngine(int horsePower)
         {
             Asserts.isTrue(horsePower > 0);
             this.engine = horsePower;
         }
-
         public void setColor(CarColor color)
         {
             Asserts.isEnumDefined(color);
@@ -68,6 +64,11 @@ namespace CarManagement.Services
         public IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+        }
+        public IVehicle convert(VehicleDto vehicleDto)
+        {
+            IEnrollment enrollment = defaultDtoConverter.convert(vehicleDto.Enrollment);
+            return new Vehicle(vehicleDto, enrollment);
         }
         public IVehicle build()
         {
@@ -87,7 +88,6 @@ namespace CarManagement.Services
             //Generamos coche
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
-
         public List<T> createList<T>(int numberItem) where T : class, new()
         {
             List<T> items = new List<T>();
@@ -98,7 +98,6 @@ namespace CarManagement.Services
             return items;
         }
 
-        
         private class Wheel :IWheel
         {
             private double pressure;
@@ -125,12 +124,11 @@ namespace CarManagement.Services
                 this.Pressure = pressure;
             }
         }
-        
         private class Vehicle : IVehicle
         {
             private CarColor color;
             private IReadOnlyList<Wheel> wheels;
-            private IEnrollment enrollment;
+            private readonly IEnrollment enrollment;
             private IReadOnlyList<Door> doors;
             private Engine engine;
 
@@ -142,6 +140,14 @@ namespace CarManagement.Services
                 this.enrollment = enrollment;
                 this.doors = doors;
                 this.engine = engine;
+            }
+            public Vehicle(VehicleDto vehicleDto, IEnrollment enrollment)
+            {
+                this.Color = vehicleDto.Color;
+                this.enrollment = enrollment;
+                this.doors = vehicleDto.Doors.OfType<Door>().ToList();
+                this.wheels = vehicleDto.Wheels.OfType<Wheel>().ToList();
+                this.engine = new Engine(vehicleDto.Engine.HorsePower, vehicleDto.Engine.IsStarted);
             }
 
             public IEngine Engine
@@ -189,7 +195,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
         private class Engine: IEngine
         {
             private int horsePower;
@@ -249,7 +254,6 @@ namespace CarManagement.Services
                 this.horsePower = horsePower;
             }
         }
-
         private class Door :IDoor
         {
 
@@ -287,7 +291,6 @@ namespace CarManagement.Services
             }
         }
 
-
         public IVehicle import(VehicleDto vehicleDto)
         {
             CarColor color = vehicleDto.Color;
@@ -312,7 +315,6 @@ namespace CarManagement.Services
 
             return new Vehicle(color, wheels, enrollment, doors, engine);
         }
-
         public VehicleDto export(IVehicle vehicleDto)
         {
             return defaultDtoConverter.convert(vehicleDto);
