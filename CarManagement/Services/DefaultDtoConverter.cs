@@ -16,10 +16,10 @@ namespace CarManagement.Services
             this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
         }
 
-        public IEngine convert(EngineDto engineDto)
+        /*public IEngine convert(EngineDto engineDto)
         {
             return this.vehicleBuilder.import(engineDto.HorsePower, engineDto.IsStarted);
-        }
+        }*/
 
         public EngineDto convert(IEngine engine)
         {
@@ -34,10 +34,10 @@ namespace CarManagement.Services
 
         public IVehicle convert(VehicleDto vehicleDto)
         {
-            /*this.vehicleBuilder = new VehicleBuilder(vehicleDto.Wheels.Length, vehicleDto.Doors.Length,
-                vehicleDto.Engine.HorsePower, vehicleDto.Color, convert(vehicleDto.Enrollment));*/
+            this.vehicleBuilder = new VehicleBuilder(vehicleDto.Wheels.Length, vehicleDto.Doors.Length,
+                vehicleDto.Engine.HorsePower, vehicleDto.Color, convert(vehicleDto.Enrollment));
 
-            return this.vehicleBuilder.build();
+            return this.vehicleBuilder.import(vehicleDto);
         }
 
         public VehicleDto convert(IVehicle vehicle)
