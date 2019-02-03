@@ -18,8 +18,6 @@ namespace CarManagement.Services
         private Wheel wheel;
         private List<Wheel> wheels;
         private WheelDto wheelDto;
-        private WheelDto[] wheelsArr;
-        private DoorDto[] doorsArr;
         private List<Door> doors;
         private CarColor color;
         
@@ -56,30 +54,18 @@ namespace CarManagement.Services
             this.doors = new List<Door>();
             this.engine = new Engine();
 
-            this.vehicleDto = vehicleDto;
             for (int i = 0; i < vehicleDto.Wheels.Length; i++)
             {
-                Wheel wheel = new Wheel();
-                //wheel.Pressure = this.vehicleDto.Wheels[i].Pressure;
-                this.wheels.Add(wheel);
+                this.wheels.Add(convert(vehicleDto.Wheels[i]));
             }
             for (int i = 0; i < vehicleDto.Doors.Length; i++)
             {
-                Door door = new Door();
-                if (vehicleDto.Doors[i].IsOpen == true)
-                {
-                    door.open();
-                }
-                this.doors.Add(door);
+                this.doors.Add(convert(vehicleDto.Doors[i]));
             }
             this.vehicle.carColor = this.vehicleDto.Color;
-            this.vehicle.Engine.Horsepower = this.vehicleDto.Engine.HorsePower;
-            this.vehicle.Engine.IsStarted = this.vehicleDto.Engine.IsStarted;
-
-            //this.color = vehicleDto.Color;
-            this.engine.Horsepower = this.vehicleDto.Engine.HorsePower;
-            this.engine.IsStarted = this.vehicleDto.Engine.IsStarted;
-            this.enrollment = this.enrollmentProvider.import(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
+            this.vehicle.Engine = convert(vehicleDto.Engine);
+            this.color = vehicleDto.Color;
+            this.enrollment = convert(vehicleDto.Enrollment);
             this.vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
             return this.vehicle;
         }
@@ -88,26 +74,19 @@ namespace CarManagement.Services
         public VehicleDto convert(Vehicle vehicle)
         {
             this.vehicleDto = new VehicleDto();
-            this.wheelsArr = new WheelDto[vehicle.Wheels.Length];
-            for (int aux = 0; aux < vehicle.Wheels.Length; aux++)
+            for (int i = 0; i < vehicle.Wheels.Length; i++)
             {
-                this.wheelDto = new WheelDto();
-                this.wheelDto.Pressure = vehicle.Wheels[aux].Pressure;
-                this.wheelsArr[aux] = this.wheelDto;
-                aux++;
+                this.vehicleDto.Wheels[i] = convert(vehicle.Wheels[i]);
+                i++;
             }
-            this.vehicleDto.Wheels = this.wheelsArr;
 
-            this.doorsArr = new DoorDto[vehicle.Doors.Length];
-            for (int aux = 0; aux < vehicle.Doors.Length; aux++)
+            for (int i = 0; i < vehicle.Doors.Length; i++)
             {
-                this.doorDto = new DoorDto();
-                this.doorDto.IsOpen = vehicle.Doors[aux].IsOpen;
-                this.doorsArr[aux] = this.doorDto;
-                aux++;
+                this.vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
+                i++;
             }
-            this.vehicleDto.Doors = this.doorsArr;
             this.vehicleDto.Color = vehicle.carColor;
+            this.vehicleDto.Enrollment = convert(vehicle.Enrollment);
             return this.vehicleDto;
         }
 
