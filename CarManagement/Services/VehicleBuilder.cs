@@ -21,6 +21,16 @@ namespace CarManagement.Services
             this.numberWheels = 0;
         }
 
+        public VehicleBuilder(int wheels, int doors, int horsePower, 
+            CarColor color, IEnrollment enrollment)
+        {
+            this.numberWheels = wheels;
+            this.numberDoors = doors;
+            this.horsePorwer = horsePower;
+            this.color = color;
+            this.enrollmentProvider.import(enrollment.Serial, enrollment.Number);
+        }
+
         public void addWheel()
         {
             Asserts.isTrue(this.numberWheels < 4);
@@ -51,6 +61,11 @@ namespace CarManagement.Services
             this.color = color;
         }
 
+        IEngine IVehicleBuilder.import(int horsePower, bool isStarted)
+        {
+            return new Engine(horsePower, isStarted);
+        }
+
         /*private List<T> create<T>(int nItems) where T : class, new()
         {
             List<T> items = new List<T>();
@@ -63,21 +78,6 @@ namespace CarManagement.Services
             return items;
         }*/
 
-        private List<TInterface> create<TInterface, TInstance>(int nItems) 
-            where TInstance : class, TInterface, new()
-            where TInterface : class
-        {
-            List<TInterface> items = new List<TInterface>();
-            for (int i = 0; i < nItems; i++)
-            {
-                TInterface aux = new TInstance();
-                items.Add(aux);
-            }
-
-            return items;
-        }
-
-
         public IVehicle build()
         {
             Asserts.isTrue(0 < this.numberWheels && this.numberWheels <= 4);
@@ -89,6 +89,8 @@ namespace CarManagement.Services
             Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, this.enrollmentProvider.getNew());
             return vehicle;
         }
+
+        
 
         private class Door : IDoor
         {
@@ -125,21 +127,35 @@ namespace CarManagement.Services
             }
         }
 
+        private List<TInterface> create<TInterface, TInstance>(int nItems)
+            where TInstance : class, TInterface, new()
+            where TInterface : class
+        {
+            List<TInterface> items = new List<TInterface>();
+            for (int i = 0; i < nItems; i++)
+            {
+                TInterface aux = new TInstance();
+                items.Add(aux);
+            }
+
+            return items;
+        }
+
         private class Engine : IEngine
         {
             private bool startEngine;
-            private int horsePorwer;
+            private int horsePower;
 
             public Engine(int horsePorwer)
             {
                 this.startEngine = false;
-                this.horsePorwer = horsePorwer;
+                this.horsePower = horsePorwer;
             }
 
             public Engine(int horsePorwer, bool startEngine)
             {
                 this.startEngine = startEngine;
-                this.horsePorwer = horsePorwer;
+                this.horsePower = horsePorwer;
             }
 
             public bool IsStarted
@@ -160,22 +176,14 @@ namespace CarManagement.Services
             {
                 get
                 {
-                    return this.horsePorwer;
+                    return this.horsePower;
                 }
             }
 
-
-            /*public int HorsePorwer
+            public void setHorsePorwer(int horsePower)
             {
-                get
-                {
-                    return this.horsePorwer;
-                }
-                set
-                {
-                    this.horsePorwer = value;
-                }
-            }*/
+                this.horsePower = horsePower;
+            }
 
             public void stop()
             {

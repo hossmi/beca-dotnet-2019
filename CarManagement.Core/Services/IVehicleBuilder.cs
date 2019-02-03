@@ -10,5 +10,6 @@ namespace CarManagement.Core.Services
         void setColor(CarColor color);
         void setDoors(int doorsCount);
         void setEngine(int horsePorwer);
+        IEngine import(int horsePower, bool isStarted);
     }
 }
