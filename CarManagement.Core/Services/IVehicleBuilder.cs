@@ -1,4 +1,5 @@
 ﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Core.Services
 {
@@ -10,6 +11,7 @@ namespace CarManagement.Core.Services
         void setColor(CarColor color);
         void setDoors(int doorsCount);
         void setEngine(int horsePorwer);
-        IEngine import(int horsePower, bool isStarted);
+        IVehicle import(VehicleDto vehicleDto);
+        VehicleDto export(IVehicle vehicleDto);
     }
 }
