@@ -286,6 +286,27 @@ namespace CarManagement.Services
 
         public IVehicle import(VehicleDto vehicleDto)
         {
+            CarColor color = vehicleDto.Color;
+
+            List<Wheel> wheels = new List<Wheel>();
+            foreach (WheelDto wheelDto in vehicleDto.Wheels)
+            {
+                Wheel r = new Wheel(wheelDto.Pressure);
+                wheels.Add(r);
+            }
+
+            IEnrollment enrollment = defaultDtoConverter.convert(vehicleDto.Enrollment);
+
+            List<IDoor> doors = new List<IDoor>();
+            foreach (DoorDto doorDto in vehicleDto.Doors)
+            {
+                IDoor door = defaultDtoConverter.convert(doorDto);
+                doors.Add(door);
+            }
+
+            IEngine engine = defaultDtoConverter.convert(vehicleDto.Engine);
+
+            IVehicle vehicle = new Vehicle(color, wheels , enrollment , doors, engine);
             return defaultDtoConverter.convert(vehicleDto);
         }
 

@@ -87,7 +87,7 @@ namespace CarManagement.Services
 
             IEngine engine = convertToEngine(vehicleDto.Engine);
 
-            IVehicle vehicle = 
+            
 
             return new Vehicle(color, wheels, enrollment, doors, engine);
         }
