@@ -9,15 +9,12 @@ namespace CarManagement.Extensions.Filters
     {
         public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(this IEnumerable<IVehicle> vehicles)
         {
-            IEnumerable<T> items = new T[] { new T("msg") };
-            items.ToList().Add(new T("msg2"));
-
-            IEnumerable<IVehicle> vehiclesEnrollmentPair = new Enumerable<IVehicle>();
+            List<IVehicle> vehiclesEnrollmentPair = new List<IVehicle>();
             foreach (IVehicle vehicle in vehicles)
             {
                 if (vehicle.Enrollment.Number % 2 == 0)
                 {
-                    vehiclesEnrollmentPair.ToList().Add(vehicle);
+                    vehiclesEnrollmentPair.Add(vehicle);
                 }
             }
             return vehiclesEnrollmentPair;
@@ -25,7 +22,17 @@ namespace CarManagement.Extensions.Filters
 
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            throw new NotImplementedException();
+            List<IVehicle> vehiclesSerial = new List<IVehicle>();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                if (vehicle.Enrollment.Serial == enrollmentSerial)
+                {
+                    vehiclesSerial.Add(vehicle);
+                }
+            }
+                
+            return vehicles;
         }
     }
 }
