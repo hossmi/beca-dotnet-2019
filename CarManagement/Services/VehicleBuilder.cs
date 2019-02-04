@@ -301,6 +301,7 @@ namespace CarManagement.Services
 
         public IVehicle import(VehicleDto vehicleDto)
         {
+
             CarColor color = vehicleDto.Color;
 
             List<Wheel> wheels = new List<Wheel>();
@@ -326,6 +327,11 @@ namespace CarManagement.Services
         public VehicleDto export(IVehicle vehicle)
         {
             return defaultDtoConverter.convert(vehicle);
+        }
+
+        public VehicleDto import(IVehicle vehicle)
+        {
+            return this.defaultDtoConverter.convert(vehicle);// throw new NotImplementedException();
         }
     }
 }

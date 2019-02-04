@@ -22,7 +22,7 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            writeToFile(this.filePath, vehicles);
+            writeToFile(this.filePath, vehicles,  vehicleBuilder);
         }
 
         private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
@@ -46,13 +46,13 @@ namespace CarManagement.Services
             return vehicles;
         }
 
-        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles)
+        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, IVehicleBuilder vehicleBuilder)
         {
             VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
             int aux = 0;
             foreach (IVehicle vehicle in vehicles)
             {
-                VehicleDto vehicleDto = vehicleBuilder.;// .convert(vehicle);
+                VehicleDto vehicleDto = vehicleBuilder.import(vehicle);// .convert(vehicle);
                 vehiclesDto[aux] = vehicleDto;
                 aux++;
             }
