@@ -43,9 +43,9 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            int pressure = 0;
+            double pressure = 0.0;
 
-            Assert.AreEqual(3, pressure);
+            Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
