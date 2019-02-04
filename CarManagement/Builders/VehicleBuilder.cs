@@ -13,18 +13,13 @@ namespace CarManagement.Builders
         private int doors;
         private int horsepowerValue;
         private CarColor vehicleColor;
-
-        private int numbers;
-        private readonly string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
-        private readonly int[] serial = { 0, 0, 0 };
-        
+                      
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.wheels = 0;
             this.doors = 0;
             this.horsepowerValue = 0;
             this.vehicleColor = CarColor.White;
-            this.numbers = 0;
             this.enrollmentProvider = enrollmentProvider;
         }
 
@@ -96,59 +91,55 @@ namespace CarManagement.Builders
 
             Engine engine = new Engine(this.horsepowerValue);
 
-            string enrollment = generateEnrollment();
+            IEnrollment enrollment = this.enrollmentProvider.getNewEnrollment();
 
             Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
             return vehicle;
         }
 
-        private string generateEnrollment()
-        {
-            string enrollment = "";
+        //private string generateEnrollment()
+        //{
+        //    string enrollment = "";
 
+        //    if (this.numbers >= 9999)
+        //    {
+        //        if ((this.serial[0] & this.serial[1] & this.serial[2]) < 19)
+        //        {
+        //            if ((this.serial[1] & this.serial[2]) < 19)
+        //            {
+        //                if (this.serial[2] < 19)
+        //                {
+        //                    this.serial[2] += 1;
+        //                    this.numbers = 0000;
+        //                }
+        //                else
+        //                {
+        //                    this.serial[1] += 1;
+        //                    this.serial[2] = 0;
+        //                    this.numbers = 0000;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                this.serial[0] += 1;
+        //                this.serial[1] = 0;
+        //                this.serial[2] = 0;
+        //                this.numbers = 0000;
+        //            }
+        //        }
+        //        else
+        //        {
+        //            throw new SystemException("Unexpected Error in generateEnrollment");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        this.numbers += 1;
+        //    }
 
-            if (this.numbers >= 9999)
-            {
-                if ((this.serial[0] & this.serial[1] & this.serial[2]) < 19)
-                {
-                    if ((this.serial[1] & this.serial[2]) < 19)
-                    {
-                        if (this.serial[2] < 19)
-                        {
-                            this.serial[2] += 1;
-                            this.numbers = 0000;
-                        }
-                        else
-                        {
-                            this.serial[1] += 1;
-                            this.serial[2] = 0;
-                            this.numbers = 0000;
-                        }
-                    }
-                    else
-                    {
-                        this.serial[0] += 1;
-                        this.serial[1] = 0;
-                        this.serial[2] = 0;
-                        this.numbers = 0000;
-                    }
-                }
-                else
-                {
-                    throw new SystemException("Unexpected Error in generateEnrollment");
-                }
-            }
-            else
-            {
-                this.numbers += 1;
-            }
-
-            enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
-
-            //string numbers = "1234567890";
-
-            
-            return enrollment;
-        }
+        //    enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
+                        
+        //    return enrollment;
+        //}
     }
 }
