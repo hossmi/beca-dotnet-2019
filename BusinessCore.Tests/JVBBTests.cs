@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using CarManagement.Builders;
-using CarManagement.Models;
 using CarManagement.Services;
 using CarManagement.Extensions.Vehicles;
 using CarManagement.Core.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CarManagement.Services;
 using CarManagement.Core.Services;
 
 namespace BusinessCore.Tests
@@ -68,13 +65,13 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void StorageComparison()
         {
-            Vehicle motoVehicle;
+            IVehicle motoVehicle;
 
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
-            IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
+            //IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
+            IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
             IVehicleStorage vehicleMemoryStorage = new InMemoryVehicleStorage();
 
 
@@ -87,10 +84,10 @@ namespace BusinessCore.Tests
             vehicleFileStorage.set(motoVehicle);
             vehicleMemoryStorage.set(motoVehicle);
 
-            vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, dtoConverter);
+            vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
-            Vehicle memoryVehicleA = vehicleMemoryStorage.get(enrollmentProvider.DefaultEnrollment);
-            Vehicle fileVehicle = vehicleFileStorage.get(enrollmentProvider.DefaultEnrollment);
+            IVehicle memoryVehicleA = vehicleMemoryStorage.get(enrollmentProvider.DefaultEnrollment);
+            IVehicle fileVehicle = vehicleFileStorage.get(enrollmentProvider.DefaultEnrollment);
 
             Assert.IsNotNull(memoryVehicleA);
             Assert.IsNotNull(vehicleFileStorage);
@@ -98,23 +95,23 @@ namespace BusinessCore.Tests
             Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle, equalityComparer));
         }
 
-        private static bool SameVehicle(Vehicle v1, Vehicle v2, IEqualityComparer<IEnrollment> enrollmentComparer)
+        private static bool SameVehicle(IVehicle v1, IVehicle v2, IEqualityComparer<IEnrollment> enrollmentComparer)
         {
 
             if (v1.Color != v2.Color)
                 return false;
 
-            if (v1.WheelCount != v2.WheelCount)
+            if (v1.Wheels.Length != v2.Wheels.Length)
                 return false;
 
-            for (int i = 0; i < v1.WheelCount; i++)
+            for (int i = 0; i < v1.Wheels.Length; i++)
                 if (v1.Wheels[i].Pressure != v2.Wheels[i].Pressure)
                     return false;
 
-            if (v1.DoorsCount != v2.DoorsCount)
+            if (v1.Doors.Length != v2.Doors.Length)
                 return false;
 
-            for (int i = 0; i < v1.DoorsCount; i++)
+            for (int i = 0; i < v1.Doors.Length; i++)
                 if (v1.Doors[i].IsOpen != v2.Doors[i].IsOpen)
                     return false;
 
