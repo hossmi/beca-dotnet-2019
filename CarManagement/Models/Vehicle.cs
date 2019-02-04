@@ -5,13 +5,33 @@ namespace CarManagement.Models
 {
     public class Vehicle
     {
-        private List<Wheel> wheels;
+        private readonly List<Wheel> wheels;
+        private readonly List<Door> doors;
+
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, string enrollment)
+        {
+            if (doors.Count > 0 && doors.Count <= 6)
+            {
+                this.doors = doors;
+            }
+            if(wheels.Count > 0 && wheels.Count <= 4)
+            {
+                this.wheels = wheels;
+            }
+
+            this.Engine = engine;
+
+            if (enrollment.Length == 8)
+            {
+                this.Enrollment = enrollment;
+            }
+        }
 
         public int DoorsCount
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.Count;
             }
         }
 
@@ -19,32 +39,13 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.wheels.Count;
             }
         }
 
-        public Engine Engine
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public Engine Engine{ get;}
 
-        public string Enrollment
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
-        }
+        public string Enrollment { get; }
 
         public Wheel[] Wheels
         {
@@ -58,13 +59,24 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.doors.ToArray();
             }
         }
 
         public void setWheelsPressure(double pression)
         {
-            throw new NotImplementedException();
+            if (pression >= 0)
+            {
+                foreach (Wheel iterWheel in this.wheels)
+                {
+                    iterWheel.Pressure = pression;
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Pression must be greater than 0.");
+            }
+
         }
     }
 }
