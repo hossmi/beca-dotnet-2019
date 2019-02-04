@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Services\VehicleBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DefaultDtoConverter.cs" />
     <Compile Include="Services\AbstractVehicleStorage.cs" />
     <Compile Include="Services\DefaultEnrollmentProvider.cs" />
     <Compile Include="Services\EnrollmentEqualityComparer.cs" />

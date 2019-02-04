@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
@@ -8,28 +10,38 @@ namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
+        private IDictionary<IEnrollment, IVehicle> vehicles;
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
+
 
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
             : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
+            this.vehicles = readFromFile(this.filePath, this.vehicleBuilder);
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count];
-            int i = 0;
+            List<IVehicle> vehiclesToExportList = new List<IVehicle>();
 
-            foreach (Vehicle vehicle in vehicles.Values)
+            foreach (IVehicle vehicle in vehicles)
             {
-                vehiclesDto[i] = dtoConverter.convert(vehicle);
-                i++;
+                vehiclesToExportList.Add(vehicle);
             }
 
-            using (var writer = new StreamWriter(filePath))
+            IVehicle[] vehiclesToExportArray = vehiclesToExportList.ToArray();
+
+            VehicleDto[] vehiclesDto = new VehicleDto[vehiclesToExportArray.Length];
+
+            for (int i = 0; i < vehiclesDto.Length; i++)
+            {
+                vehiclesDto[i] = this.vehicleBuilder.export(vehiclesToExportArray[i]);
+            }
+
+            using (var writer = new StreamWriter(this.filePath))
             {
                 var serializer = new XmlSerializer(typeof(VehicleDto[]));
                 serializer.Serialize(writer, vehiclesDto);
@@ -40,8 +52,8 @@ namespace CarManagement.Services
         private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             {
-                IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
-                Vehicle vehicle;
+                IDictionary<IEnrollment, IVehicle> vehicles = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
+                IVehicle vehicle;
                 VehicleDto[] vehiclesDto;
 
                 using (var stream = File.OpenRead(fileFullPath))
@@ -52,7 +64,7 @@ namespace CarManagement.Services
 
                 foreach (VehicleDto vehicleDto in vehiclesDto)
                 {
-                    vehicle = dtoConverter.convert(vehicleDto);
+                    vehicle = vehicleBuilder.import(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
                 return vehicles;
