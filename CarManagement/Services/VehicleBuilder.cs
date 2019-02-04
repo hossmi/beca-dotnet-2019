@@ -25,48 +25,204 @@ namespace CarManagement.Services
         private int horsePower;
         private CarColor color;
         private IEnrollment enrollment;
+
         public void addWheel()
         {
-            Asserts.isTrue(this.numWheels < 4);
+
             this.numWheels++;
         }
-
+        public void removeWheel()
+        {
+            this.numWheels--;
+        }
+        public void setColor(CarColor color)
+        {
+            this.color = color;
+        }
         public void setDoors(int doorsCount)
         {
             this.numDoors = doorsCount;
         }
-
         public void setEngine(int horsePower)
         {
             this.horsePower = horsePower;
         }
 
-        public void setColor(CarColor color)
-        { 
-            this.color = color;
+
+        private class Engine : IEngine
+        {
+            public int horsePower;
+            public bool isStarted;
+            public int HorsePower
+            {
+                get
+                {
+                    return this.horsePower;
+                }
+            }
+
+            public bool IsStarted
+            {
+                get
+                {
+                    return this.isStarted;
+                }
+            }
+
+            public Engine(int horsePower)
+            {
+                this.horsePower = horsePower;
+                this.isStarted = false;
+
+            }
+
+            public Engine(int horsePower, bool isStarted)
+            {
+                this.horsePower = horsePower;
+                this.isStarted = isStarted;
+
+            }
+
+            public void start()
+            {
+                this.isStarted = true;
+            }
+            public void stop()
+            {
+                this.isStarted = false;
+            }
         }
+        private class Wheel : IWheel
+        {
+            public double pressure;
 
+            public Wheel()
+            {
+                this.pressure = 1;
+            }
+            public double Pressure
+            {
+                get
+                {
+                    return this.pressure;
+                }
+                set
+                {
+                    this.pressure = value;
+                }
+            }
 
+        }
+        private class Door : IDoor
+        {
+            public bool isOpen;
 
-        public Vehicle build()
+            public bool IsOpen
+            {
+                get
+                {
+                    return this.isOpen;
+                }
+            }
+
+            public void close()
+            {
+                this.isOpen = false;
+            }
+
+            public void open()
+            {
+                this.isOpen = true;
+            }
+        }
+        private class Enrollment : IEnrollment
+        {
+            public string serial;
+            public int number;
+
+            public string Serial
+            {
+                get
+                {
+                    return this.serial;
+                }
+            }
+
+            public int Number
+            {
+                get
+                {
+                    return this.number;
+                }
+            }
+        }
+        private class Vehicle : IVehicle
+        {
+            private List<IWheel> wheel;
+            private List<IDoor> door;
+            private IEngine engine;
+            private CarColor color;
+            private IEnrollment enrollment;
+
+            public Vehicle(List<IWheel> wheel, List<IDoor> door, IEngine engine, CarColor color, IEnrollment enrollment)
+            {
+                this.wheel = wheel;
+                this.door = door;
+                this.engine = engine;
+                this.color = color;
+                this.enrollment = enrollment;
+            }
+
+            public CarColor Color
+            {
+                get
+                {
+                    return this.Color;
+                }
+            }
+            public IDoor[] Doors
+            {
+                get
+                {
+                    return this.Doors;
+                }
+            }
+            public IEngine Engine
+            {
+                get
+                {
+                    return this.Engine;
+                }
+            }
+            public IEnrollment Enrollment
+            {
+                get
+                {
+                    return this.Enrollment;
+                }
+            }
+            public IWheel[] Wheels
+            {
+                get
+                {
+                    return this.Wheels;
+                }
+            }
+        }
 
         public IVehicle build()
 
         {
-            List<Wheel> wheel = new List<Wheel>();
-            List<Door> door = new List<Door>();
-            Engine engine = new Engine(this.horsePower);
-            Vehicle vehicle = new Vehicle(wheel, door, engine, this.color, this.enrollment);
+            List<IWheel> wheel = new List<IWheel>();
+            List<IDoor> door = new List<IDoor>();
+            IEngine engine = new Engine(this.horsePower);
+            IVehicle vehicle = new Vehicle( wheel, door, engine, this.color, this.enrollment);
             {
 
             }
             return vehicle;
         }
 
-        public void removeWheel()
-        {
-            throw new NotImplementedException();
-        }
 
         public IVehicle import(VehicleDto vehicleDto)
         {
@@ -79,3 +235,5 @@ namespace CarManagement.Services
         }
     }
 }
+
+
