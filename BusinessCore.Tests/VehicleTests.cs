@@ -7,6 +7,7 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CarManagement.Services;
+using BusinessCore.Tests.Services;
 using CarManagement.Services.CarManagement.Builders;
 
 namespace BusinessCore.Tests

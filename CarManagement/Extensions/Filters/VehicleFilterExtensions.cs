@@ -83,14 +83,12 @@ namespace CarManagement.Extensions.Filters
                     yield return item;
             }
         }
-        public static IEnumerable<T2> filter2<T1,T2>(
-        this IEnumerable<T1> items, Func<T1, T2,bool> filterDelegate)
+
+        public static IEnumerable<TOut> select<TIn, TOut>(
+            this IEnumerable<TIn> items, Func<TIn, TOut> selectDelegate)
         {
-            foreach (T2 item in items)
-            {
-                yield return items;
-                 
-            }
+            foreach (TIn item in items)
+                yield return selectDelegate(item);
         }
     }
 }
