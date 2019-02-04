@@ -34,5 +34,10 @@ namespace CarManagement.Extensions.Filters
 
             return filteredVehicles.ToArray();
         }
+
+        public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
