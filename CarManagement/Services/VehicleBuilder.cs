@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CarManagement.Core;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
@@ -286,5 +287,14 @@ namespace CarManagement.Services
             }
         }
 
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public VehicleDto export(IVehicle vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
