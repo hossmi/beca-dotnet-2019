@@ -10,6 +10,7 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        
         private int numberWheel;
         private int numberDoor;
         private int engine;
@@ -173,12 +174,14 @@ namespace CarManagement.Services
 
         private class Wheel :IWheel
         {
+            private readonly double presureMin = 1;
+            private readonly double presureMax = 5;
             private double pressure;
             public double Pressure
             {
                 set
                 {
-                    Asserts.isTrue(value >= 0);
+                    Asserts.isTrue(value >= presureMin && value <= presureMax);
                     this.pressure = value;
                 }
                 get
@@ -189,11 +192,12 @@ namespace CarManagement.Services
 
             public Wheel()
             {
-                this.pressure = 0;
+                this.pressure = 1;
             }
 
             public Wheel(double pressure)
             {
+                Asserts.isTrue(pressure >= presureMin && pressure<= presureMax);
                 this.Pressure = pressure;
             }
         }
