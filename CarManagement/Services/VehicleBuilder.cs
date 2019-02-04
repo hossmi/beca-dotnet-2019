@@ -140,6 +140,11 @@ namespace CarManagement.Services
             public string serial;
             public int number;
 
+            public Enrollment()
+            {
+
+            }
+
             public string Serial
             {
                 get
@@ -216,10 +221,9 @@ namespace CarManagement.Services
             List<IWheel> wheel = new List<IWheel>();
             List<IDoor> door = new List<IDoor>();
             IEngine engine = new Engine(this.horsePower);
+            IEnrollment enrollment = new Enrollment();
             IVehicle vehicle = new Vehicle( wheel, door, engine, this.color, this.enrollment);
-            {
-
-            }
+           
             return vehicle;
         }
 
