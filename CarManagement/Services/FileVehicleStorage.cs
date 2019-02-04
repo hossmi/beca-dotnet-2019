@@ -16,7 +16,7 @@ namespace CarManagement.Services
             : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            dtoConverter = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
