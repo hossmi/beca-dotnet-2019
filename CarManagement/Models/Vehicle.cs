@@ -45,7 +45,13 @@ namespace CarManagement.Models
 
         public Engine Engine{ get;}
 
-        public string Enrollment { get; }
+        public IEnrollment Enrollment
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public Wheel[] Wheels
         {
