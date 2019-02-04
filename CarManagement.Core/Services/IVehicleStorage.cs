@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core.Models;
 
 namespace CarManagement.Core.Services
 {
-    public interface IVehicleStorage
+    public interface IVehicleStorage : IDisposable
     {
         int Count { get; }
 

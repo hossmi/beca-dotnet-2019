@@ -26,7 +26,6 @@ namespace CarManagement.Services
         public void clear()
         {
             this.vehicles.Clear();
-            save(this.vehicles.Values);
         }
 
         public IVehicle get(IEnrollment enrollment)
@@ -57,6 +56,10 @@ namespace CarManagement.Services
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
+        }
+
+        public void Dispose()
+        {
             save(this.vehicles.Values);
         }
 
