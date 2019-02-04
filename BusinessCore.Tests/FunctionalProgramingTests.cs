@@ -4,6 +4,7 @@ using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Extensions.Filters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -23,7 +24,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .filter(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
             Assert.AreEqual(6, vehicles.Length);
@@ -34,7 +35,7 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /* */
+                .filter(vehicle => vehicle.Engine.IsStarted)
                 .Select(vehicle => vehicle.Engine);
 
             Assert.AreEqual(4, engines.Count());
