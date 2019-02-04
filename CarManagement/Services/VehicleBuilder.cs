@@ -98,7 +98,12 @@ namespace CarManagement.Services
 
         private class Wheel : IWheel
         {
-            private double pressure = 1.0;
+            private double pressure;
+
+            public Wheel()
+            {
+                this.pressure = 1.0;
+            }
 
             public double Pressure
             {
@@ -117,7 +122,12 @@ namespace CarManagement.Services
 
         private class Door: IDoor 
         {
-            private bool isOpen = false;
+            private bool isOpen;
+
+            public Door()
+            {
+                this.isOpen = false;
+            }
 
             public void open()
             {
