@@ -5,7 +5,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
         private readonly IEnrollmentProvider enrollmentProvider;
 
@@ -138,8 +138,13 @@ namespace CarManagement.Builders
         //    }
 
         //    enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
-                        
+
         //    return enrollment;
         //}
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
