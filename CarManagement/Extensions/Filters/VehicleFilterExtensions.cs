@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Core.Models;
-using System.Linq;
 
 namespace CarManagement.Extensions.Filters
 {
