@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Extensions.Filters;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -118,6 +120,35 @@ namespace BusinessCore.Tests
                 IVehicle[] vehicles = vehicleStorage.getAll();
                 Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
             }
+        }
+
+        [TestMethod]
+        public void filtering_vehicle_items()
+        {
+            ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
+            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+
+            IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
+
+            vehicleBuilder.addWheel();
+            vehicleBuilder.addWheel();
+            vehicleBuilder.setColor(CarColor.Blue);
+            vehicleBuilder.setDoors(0);
+            vehicleBuilder.setEngine(40);
+
+            for (int i = 0; i < enrollmentProvider.Count; i++)
+            {
+                IVehicle vehicle = vehicleBuilder.build();
+                vehicleStorage.set(vehicle);
+            }
+
+            IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+            IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.getVehiclesByPairEnrollments();
+            IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.getVehiclesByEnrollmentsSerial("BBC");
+
+            Assert.AreEqual(4, pairEnrollmentVehicles.Count());
+            Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
+
         }
     }
 }
