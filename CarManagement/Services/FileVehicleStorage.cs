@@ -5,7 +5,6 @@ using CarManagement.Core.Services;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -23,17 +22,17 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            writeToFile(this.filePath, vehicles, this.dtoConverter);
+            writeToFile(this.filePath, vehicles, this.vehicleBuilder);
         }
 
         
-        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, IVehicleBuilder vehicleBuilder)
         {
             VehicleDto[] vehiclesDtoAux = new VehicleDto[vehicles.Count()];
             int contFor = 0;
             foreach (IVehicle vehicle in vehicles)
             {
-                VehicleDto vehicleDto = dtoConverter.convert(vehicle);
+                VehicleDto vehicleDto = vehicleBuilder.export(vehicle);
                 vehiclesDtoAux[contFor] = vehicleDto;
                 contFor++;
             }
@@ -57,7 +56,7 @@ namespace CarManagement.Services
 
                 foreach (VehicleDto vehicleDto in vehiclesDtoAux)
                 {
-                    IVehicle vehicle = dtoConverter.convert(vehicleDto);
+                    IVehicle vehicle = vehicleBuilder.import(vehicleDto);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
