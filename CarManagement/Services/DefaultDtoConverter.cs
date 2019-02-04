@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
-    public class DefaultDtoConverter : IDtoConverter
+    public class DefaultDtoConverter 
     {
         private IEnrollmentProvider enrollmentProvider;
         
