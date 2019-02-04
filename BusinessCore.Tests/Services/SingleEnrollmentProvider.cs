@@ -7,37 +7,40 @@ namespace BusinessCore.Tests.Services
     {
         private class Enrollment : IEnrollment
         {
+            private string serial;
+            private int number;
 
             public Enrollment(string serial, int number)
             {
-                this.Serial = serial;
-                this.Number = number;
+
             }
 
             public string Serial { get; }
             public int Number { get; }
-
-            public override string ToString()
-            {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
-            }
         }
+    }
 
-        public SingleEnrollmentProvider()
-        {
-            this.DefaultEnrollment = new Enrollment(serial: "XXX", number: 666);
-        }
+    public override string ToString()
+    {
+        return $"{this.Serial}-{this.Number.ToString("0000")}";
+    }
+}
 
-        public IEnrollment DefaultEnrollment { get; }
+public SingleEnrollmentProvider()
+{
+    this.DefaultEnrollment = new Enrollment(serial: "XXX", number: 666);
+}
 
-        IEnrollment IEnrollmentProvider.getNew()
-        {
-            return this.DefaultEnrollment;
-        }
+public IEnrollment DefaultEnrollment { get; }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
-        {
-            return new Enrollment(serial, number);
-        }
+IEnrollment IEnrollmentProvider.getNew()
+{
+    return this.DefaultEnrollment;
+}
+
+IEnrollment IEnrollmentProvider.import(string serial, int number)
+{
+    return new Enrollment(serial, number);
+}
     }
 }
