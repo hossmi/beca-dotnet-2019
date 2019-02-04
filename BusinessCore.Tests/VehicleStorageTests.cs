@@ -36,7 +36,6 @@ namespace BusinessCore.Tests
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
 
             using (IVehicleStorage vehicleStorage =
@@ -167,6 +166,7 @@ namespace BusinessCore.Tests
                 IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
                 IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
                 IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
+                
 
                 Assert.AreEqual(4, pairEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
@@ -174,14 +174,13 @@ namespace BusinessCore.Tests
 
                 IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .getAll()
-                    .filterByPairEnrollments()          //4
-                    .filterByEnrollmentsSerial("BBC")   //2
-                    .selectEngines()                    //2
-                    .filter(VehicleFilterExtensions.filterByIsStarted);         //1
+                    .filter(VehicleFilterExtensions.filterByIsPairEnrollment)      //4
+                    .filter2(VehicleFilterExtensions.filterByIsEnrollmentsSerial,"BBC")   //2
+                    .filter(VehicleFilterExtensions.selectIsEngines)                 //2
+                    .filter(VehicleFilterExtensions.filterByIsStarted);                 //1
 
                 Assert.AreEqual(1, selectedEngines2.Count());
             }
         }
-
     }
 }
