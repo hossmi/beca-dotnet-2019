@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using CarManagement.Core.Models;
 
@@ -27,7 +28,7 @@ namespace CarManagement.Extensions.Filters
 
             foreach (IVehicle vehicle in vehicles)
             {
-                if (vehicle.Enrollment.Serial.ToString() == enrollmentSerial)
+                if (vehicle.Enrollment.Serial == enrollmentSerial)
                     serialVehicles.Add(vehicle);
             }
 
