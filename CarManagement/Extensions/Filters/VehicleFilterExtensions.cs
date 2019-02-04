@@ -38,9 +38,9 @@ namespace CarManagement.Extensions.Filters
                 yield return vehicle.Engine;
             }
         }
-        public static bool filterByEngine(IVehicle vehicle)
+        public static IEngine filterByEngine(IVehicle vehicle)
         {
-            return (vehicle.Engine.GetType() == IEngine);
+            return vehicle.Engine;
         }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
