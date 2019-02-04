@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Core.Models;
 
 namespace CarManagement.Extensions.Filters

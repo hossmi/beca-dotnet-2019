@@ -11,6 +11,8 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        private const int MAX_WHEELS = 4;
+        private const int MAX_DOORS = 6;
         private const string ERR_WHEEL_ADDITION_CALL = "Cannot add more than 4 wheels";
         private const string ERR_WHEEL_REMOVAL_CALL = "Cannot remove from none wheels";
         private const string ERR_DOOR_NUMBER_OVER_MAX = "You cannot have more than 6 doors";
@@ -63,7 +65,7 @@ namespace CarManagement.Services
 
         public void addWheel()
         {
-            Asserts.isTrue(this.wheelList.Count() < 4, ERR_WHEEL_ADDITION_CALL);
+            Asserts.isTrue(this.wheelList.Count() < MAX_WHEELS, ERR_WHEEL_ADDITION_CALL);
             this.wheelList.Add(new Wheel());
         }
 
@@ -79,7 +81,7 @@ namespace CarManagement.Services
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isFalse( doorsCount >= 6, ERR_DOOR_NUMBER_OVER_MAX);
+            Asserts.isFalse( doorsCount >= MAX_DOORS, ERR_DOOR_NUMBER_OVER_MAX);
             Asserts.isFalse(doorsCount < 0, ERR_DOOR_NUMBER_UNDER0);
             if (doorsCount > this.doorList.Count)
             {
