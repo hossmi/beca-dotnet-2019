@@ -9,7 +9,7 @@ namespace CarManagement.Services
     public class VehicleBuilder : IVehicleBuilder
     {
         private List<Door> doors;
-        private List<Wheel> wheels;
+        private List<IWheel> wheels;
         private Engine engine;
         private CarColor color;
         private int horsePorwer;
@@ -17,6 +17,37 @@ namespace CarManagement.Services
         private IEnrollment enrollment;
         private int doorsCount;
         private int wheelCounter = 0;
+
+        class Engine : IEngine
+        {
+            public int HorsePower { get; }
+
+            public bool IsStarted { get; }
+
+            public void start()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void stop()
+            {
+                throw new NotImplementedException();
+            }
+        }
+        class Door : IDoor
+        {
+            public bool IsOpen { get; }
+
+            public void close()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void open()
+            {
+                throw new NotImplementedException();
+            }
+        }
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
