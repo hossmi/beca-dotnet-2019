@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core.Models;
 
 namespace CarManagement.Extensions.Filters
@@ -37,6 +38,10 @@ namespace CarManagement.Extensions.Filters
                 yield return vehicle.Engine;
             }
         }
+        public static bool filterByEngine(IVehicle vehicle)
+        {
+            return (vehicle.Engine.GetType() == IEngine);
+        }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
         {
@@ -47,6 +52,12 @@ namespace CarManagement.Extensions.Filters
             }
         }
 
+        public static bool filterByIsStarted(IEngine engine)
+        {
+            return engine.IsStarted;
+        }
+        
+
         public static IEnumerable<IEngine> filterByHorsePowerGreaterOrEqual(this IEnumerable<IEngine> engines, int horsePower)
         {
             foreach (IEngine engine in engines)
@@ -54,11 +65,6 @@ namespace CarManagement.Extensions.Filters
                 if (engine.HorsePower >= horsePower)
                     yield return engine;
             }
-        }
-
-        public static bool filterByIsStarted(IEngine engine)
-        {
-            return engine.IsStarted;
         }
 
         public static IEnumerable<T> filter<T>(
