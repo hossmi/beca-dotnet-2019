@@ -41,9 +41,9 @@ namespace CarManagement.Services
 
         public IVehicle[] getAll()
         {
-            Vehicle[] v = new Vehicle[this.vehicles.Count];
+            IVehicle[] v = new IVehicle[this.vehicles.Count];
             int aux = 0;
-            foreach (Vehicle i in this.vehicles.Values)
+            foreach (IVehicle i in this.vehicles.Values)
             {
                 v[aux] = i;
                 aux++;

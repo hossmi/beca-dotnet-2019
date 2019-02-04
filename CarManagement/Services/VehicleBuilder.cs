@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
@@ -53,7 +54,8 @@ namespace CarManagement.Services
         public IVehicle build()
         {
             Asserts.isTrue(this.wheelCounter > 0);
-            this.wheels = new List<Wheel>();
+            this.wheels = 
+            //this.wheels = new List<Wheel>();
             this.doors = new List<Door>();
             this.engine = new Engine();
             this.enrollment = this.enrollmentProvider.getNew();

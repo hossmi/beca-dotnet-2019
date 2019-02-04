@@ -1,28 +1,60 @@
-﻿using CarManagement.Core.Models;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using System.Collections.Generic;
 
 namespace CarManagement.Services
 {
-    public class DefaultDtoConverter 
+    public class DefaultDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
         private IEnrollment enrollment;
         private EnrollmentDto enrollmentDto;
         private VehicleDto vehicleDto;
-        private Vehicle vehicle;
+        private IVehicle vehicle;
         private EngineDto engineDto;
-        private Engine engine;
+        private IEngine engine;
         private DoorDto doorDto;
-        private Door door;
-        private Wheel wheel;
-        private List<Wheel> wheels;
+        private IDoor door;
+        private IWheel wheel;
+        private List<IWheel> wheels;
         private WheelDto wheelDto;
         private WheelDto[] wheelsDto;
-        private List<Door> doors;
+        private List<IDoor> doors;
         private DoorDto[] doorsDto;
         private CarColor color;
-        
+        public class Engine : IEngine
+        {
+            public int HorsePower => throw new System.NotImplementedException();
+
+            public bool IsStarted => throw new System.NotImplementedException();
+
+            public void start()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public void stop()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+        public class Door : IDoor
+        {
+            public bool IsOpen => throw new System.NotImplementedException();
+
+            public void close()
+            {
+                throw new System.NotImplementedException();
+            }
+
+            public void open()
+            {
+                throw new System.NotImplementedException();
+            }
+        }
+
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
@@ -30,7 +62,7 @@ namespace CarManagement.Services
 
         public IEngine convert(EngineDto engineDto)
         {
-            this.engine = new Engine();
+
             this.engine.Horsepower = engineDto.HorsePower;
             this.engine.IsStarted = engineDto.IsStarted;
             return this.engine;
@@ -93,12 +125,12 @@ namespace CarManagement.Services
 
         public IDoor convert(DoorDto doorDto)
         {
-            this.door = new Door();
+            /*this.door = new Door();
             if (doorDto.IsOpen == true)
             {
                 this.door.open();
             }
-            return this.door;
+            return this.door;*/
         }
 
         public DoorDto convert(IDoor door)
