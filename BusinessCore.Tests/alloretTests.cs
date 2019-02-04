@@ -1,16 +1,16 @@
-﻿using System;
-using CarManagement.Builders;
-using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Extensions.Vehicles;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CarManagement.Services;
 
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class alloret
+    public class alloretTests
     {
         [TestMethod]
-        public void pressure_must_not_be_less_than_1() // Posible conflicto con el test de JVBB 
+        public void Pressure_must_not_be_less_than_1() // Posible conflicto con el test de JVBB 
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
@@ -21,11 +21,14 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
             Negassert.mustFail(() => vehicle.setWheelsPressure(0));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(0.99));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(-1));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(-10.5));
         }
         [TestMethod]
-        public void pressure_must_not_be_more_than_5()
+        public void Pressure_must_not_be_more_than_5()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
@@ -36,8 +39,11 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
             Negassert.mustFail(() => vehicle.setWheelsPressure(6));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(5.01));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(100));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(120.01));
         }
     }
 }
