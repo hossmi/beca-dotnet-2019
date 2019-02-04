@@ -51,6 +51,11 @@
   <ItemGroup>
     <Compile Include="alloretTests.cs" />
     <Compile Include="amunozeverisTests.cs" />
+    <Compile Include="Models\Door.cs" />
+    <Compile Include="Models\Engine.cs" />
+    <Compile Include="Models\Enrollment.cs" />
+    <Compile Include="Models\Vehicle.cs" />
+    <Compile Include="Models\Wheel.cs" />
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
