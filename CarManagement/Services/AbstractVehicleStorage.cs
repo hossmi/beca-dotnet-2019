@@ -37,7 +37,7 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public IVehicle[] getAll()
+        public IEnumerable<IVehicle> getAll()
         {
             List<IVehicle> vehiclesList = new List<IVehicle>();
 
