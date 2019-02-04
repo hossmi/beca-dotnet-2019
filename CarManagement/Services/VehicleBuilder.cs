@@ -52,6 +52,18 @@ namespace CarManagement.Services
             this.color = color;
         }
 
+        public IVehicle build()
+        {
+            Asserts.isTrue(0 < this.numberWheels && this.numberWheels <= 4);
+
+            Engine engine = new Engine(this.horsePorwer);
+            List<IDoor> doors = create<IDoor, Door>(this.numberDoors);
+            List<IWheel> wheels = create<IWheel, Wheel>(this.numberWheels);
+
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, this.enrollmentProvider.getNew());
+            return vehicle;
+        }
+
         public IVehicle import(VehicleDto vehicleDto)
         {
             Engine engine = new Engine(vehicleDto.Engine.HorsePower, vehicleDto.Engine.IsStarted);
@@ -179,18 +191,6 @@ namespace CarManagement.Services
             }
 
             return wheels;
-        }
-
-        public IVehicle build()
-        {
-            Asserts.isTrue(0 < this.numberWheels && this.numberWheels <= 4);
-
-            Engine engine = new Engine(this.horsePorwer);
-            List<IDoor> doors = create<IDoor, Door>(this.numberDoors);
-            List<IWheel> wheels = create<IWheel, Wheel>(this.numberWheels);
-
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, this.enrollmentProvider.getNew());
-            return vehicle;
         }
 
         private List<TInterface> create<TInterface, TInstance>(int nItems)
@@ -369,7 +369,7 @@ namespace CarManagement.Services
 
             public void setWheelsPressure(double pression)
             {
-                Asserts.isTrue(pression >= 0);
+                Asserts.isTrue(pression >= 1 && pression <= 5);
                 for (int i = 0; i < this.WheelCount; i++)
                 {
                     this.Wheels[i].Pressure = pression;
@@ -389,7 +389,7 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 0);
+                    Asserts.isTrue(value >= 1 && value <= 5);
                     this.pression = value;
                 }
             }
