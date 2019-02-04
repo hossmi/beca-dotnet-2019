@@ -145,10 +145,11 @@ namespace BusinessCore.Tests
             IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
             IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.getVehiclesByPairEnrollments();
             IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.getVehiclesByEnrollmentsSerial("BBC");
+            IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.getEngines();
 
             Assert.AreEqual(4, pairEnrollmentVehicles.Count());
             Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
-
+            Assert.AreEqual(2, selectedEngines.Count());
         }
     }
 }
