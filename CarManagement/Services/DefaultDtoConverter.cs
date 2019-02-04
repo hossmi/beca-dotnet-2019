@@ -1,8 +1,8 @@
-﻿using CarManagement.Core;
-using CarManagement.Core.Models;
+﻿using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using System.Collections.Generic;
+using static CarManagement.Services.VehicleBuilder;
 
 namespace CarManagement.Services
 {
@@ -12,7 +12,7 @@ namespace CarManagement.Services
         private IEnrollment enrollment;
         private EnrollmentDto enrollmentDto;
         private VehicleDto vehicleDto;
-        private IVehicle vehicle;
+        private Vehicle vehicle;
         private EngineDto engineDto;
         private IEngine engine;
         private DoorDto doorDto;
@@ -32,16 +32,16 @@ namespace CarManagement.Services
 
         public IEngine convert(EngineDto engineDto)
         {
-
-            this.engine.Horsepower = engineDto.HorsePower;
-            this.engine.IsStarted = engineDto.IsStarted;
+            Engine engine = new Engine();
+            engine.HorsePower = engineDto.HorsePower;
+            engine.IsStarted = engineDto.IsStarted;
             return this.engine;
         }
 
         public EngineDto convert(IEngine engine)
         {
             this.engineDto = new EngineDto();
-            this.engineDto.HorsePower = engine.Horsepower;
+            this.engineDto.HorsePower = engine.HorsePower;
             this.engineDto.IsStarted = engine.IsStarted;
             return this.engineDto;
         }
@@ -49,10 +49,11 @@ namespace CarManagement.Services
         public IVehicle convert(VehicleDto vehicleDto)
         {
             this.color = new CarColor();
-            this.wheels = new List<Wheel>();
-            this.doors = new List<Door>();
-            this.engine = new Engine();
+            List<Wheel> wheels = new List<Wheel>();
+            List<Door> doors = new List<Door>();
+            Engine engine = new Engine();
             this.color = new CarColor();
+
             for (int i = 0; i < vehicleDto.Wheels.Length; i++)
             {
                 this.wheels.Add(convert(vehicleDto.Wheels[i]));
@@ -64,7 +65,7 @@ namespace CarManagement.Services
             this.engine = convert(vehicleDto.Engine);
             this.color = vehicleDto.Color;
             this.enrollment = convert(vehicleDto.Enrollment);
-            this.vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
+            this.vehicle = new Vehicle(wheels, doors, engine, this.color, this.enrollment);
             return this.vehicle;
         }
 
@@ -87,7 +88,7 @@ namespace CarManagement.Services
                 this.vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
             }
 
-            this.vehicleDto.Color = vehicle.carColor;
+            this.vehicleDto.Color = vehicle.Color;
             this.vehicleDto.Enrollment = convert(vehicle.Enrollment);
             this.vehicleDto.Engine = convert(vehicle.Engine);
             return this.vehicleDto;
@@ -95,12 +96,12 @@ namespace CarManagement.Services
 
         public IDoor convert(DoorDto doorDto)
         {
-            /*this.door = new Door();
+            this.door = new Door();
             if (doorDto.IsOpen == true)
             {
                 this.door.open();
             }
-            return this.door;*/
+            return this.door;
         }
 
         public DoorDto convert(IDoor door)

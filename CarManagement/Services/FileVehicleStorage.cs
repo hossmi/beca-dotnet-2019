@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
@@ -15,15 +16,14 @@ namespace CarManagement.Services
             : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
-
+            dtoConverter = dtoConverter;
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
             List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
 
-            foreach (Vehicle v in vehicles)
+            foreach (IVehicle v in vehicles)
             {
                 vehiclesDtoList.Add(this.dtoConverter.convert(v));
             }
@@ -33,9 +33,9 @@ namespace CarManagement.Services
             writer.Close();
         }
 
-        private static IDictionary<IEnrollment, Vehicle> load(string filePath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> load(string filePath, IDtoConverter dtoConverter)
         {
-            IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
+            IDictionary<IEnrollment, IVehicle> vehicleDictionary = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(filePath))
             {
@@ -45,7 +45,7 @@ namespace CarManagement.Services
                 reader.Close();
                 foreach (VehicleDto vDto in vehiclesDtoList)
                 {
-                    Vehicle vehicle = dtoConverter.convert(vDto);
+                    IVehicle vehicle = dtoConverter.convert(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
                 }
             }

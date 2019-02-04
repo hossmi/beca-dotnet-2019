@@ -9,6 +9,7 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        //Declaracion de clases
         //Engine
         public class Engine : IEngine
         {
@@ -19,11 +20,21 @@ namespace CarManagement.Services
                 {
                     return this.horsePower;
                 }
+                set
+                {
+                    this.horsePower = value;
+                }
             }
 
-            public bool IsStarted { get
+            public bool IsStarted
+            {
+                get
                 {
                     return this.isstart;
+                }
+                set
+                {
+                    this.isstart = value;
                 }
             }
 
@@ -37,8 +48,6 @@ namespace CarManagement.Services
                 this.isstart = false;
             }
         }
-        //Instancia Engine
-        Engine engine = new Engine();
         //Door
         public class Door : IDoor
         {
@@ -61,15 +70,11 @@ namespace CarManagement.Services
                 this.isOpen = true;
             }
         }
-        //Instancia Door
-        Door door = new Door();
         //Wheel
         public class Wheel : IWheel
         {
             public double Pressure { get; set; }
         }
-        //Instancia Wheel
-        Wheel wheel = new Wheel();
         //Vehicle
         public class Vehicle : IVehicle
         {
@@ -132,8 +137,16 @@ namespace CarManagement.Services
             }
 
         }
-        //Instancia Vehicle sin argumentos
-        Vehicle vehicle = new Vehicle();
+        //Instancias
+        //Engine
+        private Engine engine = new Engine();
+        //Door
+        private Door door = new Door();
+        //Wheel
+        private Wheel wheel = new Wheel();
+
+        /////////////////////////////////////////
+        
         private List<Wheel> wheels;
         private List<Door> doors;
         private CarColor color;
@@ -164,11 +177,10 @@ namespace CarManagement.Services
             Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
             this.doorsCount = doorsCount;
         }
-
         public void setEngine(int horsePorwer)
         {
             Asserts.isTrue(this.horsePorwer >= 0);
-            Engine.HorsePower = horsePorwer;
+            this.engine.HorsePower = this.horsePorwer;
         }
 
         public void setColor(CarColor color)
