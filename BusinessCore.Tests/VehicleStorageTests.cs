@@ -162,9 +162,9 @@ namespace BusinessCore.Tests
                 }
 
                 IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
-                IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
-                IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
-                IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
+                IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filter(VehicleFilterExtensions.filterByPairEnrollments);
+                IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filter(VehicleFilterExtensions.filterByEnrollmentsSerial, "BBC");
+                IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.select(vehicle => vehicle.Engine);
 
                 Assert.AreEqual(4, pairEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
@@ -172,9 +172,9 @@ namespace BusinessCore.Tests
 
                 IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .getAll()
-                    .filterByPairEnrollments()          //4
-                    .filterByEnrollmentsSerial("BBC")   //2
-                    .selectEngines()                    //2
+                    .filter(VehicleFilterExtensions.filterByPairEnrollments)          //4
+                    .filter(VehicleFilterExtensions.filterByEnrollmentsSerial,"BBC")   //2
+                    .select(vehicle => vehicle.Engine)                    //2
                     .filter(VehicleFilterExtensions.filterByIsStarted);         //1
 
                 Assert.AreEqual(1, selectedEngines2.Count());

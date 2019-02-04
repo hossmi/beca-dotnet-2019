@@ -6,15 +6,15 @@ namespace CarManagement.Extensions.Filters
 {
     public static class VehicleFilterExtensions
     {
-
-        public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
+        public static IEnumerable<T> filter<T, T2>(
+            this IEnumerable<T> items, Func<T, T2, bool> filterDelegate, T2 arg)
         {
-            foreach (IVehicle vehicle in vehicles)
+            foreach (T item in items)
             {
-                yield return vehicle.Engine;
+                if (filterDelegate(item, arg))
+                    yield return item;
             }
         }
-
         public static IEnumerable<T> filter<T>(
             this IEnumerable<T> items, Func<T, bool> filterDelegate)
         {
