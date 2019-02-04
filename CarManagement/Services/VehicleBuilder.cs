@@ -22,16 +22,6 @@ namespace CarManagement.Services
             this.numberWheels = 0;
         }
 
-        public VehicleBuilder(int wheels, int doors, int horsePower, 
-            CarColor color, IEnrollment enrollment)
-        {
-            this.numberWheels = wheels;
-            this.numberDoors = doors;
-            this.horsePorwer = horsePower;
-            this.color = color;
-            this.enrollmentProvider.import(enrollment.Serial, enrollment.Number);
-        }
-
         public void addWheel()
         {
             Asserts.isTrue(this.numberWheels < 4);
@@ -88,7 +78,7 @@ namespace CarManagement.Services
             return vehicleDtoFinal;
         }
 
-        public EnrollmentDto convert(IEnrollment enrollment)
+        private static EnrollmentDto convert(IEnrollment enrollment)
         {
             EnrollmentDto enrollmentDto = new EnrollmentDto
             {
@@ -99,7 +89,7 @@ namespace CarManagement.Services
             return enrollmentDto;
         }
 
-        public EngineDto convert(IEngine engine)
+        private static EngineDto convert(IEngine engine)
         {
             EngineDto engineDto = new EngineDto
             {
@@ -110,13 +100,13 @@ namespace CarManagement.Services
             return engineDto;
         }
 
-        public IDoor convert(DoorDto doorDto)
+        private static IDoor convert(DoorDto doorDto)
         {
             IDoor door = new Door(doorDto.IsOpen);
             return door;
         }
 
-        public DoorDto convert(IDoor door)
+        private static DoorDto convert(IDoor door)
         {
             DoorDto doorDto = new DoorDto
             {
@@ -126,7 +116,7 @@ namespace CarManagement.Services
             return doorDto;
         }
 
-        public IWheel convert(WheelDto wheelDto)
+        private static IWheel convert(WheelDto wheelDto)
         {
             IWheel wheel = new Wheel
             {
@@ -136,7 +126,7 @@ namespace CarManagement.Services
             return wheel;
         }
 
-        public WheelDto convert(IWheel wheel)
+        private static WheelDto convert(IWheel wheel)
         {
             
             WheelDto wheelDto = new WheelDto
@@ -147,7 +137,7 @@ namespace CarManagement.Services
             return wheelDto;
         }
 
-        private DoorDto[] createDoorsDto(IVehicle vehicle)
+        private static DoorDto[] createDoorsDto(IVehicle vehicle)
         {
             DoorDto[] doorsDto = new DoorDto[vehicle.Doors.Length];
             for (int i = 0; i < vehicle.Doors.Length; i++)
@@ -158,7 +148,7 @@ namespace CarManagement.Services
             return doorsDto;
         }
 
-        private List<IDoor> createDoors(VehicleDto vehicleDto)
+        private static List<IDoor> createDoors(VehicleDto vehicleDto)
         {
             List<IDoor> doors = new List<IDoor>();
             for (int i = 0; i < vehicleDto.Doors.Length; i++)
@@ -169,7 +159,7 @@ namespace CarManagement.Services
             return doors;
         }
 
-        private WheelDto[] createWheelDto(IVehicle vehicle)
+        private static WheelDto[] createWheelDto(IVehicle vehicle)
         {
             WheelDto[] wheelsDto = new WheelDto[vehicle.Wheels.Length];
             for (int i = 0; i < vehicle.Wheels.Length; i++)
@@ -180,7 +170,7 @@ namespace CarManagement.Services
             return wheelsDto;
         }
 
-        private List<IWheel> createWheels(VehicleDto vehicleDto)
+        private static List<IWheel> createWheels(VehicleDto vehicleDto)
         {
             List<IWheel> wheels = new List<IWheel>();
             for (int i = 0; i < vehicleDto.Wheels.Length; i++)
@@ -253,8 +243,6 @@ namespace CarManagement.Services
 
             
         }
-
-        
 
         private class Engine : IEngine
         {
