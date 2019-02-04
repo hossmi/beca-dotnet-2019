@@ -68,7 +68,6 @@ namespace CarManagement.Services
             Asserts.isTrue(this.wheelList.Count() < MAX_WHEELS, ERR_WHEEL_ADDITION_CALL);
             this.wheelList.Add(new Wheel());
         }
-
         //public void removeWheel(Wheel wheel = null)
         public void removeWheel()
         {
@@ -122,6 +121,7 @@ namespace CarManagement.Services
                 this.WheelListClone, this.Color, toProvideEnrollment );
         }
 
+        #region "DTO Operations"
         public IVehicle import(VehicleDto vehicleDto)
         {
             List<IDoor> doors = new List<IDoor>();
@@ -138,7 +138,6 @@ namespace CarManagement.Services
 
             return new Vehicle(this.convert(vehicleDto.Engine), doors, wheels, vehicleDto.Color, this.convert(vehicleDto.Enrollment));
         }
-
         public VehicleDto export(IVehicle vehicle)
         {
             VehicleDto vehicleDto = new VehicleDto
@@ -163,12 +162,10 @@ namespace CarManagement.Services
 
             return vehicleDto;
         }
-
         private IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
-
         private EngineDto convert(IEngine engine)
         {
             return new EngineDto
@@ -177,12 +174,10 @@ namespace CarManagement.Services
                 IsStarted = engine.IsStarted
             };
         }
-
         private IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
         }
-
         private DoorDto convert(IDoor door)
         {
             return new DoorDto
@@ -190,12 +185,10 @@ namespace CarManagement.Services
                 IsOpen = door.IsOpen,
             };
         }
-
         private IWheel convert(WheelDto wheelDto)
         {
             return new Wheel(wheelDto.Pressure);
         }
-
         private WheelDto convert(IWheel wheel)
         {
             return new WheelDto
@@ -203,12 +196,10 @@ namespace CarManagement.Services
                 Pressure = wheel.Pressure,
             };
         }
-
         private IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
-
         private EnrollmentDto convert(IEnrollment enrollment)
         {
             return new EnrollmentDto
@@ -217,5 +208,6 @@ namespace CarManagement.Services
                 Number = enrollment.Number
             };
         }
+        #endregion
     }
 }
