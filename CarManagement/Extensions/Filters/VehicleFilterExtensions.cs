@@ -9,16 +9,13 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(
             this IEnumerable<IVehicle> vehicles)
         {
-            List<IVehicle> filteredVehicles = new List<IVehicle>();
             foreach (IVehicle vehicle in vehicles)
             {
                 if (vehicle.Enrollment.Number % 2 == 0)
                 {
-                    filteredVehicles.Add(vehicle);
+                    yield return vehicle;
                 }
             }
-
-            return filteredVehicles.ToArray();
         }
 
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
@@ -29,22 +26,17 @@ namespace CarManagement.Extensions.Filters
             {
                 if (vehicle.Enrollment.Serial == enrollmentSerial)
                 {
-                    filteredVehicles.Add(vehicle);
+                    yield return vehicle;
                 }
             }
-
-            return filteredVehicles.ToArray();
         }
 
         public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
         {
-            List<IEngine> Engines = new List<IEngine>();
             foreach (IVehicle vehicle in vehicles)
             {
-                Engines.Add(vehicle.Engine);
+                yield return vehicle.Engine;
             }
-
-            return Engines.ToArray();
         }
     }
 }
