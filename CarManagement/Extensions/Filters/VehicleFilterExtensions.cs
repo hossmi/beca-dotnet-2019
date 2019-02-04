@@ -27,7 +27,7 @@ namespace CarManagement.Extensions.Filters
             
             foreach (IVehicle vehicle in vehicles)
             {
-                if (vehicle.Enrollment.Serial  == "BBC")
+                if (vehicle.Enrollment.Serial  == enrollmentSerial)
                 {
                     yield return vehicle;
                 }
