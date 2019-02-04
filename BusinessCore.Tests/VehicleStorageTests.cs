@@ -174,13 +174,14 @@ namespace BusinessCore.Tests
                 Assert.AreEqual(2, selectedEngines.Count());
                 //Func<IVehicle, bool> byOddEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
-                
+
                 IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .getAll()
                     .filter(vehicle => vehicle.Enrollment.Number % 2 == 0)          //4
                     .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1
+                   
 
                 Assert.AreEqual(1, selectedEngines.Count());
             }

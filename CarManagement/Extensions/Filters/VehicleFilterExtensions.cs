@@ -13,7 +13,7 @@ namespace CarManagement.Extensions.Filters
             
             foreach (IVehicle vehicle in vehicles)
             {
-                if (vehicle.Enrollment.Number % 2 == 0)
+                if (filterByIsPairEnrollment(vehicle))
                 {
                     yield return vehicle;
                 }
@@ -31,7 +31,7 @@ namespace CarManagement.Extensions.Filters
             
             foreach (IVehicle vehicle in vehicles)
             {
-                if (vehicle.Enrollment.Serial  == enrollmentSerial)
+                if (filterByIsEnrollmentsSerial(vehicle,enrollmentSerial ))
                 {
                     yield return vehicle;
                 }
@@ -48,9 +48,10 @@ namespace CarManagement.Extensions.Filters
             
             foreach (IVehicle  vehicle in vehicles)
             {
-               
-                    yield return vehicle.Engine;
-      
+
+                yield return selectIsEngines(vehicle);
+
+
             }
         }
         public static IEngine  selectIsEngines(IVehicle vehicle)
@@ -64,13 +65,13 @@ namespace CarManagement.Extensions.Filters
         {
             foreach (IEngine engine in engines)
             {
-                if (engine.IsStarted)
+                if (filterByIsStarted(engine))
                     yield return engine;
             }
         }
         public static bool filterByIsStarted(IEngine engine)
         {
-            return engine.IsStarted;
+            return engine.IsStarted == true;
         }
 
 

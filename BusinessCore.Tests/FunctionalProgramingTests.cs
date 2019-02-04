@@ -35,8 +35,10 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
+                .TakeWhile(vehicle => vehicle.Engine.IsStarted == true)
                 .Select(vehicle => vehicle.Engine);
+
 
             Assert.AreEqual(4, engines.Count());
         }
@@ -44,9 +46,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            IEnumerable<IVehicle> vehicles = vehicleStorage
-                 .getAll()
-
+            IEnumerable<IWheel> engines = this.vehicleStorage
+                .getAll()
+                .Select(vehicle => vehicle)
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Select(vehicle => vehicle.Wheels[0])
         }
 
         [TestMethod]
