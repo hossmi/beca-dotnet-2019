@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Models.CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
@@ -17,9 +18,11 @@ namespace CarManagement.Builders
         private readonly string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
         private int[] serial = { 0, 0, 0 };
 
-        public VehicleBuilder()
-        {
+        private readonly IEnrollmentProvider enrollmentProvider;
 
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
         }
 
         public void addWheel()

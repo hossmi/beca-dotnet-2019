@@ -11,7 +11,7 @@ namespace CarManagement.Models
             private readonly List<Wheel> wheels;
             private readonly List<Door> doors;
 
-            public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, string enrollment)
+            public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment)
             {
                 if (doors.Count > 0 && doors.Count <= 4)
                 {
@@ -24,10 +24,7 @@ namespace CarManagement.Models
 
                 this.Engine = engine;
 
-                if (enrollment.Length == 8)
-                {
-                    this.Enrollment = enrollment;
-                }
+                this.Enrollment = enrollment;
             }
 
             public int DoorsCount
@@ -45,10 +42,14 @@ namespace CarManagement.Models
                     return this.wheels.Count;
                 }
             }
+            public IEnrollment Enrollment
+            {
+                get;
+            }
 
             public Engine Engine { get; }
 
-            public string Enrollment { get; }
+            
 
             public Wheel[] Wheels
             {
