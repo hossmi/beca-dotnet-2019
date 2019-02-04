@@ -23,6 +23,9 @@ namespace BusinessCore.Tests
 
             IVehicle vehicle = builder.build();
             Negassert.mustFail(() => vehicle.setWheelsPressure(0));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(0.99));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(-1));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(-10.5));
         }
         [TestMethod]
         public void Pressure_must_not_be_more_than_5()
@@ -38,6 +41,9 @@ namespace BusinessCore.Tests
 
             IVehicle vehicle = builder.build();
             Negassert.mustFail(() => vehicle.setWheelsPressure(6));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(5.01));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(100));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(120.01));
         }
     }
 }

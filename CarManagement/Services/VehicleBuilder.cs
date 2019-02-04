@@ -30,27 +30,27 @@ namespace CarManagement.Services
 
         public void addWheel()
         {
-            Asserts.isTrue(this.wheelsCount < MAX_WHEELS, "Maximum number of wheels reached. Cannot add more wheels.");
+            Asserts.isTrue(this.wheelsCount < MAX_WHEELS);
             this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isTrue(doorsCount >= 0, "Cannot create a vehicle with negative doors");
-            Asserts.isTrue(doorsCount <= MAX_DOORS, $"Cannot create a vehicle with more than {MAX_DOORS} doors");
+            Asserts.isTrue(doorsCount >= 0);
+            Asserts.isTrue(doorsCount <= MAX_DOORS);
             this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
-            Asserts.isTrue(horsePorwer <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
+            Asserts.isTrue(horsePorwer >= MINPOWER);
+            Asserts.isTrue(horsePorwer <= MAXPOWER);
             this.enginePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            Asserts.isEnumDefined<CarColor>(color, "The selected color does not match.");
+            Asserts.isEnumDefined<CarColor>(color);
             this.colorCode = color;
         }
 
@@ -89,7 +89,7 @@ namespace CarManagement.Services
 
         public void removeWheel()
         {
-            Asserts.isTrue(this.wheelsCount > 0, "The vehicle does not have any more wheels to remove.");
+            Asserts.isTrue(this.wheelsCount > 0);
             this.wheelsCount--;
         }
 
@@ -105,7 +105,8 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 0, "Cannot set pressure lower than 0");
+                    Asserts.isTrue(value >= 1);
+                    Asserts.isTrue(value <= 5);
                     this.pressure = value;
                 }
             }
@@ -117,13 +118,13 @@ namespace CarManagement.Services
 
             public void open()
             {
-                Asserts.isFalse(this.isOpen, "Door is already open.");
+                Asserts.isFalse(this.isOpen);
                 this.isOpen = true;
             }
 
             public void close()
             {
-                Asserts.isTrue(this.isOpen, "Door is already close.");
+                Asserts.isTrue(this.isOpen);
                 this.isOpen = false;
             }
 
@@ -147,15 +148,14 @@ namespace CarManagement.Services
 
             public Engine(int h)
             {
-                Asserts.isTrue(h >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
-                Asserts.isTrue(h <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
+                Asserts.isTrue(h >= MINPOWER);
+                Asserts.isTrue(h <= MAXPOWER);
                 this.horsepower = h;
-                //this.isStarted = false;
-            }
+            }           
 
             public void start()
             {
-                Asserts.isFalse(this.isStarted, "Engine is already started.");
+                Asserts.isFalse(this.isStarted);
                 this.isStarted = true;
             }
 
@@ -177,7 +177,7 @@ namespace CarManagement.Services
 
             public void stop()
             {
-                Asserts.isTrue(this.isStarted, "Engine is already stopped.");
+                Asserts.isTrue(this.isStarted);
                 this.isStarted = false;
             }
         }

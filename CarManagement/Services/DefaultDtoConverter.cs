@@ -152,7 +152,8 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 0, "Cannot set pressure lower than 0");
+                    Asserts.isTrue(value >= 1);
+                    Asserts.isTrue(value <= 5);
                     this.pressure = value;
                 }
             }
@@ -164,13 +165,13 @@ namespace CarManagement.Services
 
             public void open()
             {
-                Asserts.isFalse(this.isOpen, "Door is already open.");
+                Asserts.isFalse(this.isOpen);
                 this.isOpen = true;
             }
 
             public void close()
             {
-                Asserts.isTrue(this.isOpen, "Door is already close.");
+                Asserts.isTrue(this.isOpen);
                 this.isOpen = false;
             }
 
@@ -194,15 +195,14 @@ namespace CarManagement.Services
 
             public Engine(int h)
             {
-                Asserts.isTrue(h >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
-                Asserts.isTrue(h <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
+                Asserts.isTrue(h >= MINPOWER);
+                Asserts.isTrue(h <= MAXPOWER);
                 this.horsepower = h;
-                //this.isStarted = false;
             }
 
             public void start()
             {
-                Asserts.isFalse(this.isStarted, "Engine is already started.");
+                Asserts.isFalse(this.isStarted);
                 this.isStarted = true;
             }
 
@@ -224,7 +224,7 @@ namespace CarManagement.Services
 
             public void stop()
             {
-                Asserts.isTrue(this.isStarted, "Engine is already stopped.");
+                Asserts.isTrue(this.isStarted);
                 this.isStarted = false;
             }
         }
