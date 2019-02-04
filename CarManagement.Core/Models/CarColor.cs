@@ -1,4 +1,4 @@
-﻿namespace CarManagement.Models
+﻿namespace CarManagement.Core.Models
 {
     public enum CarColor
     {
