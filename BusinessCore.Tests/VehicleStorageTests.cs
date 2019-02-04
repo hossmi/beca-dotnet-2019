@@ -157,12 +157,12 @@ namespace BusinessCore.Tests
 
             IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                 .getAll()
-                .filterByPairEnrollments()
-                .filterByEnrollmentsSerial("BBC")
-                .selectEngines()
-                .filterByStarted();
+                .filterByPairEnrollments()          //4
+                .filterByEnrollmentsSerial("BBC")   //2
+                .selectEngines()                    //2
+                .filterByStarted();                 //1
 
-            Assert.AreEqual(2, selectedEngines2.Count());
+            Assert.AreEqual(1, selectedEngines2.Count());
         }
     }
 }
