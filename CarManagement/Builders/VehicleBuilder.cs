@@ -6,18 +6,23 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        public const int maxDoorsCount = 6;
+        public const int minDoorsCount = 0;
+        public const int minEngineHorsePower = 0;
+
         private int wheel;
         private int door;
         private int engineHorsePower;
         private CarColor color;
+        private Enrollment enrollment;
 
-        public VehicleBuilder()
+        public VehicleBuilder(Enrollment enrollment)
         {
-            this.wheel=0;
+            this.wheel = 0;
             this.door = 0;
             this.engineHorsePower = 0;
             this.color = CarColor.Red;
-
+            this.enrollment = enrollment;
         }
 
 
@@ -30,12 +35,19 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            this.door = doorsCount;
+            if (doorsCount >= minDoorsCount && doorsCount >= maxDoorsCount)
+            {
+                this.door = doorsCount;
+            }
+            
         }
 
         public void setEngine(int horsePorwer)
         {
-            this.engineHorsePower = horsePorwer;
+            if (horsePorwer >= minEngineHorsePower)
+            {
+                this.engineHorsePower = horsePorwer;
+            }
         }
 
         public void setColor(CarColor color)
@@ -63,8 +75,7 @@ namespace CarManagement.Builders
                 wheels.Add(w);
             }
 
-            Vehicle v = new Vehicle(wheels,doors, engine, color);
-            return v;
+            return new Vehicle(wheels, doors, engine, color);
         }
     }
 }
