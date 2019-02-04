@@ -39,9 +39,9 @@ namespace CarManagement.Extensions.Filters
         {
             List<IEngine> engines = new List<IEngine>();
 
-            foreach (IEngine engine in vehicles)
+            foreach (IVehicle vehicle in vehicles)
             {
-                engines.Add(engine);
+                engines.Add(vehicle.Engine);
             }
 
             return engines;
