@@ -24,36 +24,6 @@ namespace CarManagement.Services
         private List<IDoor> doors;
         private DoorDto[] doorsDto;
         private CarColor color;
-        public class Engine : IEngine
-        {
-            public int HorsePower => throw new System.NotImplementedException();
-
-            public bool IsStarted => throw new System.NotImplementedException();
-
-            public void start()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void stop()
-            {
-                throw new System.NotImplementedException();
-            }
-        }
-        public class Door : IDoor
-        {
-            public bool IsOpen => throw new System.NotImplementedException();
-
-            public void close()
-            {
-                throw new System.NotImplementedException();
-            }
-
-            public void open()
-            {
-                throw new System.NotImplementedException();
-            }
-        }
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
