@@ -9,6 +9,7 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        //Engine
         public class Engine : IEngine
         {
             private bool isstart;
@@ -36,6 +37,9 @@ namespace CarManagement.Services
                 this.isstart = false;
             }
         }
+        //Instancia Engine
+        Engine engine = new Engine();
+        //Door
         public class Door : IDoor
         {
             private bool isOpen;
@@ -57,27 +61,81 @@ namespace CarManagement.Services
                 this.isOpen = true;
             }
         }
+        //Instancia Door
+        Door door = new Door();
+        //Wheel
         public class Wheel : IWheel
         {
             public double Pressure { get; set; }
         }
+        //Instancia Wheel
+        Wheel wheel = new Wheel();
+        //Vehicle
         public class Vehicle : IVehicle
         {
-            public CarColor Color { get; }
+            private List<Wheel> wheels = new List<Wheel>();
+            private List<Door> doors = new List<Door>();
+            private int doorsCount;
+            private int wheelsCount;
+            public CarColor Color { get; set; }
+            public IEngine Engine { get; set; }
 
             public IDoor[] Doors { get; }
-
-            public IEngine Engine { get; }
 
             public IEnrollment Enrollment { get; }
 
             public IWheel[] Wheels { get; }
-        }
 
-        private Door door;
+            public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
+            {
+                this.wheels = wheels;
+                this.doors = doors;
+                this.Engine = engine;
+                this.Color = color;
+                this.Enrollment = enrollment;
+            }
+
+            public Vehicle()
+            {
+            }
+
+            public int DoorsCount
+            {
+                get
+                {
+                    return this.doors.Count;
+                }
+                set
+                {
+                    this.doorsCount = value;
+                }
+            }
+
+            public int WheelCount
+            {
+                get
+                {
+                    return this.wheels.Count;
+                }
+                set
+                {
+                    this.wheelsCount = value;
+                }
+            }
+            public void setWheelsPressure(double pression)
+            {
+                Asserts.isTrue(pression > 0);
+                foreach (Wheel wheel in this.wheels)
+                {
+                    wheel.Pressure = pression;
+                }
+            }
+
+        }
+        //Instancia Vehicle sin argumentos
+        Vehicle vehicle = new Vehicle();
         private List<Wheel> wheels;
         private List<Door> doors;
-        private Engine engine;
         private CarColor color;
         private int horsePorwer;
         private IEnrollmentProvider enrollmentProvider;
@@ -109,8 +167,8 @@ namespace CarManagement.Services
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer >= 0);
-            this.horsePorwer = horsePorwer;
+            Asserts.isTrue(this.horsePorwer >= 0);
+            Engine.HorsePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
