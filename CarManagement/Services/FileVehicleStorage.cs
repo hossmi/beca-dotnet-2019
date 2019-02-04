@@ -28,12 +28,12 @@ namespace CarManagement.Services
 
             foreach (Vehicle vehicle in vehicles)
             {
-                VehicleDto savedVehicle = this.dtoConverter.convert(vehicle);
+                VehicleDto savedVehicle = this.vehicleBuilder.export(vehicle);
                 jsonText += JsonConvert.SerializeObject(savedVehicle);
             }
             System.IO.File.WriteAllText(this.filePath, jsonText);
         }
-        private static IDictionary<IEnrollment, IVehicle> load(String filePath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> load(String filePath, IVehicleBuilder vehicleBuilder)
         {
             Dictionary<IEnrollment, IVehicle>  initialVehicles = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
 
@@ -45,7 +45,7 @@ namespace CarManagement.Services
                 foreach (string jsonObject in jsonObjects)
                 {
                     VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
-                    IVehicle vehicle = dtoConverter.convert(vehicleDto);
+                    IVehicle vehicle = vehicleBuilder.import(vehicleDto);
                     initialVehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }

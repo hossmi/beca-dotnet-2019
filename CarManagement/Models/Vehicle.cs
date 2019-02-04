@@ -22,20 +22,11 @@ namespace CarManagement.Models
             this.color = color;
             this.enrollment = enrollment;
         }
-        public int DoorsCount
-        {
-            get => this.doorList.Count;
-        }
+        public int DoorsCount { get => this.doorList.Count; }
 
-        public int WheelCount
-        {
-            get => this.wheelList.Count;
-        }
+        public int WheelCount { get => this.wheelList.Count; }
 
-        public IEnrollment Enrollment
-        {
-            get => this.enrollment;
-        }
+        public IEnrollment Enrollment { get => this.enrollment; }
 
         public CarColor Color { get => this.color; }
 
