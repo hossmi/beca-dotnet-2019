@@ -19,32 +19,18 @@ namespace CarManagement.Extensions.Filters
             }
         }
 
-        public static bool filterByPairEnrollments(IVehicle vehicle)
-        {
-            return (vehicle.Enrollment.Number % 2) == 0;
-        }
-
-        public static bool filterByEnrollmentsSerial(IVehicle vehicle, string enrollmentSerial)
-        {
-            return vehicle.Enrollment.Serial == enrollmentSerial;
-        }
-
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {         
-            
-            List<IVehicle> vehiclesBySerial = new List<IVehicle>();
             IEnumerator<IVehicle> enumerator = vehicles.GetEnumerator();
 
             while (enumerator.MoveNext())
             {
                 if(enumerator.Current.Enrollment.Serial == enrollmentSerial)
                 {
-                    vehiclesBySerial.Add(enumerator.Current);
+                    yield return enumerator.Current;
                 }                
             }
-
-            return vehiclesBySerial;
         }
 
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
@@ -78,11 +64,6 @@ namespace CarManagement.Extensions.Filters
             }
         }
 
-        public static bool filterByIsStarted(IEngine engine)
-        {
-            return engine.IsStarted;
-        }
-
         public static IEnumerable<T> filter<T>(
             this IEnumerable<T> items, Func<T, bool> filterDelegate)
         {
@@ -91,6 +72,37 @@ namespace CarManagement.Extensions.Filters
                 if (filterDelegate(item))
                     yield return item;
             }
+        }
+        
+        public static IEnumerable<T> filter2<T, T2>(this IEnumerable<T> items, Func<T, T2, bool> filterDelegate, T2 item2)
+        {
+            foreach(T item in items)
+            {
+                if(filterDelegate(item, item2))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        public static IEngine selectEngines(IVehicle vehicle)
+        {
+            return vehicle.Engine;
+        }
+
+        public static bool filterByPairEnrollments(IVehicle vehicle)
+        {
+            return (vehicle.Enrollment.Number % 2) == 0;
+        }
+
+        public static bool filterByEnrollmentsSerial(IVehicle vehicle, string enrollmentSerial)
+        {
+            return vehicle.Enrollment.Serial == enrollmentSerial;
+        }
+
+        public static bool filterByIsStarted(IEngine engine)
+        {
+            return engine.IsStarted;
         }
     }
 }
