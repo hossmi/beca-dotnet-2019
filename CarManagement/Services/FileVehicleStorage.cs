@@ -12,16 +12,14 @@ namespace CarManagement.Services
     public class FileVehicleStorage : AbstractVehicleStorage
     {
 
-
+        private readonly IDtoConverter  dtoConverter;
         private readonly string filePath;
-        private readonly IVehicleBuilder vehicleBuilder;
-        //private IDtoConverter  dtoConverter;
 
-        public FileVehicleStorage(string fileFullPath ,IVehicleBuilder vehicleBuilder  )
-            : base(load(fileFullPath ,vehicleBuilder ))
+        public FileVehicleStorage(string fileFullPath ,IDtoConverter dtoConverter )
+            : base(load(fileFullPath , dtoConverter ))
         {
             this.filePath = fileFullPath;
-            this.vehicleBuilder = vehicleBuilder;
+            this.dtoConverter  = dtoConverter;
         }
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
@@ -30,7 +28,7 @@ namespace CarManagement.Services
             foreach (IVehicle vehicle in vehicles.AsEnumerable())
             {
 
-                listVehicles[aux] = this.vehicleBuilder.export(vehicle);
+                listVehicles[aux] = this.dtoConverter.convert(vehicle);
                 aux++;
             }
             XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
@@ -39,7 +37,7 @@ namespace CarManagement.Services
             writer.Close();
         }
 
-        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IVehicleBuilder vehicleBuilder )
+        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IDtoConverter dtoConverter )
 
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
@@ -54,8 +52,7 @@ namespace CarManagement.Services
                 foreach (VehicleDto ToIvehcile in listVehicle)
                 {
 
-                    IVehicle vehicle = vehicleBuilder.import(ToIvehcile);
-                   //dtoConverter.convert(vehicleBuilder.import(vehicle));
+                    IVehicle vehicle = dtoConverter.convert(ToIvehcile);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }

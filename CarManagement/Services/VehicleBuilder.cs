@@ -65,9 +65,9 @@ namespace CarManagement.Services
                 this.color = color;
             }
 
-            private List<TInterface> generateList<TInterface, TInstance>(int count)
-            where TInstance : class, TInterface, new()
-            where TInterface : class
+          private List<TInterface> generateList<TInterface, TInstance>(int count)
+          where TInstance : class, TInterface, new()
+          where TInterface : class
             {
                 List<TInterface> list = new List<TInterface>();
                 for (int i = 0; i < count; i++)
@@ -84,7 +84,7 @@ namespace CarManagement.Services
 
                 //Generamos puertas
                 Asserts.isTrue(this.numberWheel > 0);
-                List<IDoor> doors = generateList<IDoor, Door>(this.numberDoor);
+                List<IDoor> doors = generateList<IDoor,Door>(this.numberDoor);
 
                 //Generamos motor
 
@@ -93,7 +93,7 @@ namespace CarManagement.Services
                 //Generamos ruedas
 
                 Asserts.isTrue(this.numberWheel > 0);
-                List<IWheel> wheels = generateList<IWheel, Wheel>(this.numberWheel);
+                List<IWheel> wheels = generateList<IWheel,Wheel>(this.numberWheel);
 
                 //Generamos matricula
 
@@ -137,10 +137,10 @@ namespace CarManagement.Services
                 private IReadOnlyList<IWheel> wheels;
                 private IEnrollment enrollment;
                 private IReadOnlyList<IDoor> doors;
-                private IEngine engine;
+                private Engine engine;
 
 
-                public Vehicle(CarColor color, List<IWheel> wheels, IEnrollment enrollment, List<IDoor> doors, IEngine engine)
+                public Vehicle(CarColor color, List<IWheel> wheels, IEnrollment enrollment, List<IDoor> doors, Engine engine)
                 {
                     this.color = color;
                     this.wheels = wheels;
@@ -252,7 +252,7 @@ namespace CarManagement.Services
 
                 public void stop()
                 {
-                    //Asserts.isTrue(this.IsStarted);
+                    Asserts.isTrue(this.IsStarted);
                     this.mode = false;
                 }
 
@@ -302,59 +302,12 @@ namespace CarManagement.Services
 
             public IVehicle import(VehicleDto vehicleDto)
             {
-                IEngine toEngine = convert(vehicleDto.Engine);
-                IEnrollment toEnrollment = convert(vehicleDto.Enrollment);
-                List<IWheel> listWheels = new List<IWheel>();
-                List<IDoor> listDoor = new List<IDoor>();
-             
-                foreach (WheelDto wheelsDto in vehicleDto.Wheels)
-                {
-                    IWheel setwheel = convert(wheelsDto);
-                    listWheels.Add(setwheel);
+                throw new NotImplementedException();
+            }
 
-                }
-                foreach (DoorDto doorDto in vehicleDto.Doors)
-                {
-                    IDoor setdoor = convert(doorDto);
-                    listDoor.Add(setdoor);
-
-                }
-                return new Vehicle(vehicleDto.Color, listWheels, toEnrollment, listDoor, toEngine);
-
-            }
-            public VehicleDto export(IVehicle vehicle)
+            public VehicleDto export(IVehicle vehicleDto)
             {
-                DefaultDtoConverter converter = new DefaultDtoConverter (this.enrollmentProvider);
-                return converter.convert(vehicle);
-            }
-            private  IDoor convert(DoorDto doorDto)
-            {
-                IDoor toMemory = new Door();
-                if (doorDto.IsOpen == true)
-                {
-                    toMemory.open();
-                }
-                toMemory.close();
-                return toMemory;
-            }
-            private  IWheel convert(WheelDto wheelDto)
-            {
-                return new Wheel(wheelDto.Pressure);
-
-            }
-            private IEnrollment convert(EnrollmentDto enrollmentDto)
-            {
-                return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-            }
-            private  IEngine convert(EngineDto engineDto)
-            {
-                IEngine toMemory = new Engine(engineDto.HorsePower);
-                if (engineDto.IsStarted == true)
-                {
-                    toMemory.start();
-                }
-                toMemory.stop();
-                return toMemory;
+                throw new NotImplementedException();
             }
         }
     }

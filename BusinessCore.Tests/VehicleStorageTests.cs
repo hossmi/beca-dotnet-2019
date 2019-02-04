@@ -4,7 +4,6 @@ using System.IO;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using CarManagement.Services;
-using CarManagement.Services.CarManagement.Builders;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -34,7 +33,7 @@ namespace BusinessCore.Tests
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath,vehicleBuilder);
+            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
             vehicleStorage.clear();
             Assert.AreEqual(0, vehicleStorage.Count);
