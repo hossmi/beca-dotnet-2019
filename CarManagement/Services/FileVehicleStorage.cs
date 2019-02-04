@@ -12,14 +12,16 @@ namespace CarManagement.Services
     public class FileVehicleStorage : AbstractVehicleStorage
     {
 
-        private readonly IDtoConverter  dtoConverter;
-        private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath ,IDtoConverter dtoConverter )
-            : base(load(fileFullPath , dtoConverter ))
+        private readonly string filePath;
+        private readonly IVehicleBuilder vehicleBuilder;
+        //private IDtoConverter  dtoConverter;
+
+        public FileVehicleStorage(string fileFullPath ,IVehicleBuilder vehicleBuilder  )
+            : base(load(fileFullPath ,vehicleBuilder ))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter  = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
@@ -28,7 +30,7 @@ namespace CarManagement.Services
             foreach (IVehicle vehicle in vehicles.AsEnumerable())
             {
 
-                listVehicles[aux] = this.dtoConverter.convert(vehicle);
+                listVehicles[aux] = this.vehicleBuilder.export(vehicle);
                 aux++;
             }
             XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
@@ -37,7 +39,7 @@ namespace CarManagement.Services
             writer.Close();
         }
 
-        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IDtoConverter dtoConverter )
+        private static IDictionary<IEnrollment, IVehicle> load(string fileFullPath,IVehicleBuilder vehicleBuilder )
 
         {
             EnrollmentEqualityComparer enrollmentEC = new EnrollmentEqualityComparer();
@@ -52,7 +54,8 @@ namespace CarManagement.Services
                 foreach (VehicleDto ToIvehcile in listVehicle)
                 {
 
-                    IVehicle vehicle = dtoConverter.convert(ToIvehcile);
+                    IVehicle vehicle = vehicleBuilder.import(ToIvehcile);
+                   //dtoConverter.convert(vehicleBuilder.import(vehicle));
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
             }
