@@ -9,18 +9,24 @@ namespace CarManagement.Extensions.Filters
     {
         public static IEnumerable<IVehicle> filterByPairEnrollments(
             this IEnumerable<IVehicle> vehicles)
-        {
-            List<IVehicle> vehiclesPairs = new List<IVehicle>();
-            
+        {            
             foreach(IVehicle vehicle in vehicles)
             {
                 if(vehicle.Enrollment.Number % 2 == 0)
                 {
-                    vehiclesPairs.Add(vehicle);
+                    yield return vehicle;
                 }
             }
+        }
 
-            return vehiclesPairs;
+        public static bool filterByPairEnrollments(IVehicle vehicle)
+        {
+            return (vehicle.Enrollment.Number % 2) == 0;
+        }
+
+        public static bool filterByEnrollmentsSerial(IVehicle vehicle, string enrollmentSerial)
+        {
+            return vehicle.Enrollment.Serial == enrollmentSerial;
         }
 
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
