@@ -239,8 +239,6 @@ namespace CarManagement.Services
                     return this.openDoor;
                 }
             }
-
-            
         }
 
         private class Engine : IEngine

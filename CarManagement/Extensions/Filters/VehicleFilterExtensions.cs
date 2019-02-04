@@ -39,18 +39,6 @@ namespace CarManagement.Extensions.Filters
             }
 
             return vehiclesBySerial;
-
-            /*
-            foreach (IVehicle vehicle in vehicles)
-            {
-                if (vehicle.Enrollment.Serial  == enrollmentSerial)
-                {
-                    vehiclesBySerial.Add(vehicle);
-                }
-            }
-
-            return vehiclesBySerial;
-            */
         }
 
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
