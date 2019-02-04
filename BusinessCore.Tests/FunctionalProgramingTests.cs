@@ -44,7 +44,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            double pressure = 0;
+            double pressure = 0.0;
              pressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
@@ -57,7 +57,7 @@ namespace BusinessCore.Tests
             //Assert.AreEqual(3.0, averagePressure);
             
 
-            Assert.AreEqual(3, pressure);
+            Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
