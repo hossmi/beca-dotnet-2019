@@ -7,21 +7,24 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
 
         private int wheels;
         private int doors;
         private int horsepowerValue;
         private CarColor vehicleColor;
 
-        private int numbers = 0000;
-        private string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
-        private int[] serial = { 0, 0, 0 };
-
+        private int numbers;
+        private readonly string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
+        private readonly int[] serial = { 0, 0, 0 };
         
-        private readonly IEnrollmentProvider enrollmentProvider;
-
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
+            this.wheels = 0;
+            this.doors = 0;
+            this.horsepowerValue = 0;
+            this.vehicleColor = CarColor.White;
+            this.numbers = 0;
             this.enrollmentProvider = enrollmentProvider;
         }
 
