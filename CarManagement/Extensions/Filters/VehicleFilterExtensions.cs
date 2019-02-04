@@ -10,12 +10,12 @@ namespace CarManagement.Extensions.Filters
             this IEnumerable<IVehicle> vehicles)
         {
 
-            var CurrentEnrollment = vehicles.GetEnumerator();
-            foreach (IVehicle vehiclesPairNumber in vehicles)
+            
+            foreach (IVehicle vehicle in vehicles)
             {
-                if (CurrentEnrollment.Current.Enrollment.Number % 2 == 0)
+                if (vehicle.Enrollment.Number % 2 == 0)
                 {
-                    yield return vehiclesPairNumber;
+                    yield return vehicle;
                 }
             }
             
@@ -24,12 +24,12 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            var CurrentEnrollment = vehicles.GetEnumerator();
-            foreach (IVehicle vehiclesSerial in vehicles)
+            
+            foreach (IVehicle vehicle in vehicles)
             {
-                if (CurrentEnrollment.Current.Enrollment.Serial == "BBC")
+                if (vehicle.Enrollment.Serial  == "BBC")
                 {
-                    yield return vehiclesSerial;
+                    yield return vehicle;
                 }
             }
 
