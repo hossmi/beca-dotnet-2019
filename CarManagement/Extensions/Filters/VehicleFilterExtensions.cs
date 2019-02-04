@@ -6,7 +6,7 @@ namespace CarManagement.Extensions.Filters
 {
     public static class VehicleFilterExtensions
     {
-        public static IEnumerable<IVehicle> getVehiclesByPairEnrollments( //probar mas tarde con enumerator
+        public static IEnumerable<IVehicle> filterByPairEnrollments(//probar mas tarde con enumerator
             this IEnumerable<IVehicle> vehicles)
         {
             List<IVehicle> pairVehicles = new List<IVehicle>();
@@ -19,9 +19,7 @@ namespace CarManagement.Extensions.Filters
             return pairVehicles;
         }
 
-
-
-        public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
+        public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
             List<IVehicle> serialVehicles = new List<IVehicle>();
@@ -35,7 +33,7 @@ namespace CarManagement.Extensions.Filters
             return serialVehicles;
         }
 
-        public static IEnumerable<IEngine> getEngines(
+        public static IEnumerable<IEngine> selectEngines(
             this IEnumerable<IVehicle> vehicles)
         {
             List<IEngine> pairVehicles = new List<IEngine>();
@@ -46,6 +44,24 @@ namespace CarManagement.Extensions.Filters
             }
 
             return pairVehicles;
+        }
+
+        public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
+        {
+            foreach (IEngine engine in engines)
+            {
+                if (engine.IsStarted)
+                    yield return engine;
+            }
+        }
+
+        public static IEnumerable<IEngine> filterByHorsePowerGreaterOrEqual(this IEnumerable<IEngine> engines, int horsePower)
+        {
+            foreach (IEngine engine in engines)
+            {
+                if (engine.HorsePower >= horsePower)
+                    yield return engine;
+            }
         }
     }
 }
