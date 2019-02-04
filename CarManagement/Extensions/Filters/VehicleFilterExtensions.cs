@@ -17,5 +17,10 @@ namespace CarManagement.Extensions.Filters
         {
             throw new NotImplementedException();
         }
+
+        public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
