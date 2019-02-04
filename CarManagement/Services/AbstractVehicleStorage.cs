@@ -39,7 +39,7 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public IVehicle[] getAll()
+        public IEnumerable<IVehicle> getAll()
         {
   
             IVehicle[] vehicleArray = new IVehicle[this.vehicles.Count];

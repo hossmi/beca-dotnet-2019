@@ -6,7 +6,7 @@ namespace CarManagement.Extensions.Filters
 {
     public static class VehicleFilterExtensions
     {
-        public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(
+        public static IEnumerable<IVehicle> filterByPairEnrollments(
             this IEnumerable<IVehicle> vehicles)
         {
 
@@ -21,16 +21,34 @@ namespace CarManagement.Extensions.Filters
             
         }
 
-        public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
+        public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
             throw new NotImplementedException();
 
         }
 
-        public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
+        public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
         {
             throw new NotImplementedException();
+        }
+
+        public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
+        {
+            foreach (IEngine engine in engines)
+            {
+                if (engine.IsStarted)
+                    yield return engine;
+            }
+        }
+
+        public static IEnumerable<IEngine> filterByHorsePowerGreaterOrEqual(this IEnumerable<IEngine> engines, int horsePower)
+        {
+            foreach (IEngine engine in engines)
+            {
+                if (engine.HorsePower >= horsePower)
+                    yield return engine;
+            }
         }
     }
 }
