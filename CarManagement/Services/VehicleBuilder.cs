@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CarManagement.Models;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using CarManagement.Core;
 using System.Linq;
@@ -117,6 +118,16 @@ namespace CarManagement.Services
 
             return new Vehicle(this.EngineClone, this.DoorListClone,
                 this.WheelListClone, this.Color, toProvideEnrollment );
+        }
+
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public VehicleDto export(IVehicle vehicleDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }
