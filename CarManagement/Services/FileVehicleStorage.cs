@@ -12,10 +12,9 @@ namespace CarManagement.Services
     {
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
-        private DefaultDtoConverter defaultDtoConverter;
 
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
-            : base(readFromFile(fileFullPath, vehicleBuilder, defaultDtoConverter))
+            : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
@@ -23,10 +22,10 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-            writeToFile(this.filePath, vehicles, this.defaultDtoConverter);
+            writeToFile(this.filePath, vehicles);
         }
 
-        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder, DefaultDtoConverter defaultDtoConverter )
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             EnrollmentEqualityComparer enrollmentEqualityComparer = new EnrollmentEqualityComparer();
             IDictionary<IEnrollment, IVehicle> vehicles= new Dictionary<IEnrollment, IVehicle>(enrollmentEqualityComparer);
@@ -40,20 +39,20 @@ namespace CarManagement.Services
 
                 foreach (VehicleDto vDto in vehicleArray)
                 {
-                    IVehicle vehicle = defaultDtoConverter.convert(vDto);
+                    IVehicle vehicle = vehicleBuilder.import(vDto);
                     vehicles.Add(vehicle.Enrollment,vehicle);
                 }
             }
             return vehicles;
         }
 
-        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles, DefaultDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IEnumerable<IVehicle> vehicles)
         {
             VehicleDto[] vehiclesDto = new VehicleDto[vehicles.Count()];
             int aux = 0;
             foreach (IVehicle vehicle in vehicles)
             {
-                VehicleDto vehicleDto = dtoConverter.convert(vehicle);
+                VehicleDto vehicleDto = vehicleBuilder.;// .convert(vehicle);
                 vehiclesDto[aux] = vehicleDto;
                 aux++;
             }

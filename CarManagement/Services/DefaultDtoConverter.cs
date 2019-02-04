@@ -8,51 +8,46 @@ namespace CarManagement.Services
     public class DefaultDtoConverter 
     {
         private IEnrollmentProvider enrollmentProvider;
-        private IEnrollment enrollment;
+        //private IEnrollment enrollment;
         private VehicleBuilder vehicleBuilder;
-
-
-
+        
+        
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
         }
-
-
+        public DefaultDtoConverter()
+        {
+            this.vehicleBuilder = new VehicleBuilder();
+        }
+        
         public IEngine convert(EngineDto engineDto)
         {
             return convertToEngine(engineDto);
         }
-
         public EngineDto convert(IEngine engine)
         {
             return convertToEngineDto(engine);
         }
-
-        
+                
         public IDoor convert(DoorDto doorDto)
         {
             return convertToDoor(doorDto);
         }
-
         public DoorDto convert(IDoor door)
         {
             return convertToDoorDto(door);
         }
-
-       
-
+        
         public IWheel convert(WheelDto wheelDto)
         {
             return convertToWheel(wheelDto);
         }
-
         public WheelDto convert(IWheel wheel)
         {
             return convertToWheelDto(wheel);
         }
-
-        
+             
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
@@ -62,8 +57,7 @@ namespace CarManagement.Services
         {
             return convertToIEnrollmentDto(enrollment);
         }
-
-
+        
 
         public IVehicle convert(VehicleDto vehicleDto)
         {
@@ -105,6 +99,7 @@ namespace CarManagement.Services
             };
         }
 
+
         private IEnrollment convertToIEnrollment(EnrollmentDto enrollmentDto)
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial,
@@ -119,6 +114,7 @@ namespace CarManagement.Services
             };
         }
         
+
         private IEngine convertToEngine(EngineDto engineDto)
         {
             return this.vehicleBuilder.convert(engineDto);
@@ -132,6 +128,7 @@ namespace CarManagement.Services
             };
         }
 
+
         private IDoor convertToDoor(DoorDto doorDto)
         {
             return this.vehicleBuilder.convert(doorDto);
@@ -143,6 +140,7 @@ namespace CarManagement.Services
                 IsOpen = door.IsOpen
             };
         }
+
         
         private IWheel convertToWheel(WheelDto wheelDto)
         {

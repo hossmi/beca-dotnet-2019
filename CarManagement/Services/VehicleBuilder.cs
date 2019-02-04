@@ -25,6 +25,15 @@ namespace CarManagement.Services
             this.engine = 0;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
+            this.defaultDtoConverter = new DefaultDtoConverter();
+        }
+        public VehicleBuilder()
+        {
+            this.numberWheel = 0;
+            this.numberDoor = 0;
+            this.engine = 0;
+            this.color = CarColor.Red;
+            this.defaultDtoConverter = new DefaultDtoConverter();
         }
 
         public void addWheel()
@@ -314,9 +323,9 @@ namespace CarManagement.Services
 
             return new Vehicle(color, wheels, enrollment, doors, engine);
         }
-        public VehicleDto export(IVehicle vehicleDto)
+        public VehicleDto export(IVehicle vehicle)
         {
-            return defaultDtoConverter.convert(vehicleDto);
+            return defaultDtoConverter.convert(vehicle);
         }
     }
 }
