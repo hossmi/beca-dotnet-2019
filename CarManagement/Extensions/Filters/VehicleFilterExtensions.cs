@@ -9,7 +9,9 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(
             this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            List<IVehicle> pairVehicles = new List<IVehicle>;
+
+      
         }
 
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
