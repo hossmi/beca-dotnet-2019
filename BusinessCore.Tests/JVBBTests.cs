@@ -73,9 +73,6 @@ namespace BusinessCore.Tests
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             //IDtoConverter dtoConverter = new DefaultDtoConverter(enrollmentProvider);
-            IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
-            IVehicleStorage vehicleMemoryStorage = new InMemoryVehicleStorage();
-
 
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
@@ -83,18 +80,29 @@ namespace BusinessCore.Tests
             vehicleBuilder.setEngine(40);
             motoVehicle = vehicleBuilder.build();
 
-            vehicleFileStorage.set(motoVehicle);
-            vehicleMemoryStorage.set(motoVehicle);
+            using (IVehicleStorage vehicleMemoryStorage = new InMemoryVehicleStorage())
+            {
+                using (IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+                {
+                    vehicleFileStorage.set(motoVehicle);
+                    vehicleMemoryStorage.set(motoVehicle);
+                }
 
-            vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
+                IVehicle memoryVehicleA = vehicleMemoryStorage.get(enrollmentProvider.DefaultEnrollment);
+                IVehicle fileVehicle;
 
-            IVehicle memoryVehicleA = vehicleMemoryStorage.get(enrollmentProvider.DefaultEnrollment);
-            IVehicle fileVehicle = vehicleFileStorage.get(enrollmentProvider.DefaultEnrollment);
+                using (IVehicleStorage vehicleFileStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+                {
+                    fileVehicle = vehicleFileStorage.get(enrollmentProvider.DefaultEnrollment);
 
-            Assert.IsNotNull(memoryVehicleA);
-            Assert.IsNotNull(vehicleFileStorage);
+                    Assert.IsNotNull(memoryVehicleA);
+                    Assert.IsNotNull(vehicleFileStorage);
 
-            Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle, equalityComparer));
+                    Assert.IsTrue(SameVehicle(memoryVehicleA, fileVehicle, equalityComparer));
+                }
+            }
+
+
         }
 
         private static bool SameVehicle(IVehicle v1, IVehicle v2, IEqualityComparer<IEnrollment> enrollmentComparer)
