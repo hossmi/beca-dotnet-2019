@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
             Assert.AreEqual(6, vehicles.Length);
@@ -34,7 +34,7 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Engine.IsStarted)
                 .Select(vehicle => vehicle.Engine);
 
             Assert.AreEqual(4, engines.Count());
@@ -43,7 +43,14 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            throw new NotImplementedException();
+            /*double pressureMedia = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Average(vehicle => )
+
+            Assert.AreEqual(3, vehicles.Length);*/
+
+
         }
 
         [TestMethod]
