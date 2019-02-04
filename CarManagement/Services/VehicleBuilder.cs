@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
@@ -188,12 +189,12 @@ namespace CarManagement.Services
         {
             private List<IDoor> doors;
             private List<IWheel> wheels;
-            private Engine engine;
+            private IEngine engine;
             private CarColor color;
             private IEnrollment enrollment;
             private CarColor colorCode;
 
-            public Vehicle(List<IWheel> wheels, List<IDoor> doors, Engine engine, CarColor colorCode, IEnrollment enrollment)
+            public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor colorCode, IEnrollment enrollment)
             {
                 this.wheels = wheels;
                 this.doors = doors;
@@ -289,12 +290,129 @@ namespace CarManagement.Services
 
         public IVehicle import(VehicleDto vehicleDto)
         {
-            throw new NotImplementedException();
+            IVehicle v;
+
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
+            IEngine engine;
+            IEnrollment enrollment;
+
+            foreach (WheelDto w in vehicleDto.Wheels)
+            {
+                wheels.Add(convert(w));
+
+            }
+
+            foreach (DoorDto d in vehicleDto.Doors)
+            {
+                doors.Add(convert(d));
+            }
+            engine = convert(vehicleDto.Engine);
+
+            enrollment = convert(vehicleDto.Enrollment);
+
+            v = new Vehicle(wheels, doors, engine, vehicleDto.Color, enrollment);
+
+            return v;
         }
 
         public VehicleDto export(IVehicle vehicleDto)
         {
-            throw new NotImplementedException();
+            VehicleDto vDto = new VehicleDto();
+            vDto.Color = vehicleDto.Color;
+            vDto.Engine = convert(vehicleDto.Engine);
+            vDto.Enrollment = convert(vehicleDto.Enrollment);
+            vDto.Wheels = new WheelDto[vehicleDto.Wheels.Length];
+            vDto.Doors = new DoorDto[vehicleDto.Doors.Length];
+
+            int i = 0;
+            foreach (IWheel w in vehicleDto.Wheels)
+            {
+                vDto.Wheels[i] = convert(w);
+                i++;
+            }
+
+            int j = 0;
+            foreach (IDoor d in vehicleDto.Doors)
+            {
+                vDto.Doors[j] = convert(d);
+                j++;
+            }
+
+            return vDto;
         }
+
+        public IEngine convert(EngineDto engineDto)
+        {
+            IEngine e = new Engine(engineDto.HorsePower);
+
+            if (engineDto.IsStarted)
+                e.start();
+            //else
+            //e.stop();
+
+            return e;
+        }
+
+        public EngineDto convert(IEngine engine)
+        {
+            EngineDto eDto = new EngineDto();
+            eDto.IsStarted = engine.IsStarted;
+            eDto.HorsePower = engine.HorsePower;
+
+            return eDto;
+        }
+
+
+        public IDoor convert(DoorDto doorDto)
+        {
+            IDoor d = new Door();
+
+            if (doorDto.IsOpen)
+                d.open();
+            else
+                d.close();
+
+            return d;
+        }
+
+        public DoorDto convert(IDoor door)
+        {
+            DoorDto dDto = new DoorDto();
+            dDto.IsOpen = door.IsOpen;
+
+            return dDto;
+        }
+
+        public IWheel convert(WheelDto wheelDto)
+        {
+            IWheel w = new Wheel();
+            w.Pressure = wheelDto.Pressure;
+
+            return w;
+        }
+
+        public WheelDto convert(IWheel wheel)
+        {
+            WheelDto wDto = new WheelDto();
+            wDto.Pressure = wheel.Pressure;
+            return wDto;
+        }
+
+        public IEnrollment convert(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+        }
+
+        public EnrollmentDto convert(IEnrollment enrollment)
+        {
+            EnrollmentDto eDto = new EnrollmentDto();
+            eDto.Serial = enrollment.Serial;
+            eDto.Number = enrollment.Number;
+
+            return eDto;
+        }
+
     }
 }
+
