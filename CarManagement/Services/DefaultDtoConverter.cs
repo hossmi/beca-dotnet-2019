@@ -18,15 +18,17 @@ namespace CarManagement.Services
         private Wheel wheel;
         private List<Wheel> wheels;
         private WheelDto wheelDto;
+        private WheelDto[] wheelsDto;
         private List<Door> doors;
+        private DoorDto[] doorsDto;
         private CarColor color;
         
-        //Memoria ->Fichero
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
         }
 
+        //Engine
         //Fichero ->Memoria
         public Engine convert(EngineDto engineDto)
         {
@@ -45,15 +47,14 @@ namespace CarManagement.Services
             return this.engineDto;
         }
 
-        //Fichero ->Memoria
+        //VehicleDto -> Vehicle
         public Vehicle convert(VehicleDto vehicleDto)
         {
-            this.vehicleDto = new VehicleDto();
             this.color = new CarColor();
             this.wheels = new List<Wheel>();
             this.doors = new List<Door>();
             this.engine = new Engine();
-
+            this.color = new CarColor();
             for (int i = 0; i < vehicleDto.Wheels.Length; i++)
             {
                 this.wheels.Add(convert(vehicleDto.Wheels[i]));
@@ -62,34 +63,40 @@ namespace CarManagement.Services
             {
                 this.doors.Add(convert(vehicleDto.Doors[i]));
             }
-            this.vehicle.carColor = this.vehicleDto.Color;
-            this.vehicle.Engine = convert(vehicleDto.Engine);
+            this.engine = convert(vehicleDto.Engine);
             this.color = vehicleDto.Color;
             this.enrollment = convert(vehicleDto.Enrollment);
             this.vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
             return this.vehicle;
         }
 
-        //Memoria ->Fichero
+        //Vehicle -> VehicleDto
         public VehicleDto convert(Vehicle vehicle)
         {
             this.vehicleDto = new VehicleDto();
+            this.vehicleDto.Color = new CarColor();
+            this.vehicleDto.Doors = new DoorDto[vehicle.Doors.Length];
+            this.vehicleDto.Wheels = new WheelDto[vehicle.Wheels.Length];
+            this.vehicleDto.Enrollment = new EnrollmentDto();
+            this.vehicleDto.Engine = new EngineDto();
+
             for (int i = 0; i < vehicle.Wheels.Length; i++)
             {
                 this.vehicleDto.Wheels[i] = convert(vehicle.Wheels[i]);
-                i++;
             }
 
             for (int i = 0; i < vehicle.Doors.Length; i++)
             {
                 this.vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
-                i++;
             }
+
             this.vehicleDto.Color = vehicle.carColor;
             this.vehicleDto.Enrollment = convert(vehicle.Enrollment);
+            this.vehicleDto.Engine = convert(vehicle.Engine);
             return this.vehicleDto;
         }
 
+        //Door
         //Fichero ->Memoria
         public Door convert(DoorDto doorDto)
         {
@@ -109,6 +116,7 @@ namespace CarManagement.Services
             return this.doorDto;
         }
 
+        //Wheel
         //Fichero ->Memoria
         public Wheel convert(WheelDto wheelDto)
         {
@@ -125,6 +133,7 @@ namespace CarManagement.Services
             return this.wheelDto;
         }
 
+        //IEnrollment
         //Fichero ->Memoria
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
