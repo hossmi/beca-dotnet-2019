@@ -15,39 +15,29 @@ namespace CarManagement.Extensions.Filters
             {
                 if (vehicle.Enrollment.Number % 2 == 0)
                 {
-                    vehiclesEnrollmentPair.Add(vehicle);
+                    yield return vehicle;
                 }
             }
-            return vehiclesEnrollmentPair;
         }
 
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            List<IVehicle> vehiclesSerial = new List<IVehicle>();
-
             foreach (IVehicle vehicle in vehicles)
             {
                 if (vehicle.Enrollment.Serial == enrollmentSerial)
                 {
-                    vehiclesSerial.Add(vehicle);
+                    yield return vehicle;
                 }
             }
-
-            return vehicles; ;
         }
 
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
         {
-            List<IEngine> engines = new List<IEngine>();
-
             foreach (IVehicle vehicle in vehicles)
             {
-                engines.Add(vehicle.Engine);
+                yield return vehicle.Engine;
             }
-
-            return engines;
-            ;// throw new NotImplementedException();
         }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
