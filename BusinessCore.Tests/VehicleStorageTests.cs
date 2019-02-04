@@ -117,8 +117,8 @@ namespace BusinessCore.Tests
 
             foreach (IVehicleStorage vehicleStorage in vehicleStorages)
             {
-                IVehicle[] vehicles = vehicleStorage.getAll();
-                Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
+                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                Assert.AreEqual(enrollmentProvider.Count, vehicles.Count());
             }
         }
 
