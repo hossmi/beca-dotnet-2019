@@ -6,14 +6,14 @@ namespace CarManagement.Extensions.Filters
 {
     public static class VehicleFilterExtensions
     {
-        public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(
+        public static IEnumerable<IVehicle> getVehiclesByPairEnrollments( //probar mas tarde con enumerator
             this IEnumerable<IVehicle> vehicles)
         {
             List<IVehicle> pairVehicles = new List<IVehicle>();
-            { 
-            foreach (IVehicle vehicle in vehicles)
-                if (vehicle.Enrollment.Number % 2 == 0) //repasar bien los % (resto)
-                    pairVehicles.Add(vehicle);
+            {
+                foreach (IVehicle vehicle in vehicles)
+                    if (vehicle.Enrollment.Number % 2 == 0) //repasar bien los % (resto)
+                        pairVehicles.Add(vehicle);
             }
 
             return pairVehicles;
@@ -33,6 +33,19 @@ namespace CarManagement.Extensions.Filters
             }
 
             return serialVehicles;
+        }
+
+        public static IEnumerable<IEngine> getEngines(
+            this IEnumerable<IVehicle> vehicles)
+        {
+            List<IEngine> pairVehicles = new List<IEngine>();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                pairVehicles.Add(vehicle.Engine);
+            }
+
+            return pairVehicles;
         }
     }
 }

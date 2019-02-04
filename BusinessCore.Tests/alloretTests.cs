@@ -1,4 +1,4 @@
-﻿using CarManagement.Extensions.Vehicles;
+using CarManagement.Extensions.Vehicles;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
