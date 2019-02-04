@@ -56,8 +56,9 @@ namespace BusinessCore.Tests
             Negassert.mustFail(() => vehicle.Engine.start());
 
             Negassert.mustFail(() => vehicle.setWheelsPressure(-1));
-            vehicle.setWheelsPressure(0);
-            vehicle.setWheelsPressure(0.99);
+            Negassert.mustFail(() => vehicle.setWheelsPressure(0));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(0.99));
+            Negassert.mustFail(() => vehicle.setWheelsPressure(5.01));
             vehicle.setWheelsPressure(2);
 
         }
