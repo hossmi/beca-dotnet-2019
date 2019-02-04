@@ -21,7 +21,6 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            List<IVehicle> filteredVehicles = new List<IVehicle>();
             foreach (IVehicle vehicle in vehicles)
             {
                 if (vehicle.Enrollment.Serial == enrollmentSerial)
