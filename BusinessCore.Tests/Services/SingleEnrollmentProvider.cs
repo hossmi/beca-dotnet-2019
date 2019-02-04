@@ -1,7 +1,7 @@
 ﻿using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 
-namespace BusinessCore.Tests
+namespace BusinessCore.Tests.Services
 {
     public class SingleEnrollmentProvider : IEnrollmentProvider
     {
