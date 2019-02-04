@@ -15,7 +15,7 @@ namespace CarManagement.Services
 
         public IEngine convert(EngineDto engineDto)
         {
-            Engine engine = new Engine(engineDto.HorsePower);
+            IEngine engine = new IEngine(engineDto.HorsePower);
 
             if (engineDto != null)
                 engine.IsStarted = engineDto.IsStarted;
@@ -42,7 +42,7 @@ namespace CarManagement.Services
             return door;
         }
 
-        public DoorDto convert(Door door)
+        public DoorDto convert(IDoor door)
         {
             DoorDto doorDto = new DoorDto();
             doorDto.IsOpen = door.IsOpen;
@@ -70,7 +70,7 @@ namespace CarManagement.Services
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
-            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
         public EnrollmentDto convert(IEnrollment enrollment)
@@ -137,103 +137,104 @@ namespace CarManagement.Services
             return vehicleDto;
 
             public IDoor convert(DoorDto doorDto)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public DoorDto convert(IDoor door)
-        {
-            DoorDto doorDto = new DoorDto();
-            doorDto.IsOpen = door.IsOpen;
-
-            return doorDto;
-        }
-
-        public IWheel convert(WheelDto wheelDto)
-        {
-            Wheel wheel = new Wheel();
-
-            if (wheelDto != null)
-                wheel.Pressure = wheelDto.Pressure;
-
-            return wheel;
-        }
-
-        public WheelDto convert(IWheel wheel)
-        {
-            WheelDto wheelDto = new WheelDto();
-            wheelDto.Pressure = wheel.Pressure;
-
-            return wheelDto;
-        }
-
-        public IEnrollment convert(EnrollmentDto enrollmentDto)
-        {
-            return enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        }
-
-        public EnrollmentDto convert(IEnrollment enrollment)
-        {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Serial = enrollment.Serial;
-            enrollmentDto.Number = enrollment.Number;
-
-            return enrollmentDto;
-        }
-
-        public Vehicle convert(VehicleDto vehicleDto)
-        {
-            Vehicle vehicle;
-            List<Door> doors = new List<Door>();
-            List<Wheel> wheels = new List<Wheel>();
-
-            foreach (DoorDto doorDto in vehicleDto.Doors)
             {
-                doors.Add(convert(doorDto));
+                throw new System.NotImplementedException();
             }
 
-            foreach (WheelDto wheelDto in vehicleDto.Wheels)
+            public DoorDto convert(IDoor door)
             {
-                wheels.Add(convert(wheelDto));
+                DoorDto doorDto = new DoorDto();
+                doorDto.IsOpen = door.IsOpen;
+
+                return doorDto;
             }
 
-            Engine engine = convert(vehicleDto.Engine);
-            IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            CarColor Color = vehicleDto.Color;
+            public IWheel convert(WheelDto wheelDto)
+            {
+                Wheel wheel = new Wheel();
 
-            vehicle = new Vehicle(doors, wheels, engine, enrollment, Color);
-            return vehicle;
+                if (wheelDto != null)
+                    wheel.Pressure = wheelDto.Pressure;
+
+                return wheel;
+            }
+
+            public WheelDto convert(IWheel wheel)
+            {
+                WheelDto wheelDto = new WheelDto();
+                wheelDto.Pressure = wheel.Pressure;
+
+                return wheelDto;
+            }
+
+            public IEnrollment convert(EnrollmentDto enrollmentDto)
+            {
+                return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            }
+
+            public EnrollmentDto convert(IEnrollment enrollment)
+            {
+                EnrollmentDto enrollmentDto = new EnrollmentDto();
+                enrollmentDto.Serial = enrollment.Serial;
+                enrollmentDto.Number = enrollment.Number;
+
+                return enrollmentDto;
+            }
+
+            public Vehicle convert(VehicleDto vehicleDto)
+            {
+                Vehicle vehicle;
+                List<Door> doors = new List<Door>();
+                List<Wheel> wheels = new List<Wheel>();
+
+                foreach (DoorDto doorDto in vehicleDto.Doors)
+                {
+                    doors.Add(convert(doorDto));
+                }
+
+                foreach (WheelDto wheelDto in vehicleDto.Wheels)
+                {
+                    wheels.Add(convert(wheelDto));
+                }
+
+                Engine engine = convert(vehicleDto.Engine);
+                IEnrollment enrollment = convert(vehicleDto.Enrollment);
+                CarColor Color = vehicleDto.Color;
+
+                vehicle = new Vehicle(doors, wheels, engine, enrollment, Color);
+                return vehicle;
+            }
+
+            public VehicleDto convert(Vehicle vehicle)
+            {
+                VehicleDto vehicleDto = new VehicleDto();
+
+                DoorDto[] doorsDto = new DoorDto[vehicle.DoorsCount];
+                WheelDto[] wheelsDto = new WheelDto[vehicle.WheelCount];
+
+
+
+                for (int i = vehicle.DoorsCount - 1; i > 0; i--)
+                {
+                    doorsDto[i] = convert(vehicle.Doors[i]);
+                }
+
+                for (int i = vehicle.WheelCount - 1; i > 0; i--)
+                {
+                    wheelsDto[i] = convert(vehicle.Wheels[i]);
+                }
+
+                EngineDto engineDto = convert(vehicle.Engine);
+                EnrollmentDto enrollmentDto = convert(vehicle.Enrollment);
+
+                vehicleDto.Doors = doorsDto;
+                vehicleDto.Wheels = wheelsDto;
+                vehicleDto.Color = vehicle.Color;
+                vehicleDto.Engine = engineDto;
+                vehicleDto.Enrollment = enrollmentDto;
+
+                return vehicleDto;
+            }
         }
 
-        public VehicleDto convert(Vehicle vehicle)
-        {
-            VehicleDto vehicleDto = new VehicleDto();
-
-            DoorDto[] doorsDto = new DoorDto[vehicle.DoorsCount];
-            WheelDto[] wheelsDto = new WheelDto[vehicle.WheelCount];
-
-
-
-            for (int i = vehicle.DoorsCount - 1; i > 0; i--)
-            {
-                doorsDto[i] = convert(vehicle.Doors[i]);
-            }
-
-            for (int i = vehicle.WheelCount - 1; i > 0; i--)
-            {
-                wheelsDto[i] = convert(vehicle.Wheels[i]);
-            }
-
-            EngineDto engineDto = convert(vehicle.Engine);
-            EnrollmentDto enrollmentDto = convert(vehicle.Enrollment);
-
-            vehicleDto.Doors = doorsDto;
-            vehicleDto.Wheels = wheelsDto;
-            vehicleDto.Color = vehicle.Color;
-            vehicleDto.Engine = engineDto;
-            vehicleDto.Enrollment = enrollmentDto;
-
-            return vehicleDto;
-        }
     }
-}
