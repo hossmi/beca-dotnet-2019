@@ -25,9 +25,22 @@ namespace CarManagement.Extensions.Filters
 
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
-        {
+        {         
+            
             List<IVehicle> vehiclesBySerial = new List<IVehicle>();
+            IEnumerator<IVehicle> enumerator = vehicles.GetEnumerator();
 
+            while (enumerator.MoveNext())
+            {
+                if(enumerator.Current.Enrollment.Serial == enrollmentSerial)
+                {
+                    vehiclesBySerial.Add(enumerator.Current);
+                }                
+            }
+
+            return vehiclesBySerial;
+
+            /*
             foreach (IVehicle vehicle in vehicles)
             {
                 if (vehicle.Enrollment.Serial  == enrollmentSerial)
@@ -37,6 +50,7 @@ namespace CarManagement.Extensions.Filters
             }
 
             return vehiclesBySerial;
+            */
         }
     }
 }
