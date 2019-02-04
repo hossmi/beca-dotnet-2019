@@ -1,17 +1,17 @@
-﻿using CarManagement.Models;
+﻿using CarManagement.Core;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
-using System;
 namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
-        private int number1;
-        private int number2;
-        private int number3;
-        private int number4;
-        private readonly string letters;
-        private readonly int sizeLetters;
 
+        private const char INITIAL_LETTER = 'B';
+        static int number = 0;
+        static char Letter1 = INITIAL_LETTER;
+        static char Letter2 = INITIAL_LETTER;
+        static char Letter3 = INITIAL_LETTER;
 
         private class Enrollment : IEnrollment
         {
@@ -20,9 +20,9 @@ namespace CarManagement.Services
                 this.Serial = serial;
                 this.Number = number;
             }
-            
-            public string Serial{get;}
-            public int Number{get;}
+
+            public string Serial { get; }
+            public int Number { get; }
 
             public override string ToString()
             {
@@ -30,60 +30,48 @@ namespace CarManagement.Services
             }
         }
 
-        public DefaultEnrollmentProvider()
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            this.number1 = 0;
-            this.number2 = 0;
-            this.number3 = 0;
-            this.number4 = 0;
-            this.letters = "BCDFGHJKLMNPRSTVWXYZ";
-            this.sizeLetters = this.letters.Length-1;
+            IEnrollment e2 = new Enrollment(serial, number);
+
+            return e2;
         }
 
         IEnrollment IEnrollmentProvider.getNew()
         {
-            if (number4 <= 9999)
+            if (number >= 10000)
             {
-                number4++;
-            }
-            else
-            {
-                number4 = 0;
-                if (number3 < this.sizeLetters)
+                number = 0;
+                Letter3++;
+                if (!IsValidLetter(Letter3))
+                    Letter3++;
+                if (Letter3 > 'Z')
                 {
-                    number3++;
-                }
-                else
-                {
-                    number4 = 0;
-                    number3 = 0;
-                    if (number2 < this.sizeLetters)
+                    Letter3 = INITIAL_LETTER;
+                    Letter2++;
+                    if (!IsValidLetter(Letter2))
+                        Letter2++;
+                    if (Letter2 > 'Z')
                     {
-                        number2++;
-                    }
-                    else
-                    {
-                        number4 = 0;
-                        number3 = 0;
-                        number2 = 0;
-                        if (number1 < this.sizeLetters)
-                        {
-                            number1++;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Superado límite de matrículas");
-                        }
+                        Letter2 = INITIAL_LETTER;
+                        Letter1++;
+                        if (!IsValidLetter(Letter1))
+                            Letter1++;
+                        Asserts.isTrue(Letter1 <= 'Z', "Alcanzado el limite maximo de matriculas");
                     }
                 }
             }
-            string lettersEnrollment = this.letters[number1].ToString() + this.letters[number2].ToString() + this.letters[number3].ToString();
-            return new Enrollment(lettersEnrollment, number4);
+
+            IEnrollment enrollment = new Enrollment(Letter1.ToString() + Letter2.ToString() + Letter3.ToString(), number);
+            number++;
+
+            return enrollment;
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        private bool IsValidLetter(char letter)
         {
-            return new Enrollment(serial, number);
+            string allowedLetters = "BCDFGHJKLMNPRSTVWXYZ";
+            return allowedLetters.Contains(letter.ToString());
         }
     }
 }

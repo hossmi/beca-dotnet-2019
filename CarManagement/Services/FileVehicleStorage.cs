@@ -1,30 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using CarManagement.Models;
-using CarManagement.Models.DTOs;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-        public class FileVehicleStorage : AbstractVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDtoConverter dtoConverter;
+        private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter): base(load(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
+            : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
+
             List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
 
-            foreach (Vehicle v in vehicles)
+            foreach (IVehicle v in vehicles)
             {
-                vehiclesDtoList.Add(this.dtoConverter.convert(v));
+                vehiclesDtoList.Add(this.vehicleBuilder.export(v));
             }
             XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
             TextWriter writer = new StreamWriter(this.filePath);
@@ -32,19 +34,20 @@ namespace CarManagement.Services
             writer.Close();
         }
 
-        private static IDictionary<IEnrollment, Vehicle> load(string filePath, IDtoConverter dtoConverter)
-        {
-            IDictionary<IEnrollment, Vehicle> vehicleDictionary = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
-            if (File.Exists(filePath))
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
+        {
+            IDictionary<IEnrollment, IVehicle> vehicleDictionary = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
+
+            if (File.Exists(fileFullPath))
             {
                 XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
-                TextReader reader = new StreamReader(filePath);
+                TextReader reader = new StreamReader(fileFullPath);
                 List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)ser.Deserialize(reader);
                 reader.Close();
                 foreach (VehicleDto vDto in vehiclesDtoList)
                 {
-                    Vehicle vehicle = dtoConverter.convert(vDto);
+                    IVehicle vehicle = vehicleBuilder.import(vDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
                 }
             }
