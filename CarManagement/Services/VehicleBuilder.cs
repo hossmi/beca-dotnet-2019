@@ -131,7 +131,7 @@ namespace CarManagement.Services
         private static IWheel convert(WheelDto wheelDto)
         {
             IWheel wheel = new Wheel
-            {
+            {                
                 Pressure = wheelDto.Pressure
             };
 
@@ -139,8 +139,7 @@ namespace CarManagement.Services
         }
 
         private static WheelDto convert(IWheel wheel)
-        {
-            
+        {            
             WheelDto wheelDto = new WheelDto
             {
                 Pressure = wheel.Pressure
@@ -381,6 +380,11 @@ namespace CarManagement.Services
         {
             private double pression;
 
+            public Wheel()
+            {
+                this.pression = 1;
+            }
+
             public double Pressure
             {
                 get
@@ -389,7 +393,7 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 1 && value <= 5);
+                    Asserts.isTrue(value >= 1 && value <=5);
                     this.pression = value;
                 }
             }
