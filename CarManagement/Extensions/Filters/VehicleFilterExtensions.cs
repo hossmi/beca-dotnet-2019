@@ -76,5 +76,12 @@ namespace CarManagement.Extensions.Filters
                     yield return item;
             }
         }
+
+        public static IEnumerable<TOut> select<TIn, TOut>(
+            this IEnumerable<TIn> items, Func<TIn, TOut> selectDelegate)
+        {
+            foreach (TIn item in items)
+                yield return selectDelegate(item);
+        }
     }
 }
