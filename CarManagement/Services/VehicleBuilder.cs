@@ -108,7 +108,8 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 0, "Cannot set pressure lower than 0");
+                    Asserts.isTrue(value >= 1.0, "Cannot set pressure lower than 1.0");
+                    Asserts.isTrue(value <= 5.0, "Cannot set pressure higher than 5.0");
                     this.pressure = value;
                 }
             }

@@ -25,11 +25,12 @@ namespace CarManagement.Extensions.Filters
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
             List<IVehicle> serialVehicles = new List<IVehicle>();
+            IEnumerator<IVehicle> enumVehicle = vehicles.GetEnumerator();
 
-            foreach (IVehicle vehicle in vehicles)
+            while (enumVehicle.MoveNext())
             {
-                if (vehicle.Enrollment.Serial == enrollmentSerial)
-                    serialVehicles.Add(vehicle);
+                if (enumVehicle.Current.Enrollment.Serial == enrollmentSerial)
+                    serialVehicles.Add(enumVehicle.Current);
             }
 
             return serialVehicles;
@@ -37,7 +38,14 @@ namespace CarManagement.Extensions.Filters
 
         public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            List<IEngine> pairVehicles = new List<IEngine>();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                    pairVehicles.Add(vehicle.Engine);
+            }
+
+            return pairVehicles;
         }
     }
 }
