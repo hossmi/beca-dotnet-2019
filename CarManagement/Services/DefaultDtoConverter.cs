@@ -4,7 +4,7 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class DefaultDtoConverter : IDtoConverter
+    public class DefaultDtoConverter 
     {
         private IEnrollmentProvider enrollmentProvider;
 

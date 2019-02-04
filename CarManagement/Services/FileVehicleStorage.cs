@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDtoConverter dtoConverter;
+        private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
-            : base(readFromFile(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
+            : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
@@ -36,7 +37,7 @@ namespace CarManagement.Services
             }
         }
 
-        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             {
                 IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());

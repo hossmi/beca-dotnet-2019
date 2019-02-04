@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
@@ -65,6 +66,16 @@ namespace CarManagement.Services
                 throw new InvalidOperationException("There is no wheel to remove.");
             else
                 wheelsCount--;
+        }
+
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public VehicleDto export(IVehicle vehicleDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }
