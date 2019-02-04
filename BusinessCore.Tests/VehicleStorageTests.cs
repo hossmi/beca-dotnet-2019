@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using CarManagement.Extensions.Filters;
@@ -161,23 +162,16 @@ namespace BusinessCore.Tests
                     vehicleStorage.set(vehicle);
                 }
 
-                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
-                IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
-                IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
-                IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
+                Func<IVehicle, bool> byOddEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
-                Assert.AreEqual(4, pairEnrollmentVehicles.Count());
-                Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
-                Assert.AreEqual(2, selectedEngines.Count());
-
-                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
+                IEnumerable<IEngine> selectedEngines = vehicleStorage
                     .getAll()
-                    .filterByPairEnrollments()          //4
-                    .filterByEnrollmentsSerial("BBC")   //2
-                    .selectEngines()                    //2
-                    .filter(VehicleFilterExtensions.filterByIsStarted);         //1
+                    .filter(byOddEnrollment)          //4
+                    .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
+                    .select(vehicle => vehicle.Engine)                    //2
+                    .filter(engine => engine.IsStarted);         //1
 
-                Assert.AreEqual(1, selectedEngines2.Count());
+                Assert.AreEqual(1, selectedEngines.Count());
             }
         }
 
