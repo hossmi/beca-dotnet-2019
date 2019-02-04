@@ -1,4 +1,5 @@
-﻿using CarManagement.Core.Models;
+﻿using System.Collections.Generic;
+using CarManagement.Core.Models;
 
 namespace CarManagement.Core.Services
 {
@@ -9,6 +10,6 @@ namespace CarManagement.Core.Services
         void set(IVehicle vehicle);
         IVehicle get(IEnrollment enrollment);
         void clear();
-        IVehicle[] getAll();
+        IEnumerable<IVehicle> getAll();
     }
 }
