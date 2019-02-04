@@ -44,7 +44,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            double averagePressure = this.vehicleStorage
+            double pressure = 0;
+             pressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Select(vehicle => vehicle.Wheels)
@@ -54,23 +55,31 @@ namespace BusinessCore.Tests
                 ;
 
             //Assert.AreEqual(3.0, averagePressure);
+            
+
+            Assert.AreEqual(3, pressure);
         }
 
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-            int minimalPower = this.vehicleStorage
+            int horsePower = 0;
+            horsePower = this.vehicleStorage
                 .getAll()
                 .Select(vehicle => vehicle.Engine)
                 .Min(engine => engine.HorsePower);
 
             //Assert.AreEqual(minimalPower, 100);
+            
+
+            Assert.AreEqual(100, horsePower);
         }
 
         [TestMethod]
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
-            int maximalPower = this.vehicleStorage
+            int horsePower = 0;
+            horsePower = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.Red)
                 .Select(vehicle => vehicle.Engine)
@@ -78,6 +87,9 @@ namespace BusinessCore.Tests
                 .Max(engine => engine.HorsePower);
 
             //Assert.AreEqual(maximalPower, 666);
+            
+
+            Assert.AreEqual(666, horsePower);
         }
     }
 }
