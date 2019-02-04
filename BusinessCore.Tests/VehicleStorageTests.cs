@@ -35,10 +35,14 @@ namespace BusinessCore.Tests
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
-            vehicleStorage.clear();
-            Assert.AreEqual(0, vehicleStorage.Count);
+
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                vehicleStorage.clear();
+                Assert.AreEqual(0, vehicleStorage.Count);
+            }
 
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
@@ -46,15 +50,22 @@ namespace BusinessCore.Tests
             vehicleBuilder.setEngine(40);
             IVehicle motoVehicle = vehicleBuilder.build();
 
-            vehicleStorage.set(motoVehicle);
-            Assert.AreEqual(1, vehicleStorage.Count);
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                vehicleStorage.set(motoVehicle);
+                Assert.AreEqual(1, vehicleStorage.Count);
+            }
 
-            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
-            Assert.AreEqual(1, vehicleStorage.Count);
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                Assert.AreEqual(1, vehicleStorage.Count);
 
-            IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-            Assert.IsNotNull(vehicle);
-            Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
+                IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
+                Assert.IsNotNull(vehicle);
+                Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
+            }
         }
 
         [TestMethod]
