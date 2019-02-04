@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core.Models;
 
 namespace CarManagement.Extensions.Filters
@@ -37,7 +38,13 @@ namespace CarManagement.Extensions.Filters
 
         public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            List<IEngine> Engines = new List<IEngine>();
+            foreach (IVehicle vehicle in vehicles)
+            {
+                Engines.Add(vehicle.Engine);
+            }
+
+            return Engines.ToArray();
         }
     }
 }
