@@ -46,7 +46,10 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 4},
+                    new Wheel{Pressure = 4},
+                    new Wheel{Pressure = 2},
+                    new Wheel{Pressure = 2},
                 },
             };
             yield return new Vehicle
@@ -134,8 +137,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Engine = new Engine
                 {
-                    HorsePower = 600,
-                    IsStarted = true,
+                    HorsePower = 666,
+                    IsStarted = false,
                 },
                 Doors = new IDoor[]
                 {
@@ -160,7 +163,7 @@ namespace BusinessCore.Tests.Services
                 Engine = new Engine
                 {
                     HorsePower = 600,
-                    IsStarted = true,
+                    IsStarted = false,
                 },
                 Doors = new IDoor[]
                 {
@@ -184,8 +187,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Engine = new Engine
                 {
-                    HorsePower = 600,
-                    IsStarted = true,
+                    HorsePower = 100,
+                    IsStarted = false,
                 },
                 Doors = new IDoor[]
                 {
@@ -197,6 +200,34 @@ namespace BusinessCore.Tests.Services
                 Wheels = new IWheel[]
                 {
                     new Wheel{Pressure = 6},
+                },
+            };
+            yield return new Vehicle
+            {
+                Color = CarColor.White,
+                Enrollment = new Enrollment
+                {
+                    Serial = "XXX",
+                    Number = 666,
+                },
+                Engine = new Engine
+                {
+                    HorsePower = 600,
+                    IsStarted = false,
+                },
+                Doors = new IDoor[]
+                {
+                    new Door
+                    {
+                        IsOpen = true,
+                    }
+                },
+                Wheels = new IWheel[]
+                {
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 5},
+                    new Wheel{Pressure = 5},
                 },
             };
         }
