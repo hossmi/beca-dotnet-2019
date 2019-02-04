@@ -44,19 +44,25 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            throw new NotImplementedException();
+            double pressure = 0.0;
+
+            Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-            throw new NotImplementedException();
+            int horsePower = 0;
+
+            Assert.AreEqual(100, horsePower);
         }
 
         [TestMethod]
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
-            throw new NotImplementedException();
+            int horsePower = 0;
+
+            Assert.AreEqual(666, horsePower);
         }
     }
 }
