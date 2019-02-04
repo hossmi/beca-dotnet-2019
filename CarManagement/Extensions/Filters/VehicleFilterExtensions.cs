@@ -24,13 +24,26 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            throw new NotImplementedException();
+            var CurrentEnrollment = vehicles.GetEnumerator();
+            foreach (IVehicle vehiclesSerial in vehicles)
+            {
+                if (CurrentEnrollment.Current.Enrollment.Serial == "BBC")
+                {
+                    yield return vehiclesSerial;
+                }
+            }
 
         }
 
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            
+            foreach (IVehicle  vehicle in vehicles)
+            {
+               
+                    yield return vehicle.Engine;
+      
+            }
         }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
