@@ -138,6 +138,7 @@ namespace CarManagement.Services
 
         public WheelDto convert(IWheel wheel)
         {
+            
             WheelDto wheelDto = new WheelDto
             {
                 Pressure = wheel.Pressure
@@ -400,6 +401,7 @@ namespace CarManagement.Services
                 }
                 set
                 {
+                    Asserts.isTrue(value >= 0);
                     this.pression = value;
                 }
             }
