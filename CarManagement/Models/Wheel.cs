@@ -4,16 +4,27 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
-        public double Pressure
-        {
-            get
+            private double pressure;
+            public double Pressure
             {
-                throw new NotImplementedException();
+                set
+                {
+                    this.pressure = value;
+                }
+                get
+                {
+                    return this.pressure;
+                }
             }
-            set
+
+            public Wheel()
             {
-                throw new NotImplementedException();
+                this.pressure = 0;
+            }
+
+            public Wheel(double pressure)
+            {
+                this.Pressure = pressure;
             }
         }
     }
-}

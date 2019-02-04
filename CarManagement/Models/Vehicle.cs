@@ -1,70 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CarManagement.Models
 {
-    public class Vehicle
+    namespace CarManagement.Models
     {
-        private List<Wheel> wheels;
-
-        public int DoorsCount
+        public class Vehicle
         {
-            get
+            private readonly List<Wheel> wheels;
+            private readonly List<Door> doors;
+
+            public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, string enrollment)
             {
-                throw new NotImplementedException();
-            }
-        }
+                if (doors.Count > 0 && doors.Count <= 4)
+                {
+                    this.doors = doors;
+                }
+                if (wheels.Count > 0 && wheels.Count <= 4)
+                {
+                    this.wheels = wheels;
+                }
 
-        public int WheelCount
-        {
-            get
+                this.Engine = engine;
+
+                if (enrollment.Length == 8)
+                {
+                    this.Enrollment = enrollment;
+                }
+            }
+
+            public int DoorsCount
             {
-                throw new NotImplementedException();
+                get
+                {
+                    return this.doors.Count;
+                }
             }
-        }
 
-        public Engine Engine
-        {
-            get
+            public int WheelCount
             {
-                throw new NotImplementedException();
+                get
+                {
+                    return this.wheels.Count;
+                }
             }
-        }
 
-        public string Enrollment
-        {
-            get
+            public Engine Engine { get; }
+
+            public string Enrollment { get; }
+
+            public Wheel[] Wheels
             {
-                throw new NotImplementedException();
+                get
+                {
+                    return this.wheels.ToArray();
+                }
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
 
-            //    this.enrollment = value;
-            //}
-        }
-
-        public Wheel[] Wheels
-        {
-            get
+            public Door[] Doors
             {
-                return this.wheels.ToArray();
+                get
+                {
+                    return this.doors.ToArray();
+                }
             }
-        }
 
-        public Door[] Doors
-        {
-            get
+            public void setWheelsPressure(double pression)
             {
-                throw new NotImplementedException();
-            }
-        }
+                if (pression >= 0)
+                {
+                    foreach (Wheel iterWheel in this.wheels)
+                    {
+                        iterWheel.Pressure = pression;
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Pression must be greater than 0.");
+                }
 
-        public void setWheelsPressure(double pression)
-        {
-            throw new NotImplementedException();
+            }
         }
     }
 }
