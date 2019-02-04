@@ -57,6 +57,7 @@
     <Compile Include="Services\InMemoryVehicleStorage.cs" />
     <Compile Include="Services\FileVehicleStorage.cs" />
     <Compile Include="Extensions\Vehicles\VehicleExtensions.cs" />
+    <Compile Include="Extensions\Filters\VehicleFilterExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Builders\" />
