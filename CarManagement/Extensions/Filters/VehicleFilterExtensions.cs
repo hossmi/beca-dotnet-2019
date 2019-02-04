@@ -25,6 +25,13 @@ namespace CarManagement.Extensions.Filters
             }
         }
 
+        public static IEnumerable<TOut> select<TIn, TOut>(
+            this IEnumerable<TIn> items, Func<TIn, TOut> selectDelegate)
+        {
+            foreach (TIn item in items)
+                yield return selectDelegate(item);
+        }
+
         #region "filters"
         public static bool filterByPairEnrollments(
             this IVehicle vehicle)
