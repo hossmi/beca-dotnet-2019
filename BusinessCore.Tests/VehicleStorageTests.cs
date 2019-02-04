@@ -169,13 +169,20 @@ namespace BusinessCore.Tests
                 Assert.AreEqual(4, pairEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEngines.Count());
-
+/*
                 IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .getAll()
                     .filterByPairEnrollments()          //4
                     .filterByEnrollmentsSerial("BBC")   //2
                     .selectEngines()                    //2
                     .filter(VehicleFilterExtensions.filterByIsStarted);         //1
+                    */
+                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
+                    .getAll()
+                    .filter(VehicleFilterExtensions.filterByPairEnrollments)
+                    .filter2(VehicleFilterExtensions.filterByEnrollmentsSerial, "BBC")
+                    .select(VehicleFilterExtensions.selectEngines)
+                    .filter(VehicleFilterExtensions.filterByIsStarted);
 
                 Assert.AreEqual(1, selectedEngines2.Count());
             }
