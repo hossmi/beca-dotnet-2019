@@ -1,14 +1,16 @@
-﻿using CarManagement.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using CarManagement.Core.Models;
 
 namespace CarManagement.Core.Services
 {
-    public interface IVehicleStorage
+    public interface IVehicleStorage : IDisposable
     {
         int Count { get; }
 
         void set(IVehicle vehicle);
         IVehicle get(IEnrollment enrollment);
         void clear();
-        IVehicle[] getAll();
+        IEnumerable<IVehicle> getAll();
     }
 }

@@ -8,11 +8,18 @@ namespace CarManagement.Services
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
         private readonly IDictionary<IEnrollment, IVehicle> vehicles;
+        private bool disposed;
 
         public AbstractVehicleStorage(IDictionary<IEnrollment, IVehicle> initialVehicles)
         {
             Asserts.isNotNull(initialVehicles);
             this.vehicles = initialVehicles;
+            this.disposed = false;
+        }
+
+        ~AbstractVehicleStorage()
+        {
+            Dispose();
         }
 
         public int Count
@@ -26,7 +33,6 @@ namespace CarManagement.Services
         public void clear()
         {
             this.vehicles.Clear();
-            save(this.vehicles.Values);
         }
 
         public IVehicle get(IEnrollment enrollment)
@@ -39,7 +45,7 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public IVehicle[] getAll()
+        public IEnumerable<IVehicle> getAll()
         {
             IVehicle[] v = new IVehicle[this.vehicles.Count];
             int aux = 0;
@@ -55,7 +61,15 @@ namespace CarManagement.Services
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
-            save(this.vehicles.Values);
+        }
+
+        public void Dispose()
+        {
+            if (this.disposed == false)
+            {
+                save(this.vehicles.Values);
+                this.disposed = true;
+            }
         }
 
         protected abstract void save(IEnumerable<IVehicle> vehicles);

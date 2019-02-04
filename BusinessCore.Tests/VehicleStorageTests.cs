@@ -35,10 +35,14 @@ namespace BusinessCore.Tests
             SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IEqualityComparer<IEnrollment> equalityComparer = new EnrollmentEqualityComparer();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
 
-            vehicleStorage.clear();
-            Assert.AreEqual(0, vehicleStorage.Count);
+
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                vehicleStorage.clear();
+                Assert.AreEqual(0, vehicleStorage.Count);
+            }
 
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
@@ -46,15 +50,22 @@ namespace BusinessCore.Tests
             vehicleBuilder.setEngine(40);
             IVehicle motoVehicle = vehicleBuilder.build();
 
-            vehicleStorage.set(motoVehicle);
-            Assert.AreEqual(1, vehicleStorage.Count);
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                vehicleStorage.set(motoVehicle);
+                Assert.AreEqual(1, vehicleStorage.Count);
+            }
 
-            vehicleStorage = new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder);
-            Assert.AreEqual(1, vehicleStorage.Count);
+            using (IVehicleStorage vehicleStorage =
+                new FileVehicleStorage(this.VehiclesFilePath, vehicleBuilder))
+            {
+                Assert.AreEqual(1, vehicleStorage.Count);
 
-            IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-            Assert.IsNotNull(vehicle);
-            Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
+                IVehicle vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
+                Assert.IsNotNull(vehicle);
+                Assert.IsTrue(equalityComparer.Equals(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment));
+            }
         }
 
         [TestMethod]
@@ -117,9 +128,13 @@ namespace BusinessCore.Tests
 
             foreach (IVehicleStorage vehicleStorage in vehicleStorages)
             {
-                IVehicle[] vehicles = vehicleStorage.getAll();
-                Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
+                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                Assert.AreEqual(enrollmentProvider.Count, vehicles.Count());
             }
+
+            foreach (IVehicleStorage vehicleStorage in vehicleStorages)
+                vehicleStorage.Dispose();
+
         }
 
         [TestMethod]
@@ -128,28 +143,43 @@ namespace BusinessCore.Tests
             ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
 
-            IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
-
             vehicleBuilder.addWheel();
             vehicleBuilder.addWheel();
             vehicleBuilder.setColor(CarColor.Blue);
             vehicleBuilder.setDoors(0);
             vehicleBuilder.setEngine(40);
 
-            for (int i = 0; i < enrollmentProvider.Count; i++)
+            using (IVehicleStorage vehicleStorage = new InMemoryVehicleStorage())
             {
-                IVehicle vehicle = vehicleBuilder.build();
-                vehicleStorage.set(vehicle);
+                for (int i = 0; i < enrollmentProvider.Count; i++)
+                {
+                    IVehicle vehicle = vehicleBuilder.build();
+
+                    if (i % 3 == 0)
+                        vehicle.Engine.start();
+
+                    vehicleStorage.set(vehicle);
+                }
+
+                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
+                IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
+                IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
+
+                Assert.AreEqual(4, pairEnrollmentVehicles.Count());
+                Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
+                Assert.AreEqual(2, selectedEngines.Count());
+
+                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
+                    .getAll()
+                    .filterByPairEnrollments()          //4
+                    .filterByEnrollmentsSerial("BBC")   //2
+                    .selectEngines()                    //2
+                    .filter(VehicleFilterExtensions.filterByIsStarted);         //1
+
+                Assert.AreEqual(1, selectedEngines2.Count());
             }
-
-            IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
-            IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.getVehiclesByPairEnrollments();
-            IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.getVehiclesByEnrollmentsSerial("BBC");
-            IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.getEngines();
-
-            Assert.AreEqual(4, pairEnrollmentVehicles.Count());
-            Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
-            Assert.AreEqual(2, selectedEngines.Count());
         }
+
     }
 }
