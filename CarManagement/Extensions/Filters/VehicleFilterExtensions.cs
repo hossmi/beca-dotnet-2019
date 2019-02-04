@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Core.Models;
 
 namespace CarManagement.Extensions.Filters
@@ -9,13 +8,31 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IVehicle> getVehiclesByPairEnrollments(
             this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            List<IVehicle> filteredVehicles = new List<IVehicle>();
+            foreach (IVehicle vehicle in vehicles)
+            {
+                if (vehicle.Enrollment.Number % 2 == 0)
+                {
+                    filteredVehicles.Add(vehicle);
+                }
+            }
+
+            return filteredVehicles.ToArray();
         }
 
         public static IEnumerable<IVehicle> getVehiclesByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            throw new NotImplementedException();
+            List<IVehicle> filteredVehicles = new List<IVehicle>();
+            foreach (IVehicle vehicle in vehicles)
+            {
+                if (vehicle.Enrollment.Serial == enrollmentSerial)
+                {
+                    filteredVehicles.Add(vehicle);
+                }
+            }
+
+            return filteredVehicles.ToArray();
         }
     }
 }

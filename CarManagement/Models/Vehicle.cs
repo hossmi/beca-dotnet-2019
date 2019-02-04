@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CarManagement.Core.Models;
-using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Models
 {
