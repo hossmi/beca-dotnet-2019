@@ -52,5 +52,10 @@ namespace CarManagement.Extensions.Filters
             return vehiclesBySerial;
             */
         }
+
+        public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
