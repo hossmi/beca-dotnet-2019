@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using CarManagement.Extensions.Filters;
@@ -169,15 +170,17 @@ namespace BusinessCore.Tests
                 Assert.AreEqual(4, pairEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
                 Assert.AreEqual(2, selectedEngines.Count());
+                
+                Func<IVehicle, bool> byEvenEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
-                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
+                IEnumerable<IEngine> selectedEngines = vehicleStorage
                     .getAll()
-                    .filter(VehicleFilterExtensions.filterByPairEnrollments)          //4
-                    .filter(VehicleFilterExtensions.filterByEnrollmentsSerial,"BBC")   //2
+                    .filter(byEvenEnrollment)          //4
+                    .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
-                    .filter(VehicleFilterExtensions.filterByIsStarted);         //1
+                    .filter(engine => engine.IsStarted);         //1
 
-                Assert.AreEqual(1, selectedEngines2.Count());
+                Assert.AreEqual(1, selectedEngines.Count());
             }
         }
 
