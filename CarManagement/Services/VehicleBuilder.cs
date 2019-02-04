@@ -16,7 +16,7 @@ namespace CarManagement.Services
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
-        private bool engineStarted;
+        //private bool engineStarted;
         private CarColor colorCode;
         private readonly IEnrollmentProvider enrollmentProvider;
 
