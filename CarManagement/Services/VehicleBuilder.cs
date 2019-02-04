@@ -16,7 +16,6 @@ namespace CarManagement.Services
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
 
-
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.numberWheel = 0;
@@ -89,7 +88,7 @@ namespace CarManagement.Services
                 IsOpen = door.IsOpen
             };
         }
-
+ 
         public IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
@@ -273,7 +272,6 @@ namespace CarManagement.Services
             private int horsePower;
             private bool isStarted;
 
-
             public Engine(int horsePower)
             {
                 Asserts.isTrue(horsePower > 0);
@@ -288,7 +286,6 @@ namespace CarManagement.Services
                 this.isStarted = isIstarted;
             }
 
-           
             public bool IsStarted
             {
                 get
