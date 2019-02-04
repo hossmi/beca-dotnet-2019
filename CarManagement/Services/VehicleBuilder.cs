@@ -15,7 +15,8 @@ namespace CarManagement.Services
         {
             private bool isstart;
             private int horsePower;
-            public int HorsePower {
+            public int HorsePower
+            {
                 get
                 {
                     return this.horsePower;
@@ -150,7 +151,7 @@ namespace CarManagement.Services
         private List<Wheel> wheels;
         private List<Door> doors;
         private CarColor color;
-        private int horsePorwer;
+        private int horsePower = 0;
         private IEnrollmentProvider enrollmentProvider;
         private IEnrollment enrollment;
         private int doorsCount;
@@ -179,8 +180,9 @@ namespace CarManagement.Services
         }
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(this.horsePorwer >= 0);
-            this.engine.HorsePower = this.horsePorwer;
+            
+            Asserts.isTrue(this.horsePower >= 0);
+            this.engine.HorsePower = this.horsePower;
         }
 
         public void setColor(CarColor color)
