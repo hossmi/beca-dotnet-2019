@@ -20,7 +20,6 @@ namespace CarManagement.Services
         {
             this.filePath = fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
-            this.vehicles = readFromFile(this.filePath, this.vehicleBuilder);
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
@@ -52,7 +51,12 @@ namespace CarManagement.Services
         private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             {
-                IDictionary<IEnrollment, IVehicle> vehicles = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
+                IDictionary<IEnrollment, IVehicle> vehicles
+                    = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
+
+                if (File.Exists(fileFullPath) == false)
+                    return vehicles;
+
                 IVehicle vehicle;
                 VehicleDto[] vehiclesDto;
 

@@ -67,16 +67,16 @@ namespace CarManagement.Services
 
             Wheel[] wheels = new Wheel[this.wheelsCount];
 
-            foreach (Wheel wheel in wheels)
+            for (int i = 0; i < wheels.Length; i++)
             {
-                new Wheel();
+                wheels[i] = new Wheel();
             }
 
             Door[] doors = new Door[this.doorsCount];
 
-            foreach (Door door in doors)
+            for (int i = 0; i < doors.Length; i++)
             {
-                new Door();
+                doors[i] = new Door();
             }
 
             Engine engine = new Engine(this.horsePower);
@@ -151,86 +151,95 @@ namespace CarManagement.Services
             }
 
             vehicleDto.Color = vehicle.Color;
+
+            vehicleDto.Engine = new EngineDto();
             vehicleDto.Engine.HorsePower = vehicle.Engine.HorsePower;
             vehicleDto.Engine.IsStarted = vehicle.Engine.IsStarted;
+
+            vehicleDto.Enrollment = new EnrollmentDto();
             vehicleDto.Enrollment.Serial = vehicle.Enrollment.Serial;
             vehicleDto.Enrollment.Number = vehicle.Enrollment.Number;
+
+            vehicleDto.Doors = doorsDto;
+            vehicleDto.Wheels = wheelsDto;
 
             return vehicleDto;
         }
 
         private class Door : IDoor
         {
+            private bool isOpen = false;
+
             public bool IsOpen
             {
                 get
                 {
-                    return this.IsOpen;
+                    return this.isOpen;
                 }
                 private set
                 {
-                    this.IsOpen = value;
+                    this.isOpen = value;
                 }
             }
 
             public void close()
             {
-                if (this.IsOpen == false)
+                if (this.isOpen == false)
                     throw new ArgumentException("Door is already closed.");
                 else
-                    this.IsOpen = false;
+                    this.isOpen = false;
             }
 
             public void open()
             {
-                if (this.IsOpen == true)
+                if (this.isOpen == true)
                     throw new ArgumentException("Door is already open.");
                 else
-                    this.IsOpen = true;
+                    this.isOpen = true;
             }
         }
         private class Wheel : IWheel
         {
-            public Wheel()
-            {
-                this.Pressure = 1;
-            }
+            private double pressure = 1;
 
             public double Pressure
             {
                 get
                 {
-                    return this.Pressure;
+                    return this.pressure;
                 }
                 set
                 {
                     if (value < 1 || value > 5)
                         throw new ArgumentException("Wheel pressure must be between 1 and 5 atmos.");
                     else
-                        this.Pressure = value;
+                        this.pressure = value;
                 }
             }
         }
         private class Engine : IEngine
         {
+            private int horsePower;
+            private bool isStarted;
+
             public Engine(int horsePower)
             {
-                this.HorsePower = horsePower;
-                this.IsStarted = false;
+                this.horsePower = horsePower;
+                this.isStarted = false;
             }
 
             public int HorsePower
             {
                 get
                 {
-                    return this.HorsePower;
+                    return this.horsePower;
                 }
                 private set
                 {
                     if (value <= 0)
                         throw new ArgumentException("Horse power must be over 0.");
                     else
-                        this.HorsePower = value;
+                        this.horsePower = value;
                 }
             }
 
@@ -238,29 +247,24 @@ namespace CarManagement.Services
             {
                 get
                 {
-                    return this.IsStarted;
-                }
-
-                private set
-                {
-                    this.IsStarted = value;
+                    return this.isStarted;
                 }
             }
 
             public void start()
             {
-                if (this.IsStarted == true)
+                if (this.isStarted == true)
                     throw new ArgumentException("Engine is already started.");
                 else
-                    this.IsStarted = true;
+                    this.isStarted = true;
             }
 
             public void stop()
             {
-                if (this.IsStarted == false)
+                if (this.isStarted == false)
                     throw new ArgumentException("Engine is already started.");
                 else
-                    this.IsStarted = false;
+                    this.isStarted = false;
             }
         }
         private class Vehicle : IVehicle
