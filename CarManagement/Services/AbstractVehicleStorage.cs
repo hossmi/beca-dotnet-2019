@@ -39,14 +39,10 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
-            List<IVehicle> vehiclesList = new List<IVehicle>();
-
             foreach (KeyValuePair<IEnrollment, IVehicle> entry in this.vehicles)
             {
-                vehiclesList.Add(entry.Value);
+                yield return entry.Value;
             }
-
-            return vehiclesList.ToArray();
         }
 
         public void set(IVehicle vehicle)
