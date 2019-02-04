@@ -55,7 +55,15 @@ namespace CarManagement.Extensions.Filters
 
         public static IEnumerable<IEngine> getEngines(this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            List<IEngine> engines = new List<IEngine>();
+            IEnumerator<IVehicle> enumerator = vehicles.GetEnumerator();
+
+            while (enumerator.MoveNext())
+            {
+                engines.Add(enumerator.Current.Engine);
+            }
+
+            return engines;
         }
     }
 }
