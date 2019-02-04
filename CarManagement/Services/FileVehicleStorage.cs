@@ -52,7 +52,7 @@ namespace CarManagement.Services
             int aux = 0;
             foreach (IVehicle vehicle in vehicles)
             {
-                VehicleDto vehicleDto = vehicleBuilder.import(vehicle);// .convert(vehicle);
+                VehicleDto vehicleDto = vehicleBuilder.export(vehicle);// .convert(vehicle);
                 vehiclesDto[aux] = vehicleDto;
                 aux++;
             }

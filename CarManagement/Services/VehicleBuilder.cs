@@ -15,7 +15,6 @@ namespace CarManagement.Services
         private int engine;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
-        private readonly DefaultDtoConverter defaultDtoConverter;
 
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
@@ -25,15 +24,6 @@ namespace CarManagement.Services
             this.engine = 0;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
-            this.defaultDtoConverter = new DefaultDtoConverter();
-        }
-        public VehicleBuilder()
-        {
-            this.numberWheel = 0;
-            this.numberDoor = 0;
-            this.engine = 0;
-            this.color = CarColor.Red;
-            this.defaultDtoConverter = new DefaultDtoConverter();
         }
 
         public void addWheel()
@@ -62,23 +52,98 @@ namespace CarManagement.Services
             this.color = color;
         }
 
+        public EnrollmentDto convert(IEnrollment enrollment)
+        {
+            return new EnrollmentDto
+            {
+                Number = enrollment.Number,
+                Serial = enrollment.Serial,
+            };
+        }
+        private IEnrollment convert(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial,
+                                                  enrollmentDto.Number);
+        }
+
         public IWheel convert(WheelDto weelDto)
         {
             return new Wheel(weelDto.Pressure);
         }
+        public WheelDto convert(IWheel wheel)
+        {
+            return new WheelDto
+            {
+                Pressure = wheel.Pressure
+            };
+        }
+
         public IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
         }
+        public DoorDto convert(IDoor door)
+        {
+            return new DoorDto
+            {
+                IsOpen = door.IsOpen
+            };
+        }
+
         public IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
+        public EngineDto convert(IEngine engine)
+        {
+            return new EngineDto
+            {
+                HorsePower = engine.HorsePower,
+                IsStarted = engine.IsStarted
+            };
+        }
+
         public IVehicle convert(VehicleDto vehicleDto)
         {
-            IEnrollment enrollment = defaultDtoConverter.convert(vehicleDto.Enrollment);
+            IEnrollment enrollment = convert(vehicleDto.Enrollment);
             return new Vehicle(vehicleDto, enrollment);
         }
+        public VehicleDto convert(IVehicle vehicle)
+        {
+            CarColor color = vehicle.Color;
+
+            EngineDto engineDto = convert(vehicle.Engine);
+
+            EnrollmentDto enrollmentDto = convert(vehicle.Enrollment);
+
+            WheelDto[] wheelDtos = new WheelDto[vehicle.Wheels.Length];
+            int auxWheel = 0;
+            foreach (IWheel wheen in vehicle.Wheels)
+            {
+                WheelDto wheelDto = convert(wheen);
+                wheelDtos[auxWheel] = wheelDto;
+                auxWheel++;
+            }
+
+            DoorDto[] doorDtos = new DoorDto[vehicle.Doors.Length];
+            int auxDoor = 0;
+            foreach (IDoor door in vehicle.Doors)
+            {
+                DoorDto doorDto = convert(door);
+                doorDtos[auxDoor] = doorDto;
+                auxDoor++;
+            }
+
+            return new VehicleDto
+            {
+                Color = color,
+                Engine = engineDto,
+                Enrollment = enrollmentDto,
+                Wheels = wheelDtos,
+                Doors = doorDtos
+            };
+        }
+
         public IVehicle build()
         {
             Asserts.isTrue(this.numberWheel > 0);
@@ -311,7 +376,7 @@ namespace CarManagement.Services
                 wheels.Add(r);
             }
 
-            IEnrollment enrollment = defaultDtoConverter.convert(vehicleDto.Enrollment);
+            IEnrollment enrollment = convert(vehicleDto.Enrollment);
 
             List<Door> doors = new List<Door>();
             foreach (DoorDto doorDto in vehicleDto.Doors)
@@ -326,12 +391,9 @@ namespace CarManagement.Services
         }
         public VehicleDto export(IVehicle vehicle)
         {
-            return defaultDtoConverter.convert(vehicle);
+            return convert(vehicle);
         }
 
-        public VehicleDto import(IVehicle vehicle)
-        {
-            return this.defaultDtoConverter.convert(vehicle);// throw new NotImplementedException();
-        }
+       
     }
 }

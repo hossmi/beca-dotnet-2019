@@ -6,11 +6,11 @@ using System.Collections.Generic;
 namespace CarManagement.Services
 {
     public class DefaultDtoConverter 
-    {
+    {/*
         private IEnrollmentProvider enrollmentProvider;
         //private IEnrollment enrollment;
         private VehicleBuilder vehicleBuilder;
-        
+        /*
         
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
@@ -63,95 +63,31 @@ namespace CarManagement.Services
         {
             return this.vehicleBuilder.convert(vehicleDto);
         }
-        public VehicleDto convert(IVehicle vehicle)
-        {
-            CarColor color = vehicle.Color;
-
-            EngineDto engineDto = convertToEngineDto(vehicle.Engine);
-
-            EnrollmentDto enrollmentDto = convertToIEnrollmentDto(vehicle.Enrollment);
-
-            WheelDto[] wheelDtos = new WheelDto[vehicle.Wheels.Length];
-            int auxWheel = 0;
-            foreach (IWheel wheen in vehicle.Wheels)
-            {
-                WheelDto wheelDto = convertToWheelDto(wheen);
-                wheelDtos[auxWheel] = wheelDto;
-                auxWheel++;
-            }
-
-            DoorDto[] doorDtos = new DoorDto[vehicle.Doors.Length];
-            int auxDoor = 0;
-            foreach (IDoor door in vehicle.Doors)
-            {
-                DoorDto doorDto = convertToDoorDto(door);
-                doorDtos[auxDoor] = doorDto;
-                auxDoor++;
-            }
-
-            return new VehicleDto
-            {
-                Color = color,
-                Engine = engineDto,
-                Enrollment = enrollmentDto,
-                Wheels = wheelDtos,
-                Doors = doorDtos
-            };
-        }
-
-
-        private IEnrollment convertToIEnrollment(EnrollmentDto enrollmentDto)
-        {
-            return this.enrollmentProvider.import(enrollmentDto.Serial,
-                                                  enrollmentDto.Number);
-        }
-        private static EnrollmentDto convertToIEnrollmentDto(IEnrollment enrollment)
-        {
-            return new EnrollmentDto
-            {
-                Number = enrollment.Number,
-                Serial = enrollment.Serial,
-            };
-        }
         
 
+
+        
+        
+        
+        /*
         private IEngine convertToEngine(EngineDto engineDto)
         {
             return this.vehicleBuilder.convert(engineDto);
         }
-        private static EngineDto convertToEngineDto(IEngine engine)
-        {
-            return new EngineDto
-            {
-                HorsePower = engine.HorsePower,
-                IsStarted = engine.IsStarted
-            };
-        }
+        
 
-
+        /*
         private IDoor convertToDoor(DoorDto doorDto)
         {
             return this.vehicleBuilder.convert(doorDto);
         }
-        private static DoorDto convertToDoorDto(IDoor door)
-        {
-            return new DoorDto
-            {
-                IsOpen = door.IsOpen
-            };
-        }
-
         
+
+        /*
         private IWheel convertToWheel(WheelDto wheelDto)
         {
             return this.vehicleBuilder.convert(wheelDto);
-        }
-        private static WheelDto convertToWheelDto(IWheel wheel)
-        {
-            return new WheelDto
-            {
-                Pressure = wheel.Pressure
-            };
-        }
+        }*/
+        
     }
 }

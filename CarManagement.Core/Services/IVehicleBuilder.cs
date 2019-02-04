@@ -13,6 +13,5 @@ namespace CarManagement.Core.Services
         void setEngine(int horsePorwer);
         IVehicle import(VehicleDto vehicleDto);
         VehicleDto export(IVehicle vehicleDto);
-        VehicleDto import(IVehicle vehicle);
     }
 }
