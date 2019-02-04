@@ -63,5 +63,20 @@ namespace CarManagement.Extensions.Filters
                     yield return engine;
             }
         }
+
+        public static bool filterByIsStarted(IEngine engine)
+        {
+            return engine.IsStarted;
+        }
+
+        public static IEnumerable<T> filter<T>(
+            this IEnumerable<T> items, Func<T, bool> filterDelegate)
+        {
+            foreach (T item in items)
+            {
+                if (filterDelegate(item))
+                    yield return item;
+            }
+        }
     }
 }
