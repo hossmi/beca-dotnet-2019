@@ -175,10 +175,11 @@ namespace BusinessCore.Tests
                     .filterByPairEnrollments()          //4
                     .filterByEnrollmentsSerial("BBC")   //2
                     .selectEngines()                    //2
-                    .filterByStarted();                 //1
+                    .filter(VehicleFilterExtensions.filterByIsStarted);         //1
 
                 Assert.AreEqual(1, selectedEngines2.Count());
             }
         }
+
     }
 }
