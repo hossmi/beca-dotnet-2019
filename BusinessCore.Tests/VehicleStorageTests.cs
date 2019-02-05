@@ -173,14 +173,14 @@ namespace BusinessCore.Tests
                 
                 Func<IVehicle, bool> byEvenEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
-                IEnumerable<IEngine> selectedEngines = vehicleStorage
+                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .getAll()
                     .filter(byEvenEnrollment)          //4
                     .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1
 
-                Assert.AreEqual(1, selectedEngines.Count());
+                Assert.AreEqual(1, selectedEngines2.Count());
             }
         }
 

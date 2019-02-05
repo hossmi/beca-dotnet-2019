@@ -43,7 +43,15 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            throw new NotImplementedException();
+            double averagePressure = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Select(vehicle => 
+                    vehicle.Wheels.Average(wheel => wheel.Pressure)
+                    )
+                .Average();
+
+            Assert.AreEqual(3.0, averagePressure);
         }
 
         [TestMethod]
