@@ -87,7 +87,7 @@ namespace BusinessCore.Tests
                     vehicle.Doors.Where(door =>
                         door.IsOpen
                     ).Count() == 1)
-                .Select(vehicle => vehicle.Enrollment.Serial)//, vehicle => vehicle.Engine.HorsePower)
+                .Select(vehicle => new { vehicle.Enrollment.Serial, vehicle.Engine.HorsePower})//, vehicle => vehicle.Engine.HorsePower)
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
