@@ -71,7 +71,7 @@ namespace CarManagement.Extensions.Filters
         }
         public static bool filterByIsStarted(IEngine engine)
         {
-            return engine.IsStarted == true;
+            return engine.IsStarted;
         }
 
 
