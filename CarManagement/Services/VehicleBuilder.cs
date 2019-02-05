@@ -5,11 +5,11 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
-namespace CarManagement.Builders
+namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
-        public class Engine : IEngine
+        private class Engine : IEngine
         {
             private bool isStart;
             private int horsepower;
@@ -47,7 +47,8 @@ namespace CarManagement.Builders
                 this.isStart = false;
             }
         }
-        public class Wheel : IWheel
+
+        private class Wheel : IWheel
         {
             private double pressure;
             public double Pressure
@@ -62,7 +63,8 @@ namespace CarManagement.Builders
                 }
             }
         }
-        public class Door : IDoor
+
+        private class Door : IDoor
         {
             private bool isOpen;
 
@@ -82,7 +84,8 @@ namespace CarManagement.Builders
                 }
             }
         }
-        public class Vehicle : IVehicle
+
+        private class Vehicle : IVehicle
         {
             private List<IWheel> wheels = new List<IWheel>();
             private List<IDoor> doors = new List<IDoor>();
@@ -99,6 +102,10 @@ namespace CarManagement.Builders
                 this.Engine = engine;
                 this.Color = color;
                 this.Enrollment = enrollment;
+            }
+
+            public Vehicle()
+            {
             }
 
             public int DoorsCount
@@ -149,6 +156,7 @@ namespace CarManagement.Builders
                 }
             }
         }
+
         private IEnrollmentProvider enrollmentProvider;
         private int doorsCount;
         private int wheelCounter = 0;
@@ -183,18 +191,43 @@ namespace CarManagement.Builders
             this.engine.HorsePower = horsePorwer;
         }
 
-        public VehicleDto export(IVehicle vehicleDto)
+        public VehicleDto export(IVehicle vehicle)
         {
-            throw new NotImplementedException();
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto = convert(vehicle);
+            return vehicleDto;
         }
 
         public IVehicle import(VehicleDto vehicleDto)
         {
-            throw new NotImplementedException();
+            IVehicle vehicle = new Vehicle();
+            vehicle = convert(vehicleDto);
+            return vehicle;
         }
         public void setColor(CarColor color)
         {
             this.color = color;
+        }
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.wheelCounter > 0);
+            CarColor color = new CarColor();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
+            Engine engine = new Engine();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
+            for (int i = 0; i < this.wheelCounter; i++)
+            {
+                Wheel wheel = new Wheel();
+                wheels.Add(wheel);
+            }
+            for (int i = 0; i < this.doorsCount; i++)
+            {
+                Door door = new Door();
+                doors.Add(door);
+            }
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+            return vehicle;
         }
         IVehicle IVehicleBuilder.build()
         {
@@ -216,6 +249,113 @@ namespace CarManagement.Builders
             }
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
+        }
+        public IEngine convert(EngineDto engineDto)
+        {
+            Engine engine = new Engine();
+            engine.HorsePower = engineDto.HorsePower;
+            engine.IsStarted = engineDto.IsStarted;
+            return this.engine;
+        }
+
+        public EngineDto convert(IEngine engine)
+        {
+            EngineDto engineDto = new EngineDto();
+            engineDto.HorsePower = engine.HorsePower;
+            engineDto.IsStarted = engine.IsStarted;
+            return engineDto;
+        }
+
+        public IVehicle convert(VehicleDto vehicleDto)
+        {
+            CarColor color = new CarColor();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
+            IEngine engine = new Engine();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
+
+            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+            {
+                wheels.Add(convert(vehicleDto.Wheels[i]));
+            }
+            for (int i = 0; i < vehicleDto.Doors.Length; i++)
+            {
+                doors.Add(convert(vehicleDto.Doors[i]));
+            }
+            engine = convert(vehicleDto.Engine);
+            this.color = vehicleDto.Color;
+            enrollment = convert(vehicleDto.Enrollment);
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+            return vehicle;
+        }
+
+        public VehicleDto convert(IVehicle vehicle)
+        {
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto.Color = new CarColor();
+            vehicleDto.Doors = new DoorDto[vehicle.Doors.Length];
+            vehicleDto.Wheels = new WheelDto[vehicle.Wheels.Length];
+            vehicleDto.Enrollment = new EnrollmentDto();
+            vehicleDto.Engine = new EngineDto();
+
+            for (int i = 0; i < vehicle.Wheels.Length; i++)
+            {
+                vehicleDto.Wheels[i] = convert(vehicle.Wheels[i]);
+            }
+
+            for (int i = 0; i < vehicle.Doors.Length; i++)
+            {
+                vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
+            }
+
+            vehicleDto.Color = vehicle.Color;
+            vehicleDto.Enrollment = convert(vehicle.Enrollment);
+            vehicleDto.Engine = convert(vehicle.Engine);
+            return vehicleDto;
+        }
+
+        public IDoor convert(DoorDto doorDto)
+        {
+            IDoor door = new Door();
+            if (doorDto.IsOpen == true)
+            {
+                door.open();
+            }
+            return door;
+        }
+
+        public DoorDto convert(IDoor door)
+        {
+            DoorDto doorDto = new DoorDto();
+            doorDto.IsOpen = door.IsOpen;
+            return doorDto;
+        }
+
+        public IWheel convert(WheelDto wheelDto)
+        {
+            IWheel wheel = new Wheel();
+            wheel.Pressure = wheelDto.Pressure;
+            return wheel;
+        }
+
+        public WheelDto convert(IWheel wheel)
+        {
+            WheelDto wheelDto = new WheelDto();
+            wheelDto.Pressure = wheel.Pressure;
+            return wheelDto;
+        }
+
+        public IEnrollment convert(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+        }
+
+        public EnrollmentDto convert(IEnrollment enrollment)
+        {
+            EnrollmentDto enrollmentDto = new EnrollmentDto();
+            enrollmentDto.Number = enrollment.Number;
+            enrollmentDto.Serial = enrollment.Serial;
+            return enrollmentDto;
         }
     }
 }

@@ -1,29 +1,13 @@
-﻿using CarManagement.Core.Models;
+﻿/*using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using System.Collections.Generic;
-using static CarManagement.Builders.VehicleBuilder;
 
 namespace CarManagement.Services
 {
     public class DefaultDtoConverter
     {
         private IEnrollmentProvider enrollmentProvider;
-        private IEnrollment enrollment;
-        private EnrollmentDto enrollmentDto;
-        private VehicleDto vehicleDto;
-        private Vehicle vehicle;
-        private EngineDto engineDto;
-        private IDoor door;
-        private IEngine engine;
-        private DoorDto doorDto;
-        private Wheel wheel;
-        private List<IWheel> wheels;
-        private WheelDto wheelDto;
-        private WheelDto[] wheelsDto;
-        private List<IDoor> doors;
-        private DoorDto[] doorsDto;
-        private CarColor color;
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
@@ -125,14 +109,11 @@ namespace CarManagement.Services
             return this.wheelDto;
         }
 
-        //IEnrollment
-        //Fichero ->Memoria
         public IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
-        //Memoria ->Fichero
         public EnrollmentDto convert(IEnrollment enrollment)
         {
             this.enrollmentDto = new EnrollmentDto();
@@ -141,4 +122,4 @@ namespace CarManagement.Services
             return this.enrollmentDto;
         }
     }
-}
+}*/
