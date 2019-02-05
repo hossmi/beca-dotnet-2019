@@ -13,6 +13,10 @@ namespace CarManagement.Services
         {
             private bool isStart;
             private int horsepower;
+            public Engine()
+            {
+                this.horsepower = 1;
+            }
 
             public int HorsePower
             {
@@ -39,11 +43,13 @@ namespace CarManagement.Services
 
             public void start()
             {
+                Asserts.isTrue(this.isStart == false);
                 this.isStart = true;
             }
 
             public void stop()
             {
+                Asserts.isTrue(this.isStart == true);
                 this.isStart = false;
             }
         }
@@ -51,6 +57,11 @@ namespace CarManagement.Services
         private class Wheel : IWheel
         {
             private double pressure;
+            public Wheel()
+            {
+                this.pressure = 1;
+            }
+            
             public double Pressure
             {
                 get
@@ -59,21 +70,29 @@ namespace CarManagement.Services
                 }
                 set
                 {
+                    Asserts.isTrue(value >= 1 && value <= 5);
                     this.pressure = value;
                 }
             }
+
         }
 
         private class Door : IDoor
         {
             private bool isOpen;
+            public Door()
+            {
+                this.isOpen = false;
+            }
 
             public void open()
             {
+                Asserts.isTrue(this.isOpen == false);
                 this.isOpen = true;
             }
             public void close()
             {
+                Asserts.isTrue(this.isOpen == true);
                 this.isOpen = false;
             }
             public bool IsOpen
@@ -149,7 +168,7 @@ namespace CarManagement.Services
             }
             public void setWheelsPressure(double pression)
             {
-                Asserts.isTrue(pression > 0);
+                Asserts.isTrue(pression >= 0);
                 foreach (Wheel wheel in this.wheels)
                 {
                     wheel.Pressure = pression;
@@ -161,6 +180,7 @@ namespace CarManagement.Services
         private int doorsCount;
         private int wheelCounter = 0;
         private CarColor color;
+        private int hp;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -184,11 +204,10 @@ namespace CarManagement.Services
             this.doorsCount = doorsCount;
         }
 
-        Engine engine = new Engine();
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer >= 0);
-            this.engine.HorsePower = horsePorwer;
+            Asserts.isTrue(horsePorwer > 0);
+            this.hp = horsePorwer;
         }
 
         public VehicleDto export(IVehicle vehicle)
@@ -206,7 +225,17 @@ namespace CarManagement.Services
         }
         public void setColor(CarColor color)
         {
+
             this.color = color;
+            bool t = false;
+            foreach (CarColor c in Enum.GetValues(typeof(CarColor)))
+            {
+                if (color == c)
+                {
+                    t = true;
+                }
+            }
+            Asserts.isTrue(t == true);
         }
         public IVehicle build()
         {
@@ -215,27 +244,7 @@ namespace CarManagement.Services
             List<IWheel> wheels = new List<IWheel>();
             List<IDoor> doors = new List<IDoor>();
             Engine engine = new Engine();
-            IEnrollment enrollment = this.enrollmentProvider.getNew();
-            for (int i = 0; i < this.wheelCounter; i++)
-            {
-                Wheel wheel = new Wheel();
-                wheels.Add(wheel);
-            }
-            for (int i = 0; i < this.doorsCount; i++)
-            {
-                Door door = new Door();
-                doors.Add(door);
-            }
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
-            return vehicle;
-        }
-        IVehicle IVehicleBuilder.build()
-        {
-            Asserts.isTrue(this.wheelCounter > 0);
-            CarColor color = new CarColor();
-            List<IWheel> wheels = new List<IWheel>();
-            List<IDoor> doors = new List<IDoor>();
-            Engine engine = new Engine();
+            engine.HorsePower = this.hp;
             IEnrollment enrollment = this.enrollmentProvider.getNew();
             for (int i = 0; i < this.wheelCounter; i++)
             {
@@ -255,7 +264,7 @@ namespace CarManagement.Services
             Engine engine = new Engine();
             engine.HorsePower = engineDto.HorsePower;
             engine.IsStarted = engineDto.IsStarted;
-            return this.engine;
+            return engine;
         }
 
         public EngineDto convert(IEngine engine)
