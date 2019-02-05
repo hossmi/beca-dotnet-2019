@@ -83,7 +83,11 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Select(vehicle => new
+                {
+                    vehicle.Enrollment.Serial,
+                    AverageHorsePower = 0
+                })
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
