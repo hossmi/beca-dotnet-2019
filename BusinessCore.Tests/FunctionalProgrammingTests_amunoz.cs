@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         public void get_total_horse_power_from_yellow_vehicles_with_less_than_three_wheels()
         {
             int horsePower = 0;           
-
+            /**/
             Assert.AreEqual(1366, horsePower);
         }
     }
