@@ -163,15 +163,6 @@ namespace BusinessCore.Tests
                     vehicleStorage.set(vehicle);
                 }
 
-                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
-                IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
-                IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
-                IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
-
-
-                Assert.AreEqual(4, pairEnrollmentVehicles.Count());
-                Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
-                Assert.AreEqual(2, selectedEngines.Count());
                 //Func<IVehicle, bool> byOddEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
 
@@ -181,9 +172,8 @@ namespace BusinessCore.Tests
                     .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1
-                   
 
-                Assert.AreEqual(1, selectedEngines.Count());
+                Assert.AreEqual(1, selectedEngines2.Count());
             }
         }
     }
