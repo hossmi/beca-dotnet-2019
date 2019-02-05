@@ -84,7 +84,11 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                
+                .Select(vehicle => new
+                {
+                    vehicle.Enrollment.Serial,
+                    AverageHorsePower = 0
+                })
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -98,18 +102,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual(633, vehicles[1].AverageHorsePower);
             Assert.AreEqual("ZZZ", vehicles[2].Serial);
             Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
-            */
 
-        [TestMethod]
-        public void get_total_horse_power_from_yellow_vehicles_with_less_than_three_wheels()
-        {
-            int horsePower = 0;
-            horsePower = this.vehicleStorage_amunoz
-                .getAll()
-                .Where(vehicle => vehicle.Color == CarColor.Yellow)
-                .Where(vehicle => vehicle.Wheels.Count() < 3)
-                .Select(vehicle => vehicle.Engine)
-                .Sum(engine => engine.HorsePower);
 
             Assert.Equals(1366, horsePower);
         }
