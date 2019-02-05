@@ -4,7 +4,6 @@ using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
-using CarManagement.Extensions.Filters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -35,10 +34,8 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Engine.IsStarted == true)
-                .TakeWhile(vehicle => vehicle.Engine.IsStarted == true)
+                /* */
                 .Select(vehicle => vehicle.Engine);
-
 
             Assert.AreEqual(4, engines.Count());
         }
@@ -46,23 +43,25 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            IEnumerable<IWheel> engines = this.vehicleStorage
-                .getAll()
-                .Select(vehicle => vehicle)
-                .Where(vehicle => vehicle.Color == CarColor.White)
-                .Select(vehicle => vehicle.Wheels[0])
+            double pressure = 0.0;
+
+            Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-            throw new NotImplementedException();
+            int horsePower = 0;
+
+            Assert.AreEqual(100, horsePower);
         }
 
         [TestMethod]
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
-            throw new NotImplementedException();
+            int horsePower = 0;
+
+            Assert.AreEqual(666, horsePower);
         }
     }
 }
