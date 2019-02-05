@@ -45,21 +45,24 @@ namespace BusinessCore.Tests
         {
             double pressure = 0.0;
 
-            Assert.AreEqual(3.0, pressure);
-            /*double pressureMedia = this.vehicleStorage
+            pressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
-                .Average(vehicle => )
+                .Average(vehicle => vehicle.Wheels[0].Pressure);
+                //.Average(vehicle => vehicle.Wheels.Where(wheel => wheel.Pressure));
+                //.Average(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure);
 
-            Assert.AreEqual(3, vehicles.Length);*/
-
-
+            Assert.AreEqual(3.0, pressure);                        
         }
 
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
             int horsePower = 0;
+
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Min(vehicle => vehicle.Engine.HorsePower);
 
             Assert.AreEqual(100, horsePower);
         }
@@ -68,6 +71,12 @@ namespace BusinessCore.Tests
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
             int horsePower = 0;
+
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Where(vehicle => vehicle.Engine.IsStarted == false)
+                .Max(vehicle => vehicle.Engine.HorsePower);
 
             Assert.AreEqual(666, horsePower);
         }
