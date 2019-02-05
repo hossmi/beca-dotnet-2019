@@ -50,6 +50,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 2},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -73,6 +74,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -96,6 +98,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -119,6 +122,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -142,6 +146,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -167,6 +172,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Black,
@@ -192,6 +198,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 6},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.Red,
@@ -220,6 +227,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 5},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.White,
@@ -248,6 +256,7 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 5},
                 },
             };
+
             yield return new Vehicle
             {
                 Color = CarColor.White,
