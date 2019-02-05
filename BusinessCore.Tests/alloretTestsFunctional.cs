@@ -19,7 +19,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void minimal_horsepower_of_pressure_value_wheel_3_and_started_engine_cars_is_85cv()
+        public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
             int horsePower = 0;
             double pressure = 0;
@@ -38,7 +38,7 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Select(vehicle => new //solo para que compile el test
                 {
-                    vehicle.Wheels,
+                    vehicle.WheelsCount,
                     Pressure = 0
                 })
                 /* Insert code here for boom! */
@@ -49,11 +49,11 @@ namespace BusinessCore.Tests
             Type itemTime = vehicles[0].GetType();
             Assert.AreEqual(2, itemTime.GetProperties().Length);
 
-            Assert.AreEqual(2, vehicles[0].Wheels);
+            Assert.AreEqual(2, vehicles[0].WheelsCount);
             Assert.AreEqual(2.5, vehicles[0].Pressure);
-            Assert.AreEqual(4, vehicles[1].Wheels);
+            Assert.AreEqual(4, vehicles[1].WheelsCount);
             Assert.AreEqual(2.8, vehicles[1].Pressure);
-            Assert.AreEqual(2, vehicles[2].Wheels);
+            Assert.AreEqual(2, vehicles[2].WheelsCount);
             Assert.AreEqual(2.1, vehicles[2].Pressure);
         }
 
