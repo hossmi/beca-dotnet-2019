@@ -9,6 +9,7 @@ namespace CarManagement.Services
 {
     public interface IEnrollmentProvider
     {
-        IEnrollment getNewEnrollment();
+        IEnrollment getNew();
+        IEnrollment import(string serial, int number);
     }
 }

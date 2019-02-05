@@ -14,7 +14,7 @@ namespace CarManagement.Services
             this.numbers = 0;
         }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.getNew()
         {
             string enrollmentLetters = "";
 
@@ -58,6 +58,11 @@ namespace CarManagement.Services
             return new Enrollment(enrollmentLetters, this.numbers);
         }
 
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private class Enrollment : IEnrollment
         {
             public Enrollment(string serial, int number)
@@ -74,6 +79,5 @@ namespace CarManagement.Services
                 return $"{this.Serial}-{this.Number.ToString("0000")}";
             }
         }
-
     }
 }

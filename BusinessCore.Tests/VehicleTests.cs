@@ -105,23 +105,7 @@ namespace BusinessCore.Tests
             builder.addWheel();
             builder.addWheel();
 
-            try
-            {
-                builder.addWheel();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            Negassert.mustFail(() => builder.addWheel());
         }
 
         [TestMethod]
@@ -130,23 +114,10 @@ namespace BusinessCore.Tests
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
-            try
+            Negassert.mustFail(() =>
             {
                 Vehicle vehicle = builder.build();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
 
         [TestMethod]
@@ -196,12 +167,12 @@ namespace BusinessCore.Tests
         public void enrollments_must_complaint_requested_format()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNew();
 
-            Regex fullRegex = new Regex("[A-Z][A-Z][A-Z]-[0-9][0-9][0-9][0-9]");
+            Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}-[0-9]{4}");
             Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
 
-            Regex serialRegex = new Regex("[A-Z][A-Z][A-Z]");
+            Regex serialRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}");
             Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
 
             Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);

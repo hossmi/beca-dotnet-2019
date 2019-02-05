@@ -41,17 +41,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Builders\Asserts.cs" />
+    <Compile Include="Asserts.cs" />
     <Compile Include="Builders\IVehicleBuilder.cs" />
     <Compile Include="Builders\VehicleBuilder.cs" />
     <Compile Include="Models\CarColor.cs" />
     <Compile Include="Models\Door.cs" />
+    <Compile Include="Models\DTOs\DoorDto.cs" />
+    <Compile Include="Models\DTOs\EngineDto.cs" />
+    <Compile Include="Models\DTOs\EnrollmentDto.cs" />
+    <Compile Include="Models\DTOs\VehicleDto.cs" />
+    <Compile Include="Models\DTOs\WheelDto.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\IEnrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\DefaultDtoConverter.cs" />
     <Compile Include="Services\DefaultEnrollmentProvider.cs" />
+    <Compile Include="Services\EnrollmentEqualityComparer.cs" />
+    <Compile Include="Services\IDtoConverter.cs" />
+    <Compile Include="Services\InMemoryVehicleStorage.cs" />
     <Compile Include="Services\IVehicleStorage.cs" />
     <Compile Include="Services\IEnrollmentProvider.cs" />
     <Compile Include="Services\FileVehicleStorage.cs" />

@@ -91,7 +91,7 @@ namespace CarManagement.Builders
 
             Engine engine = new Engine(this.horsepowerValue);
 
-            IEnrollment enrollment = this.enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
 
             Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
             return vehicle;

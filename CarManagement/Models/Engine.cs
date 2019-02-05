@@ -26,6 +26,14 @@ namespace CarManagement.Models
             }
         }
 
+        public int HorsePower
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void start()
         {
             this.isStarted = true;
@@ -34,6 +42,11 @@ namespace CarManagement.Models
         public void setHorsePower(double nHorsePower)
         {
             this.horsepower = nHorsePower;
+        }
+
+        public void stop()
+        {
+            throw new NotImplementedException();
         }
     }
 }
