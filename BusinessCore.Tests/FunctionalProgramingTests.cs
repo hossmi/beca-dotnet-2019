@@ -82,9 +82,10 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Where(vehicle => 
-                    vehicle.Doors.Where(door =>
+                    vehicle.Doors.Any(door =>
                         door.IsOpen
-                    ).Count() == 1)
+                    )
+                )
                 .Select(vehicle => new { vehicle.Enrollment.Serial, vehicle.Engine.HorsePower})
                 .ToArray();
 
