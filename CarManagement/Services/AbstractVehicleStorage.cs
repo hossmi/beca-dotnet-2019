@@ -1,33 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CarManagement.Models;
+﻿using System.Collections.Generic;
+using CarManagement.Core;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        private readonly IDictionary<IEnrollment, IVehicle> vehicles;
+        private bool disposed;
 
-        public AbstractVehicleStorage()
+        public AbstractVehicleStorage(IDictionary<IEnrollment, IVehicle> initialVehicles)
         {
-            this.vehicles = load();
-            Asserts.isNotNull(this.vehicles);
+            Asserts.isNotNull(initialVehicles);
+            this.vehicles = initialVehicles;
+            this.disposed = false;
         }
 
-        public int Count { get => this.vehicles.Count; }
+        ~AbstractVehicleStorage()
+        {
+            Dispose();
+        }
+
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
 
         public void clear()
         {
             this.vehicles.Clear();
-            save(this.vehicles.Values);
         }
 
-        public Vehicle get(IEnrollment enrollment)
+        public IVehicle get(IEnrollment enrollment)
         {
-            Vehicle vehicleResult;
+            IVehicle vehicleResult;
 
             bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
             Asserts.isTrue(vehicleExists);
@@ -35,14 +45,26 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public void set(Vehicle vehicle)
+        public IEnumerable<IVehicle> getAll()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void set(IVehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));
             this.vehicles.Add(vehicle.Enrollment, vehicle);
-            save(this.vehicles.Values);
         }
 
-        protected abstract IDictionary<IEnrollment, Vehicle> load();
-        protected abstract void save(IEnumerable<Vehicle> vehicles);
+        public void Dispose()
+        {
+            if (this.disposed == false)
+            {
+                save(this.vehicles.Values);
+                this.disposed = true;
+            }
+        }
+
+        protected abstract void save(IEnumerable<IVehicle> vehicles);
     }
 }

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using CarManagement.Builders;
-using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Extensions.Vehicles;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CarManagement.Services;
+using BusinessCore.Tests.Services;
 
 namespace BusinessCore.Tests
 {
@@ -15,11 +17,17 @@ namespace BusinessCore.Tests
         private const int SMALL = 10 * 1000;
         private const int MEDIUM = 10 * SMALL;
         private const int LARGE = 10 * MEDIUM;
+        private readonly Random random;
+
+        public VehicleTests()
+        {
+            this.random = new Random(DateTime.UtcNow.Millisecond);
+        }
 
         [TestMethod]
         public void builder_default_functionality()
         {
-            FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
+            SingleEnrollmentProvider enrollmentProvider = new SingleEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
@@ -31,12 +39,12 @@ namespace BusinessCore.Tests
             builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
 
             Assert.IsNotNull(vehicle);
             Assert.IsNotNull(vehicle.Enrollment);
-            Assert.AreEqual(2, vehicle.DoorsCount);
-            Assert.AreEqual(4, vehicle.WheelCount);
+            Assert.AreEqual(2, vehicle.Doors.Length);
+            Assert.AreEqual(4, vehicle.Wheels.Length);
 
             Assert.AreEqual(enrollmentProvider.DefaultEnrollment, vehicle.Enrollment);
 
@@ -59,7 +67,7 @@ namespace BusinessCore.Tests
             // propiedad de solo lectura 
             // propiedad: array Wheels
             // campo privado: List Wheels
-            foreach (Wheel wheel in vehicle.Wheels)
+            foreach (IWheel wheel in vehicle.Wheels)
             {
                 Assert.IsTrue(wheel.Pressure == 2.4);
             }
@@ -80,8 +88,8 @@ namespace BusinessCore.Tests
             builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
-            Vehicle vehicle1 = builder.build();
-            Vehicle vehicle2 = builder.build();
+            IVehicle vehicle1 = builder.build();
+            IVehicle vehicle2 = builder.build();
 
             Assert.AreNotEqual(vehicle1.Enrollment, vehicle2.Enrollment);
         }
@@ -109,6 +117,25 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
+        public void doors_must_be_between_0_and_6()
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+
+            for (int i = 0; i < MEDIUM; i++)
+            {
+                int doorsCount = this.random.Next(7, int.MaxValue);
+                Negassert.mustFail(() => builder.setDoors(doorsCount));
+            }
+
+            for (int i = 0; i < MEDIUM; i++)
+            {
+                int doorsCount = this.random.Next(int.MinValue, 0);
+                Negassert.mustFail(() => builder.setDoors(doorsCount));
+            }
+        }
+
+        [TestMethod]
         public void cannot_create_vehicle_without_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
@@ -116,7 +143,7 @@ namespace BusinessCore.Tests
 
             Negassert.mustFail(() =>
             {
-                Vehicle vehicle = builder.build();
+                IVehicle vehicle = builder.build();
             });
         }
 
@@ -156,7 +183,7 @@ namespace BusinessCore.Tests
             builder.setEngine(100);
             builder.setColor(CarColor.Red);
 
-            Vehicle vehicle = builder.build();
+            IVehicle vehicle = builder.build();
             IEnrollment enrollment1 = vehicle.Enrollment;
             IEnrollment enrollment2 = vehicle.Enrollment;
             Assert.AreEqual(enrollment1, enrollment2);
@@ -182,7 +209,7 @@ namespace BusinessCore.Tests
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+            IDictionary<IEnrollment, IVehicle> vehicles = new Dictionary<IEnrollment, IVehicle>();
 
             builder.addWheel();
             builder.addWheel();
@@ -196,7 +223,7 @@ namespace BusinessCore.Tests
             Stopwatch stopwatch = Stopwatch.StartNew();
             for (int i = 0; i < numberOfVehicles; i++)
             {
-                Vehicle vehicle = builder.build();
+                IVehicle vehicle = builder.build();
 
                 Assert.IsFalse(vehicles.ContainsKey(vehicle.Enrollment));
                 vehicles.Add(vehicle.Enrollment, vehicle);

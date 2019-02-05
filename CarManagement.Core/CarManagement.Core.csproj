@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6542EE62-2A8A-4BAF-869F-4427B0416032}</ProjectGuid>
+    <ProjectGuid>{39975372-AA61-4A08-82A4-60479C44F079}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CarManagement</RootNamespace>
-    <AssemblyName>CarManagement</AssemblyName>
+    <RootNamespace>CarManagement.Core</RootNamespace>
+    <AssemblyName>CarManagement.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,23 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\Filters\VehicleFilterExtensions.cs" />
-    <Compile Include="Services\VehicleBuilder.cs" />
+    <Compile Include="Asserts.cs" />
+    <Compile Include="Models\CarColor.cs" />
+    <Compile Include="Models\DTOs\DoorDto.cs" />
+    <Compile Include="Models\DTOs\EngineDto.cs" />
+    <Compile Include="Models\DTOs\EnrollmentDto.cs" />
+    <Compile Include="Models\DTOs\VehicleDto.cs" />
+    <Compile Include="Models\DTOs\WheelDto.cs" />
+    <Compile Include="Models\IDoor.cs" />
+    <Compile Include="Models\IEngine.cs" />
+    <Compile Include="Models\IEnrollment.cs" />
+    <Compile Include="Models\IVehicle.cs" />
+    <Compile Include="Models\IWheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DefaultDtoConverter.cs" />
-    <Compile Include="Services\AbstractVehicleStorage.cs" />
-    <Compile Include="Services\DefaultEnrollmentProvider.cs" />
-    <Compile Include="Services\EnrollmentEqualityComparer.cs" />
-    <Compile Include="Services\InMemoryVehicleStorage.cs" />
-    <Compile Include="Services\FileVehicleStorage.cs" />
-    <Compile Include="Extensions\Vehicles\VehicleExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">
-      <Project>{39975372-AA61-4A08-82A4-60479C44F079}</Project>
-      <Name>CarManagement.Core</Name>
-    </ProjectReference>
+    <Compile Include="Services\IEnrollmentProvider.cs" />
+    <Compile Include="Services\IVehicleBuilder.cs" />
+    <Compile Include="Services\IVehicleStorage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
