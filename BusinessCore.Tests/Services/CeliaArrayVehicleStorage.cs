@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace BusinessCore.Tests.Services
 {
-    public class Celia_ArrayVehicleStorage : AbstractVehicleStorage
+    public class CeliaArrayVehicleStorage : AbstractVehicleStorage
     {
-        public Celia_ArrayVehicleStorage() : base(initialVehicles())
+        public CeliaArrayVehicleStorage() : base(initialVehicles())
         {
         }
 

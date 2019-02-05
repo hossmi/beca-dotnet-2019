@@ -7,13 +7,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class Celia_FunctionalProgramingTests
+    public class CeliaFunctionalProgramingTests
     {
-        private readonly ArrayVehicleStorage vehicleStorage;
+        private readonly CeliaArrayVehicleStorage vehicleStorage;
 
-        public Celia_FunctionalProgramingTests()
+        public CeliaFunctionalProgramingTests()
         {
-            this.vehicleStorage = new ArrayVehicleStorage();
+            this.vehicleStorage = new CeliaArrayVehicleStorage();
         }
 
         [TestMethod]
