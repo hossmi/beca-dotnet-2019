@@ -82,7 +82,12 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Where(vehicle => 
+                    vehicle.Doors.Where(door =>
+                        door.IsOpen
+                    ).Count() == 1)
+                .Select(vehicle => vehicle.Enrollment.Serial)//, vehicle => vehicle.Engine.HorsePower)
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
