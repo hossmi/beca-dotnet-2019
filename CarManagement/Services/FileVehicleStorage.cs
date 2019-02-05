@@ -10,7 +10,7 @@ namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private IDictionary<IEnrollment, IVehicle> vehicles;
+       
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
 
