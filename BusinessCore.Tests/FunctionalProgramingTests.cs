@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
-using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -107,10 +106,12 @@ namespace BusinessCore.Tests
                 .getAll()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group => new
-                {
-                    Serial = group.Key,
-                    AverageHorsePower = group.ToList().Select(vehicle => vehicle.Engine.HorsePower).Average()
-                })
+                                {
+                                    Serial = group.Key,
+                                    AverageHorsePower = group
+                                                        .Select(vehicle => vehicle.Engine.HorsePower)
+                                                        .Average()
+                                })
                 .OrderBy(group => group.Serial)
                 .ToArray();
 
