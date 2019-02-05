@@ -45,15 +45,11 @@ namespace BusinessCore.Tests
         {
             double pressure = 0.0;
 
-            IEnumerable<IVehicle> vehicles = this.vehicleStorage
-                 .getAll()
-                 .Where(vehicle => vehicle.Color == CarColor.White)
-                 .Select(vehicle => vehicle.Wheels)
-                 .Select(wheel => wheels.[0]);
-
-
-
-
+            pressure = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Select(vehicle => vehicle.Wheels)
+                .Average(wheels => pressure);
 
             Assert.AreEqual(3.0, pressure);
         }
@@ -63,6 +59,11 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
 
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Select(vehicle => vehicle.Engine)
+                .Min(engine => engine.HorsePower);
+
             Assert.AreEqual(100, horsePower);
         }
 
@@ -70,6 +71,13 @@ namespace BusinessCore.Tests
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
             int horsePower = 0;
+
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Select(vehicle => vehicle.Engine)
+                .Where(engine => engine.IsStarted == false)
+                .Max(engine => engine.HorsePower);
 
             Assert.AreEqual(666, horsePower);
         }
