@@ -86,7 +86,11 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen).Count() == 1)
-                .Select(vehicle => new { vehicle.Enrollment.Serial, vehicle.Engine.HorsePower })
+                .Select(vehicle => new
+                                   {
+                                        vehicle.Enrollment.Serial,
+                                        vehicle.Engine.HorsePower
+                                    })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
@@ -100,7 +104,13 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(group => new
+                {
+                    Serial = group.Key,
+                    AverageHorsePower = group.ToList().Select(vehicle => vehicle.Engine.HorsePower).Average()
+                })
+                .OrderBy(group => group.Serial)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
