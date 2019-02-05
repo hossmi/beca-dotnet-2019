@@ -101,9 +101,7 @@ namespace BusinessCore.Tests
                 .Select( group => new
                 {
                     Serial = group.Key,
-
                     AverageHorsePower = group
-                    .ToList()
                     .Select(vehicle => vehicle.Engine.HorsePower)
                     .Average()
                 })
