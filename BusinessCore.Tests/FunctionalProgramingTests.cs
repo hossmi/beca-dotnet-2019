@@ -44,6 +44,10 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
+            /*IEnumerable<IWheel> wheels = this.vehicleStorage
+                .getAll()
+                .filter(vehicle => vehicle.Wheels)
+                .Select(vehicle => vehicle.Wheels);*/
             double pressure = 0.0;
 
             Assert.AreEqual(3.0, pressure);
@@ -53,6 +57,10 @@ namespace BusinessCore.Tests
         public void minimal_horsepower_is_100cv()
         {
             int horsePower = 0;
+            IEnumerable<IVehicle> vehicles = this.vehicleStorage
+                .getAll()
+                .filter( vehicle => vehicle.Engine.HorsePower == 100 )
+                .Select( vehicle => vehicle);
 
             Assert.AreEqual(100, horsePower);
         }
