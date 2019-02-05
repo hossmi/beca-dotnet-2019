@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
             Assert.AreEqual(6, vehicles.Length);
@@ -34,8 +34,8 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /* */
-                .Select(vehicle => vehicle.Engine);
+                .Select(vehicle => vehicle.Engine)
+                .Where(engine => engine.IsStarted);
 
             Assert.AreEqual(4, engines.Count());
         }
@@ -45,13 +45,17 @@ namespace BusinessCore.Tests
         {
             double pressure = 0.0;
 
-            Assert.AreEqual(3.0, pressure);
             IEnumerable<IVehicle> vehicles = this.vehicleStorage
                  .getAll()
                  .Where(vehicle => vehicle.Color == CarColor.White)
                  .Select(wheels => wheels.Wheels)
-                 .Average(avgPressure => avgPressure == );
+                 .Average(wheelPressure => wheelPressure);
 
+
+
+
+
+            Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
