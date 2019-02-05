@@ -31,7 +31,12 @@ namespace CarManagement.Services
             this.numbers = 0;
         }
 
-        IEnrollment IEnrollmentProvider.getNewEnrollment()
+        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        IEnrollment IEnrollmentProvider.getNew()
         {
             string enrollmentLetters = "";
 

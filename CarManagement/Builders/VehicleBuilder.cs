@@ -5,7 +5,7 @@ using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
-    public class VehicleBuilder
+    public class VehicleBuilder : IVehicleBuilder
     {
 
         private int wheels;
@@ -98,7 +98,7 @@ namespace CarManagement.Builders
 
             Engine engine = new Engine(this.horsepowerValue);
 
-            IEnrollment enrollment = this.enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
 
             Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
             return vehicle;
@@ -148,6 +148,11 @@ namespace CarManagement.Builders
             enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
 
             return enrollment;
+        }
+
+        public void removeWheel()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -71,6 +71,8 @@ namespace CarManagement.Models
             }
         }
 
+        public CarColor Color { get; }
+
         public void setWheelsPressure(double pression)
         {
             if (pression >= 0)

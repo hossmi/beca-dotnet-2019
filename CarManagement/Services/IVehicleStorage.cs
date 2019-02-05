@@ -7,10 +7,12 @@ using CarManagement.Models;
 
 namespace CarManagement.Services
 {
-    public interface IEnrollmentProvider
+    public interface IVehicleStorage
     {
-        IEnrollment getNew();
-        IEnrollment import(string serial, int number);
-    }
+        int Count { get; }
 
+        void set(Vehicle vehicle);
+        Vehicle get(IEnrollment enrollment);
+        void clear();
+    }
 }
