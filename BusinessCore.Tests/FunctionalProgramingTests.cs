@@ -44,12 +44,12 @@ namespace BusinessCore.Tests
         public void average_pressure_for_white_vehicles_is_3()
         {
             double pressure = 0.0;
-             pressure = this.vehicleStorage
-                .getAll()
-                .Where(vehicle => vehicle.Color == CarColor.White)
-                .Select(vehicle => vehicle.Wheels)
-                .Average(wheel => wheel
-                .Average(w => w.Pressure));
+            pressure = this.vehicleStorage
+               .getAll()
+               .Where(vehicle => vehicle.Color == CarColor.White)
+               .Select(vehicle => vehicle.Wheels)
+               .Average(wheel => wheel
+               .Average(w => w.Pressure));
 
             Assert.AreEqual(3.0, pressure);
         }
@@ -85,7 +85,15 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Where(vehicle => vehicle.Doors
+                .Any(door => door.IsOpen))
+                .Select(vehicle =>
+                    new
+                    {
+                        serial = vehicle.Enrollment.Serial,
+                        horsepower = vehicle.Engine.HorsePower
+                    })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
