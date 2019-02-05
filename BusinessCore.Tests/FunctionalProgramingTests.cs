@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
-using CarManagement.Core.Services;
-using CarManagement.Extensions.Filters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -84,8 +82,8 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color==CarColor.White)
-                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == true).Count() == 1)
-                .select( vehicle => new {  vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
+                .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == true))
+                .Select( vehicle => new {  vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
@@ -99,7 +97,17 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                .Select(vehicle => new { vehicle => vehicle.Engine.HorsePower })
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select( group => new
+                {
+                    Serial = group.Key,
+
+                    AverageHorsePower = group
+                    .ToList()
+                    .Select(vehicle => vehicle.Engine.HorsePower)
+                    .Average()
+                })
+                .OrderBy(group => group.Serial)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -113,8 +121,6 @@ namespace BusinessCore.Tests
             Assert.AreEqual(633, vehicles[1].AverageHorsePower);
             Assert.AreEqual("ZZZ", vehicles[2].Serial);
             Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
-
-
         }
     }
 }
