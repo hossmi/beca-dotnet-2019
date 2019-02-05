@@ -76,7 +76,7 @@ namespace CarManagement.Builders
 
             List<Door> doorsList = new List<Door>();
 
-            if (this.doors > 0 && this.doors <= 6)
+            if (this.doors <= 6)
             {
                 for (int i = 1; i <= this.doors; i++)
                 {
@@ -97,54 +97,16 @@ namespace CarManagement.Builders
             return vehicle;
         }
 
-        //private string generateEnrollment()
-        //{
-        //    string enrollment = "";
-
-        //    if (this.numbers >= 9999)
-        //    {
-        //        if ((this.serial[0] & this.serial[1] & this.serial[2]) < 19)
-        //        {
-        //            if ((this.serial[1] & this.serial[2]) < 19)
-        //            {
-        //                if (this.serial[2] < 19)
-        //                {
-        //                    this.serial[2] += 1;
-        //                    this.numbers = 0000;
-        //                }
-        //                else
-        //                {
-        //                    this.serial[1] += 1;
-        //                    this.serial[2] = 0;
-        //                    this.numbers = 0000;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                this.serial[0] += 1;
-        //                this.serial[1] = 0;
-        //                this.serial[2] = 0;
-        //                this.numbers = 0000;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            throw new SystemException("Unexpected Error in generateEnrollment");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        this.numbers += 1;
-        //    }
-
-        //    enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
-
-        //    return enrollment;
-        //}
-
         public void removeWheel()
         {
-            throw new NotImplementedException();
+            if (this.wheels > 0)
+            {
+                this.wheels--;
+            }
+            else
+            {
+                throw new ArgumentException("The number maximun of wheels is 4");
+            }
         }
     }
 }

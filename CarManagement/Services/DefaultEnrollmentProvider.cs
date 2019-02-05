@@ -9,23 +9,6 @@ namespace CarManagement.Services
         private readonly string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
         private readonly int[] serial = { 0, 0, 0 };
 
-        private class Enrollment : IEnrollment
-        {
-            public Enrollment(string serial, int number)
-            {
-                this.Serial = serial;
-                this.Number = number;
-            }
-
-            public string Serial { get; }
-            public int Number { get; }
-
-            public override string ToString()
-            {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
-            }
-        }
-
         public DefaultEnrollmentProvider()
         {
             this.numbers = 0;
@@ -73,6 +56,23 @@ namespace CarManagement.Services
 
             enrollmentLetters = this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
             return new Enrollment(enrollmentLetters, this.numbers);
+        }
+
+        private class Enrollment : IEnrollment
+        {
+            public Enrollment(string serial, int number)
+            {
+                this.Serial = serial;
+                this.Number = number;
+            }
+
+            public string Serial { get; }
+            public int Number { get; }
+
+            public override string ToString()
+            {
+                return $"{this.Serial}-{this.Number.ToString("0000")}";
+            }
         }
 
     }
