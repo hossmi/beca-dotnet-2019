@@ -48,8 +48,8 @@ namespace BusinessCore.Tests
             IEnumerable<IVehicle> vehicles = this.vehicleStorage
                  .getAll()
                  .Where(vehicle => vehicle.Color == CarColor.White)
-                 .Select(wheels => wheels.Wheels)
-                 .Average(wheelPressure => wheelPressure);
+                 .Select(vehicle => vehicle.Wheels)
+                 .Select(wheel => wheels.[0]);
 
 
 
