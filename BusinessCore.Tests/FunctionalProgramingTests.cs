@@ -46,10 +46,8 @@ namespace BusinessCore.Tests
             double averagePressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
-                .Select(vehicle => 
-                    vehicle.Wheels.Average(wheel => wheel.Pressure)
-                    )
-                .Average();
+                .SelectMany(vehicle => vehicle.Wheels)
+                .Average(wheel => wheel.Pressure);
 
             Assert.AreEqual(3.0, averagePressure);
         }
