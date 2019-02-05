@@ -24,269 +24,7 @@ namespace BusinessCore.Tests.Services
 
         private static IEnumerable<IVehicle> buildVehicles()
         {
-            yield return new Vehicle
-            {
-                Color = CarColor.White,
-                Enrollment = new Enrollment
-                {
-                    Serial = "PNG",
-                    Number = 0100,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 666,
-                    IsStarted = true,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = true },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 4},
-                    new Wheel{Pressure = 4},
-                    new Wheel{Pressure = 2},
-                    new Wheel{Pressure = 2},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "PNG",
-                    Number = 0200,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 600,
-                    IsStarted = true,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = true },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "JVC",
-                    Number = 0300,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 600,
-                    IsStarted = true,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "JVC",
-                    Number = 400,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 600,
-                    IsStarted = true,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "JVC",
-                    Number = 1000,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 666,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "ZZZ",
-                    Number = 2000,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 600,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Black,
-                Enrollment = new Enrollment
-                {
-                    Serial = "ZZZ",
-                    Number = 2100,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 100,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 6},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.Red,
-                Enrollment = new Enrollment
-                {
-                    Serial = "ZZZ",
-                    Number = 3000,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 666,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = true },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 5},
-                    new Wheel{Pressure = 5},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.White,
-                Enrollment = new Enrollment
-                {
-                    Serial = "ZZZ",
-                    Number = 3100,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 666,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = true },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 5},
-                    new Wheel{Pressure = 5},
-                },
-            };
-
-            yield return new Vehicle
-            {
-                Color = CarColor.White,
-                Enrollment = new Enrollment
-                {
-                    Serial = "ZZZ",
-                    Number = 3300,
-                },
-                Engine = new Engine
-                {
-                    HorsePower = 666,
-                    IsStarted = false,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 5},
-                    new Wheel{Pressure = 5},
-                },
-            };
-
-            //MY VEHICLES START HERE
+            //METAL BAWKSES GO 'ERE!
 
             yield return new Vehicle
             {
@@ -303,17 +41,17 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
     {
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = true },
     },
                 Wheels = new IWheel[]
     {
                     new Wheel{Pressure = 1},
                     new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 5},
-                    new Wheel{Pressure = 5},
+                    new Wheel{Pressure = 4.5},
+                    new Wheel{Pressure = 4.5},
     },
             };
 
@@ -333,16 +71,16 @@ namespace BusinessCore.Tests.Services
                 Doors = new IDoor[]
 {
                     new Door { IsOpen = false },
-                    new Door { IsOpen = false },
-                    new Door { IsOpen = false },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = true },
                     new Door { IsOpen = false },
 },
                 Wheels = new IWheel[]
 {
                     new Wheel{Pressure = 1},
                     new Wheel{Pressure = 1},
-                    new Wheel{Pressure = 5},
-                    new Wheel{Pressure = 5},
+                    new Wheel{Pressure = 4.5},
+                    new Wheel{Pressure = 4.5},
 },
             };
 
@@ -363,8 +101,37 @@ namespace BusinessCore.Tests.Services
 {
                     new Door { IsOpen = false },
                     new Door { IsOpen = false },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
+},
+                Wheels = new IWheel[]
+{
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 4.5},
+                    new Wheel{Pressure = 4.5},
+},
+            };
+
+            yield return new Vehicle
+            {
+                Color = CarColor.Purple,
+                Enrollment = new Enrollment
+                {
+                    Serial = "CSM",
+                    Number = 1003,
+                },
+                Engine = new Engine
+                {
+                    HorsePower = 666,
+                    IsStarted = false,
+                },
+                Doors = new IDoor[]
+{
                     new Door { IsOpen = false },
                     new Door { IsOpen = false },
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = true },
 },
                 Wheels = new IWheel[]
 {

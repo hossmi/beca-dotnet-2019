@@ -24,50 +24,50 @@ namespace BusinessCore.Tests
         {
             bool isTrue = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
-                .Select(vehicle => vehicle.Engine.HorsePower)
-                .All(horsepower => horsepower == 666)
+                /* */
                 ;
 
             Assert.IsTrue(isTrue);
         }
 
         [TestMethod]
-        public void there_are_four_started_engines()
+        public void all_vehicles_with_enrollment_serial_CSM_have_their_third_door_open()
         {
+            bool isTrue = this.vehicleStorage
+                .getAll()
+                /* */
+                ;
+
+            Assert.IsTrue(isTrue);
 
         }
 
         [TestMethod]
-        public void average_pressure_for_white_vehicles_is_3()
+        public void count_of_open_and_closed_doors_from_CSM_vehicles()
         {
+            var returnedValues = this.vehicleStorage
+                .getAll()
+                /* */
+                ;
+
+            int open = returnedValues.ElementAt(0).Count();
+            int close = returnedValues.ElementAt(1).Count();
+
+            Assert.AreEqual(open,9);
+            Assert.AreEqual(close, 7);
+
 
         }
 
         [TestMethod]
-        public void minimal_horsepower_is_100cv()
+        public void return_all_wheels_with_4point5_pressure()
         {
+            IEnumerable<IWheel> wheels = this.vehicleStorage
+                .getAll()
+                /* */
+                ;
 
-        }
-
-        [TestMethod]
-        public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
-        {
-            int horsePower = 0;
-
-            Assert.AreEqual(666, horsePower);
-        }
-
-        [TestMethod]
-        public void from_the_two_white_cars_with_opened_doors_get_serial_enrollment_and_horsePower()
-        {
-
-        }
-
-
-        [TestMethod]
-        public void get_enrollment_serial_and_average_horse_power_grouping_by_enrollment_serial_ordering_by_serial_and_average_horse_power()
-        {
+            Assert.AreEqual(wheels.Count(), 6);
 
         }
     }
