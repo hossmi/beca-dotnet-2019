@@ -8,48 +8,51 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class FunctionalProgramingTests
+    public class FunctionalProgramingTestsSoden
     {
-        private readonly ArrayVehicleStorage vehicleStorage;
+        private readonly ArrayVehicleStorageSoden vehicleStorage;
 
-        public FunctionalProgramingTests()
+        public FunctionalProgramingTestsSoden()
         {
-            this.vehicleStorage = new ArrayVehicleStorage();
+            this.vehicleStorage = new ArrayVehicleStorageSoden();
         }
 
         [TestMethod]
-        public void there_are_six_black_vehicles()
+        public void a_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Color == CarColor.Black )
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
+                .Where(vehicle => vehicle.Engine.HorsePower >100)
                 .ToArray();
 
-            Assert.AreEqual(6, vehicles.Length);
+            Assert.AreEqual(3, vehicles.Length);
         }
 
         [TestMethod]
-        public void there_are_four_started_engines()
+        public void b_there_are_two_started_engines_more_one_doors_closed()
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
+                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == false).Count() >1)
                 .Select(vehicle => vehicle.Engine);
-
-            Assert.AreEqual(4, engines.Count());
+            Assert.AreEqual(2, engines.Count());
         }
 
         [TestMethod]
-        public void average_pressure_for_white_vehicles_is_3()
+        public void c_add_pressure_for_white_vehicles_is_3()
         {
             double pressure = this.vehicleStorage
                .getAll()
-               .Where(vehicle => vehicle.Color == CarColor.White)
+               .Where(vehicle => vehicle.Color == CarColor.Black)
+               .Where(vehicle => vehicle.Enrollment.Number > 100)
                .SelectMany(vehicle => vehicle.Wheels)
                .Select(wheel => wheel.Pressure)
-               .Average();
+               .Count();
 
-                Assert.AreEqual(3.0, pressure);
+                Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]

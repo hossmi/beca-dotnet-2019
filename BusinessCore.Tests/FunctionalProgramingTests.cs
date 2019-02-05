@@ -8,11 +8,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class FunctionalProgramingTestsSoden
+    public class FunctionalProgramingTests
     {
         private readonly ArrayVehicleStorageSoden vehicleStorageSoden;
 
-        public FunctionalProgramingTestsSoden()
+        public FunctionalProgramingTests()
         {
             this.vehicleStorageSoden = new ArrayVehicleStorageSoden();
         }
