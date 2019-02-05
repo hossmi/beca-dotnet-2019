@@ -220,6 +220,62 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 5},
                 },
             };
+            yield return new Vehicle
+            {
+                Color = CarColor.White,
+                Enrollment = new Enrollment
+                {
+                    Serial = "ZZZ",
+                    Number = 3100,
+                },
+                Engine = new Engine
+                {
+                    HorsePower = 666,
+                    IsStarted = false,
+                },
+                Doors = new IDoor[]
+                {
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                },
+                Wheels = new IWheel[]
+                {
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 5},
+                    new Wheel{Pressure = 5},
+                },
+            };
+            yield return new Vehicle
+            {
+                Color = CarColor.White,
+                Enrollment = new Enrollment
+                {
+                    Serial = "ZZZ",
+                    Number = 3300,
+                },
+                Engine = new Engine
+                {
+                    HorsePower = 666,
+                    IsStarted = false,
+                },
+                Doors = new IDoor[]
+                {
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                },
+                Wheels = new IWheel[]
+                {
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 1},
+                    new Wheel{Pressure = 5},
+                    new Wheel{Pressure = 5},
+                },
+            };
         }
 
         private class PrvEnrollmentComparer : IEqualityComparer<IEnrollment>
