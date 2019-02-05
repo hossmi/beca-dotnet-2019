@@ -60,6 +60,7 @@
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
+    <Compile Include="Services\CeliaArrayVehicleStorage.cs" />
     <Compile Include="Services\SingleEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
     <Compile Include="NumberToolsTests.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="JVBBTests.cs" />
     <Compile Include="CeliaVehicleTest.cs" />
     <Compile Include="FunctionalProgramingTests.cs" />
+    <Compile Include="CeliaFunctionalProgramingTests.cs" />
     <Compile Include="Services\ArrayVehicleStorageSoden.cs" />
     <Compile Include="VehicleStorageTests.cs" />
     <Compile Include="VehicleTests.cs" />
