@@ -34,7 +34,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Engine = new Engine
                 {
-                    HorsePower = 600,
+                    HorsePower = 666,
                     IsStarted = true,
                 },
                 Doors = new IDoor[]
@@ -194,7 +194,7 @@ namespace BusinessCore.Tests.Services
             };
             yield return new Vehicle
             {
-                Color = CarColor.White,
+                Color = CarColor.Red,
                 Enrollment = new Enrollment
                 {
                     Serial = "ZZZ",
@@ -202,7 +202,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Engine = new Engine
                 {
-                    HorsePower = 600,
+                    HorsePower = 666,
                     IsStarted = false,
                 },
                 Doors = new IDoor[]
