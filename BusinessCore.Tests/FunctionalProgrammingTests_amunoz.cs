@@ -30,7 +30,27 @@ namespace BusinessCore.Tests
                 .Select(vehicle => vehicle.Engine)
                 .Sum(engine => engine.HorsePower);
 
-            Assert.Equals(1366, horsePower);
+            Assert.AreEqual(1366, horsePower);
+        }
+
+
+        [TestMethod]
+        public void get_enrollment_number_from_only_vehicle_with_two_wheels_with_one_point_five_pressure_and_three_closed_doors()
+        {
+            int enrollmentNumber = 0;
+
+            this.vehicleStorage_amunoz
+            .getAll()
+            .Where(vehicle => vehicle.Wheels
+            .SelectMany(wheel => wheel.Pressure)
+
+
+
+
+            /**/
+            .ToArray();
+
+            Assert.AreEqual(0666, enrollmentNumber);
         }
     }
 }

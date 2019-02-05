@@ -47,7 +47,7 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
-            yield return 
+            return this.vehicles.Values;
         }
 
         public void set(IVehicle vehicle)
