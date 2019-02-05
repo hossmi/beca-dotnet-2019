@@ -56,12 +56,14 @@
     <Compile Include="Models\Enrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
+    <Compile Include="necoletoTestFunctional.cs" />
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\alloretArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
     <Compile Include="Services\EpicVehicleStorage.cs" />
     <Compile Include="Services\CeliaArrayVehicleStorage.cs" />
+    <Compile Include="Services\NecoletoArrayVehicleStorage.cs" />
     <Compile Include="Services\SingleEnrollmentProvider.cs" />
     <Compile Include="Negassert.cs" />
     <Compile Include="NumberToolsTests.cs" />

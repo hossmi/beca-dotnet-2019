@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -34,19 +38,29 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
+                .Select(vehicle => new
                 {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
+                    vehicle.Wheels,
+                    vehicle.Enrollment.Serial,
                 })
-                /* Insert code here for boom! */
+                .GroupBy(keygroup => keygroup.Serial)
+                .Select (group => new
+                {
+                    Serial = group.Key,
+                    Pressure = group.SelectMany(vehicle => 
+                        vehicle.Wheels
+                        .Select(pression=> pression
+                            .Pressure)
+                            ),
+                     WheelsCount = group.Select(vehicle => vehicle.Wheels .Count())
+                })
+                .OrderBy(group => group.WheelsCount)
+                .ThenBy(group => group.Pressure)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
-
             Type itemTime = vehicles[0].GetType();
             Assert.AreEqual(2, itemTime.GetProperties().Length);
-
             Assert.AreEqual(2, vehicles[0].WheelsCount);
             Assert.AreEqual(2.5, vehicles[0].Pressure);
             Assert.AreEqual(4, vehicles[1].WheelsCount);
@@ -62,8 +76,17 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                /* Insert code here for boom! */
+                //.Where (vehicle => vehicle.Color == CarColor.Red && vehicle.Doors.Where (doors  => doors.IsOpen).Count() != 0)
+                //.Select (vehicle => new
+                //{
+                //    Status = vehicle.Engine.IsStarted,
+                //    pressure = vehicle.Wheels.SelectMany(wheels => wheels.Pressure)
+                //}
+                //)
                 .ToArray();
+
+
+  
 
             Assert.AreEqual(2, vehicles.Length);
             Type itemTime = vehicles[0].GetType();
