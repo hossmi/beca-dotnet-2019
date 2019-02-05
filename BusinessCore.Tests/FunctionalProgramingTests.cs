@@ -12,6 +12,7 @@ namespace BusinessCore.Tests
     public class FunctionalProgramingTests
     {
         private readonly ArrayVehicleStorage vehicleStorage;
+        private readonly ArrayVehicleStorage_amunoz vehicleStorage_amunoz;
 
         public FunctionalProgramingTests()
         {
@@ -77,13 +78,13 @@ namespace BusinessCore.Tests
             Assert.AreEqual(2, itemTime.GetProperties().Length);
         }
 
-
+        /*
         [TestMethod]
         public void get_enrollment_serial_and_average_horse_power_grouping_by_enrollment_serial_ordering_by_serial_and_average_horse_power()
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -97,8 +98,21 @@ namespace BusinessCore.Tests
             Assert.AreEqual(633, vehicles[1].AverageHorsePower);
             Assert.AreEqual("ZZZ", vehicles[2].Serial);
             Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
+            */
 
+        [TestMethod]
+        public void get_total_horse_power_from_yellow_vehicles_with_less_than_three_wheels()
+        {
+            int horsePower = 0;
+            horsePower = this.vehicleStorage_amunoz
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Yellow)
+                .Where(vehicle => vehicle.Wheels.Count() < 3)
+                .Select(vehicle => vehicle.Engine)
+                .Sum(engine => engine.HorsePower);
 
+            Assert.Equals(1366, horsePower);
         }
     }
 }
+

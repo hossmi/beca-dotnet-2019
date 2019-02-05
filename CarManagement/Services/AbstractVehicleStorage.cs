@@ -47,7 +47,7 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
-            throw new System.NotImplementedException();
+            yield return 
         }
 
         public void set(IVehicle vehicle)
