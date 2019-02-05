@@ -15,21 +15,32 @@ namespace CarManagement.Services
     {
         private readonly IEnrollmentProvider enrollmentProvider;
 
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
-        {
-            this.enrollmentProvider = enrollmentProvider;
-        }
-
         private int numWheels;
         private int numDoors;
         private int horsePower;
         private CarColor color;
         private IEnrollment enrollment;
 
+        public VehicleBuilder()
+        {
+            this.numWheels = 0;
+            this.numDoors = 0;
+            this.horsePower = 0;
+            this.color = CarColor.Red;
+
+        }
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
         public void addWheel()
         {
-
-            this.numWheels++;
+            for (int i = 0; i <= 4; i++)
+            {
+                this.numWheels++;
+            }
         }
         public void removeWheel()
         {
@@ -216,7 +227,7 @@ namespace CarManagement.Services
         }
 
 
-            public IVehicle build()
+        public IVehicle build()
         {
 
             IEngine engine = new Engine(this.horsePower);
@@ -239,7 +250,7 @@ namespace CarManagement.Services
 
             IEnrollment enrollment = new Enrollment();
 
-            Vehicle v = new Vehicle(wheels,doors,engine,color,enrollment);
+            Vehicle v = new Vehicle(wheels, doors, engine, color, enrollment);
             return v;
         }
 
