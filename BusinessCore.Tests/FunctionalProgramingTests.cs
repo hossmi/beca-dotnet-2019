@@ -85,7 +85,8 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
-                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen).Count() == 1)
+                .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen))
+                //.Where(vehicle => vehicle.Doors.Where(door => door.IsOpen).Count() >= 1)
                 .Select(vehicle => new
                                    {
                                         vehicle.Enrollment.Serial,
