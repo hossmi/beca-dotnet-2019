@@ -102,11 +102,12 @@ namespace BusinessCore.Tests
                 .getAll()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group => 
-                    new {
+                    new
+                    {
                         Serial = group.Key,
                         AverageHorsePower = group
-                                .Select(vehicle => vehicle.Engine.HorsePower)
-                                .Average()
+                            .Select(vehicle => vehicle.Engine.HorsePower)
+                            .Average()
                     }
                 )
                 .OrderBy(anonym => anonym.Serial)
