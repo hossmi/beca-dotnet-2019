@@ -226,7 +226,7 @@ namespace BusinessCore.Tests.Services
                 Enrollment = new Enrollment
                 {
                     Serial = "ZZZ",
-                    Number = 3000,
+                    Number = 3100,
                 },
                 Engine = new Engine
                 {
@@ -254,7 +254,7 @@ namespace BusinessCore.Tests.Services
                 Enrollment = new Enrollment
                 {
                     Serial = "ZZZ",
-                    Number = 3000,
+                    Number = 3300,
                 },
                 Engine = new Engine
                 {
