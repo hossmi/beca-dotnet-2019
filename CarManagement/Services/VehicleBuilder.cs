@@ -30,14 +30,17 @@ namespace CarManagement.Services
                 this.engine = 1;
                 this.color = CarColor.Red;
                 this.enrollmentProvider = enrollmentProvider;
+               
+
 
 
             }
 
             public void addWheel()
             {
-                Asserts.isTrue(this.numberWheel < 4);
+
                 this.numberWheel++;
+                Asserts.isTrue(this.numberWheel <= 4);
             }
 
             public void removeWheel()
@@ -48,7 +51,7 @@ namespace CarManagement.Services
 
             public void setDoors(int doorsCount)
             {
-                //Asserts.isTrue(0 < doorsCount && doorsCount <= 6);
+               Asserts.isTrue(0 <= doorsCount && doorsCount <= 6);
                 this.numberDoor = doorsCount;
             }
 
@@ -61,8 +64,8 @@ namespace CarManagement.Services
 
             public void setColor(CarColor color)
             {
-                // Asserts.isTrue((CarColor )0 < color && color < (CarColor) 7);
                 this.color = color;
+                Asserts.isTrue((CarColor)0 <= color && color < (CarColor)7);
             }
 
             private List<TInterface> generateList<TInterface, TInstance>(int count)
@@ -81,9 +84,9 @@ namespace CarManagement.Services
             public IVehicle build()
             {
 
-
+     
                 //Generamos puertas
-                Asserts.isTrue(this.numberWheel > 0);
+                Asserts.isTrue(this.numberDoor >= 0);
                 List<IDoor> doors = generateList<IDoor, Door>(this.numberDoor);
 
                 //Generamos motor
@@ -92,9 +95,9 @@ namespace CarManagement.Services
 
                 //Generamos ruedas
 
-                Asserts.isTrue(this.numberWheel > 0);
                 List<IWheel> wheels = generateList<IWheel, Wheel>(this.numberWheel);
-
+                Asserts.isTrue(wheels.Count > 0);
+             
                 //Generamos matricula
 
                 IEnrollment enrollment = this.enrollmentProvider.getNew();
@@ -107,11 +110,23 @@ namespace CarManagement.Services
             private class Wheel : IWheel
             {
                 private double pressure;
+
+                public Wheel()
+                {
+                   
+                    this.pressure = 1;
+
+                }
+
+                public Wheel(double pressure)
+                {
+                    this.Pressure = pressure;
+                }
                 public double Pressure
                 {
                     set
                     {
-                        Asserts.isTrue(value >= 0);
+                        Asserts.isTrue(1 <= value && value <= 5);
                         this.pressure = value;
                     }
                     get
@@ -120,15 +135,7 @@ namespace CarManagement.Services
                     }
                 }
 
-                public Wheel()
-                {
-                    this.pressure = 0;
-                }
-
-                public Wheel(double pressure)
-                {
-                    this.Pressure = pressure;
-                }
+          
             }
 
             private class Vehicle : IVehicle
@@ -147,6 +154,7 @@ namespace CarManagement.Services
                     this.enrollment = enrollment;
                     this.doors = doors;
                     this.engine = engine;
+                    
                 }
 
                 public IEngine Engine
@@ -188,8 +196,10 @@ namespace CarManagement.Services
 
                 public void setWheelsPressure(double pression)
                 {
+
                     foreach (Wheel wheel in this.wheels)
                     {
+                        
                         wheel.Pressure = pression;
                     }
                 }
@@ -198,7 +208,11 @@ namespace CarManagement.Services
             private class Engine : IEngine
             {
                 private int horsePower;
-                private bool mode;
+                private bool mode = false;
+                public Engine()
+                {
+                    this.mode = false;
+                }
 
                 public Engine(int horsePower)
                 {
@@ -248,17 +262,19 @@ namespace CarManagement.Services
                 {
                     Asserts.isFalse(this.IsStarted);
                     this.mode = true;
+                    
                 }
 
                 public void stop()
                 {
-                    //Asserts.isTrue(this.IsStarted);
+                    Asserts.isTrue(this.IsStarted);
                     this.mode = false;
+                    
                 }
 
                 private void setHorsePower(int horsePower)
                 {
-                    Asserts.isTrue(horsePower > 0);
+                   
                     this.horsePower = horsePower;
                 }
             }
@@ -306,6 +322,7 @@ namespace CarManagement.Services
                 IEnrollment toEnrollment = convert(vehicleDto.Enrollment);
                 List<IWheel> listWheels = new List<IWheel>();
                 List<IDoor> listDoor = new List<IDoor>();
+                
              
                 foreach (WheelDto wheelsDto in vehicleDto.Wheels)
                 {
@@ -353,7 +370,11 @@ namespace CarManagement.Services
                 {
                     toMemory.start();
                 }
-                toMemory.stop();
+                else
+                {
+                    
+                }
+
                 return toMemory;
             }
         }
