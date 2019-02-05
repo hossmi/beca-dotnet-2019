@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CarManagement.Models;
-using CarManagement.Models.CarManagement.Models;
 using CarManagement.Services;
 
 namespace CarManagement.Builders
@@ -20,8 +19,14 @@ namespace CarManagement.Builders
 
         private readonly IEnrollmentProvider enrollmentProvider;
 
+        public IEnrollment Ienrollment { get; private set; }
+
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
+            this.wheels = 0;
+            this.doors = 0;
+            this.horsepowerValue = 0;
+            this.vehicleColor = CarColor.White;
             this.enrollmentProvider = enrollmentProvider;
         }
 
@@ -93,7 +98,7 @@ namespace CarManagement.Builders
 
             Engine engine = new Engine(this.horsepowerValue);
 
-            string enrollment = generateEnrollment();
+            IEnrollment enrollment = this.enrollmentProvider.getNewEnrollment();
 
             Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
             return vehicle;
