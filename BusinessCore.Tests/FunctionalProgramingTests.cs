@@ -68,7 +68,7 @@ namespace BusinessCore.Tests
             int GreatestHorsePower = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.Red)
-                .Where(vehicle => !vehicle.Engine.IsStarted)
+                .Where(vehicle => vehicle.Engine.IsStarted == false)
                 .Max(vehicle => vehicle.Engine.HorsePower);
 
 
@@ -102,16 +102,14 @@ namespace BusinessCore.Tests
                 .getAll()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group => 
-                    new { Serial = group.Key,
+                    new {
+                        Serial = group.Key,
                         AverageHorsePower = group
-                                .ToList()
-                                .Select(
-                                    vehicle => vehicle.Engine.HorsePower
-                                )
+                                .Select(vehicle => vehicle.Engine.HorsePower)
                                 .Average()
                     }
                 )
-                .OrderBy(group => group.Serial)
+                .OrderBy(anonym => anonym.Serial)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
