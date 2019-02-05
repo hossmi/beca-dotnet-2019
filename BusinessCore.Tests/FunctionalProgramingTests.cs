@@ -34,7 +34,6 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /* */
                 .Select(vehicle => vehicle.Engine)
                 .Where(engine => engine.IsStarted);
 
@@ -49,13 +48,8 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Select(vehicle => vehicle.Wheels)
-                
                 .Average(wheel => wheel
-                .Average(w => w.Pressure))
-                ;
-
-            //Assert.AreEqual(3.0, averagePressure);
-            
+                .Average(w => w.Pressure));
 
             Assert.AreEqual(3.0, pressure);
         }
@@ -68,9 +62,6 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Select(vehicle => vehicle.Engine)
                 .Min(engine => engine.HorsePower);
-
-            //Assert.AreEqual(minimalPower, 100);
-            
 
             Assert.AreEqual(100, horsePower);
         }
@@ -85,9 +76,6 @@ namespace BusinessCore.Tests
                 .Select(vehicle => vehicle.Engine)
                 .Where(engine => !engine.IsStarted)
                 .Max(engine => engine.HorsePower);
-
-            //Assert.AreEqual(maximalPower, 666);
-            
 
             Assert.AreEqual(666, horsePower);
         }
