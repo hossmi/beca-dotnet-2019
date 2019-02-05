@@ -73,5 +73,16 @@ namespace BusinessCore.Tests
 
             Assert.AreEqual(666, horsePower);
         }
+
+        [TestMethod]
+        public void from_the_two_white_cars_with_opened_doors_get_serial_enrollment_and_horsePower()
+        {
+            var vehicles = this.vehicleStorage
+                .getAll()
+                /* */
+                .ToArray();
+
+            Assert.AreEqual(2, vehicles.Length);
+        }
     }
 }
