@@ -72,6 +72,7 @@ namespace BusinessCore.Tests
             horsePower = this.vehicleStorage
                .getAll()
                .Where(vehicle => vehicle.Color == CarColor.Red)
+               .Where(vehicle => vehicle.Engine.IsStarted == false) //
                .Select(vehicle => vehicle.Engine)
                .Max(engine => engine.HorsePower);
 
@@ -106,7 +107,14 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)//Agrupa los elementos de una secuencia.
+                .Select(group =>
+                    new
+                    {
+                        Serial = group.Key,
+                        AverageHorsePower = group.Average(vehicle => vehicle.Engine.HorsePower)
+                    })
+                .OrderBy(vehicle => vehicle.Serial).ThenBy(vehicle => vehicle.AverageHorsePower)//orderBy ordenacion principal thenBy ordenacion secundaria o complementaria
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -114,14 +122,12 @@ namespace BusinessCore.Tests
             Type itemTime = vehicles[0].GetType();
             Assert.AreEqual(2, itemTime.GetProperties().Length);
 
-            /* 
              Assert.AreEqual("JVC", vehicles[0].Serial);
              Assert.AreEqual(622, vehicles[0].AverageHorsePower);
              Assert.AreEqual("PNG", vehicles[1].Serial);
              Assert.AreEqual(633, vehicles[1].AverageHorsePower);
              Assert.AreEqual("ZZZ", vehicles[2].Serial);
              Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
-             */
 
 
         }
