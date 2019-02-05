@@ -5,122 +5,160 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
-namespace CarManagement.Services
+namespace CarManagement.Builders
 {
     public class VehicleBuilder : IVehicleBuilder
-
     {
-        private int doorsCount = 0;
-        private int wheelCount = 0;
-        public void addWheel()
+        public class Engine : IEngine
         {
-            void addWheel()
+            private bool isStart;
+            private int horsepower;
+
+            public int HorsePower
             {
-                Asserts.isTrue(this.wheelCount < 4);
-                this.wheelCount++;
+                get
+                {
+                    return this.horsepower;
+                }
+                set
+                {
+                    this.horsepower = value;
+                }
             }
-        }
-        public class Engine
-        {
-            private bool isstart;
-            private int horsePower;
-            public int HorsePower { get; }
             public bool IsStarted
             {
                 get
                 {
-                    return this.isstart;
+                    return this.isStart;
+                }
+                set
+                {
+                    this.isStart = value;
                 }
             }
+
             public void start()
             {
-                this.isstart = true;
+                this.isStart = true;
             }
 
             public void stop()
             {
-                this.isstart = false;
+                this.isStart = false;
             }
         }
-        public class Wheel
+        public class Wheel : IWheel
         {
-            private double Pression;
+            private double pressure;
             public double Pressure
             {
                 get
                 {
-                    return this.Pression;
+                    return this.pressure;
                 }
                 set
                 {
-                    this.Pression = value;
+                    this.pressure = value;
                 }
             }
         }
-        public class Door
+        public class Door : IDoor
+        {
+            private bool isOpen;
+
+            public void open()
             {
-                private bool isOpen;
-                public bool IsOpen
+                this.isOpen = true;
+            }
+            public void close()
+            {
+                this.isOpen = false;
+            }
+            public bool IsOpen
+            {
+                get
                 {
-                    get
-                    {
-                        return this.isOpen;
-                    }
-                }
-                public void close()
-                {
-                    this.isOpen = false;
-                }
-                public void open()
-                {
-                    this.isOpen = true;
+                    return this.isOpen;
                 }
             }
-        public class Vehicle
+        }
+        public class Vehicle : IVehicle
         {
-            private List<Wheel> Lwheels = new List<Wheel>();
-            private List<Door> Ldoors = new List<Door>();
-            public CarColor Color = new CarColor();
-            public Engine engine = new Engine();
-            public IEnrollment Enrollment;
+            private List<IWheel> wheels = new List<IWheel>();
+            private List<IDoor> doors = new List<IDoor>();
+            private int doorsCount;
+            private int wheelsCount;
+            public CarColor Color { set; get; }
+            public IEngine Engine { get; set; }
+            public IEnrollment Enrollment { get; }
 
-            public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
+            public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor color, IEnrollment enrollment)
             {
-                this.Lwheels = wheels;
-                this.Ldoors = doors;
-                this.engine = engine;
+                this.wheels = wheels;
+                this.doors = doors;
+                this.Engine = engine;
                 this.Color = color;
                 this.Enrollment = enrollment;
             }
+
             public int DoorsCount
             {
                 get
                 {
-                    return this.Ldoors.Count;
+                    return this.doors.Count;
                 }
                 set
                 {
-                    doorsCount = value;
+                    this.doorsCount = value;
                 }
             }
-            /*public IWheel[] Wheels
-            {
-                get
-                {
-                    return this.Lwheels.ToArray();
-                }
-            }*/
+
             public int WheelCount
             {
                 get
                 {
-                    return this.Lwheels.Count;
+                    return this.wheels.Count;
                 }
                 set
                 {
                     this.wheelsCount = value;
                 }
             }
+
+            public IDoor[] Doors
+            {
+                get
+                {
+                    return this.doors.ToArray();
+                }
+            }
+
+            public IWheel[] Wheels
+            {
+                get
+                {
+                    return this.wheels.ToArray();
+                }
+            }
+            public void setWheelsPressure(double pression)
+            {
+                Asserts.isTrue(pression > 0);
+                foreach (Wheel wheel in this.wheels)
+                {
+                    wheel.Pressure = pression;
+                }
+            }
+        }
+        private IEnrollmentProvider enrollmentProvider;
+        private int doorsCount;
+        private int wheelCounter = 0;
+        private CarColor color;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
         public void addWheel()
         {
             Asserts.isTrue(this.wheelCounter < 4);
@@ -137,89 +175,47 @@ namespace CarManagement.Services
             Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
             this.doorsCount = doorsCount;
         }
+
+        Engine engine = new Engine();
         public void setEngine(int horsePorwer)
         {
-            
-            Asserts.isTrue(this.horsePower >= 0);
-            this.engine.HorsePower = this.horsePower;
-        }
-
-        public void setColor(CarColor color)
-        {
-            this.color = color;
-        }
-
-        public IVehicle build()
-        {
-            Asserts.isTrue(this.wheelCounter > 0);
-            this.wheels = new List<Wheel>();
-            this.doors = new List<Door>();
-            this.engine = new Engine();
-            this.enrollment = this.enrollmentProvider.getNew();
-            for (int i = 0; i < this.wheelCounter; i++)
-            {
-                Wheel wheel = new Wheel();
-                this.wheels.Add(wheel);
-            }
-            for (int i = 0; i < this.doorsCount; i++)
-            {
-                Door door = new Door();
-                this.doors.Add(door);
-            }
-            Vehicle vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
-            return vehicle;
-        }
-
-        public IVehicle import(VehicleDto vehicleDto)
-        {
-            throw new NotImplementedException();
+            Asserts.isTrue(horsePorwer >= 0);
+            this.engine.HorsePower = horsePorwer;
         }
 
         public VehicleDto export(IVehicle vehicleDto)
         {
             throw new NotImplementedException();
         }
-    }
-/*public class VehicleBuilder : IVehicleBuilder
-{
-    public void addWheel()
-    {
-        throw new NotImplementedException();
-    }
 
-    public IVehicle build()
-    {
-        throw new NotImplementedException();
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
+        public void setColor(CarColor color)
+        {
+            this.color = color;
+        }
+        IVehicle IVehicleBuilder.build()
+        {
+            Asserts.isTrue(this.wheelCounter > 0);
+            CarColor color = new CarColor();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
+            Engine engine = new Engine();
+            IEnrollment enrollment = this.enrollmentProvider.getNew();
+            for (int i = 0; i < this.wheelCounter; i++)
+            {
+                Wheel wheel = new Wheel();
+                wheels.Add(wheel);
+            }
+            for (int i = 0; i < this.doorsCount; i++)
+            {
+                Door door = new Door();
+                doors.Add(door);
+            }
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+            return vehicle;
+        }
     }
-
-    public VehicleDto export(IVehicle vehicleDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IVehicle import(VehicleDto vehicleDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void removeWheel()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void setColor(CarColor color)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void setDoors(int doorsCount)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void setEngine(int horsePorwer)
-    {
-        throw new NotImplementedException();
-    }
-}*/
 }
