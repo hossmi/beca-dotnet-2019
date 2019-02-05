@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                .filter(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
             Assert.AreEqual(6, vehicles.Length);
@@ -44,23 +44,21 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void average_pressure_for_white_vehicles_is_3()
         {
-            /*IEnumerable<IWheel> wheels = this.vehicleStorage
-                .getAll()
-                .filter(vehicle => vehicle.Wheels)
-                .Select(vehicle => vehicle.Wheels);*/
-            double pressure = 0.0;
+            double pressure = this.vehicleStorage
+               .getAll()
+               .select(vehicle => vehicle.Wheels.select(wheel => wheel.Pressure).Average() )
+               .Average();
 
-            Assert.AreEqual(3.0, pressure);
+                Assert.AreEqual(3.0, pressure);
         }
 
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-            int horsePower = 0;
-            IEnumerable<IVehicle> vehicles = this.vehicleStorage
+            int horsePower = this.vehicleStorage
                 .getAll()
-                .filter( vehicle => vehicle.Engine.HorsePower == 100 )
-                .Select( vehicle => vehicle);
+                .Select( vehicle => vehicle.Engine.HorsePower)
+                .Min();
 
             Assert.AreEqual(100, horsePower);
         }
@@ -68,7 +66,10 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
-            int horsePower = 0;
+            int horsePower = this.vehicleStorage
+                .getAll()
+                .Select( vehicle => vehicle.Engine.HorsePower)
+                .Max();
 
             Assert.AreEqual(666, horsePower);
         }
@@ -78,7 +79,9 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color==CarColor.White)
+                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == true).Count() == 1)
+                .select( vehicle => new {  vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
