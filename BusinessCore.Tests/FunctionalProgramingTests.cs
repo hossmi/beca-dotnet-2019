@@ -35,7 +35,7 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                .filter(vehicle => vehicle.Engine.IsStarted)
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
                 .Select(vehicle => vehicle.Engine);
 
             Assert.AreEqual(4, engines.Count());
@@ -46,7 +46,9 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .getAll()
-               .select(vehicle => vehicle.Wheels.select(wheel => wheel.Pressure).Average() )
+               .Where(vehicle => vehicle.Color == CarColor.White)
+               .SelectMany(vehicle => vehicle.Wheels)
+               .Select(wheel => wheel.Pressure)
                .Average();
 
                 Assert.AreEqual(3.0, pressure);
@@ -68,6 +70,8 @@ namespace BusinessCore.Tests
         {
             int horsePower = this.vehicleStorage
                 .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Where(vehicle => vehicle.Engine.IsStarted == false)
                 .Select( vehicle => vehicle.Engine.HorsePower)
                 .Max();
 
@@ -95,7 +99,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Select(vehicle => new { vehicle => vehicle.Engine.HorsePower })
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
