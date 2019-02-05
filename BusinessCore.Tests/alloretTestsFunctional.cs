@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
-using CarManagement.Core.Models;
-using CarManagement.Core.Services;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests

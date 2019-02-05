@@ -6,6 +6,7 @@ using BusinessCore.Tests.Services;
 using BusinessCore.Tests.Models;
 using System.Linq;
 using System;
+using CarManagement.Services.CarManagement.Builders;
 
 namespace BusinessCore.Tests
 {
