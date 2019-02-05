@@ -178,6 +178,28 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 2},
                 },
             };
+
+            yield return new Vehicle
+            {
+                Color = CarColor.Black,
+                Enrollment = new Enrollment
+                {
+                    Serial = "BOM",
+                    Number = 0001,
+                },
+                Engine = new Engine
+                {
+                    HorsePower = 120,
+                    IsStarted = false,
+                },
+                Doors = new IDoor[]
+                {
+                },
+                Wheels = new IWheel[]
+                {
+                    new Wheel{Pressure = 2},
+                },
+            };
             #endregion
         }
 

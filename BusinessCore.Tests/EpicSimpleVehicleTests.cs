@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using CarManagement.Services;
 using BusinessCore.Tests.Services;
 using BusinessCore.Tests.Models;
+using System.Linq;
+using System;
 
 namespace BusinessCore.Tests
 {
@@ -35,7 +37,6 @@ namespace BusinessCore.Tests
 
             Assert.IsFalse(vehicle0.Wheels[0].Pressure == vehicle1.Wheels[0].Pressure);
         }
-
         [TestMethod]
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
@@ -43,17 +44,28 @@ namespace BusinessCore.Tests
                 .getAll()
                 /**/;
 
-            Assert.AreEqual(new Enrollment() { Serial = "ABC", Number = 0001 }, querriedEnrollment);
+            Assert.AreEqual("ABC", querriedEnrollment.Serial);
+            Assert.AreEqual(1, querriedEnrollment.Number);
         }
 
         [TestMethod]
         public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
-        {
-            IEnrollment querriedEnrollment = this.vehicleStorage
+        { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
+            IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .getAll()
-                /**/;
-
-            Assert.AreEqual(new Enrollment() { Serial = "AAA", Number = 1000 }, querriedEnrollment);
+                /**/
+                .ToArray();
+            try
+            {
+                int a = querriedEnrollment[1].Number;
+                Assert.Fail();
+            }
+            catch (IndexOutOfRangeException)
+            {
+                //good
+            }
+            Assert.AreEqual("AAA", querriedEnrollment[0].Serial);
+            Assert.AreEqual(1000, querriedEnrollment[0].Number);
         }
     }
 }
