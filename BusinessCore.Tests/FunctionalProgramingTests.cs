@@ -46,7 +46,8 @@ namespace BusinessCore.Tests
             double pressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
-                .Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure).Average())
+                .SelectMany(vehicle => vehicle.Wheels)
+                .Select(wheel => wheel.Pressure)
                 .Average();
 
             Assert.AreEqual(3.0, pressure);
@@ -55,10 +56,10 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-           
+
             //int horsePower = 0;
             int horsePower = this.vehicleStorage
-                
+
                 .getAll()
                 .Select(vehicle => vehicle.Engine.HorsePower)
                 .Min();
@@ -83,8 +84,9 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle .Color == CarColor.White)
-                .Where(vehicle => vehicle .Doors.Where (door => door.IsOpen == true).Count() == 1)
+                .Where(vehicle => vehicle.Color == CarColor.White)
+                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == true).Count() == 1)
+                .Select(vehicle => new { vehicle.Enrollment.Serial, vehicle.Engine.HorsePower })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
@@ -98,7 +100,18 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Select(vehicle => new { vehicle.Enrollment.Serial, vehicle.Engine.HorsePower })
+                .GroupBy(keyGroup => keyGroup.Serial)
+                .Select(group => new
+                {
+                    Serial = group.Key,
+                    AverageHorsePower = group
+                        .Select(engine => engine.HorsePower)
+                            .Average()
+                }
+                )
+                .OrderBy(group => group.Serial)
+                //.ThenBy()
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
