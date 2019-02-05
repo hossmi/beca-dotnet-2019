@@ -36,7 +36,7 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Select(vehicle => new //solo para que compile el test
                 {
-                    vehicle.WheelsCount,
+                    WheelsCount = vehicle.Wheels.Length,
                     Pressure = 0
                 })
                 /* Insert code here for boom! */
