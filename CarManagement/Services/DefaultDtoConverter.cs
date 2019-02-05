@@ -2,7 +2,7 @@
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using System.Collections.Generic;
-using static CarManagement.Services.VehicleBuilder;
+using static CarManagement.Builders.VehicleBuilder;
 
 namespace CarManagement.Services
 {
@@ -14,10 +14,10 @@ namespace CarManagement.Services
         private VehicleDto vehicleDto;
         private Vehicle vehicle;
         private EngineDto engineDto;
+        private IDoor door;
         private IEngine engine;
         private DoorDto doorDto;
-        private IDoor door;
-        private IWheel wheel;
+        private Wheel wheel;
         private List<IWheel> wheels;
         private WheelDto wheelDto;
         private WheelDto[] wheelsDto;
@@ -49,8 +49,8 @@ namespace CarManagement.Services
         public IVehicle convert(VehicleDto vehicleDto)
         {
             this.color = new CarColor();
-            List<Wheel> wheels = new List<Wheel>();
-            List<Door> doors = new List<Door>();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
             Engine engine = new Engine();
             this.color = new CarColor();
 
