@@ -107,8 +107,16 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(g => 
+                    new
+                    {
+                        Serial = g.Key,
+                        AverageHorsePower = g.Average(vehicle => vehicle.Engine.HorsePower)
+                    })
+                .OrderBy(vehicle => vehicle.Serial).ThenBy(vehicle => vehicle.AverageHorsePower)
                 .ToArray();
+
 
             Assert.AreEqual(3, vehicles.Length);
 
