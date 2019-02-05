@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
             Assert.AreEqual(6, vehicles.Length);
@@ -32,12 +32,12 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void there_are_four_started_engines()
         {
-            IEnumerable<IEngine> engines = this.vehicleStorage
+            IEnumerable<IEngine> startedEngines = this.vehicleStorage
                 .getAll()
-                /* */
-                .Select(vehicle => vehicle.Engine);
+                .Select(vehicle => vehicle.Engine)
+                .Where(engine => engine.IsStarted);
 
-            Assert.AreEqual(4, engines.Count());
+            Assert.AreEqual(4, startedEngines.Count());
         }
 
         [TestMethod]
@@ -57,17 +57,24 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void minimal_horsepower_is_100cv()
         {
-            int horsePower = 0;
+            int LestHorsePower = this.vehicleStorage
+                .getAll()
+                .Min(vehicle => vehicle.Engine.HorsePower);
 
-            Assert.AreEqual(100, horsePower);
+            Assert.AreEqual(100, LestHorsePower);
         }
 
         [TestMethod]
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
-            int horsePower = 0;
+            int GreatestHorsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Where(vehicle => !vehicle.Engine.IsStarted)
+                .Max(vehicle => vehicle.Engine.HorsePower);
 
-            Assert.AreEqual(666, horsePower);
+
+            Assert.AreEqual(666, GreatestHorsePower);
         }
     }
 }
