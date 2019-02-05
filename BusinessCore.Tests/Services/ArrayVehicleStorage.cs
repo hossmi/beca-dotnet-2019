@@ -19,7 +19,7 @@ namespace BusinessCore.Tests.Services
         private static IDictionary<IEnrollment, IVehicle> initialVehicles()
         {
             return buildVehicles()
-                .ToDictionary(v => v.Enrollment, new EnrollmentEqualityComparer());
+                .ToDictionary(v => v.Enrollment, new PrvEnrollmentComparer());
         }
 
         private static IEnumerable<IVehicle> buildVehicles()
@@ -29,8 +29,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.White,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "PNG",
+                    Number = 0100,
                 },
                 Engine = new Engine
                 {
@@ -39,10 +39,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -57,8 +55,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "PNG",
+                    Number = 0200,
                 },
                 Engine = new Engine
                 {
@@ -67,10 +65,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -82,8 +78,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "JVC",
+                    Number = 0300,
                 },
                 Engine = new Engine
                 {
@@ -92,10 +88,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -107,8 +101,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "JVC",
+                    Number = 400,
                 },
                 Engine = new Engine
                 {
@@ -117,10 +111,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -132,8 +124,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "JVC",
+                    Number = 1000,
                 },
                 Engine = new Engine
                 {
@@ -142,10 +134,8 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -157,8 +147,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "ZZZ",
+                    Number = 2000,
                 },
                 Engine = new Engine
                 {
@@ -167,10 +157,10 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -182,8 +172,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.Black,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "ZZZ",
+                    Number = 2100,
                 },
                 Engine = new Engine
                 {
@@ -192,10 +182,10 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -207,8 +197,8 @@ namespace BusinessCore.Tests.Services
                 Color = CarColor.White,
                 Enrollment = new Enrollment
                 {
-                    Serial = "XXX",
-                    Number = 666,
+                    Serial = "ZZZ",
+                    Number = 3000,
                 },
                 Engine = new Engine
                 {
@@ -217,10 +207,10 @@ namespace BusinessCore.Tests.Services
                 },
                 Doors = new IDoor[]
                 {
-                    new Door
-                    {
-                        IsOpen = true,
-                    }
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
+                    new Door { IsOpen = false },
                 },
                 Wheels = new IWheel[]
                 {
@@ -230,6 +220,20 @@ namespace BusinessCore.Tests.Services
                     new Wheel{Pressure = 5},
                 },
             };
+        }
+
+        private class PrvEnrollmentComparer : IEqualityComparer<IEnrollment>
+        {
+            public bool Equals(IEnrollment x, IEnrollment y)
+            {
+                return x.Serial == x.Serial
+                    && x.Number == x.Number;
+            }
+
+            public int GetHashCode(IEnrollment x)
+            {
+                return $"{x.Serial}{x.Number}".GetHashCode();
+            }
         }
     }
 }
