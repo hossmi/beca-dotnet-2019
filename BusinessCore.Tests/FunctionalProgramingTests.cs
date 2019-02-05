@@ -47,9 +47,12 @@ namespace BusinessCore.Tests
             pressure = this.vehicleStorage
                .getAll()
                .Where(vehicle => vehicle.Color == CarColor.White)
-               .Select(vehicle => vehicle.Wheels)
-               .Average(wheel => wheel
-               .Average(w => w.Pressure));
+               .SelectMany(vehicle => vehicle.Wheels)
+               .Select(wheel => wheel.Pressure)
+               .Average();
+               //.Select(vehicle => vehicle.Wheels)
+               //.Average(wheel => wheel
+               //.Average(w => w.Pressure));
 
             Assert.AreEqual(3.0, pressure);
         }
@@ -74,7 +77,7 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.Red)
                 .Select(vehicle => vehicle.Engine)
-                .Where(engine => !engine.IsStarted)
+                .Where(engine => engine.IsStarted == false)
                 .Max(engine => engine.HorsePower);
 
             Assert.AreEqual(666, horsePower);
@@ -87,7 +90,7 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Where(vehicle => vehicle.Doors
-                .Any(door => door.IsOpen))
+                    .Any(door => door.IsOpen))
                 .Select(vehicle =>
                     new
                     {
@@ -114,7 +117,8 @@ namespace BusinessCore.Tests
                         Serial = vehicleGroup.Key,
                         AverageHorsePower = vehicleGroup.Average(vehicle => vehicle.Engine.HorsePower)
                     })
-                .OrderBy(vehicle => vehicle.Serial).ThenBy(vehicle => vehicle.AverageHorsePower)
+                .OrderBy(vehicle => vehicle.Serial)
+                .ThenBy(vehicle => vehicle.AverageHorsePower)
                 .ToArray();
 
 
