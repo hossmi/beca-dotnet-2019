@@ -215,16 +215,32 @@ namespace CarManagement.Services
             }
         }
 
-        public IVehicle build()
 
+            public IVehicle build()
         {
-            List<IWheel> wheel = new List<IWheel>();
-            List<IDoor> door = new List<IDoor>();
+
             IEngine engine = new Engine(this.horsePower);
+
+            CarColor color = new CarColor();
+
+            List<IDoor> doors = new List<IDoor>();
+            for (int i = 0; i < this.numDoors; i++)
+            {
+                Door d = new Door();
+                doors.Add(d);
+            }
+
+            List<IWheel> wheels = new List<IWheel>();
+            for (int i = 0; i < this.numWheels; i++)
+            {
+                Wheel w = new Wheel();
+                wheels.Add(w);
+            }
+
             IEnrollment enrollment = new Enrollment();
-            IVehicle vehicle = new Vehicle( wheel, door, engine, this.color, this.enrollment);
-           
-            return vehicle;
+
+            Vehicle v = new Vehicle(wheels,doors,engine,color,enrollment);
+            return v;
         }
 
 
