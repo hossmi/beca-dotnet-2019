@@ -128,6 +128,7 @@ namespace BusinessCore.Tests
         {
             var horsePowers = this.vehicleStorageSoden
                 .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Green)
                 /**/
                 .Select(vehicle => vehicle.Engine.HorsePower)
                 .ToArray();

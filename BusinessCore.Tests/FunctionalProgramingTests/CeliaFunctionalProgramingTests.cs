@@ -41,6 +41,8 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where()
                 /**/
                 //.Where(door => door.IsOpen == false)
                 .ToArray();
