@@ -21,8 +21,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void get_total_horse_power_from_yellow_vehicles_with_less_than_three_wheels()
         {
-            int horsePower = 0;
-            /**/
+            int horsePower = this.vehicleStorage_amunoz
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Yellow)
+                .Where(vehicle => vehicle.Wheels.Count() < 3)
+                .Sum(vehicle => vehicle.Engine.HorsePower);
             Assert.AreEqual(1366, horsePower);
 
         }
