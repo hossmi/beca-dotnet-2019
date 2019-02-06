@@ -1,4 +1,6 @@
-﻿namespace CarManagement.Core.Models
+﻿using System;
+
+namespace CarManagement.Core.Models
 {
     public interface IEngine
     {

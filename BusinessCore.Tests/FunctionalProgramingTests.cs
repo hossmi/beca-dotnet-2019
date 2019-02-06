@@ -43,12 +43,11 @@ namespace BusinessCore.Tests
         public void average_pressure_for_white_vehicles_is_3()
         {
             double pressure = 0.0;
-            IEnumerable<IVehicle> vehicles = this.vehicleStorage
+            pressure = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.White)
-                .select(vehicle => vehicle.Wheels)
-                .
-            
+                .Select(vehicle => vehicle.Wheels)
+                .Average(wheel => wheel.Average(w => w.Pressure));
 
             Assert.AreEqual(3.0, pressure);
         }
@@ -57,7 +56,12 @@ namespace BusinessCore.Tests
         public void minimal_horsepower_is_100cv()
         {
             int horsePower = 0;
-
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Engine.HorsePower >= 100)
+                .Select(v => v.Engine.HorsePower)
+                .Min(horse => horse);
+                
             Assert.AreEqual(100, horsePower);
         }
 
@@ -65,6 +69,13 @@ namespace BusinessCore.Tests
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
             int horsePower = 0;
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Where(condition1 => condition1.Color == CarColor.Red)
+                .Where(condition2 => condition2.Engine.IsStarted == false)
+                .Where(condition3 => condition3.Engine.HorsePower <= 666)
+                .select(selection => selection.Engine.HorsePower)
+                .Max(horse => horse);
 
             Assert.AreEqual(666, horsePower);
         }
@@ -74,8 +85,16 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /* */
-                .ToArray();
+                .Where(condition1 => condition1.Color == CarColor.White)
+                .Where(Condition2 => Condition2.Doors.Any(door => door.IsOpen))
+                .select(selection => 
+                    new
+                        {
+                            serial = selection.Enrollment.Serial,
+                            horse = selection.Engine.HorsePower
+                        }
+                     )
+            .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
             Type itemTime = vehicles[0].GetType();
