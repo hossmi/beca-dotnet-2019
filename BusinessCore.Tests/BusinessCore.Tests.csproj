@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="alloretTests.cs" />
     <Compile Include="amunozeverisTests.cs" />
+    <Compile Include="FunctionalProgramingTestsSoden.cs" />
     <Compile Include="Models\Door.cs" />
     <Compile Include="Models\Engine.cs" />
     <Compile Include="Models\Enrollment.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\alloretArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
+    <Compile Include="Services\ArrayVehicleStorageSoden.cs" />
     <Compile Include="Services\EpicVehicleStorage.cs" />
     <Compile Include="Services\CeliaArrayVehicleStorage.cs" />
     <Compile Include="Services\SingleEnrollmentProvider.cs" />
