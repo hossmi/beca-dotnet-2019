@@ -54,12 +54,11 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Engine.HorsePower >500)
-                .Where(vehicle => vehicle.Color == CarColor.White)
                 /**/
+                .Select(vehicle => new { vehicle.Enrollment.Serial})
                 .ToArray();
 
-            Assert.AreEqual(1, vehicles.Length);
+            Assert.AreEqual("PNG", vehicles[0].Serial);
         }
     }
 }
