@@ -43,8 +43,8 @@ namespace BusinessCore.Tests
                     WheelsCount = vehicle.Select(wheel => wheel.Wheels.Length),
                     Pressure = vehicle.Select(pressure => pressure.Wheels.Select(wp => wp.Pressure))
                 })
-                .OrderBy(order => order.Pressure)
-                .ThenBy(then => then.WheelsCount)
+                .OrderBy(order => order.WheelsCount)
+                .ThenBy(then => then.Pressure)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
