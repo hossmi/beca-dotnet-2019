@@ -37,11 +37,14 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(vehicleGroup => new //solo para que compile el test
                 {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
+                    WheelsCount = vehicleGroup.Sum(v => v.Wheels.Length),
+                    Pressure =vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
                 })
+                .OrderBy(a => a.WheelsCount)
+                .ThenBy(a => a.Pressure)
                 /* Insert code here for boom! */
                 .ToArray();
 

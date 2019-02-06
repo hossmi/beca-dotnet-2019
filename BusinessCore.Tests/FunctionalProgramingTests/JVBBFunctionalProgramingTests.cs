@@ -24,8 +24,10 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            bool isTrue = false;                
-
+            //IVehicle[] vehicles = this.vehicleStorage
+            bool isTrue = false;
+            
+            //isTrue = true;
             Assert.IsTrue(isTrue);
         }
 
@@ -33,8 +35,6 @@ namespace BusinessCore.Tests
         public void all_vehicles_with_enrollment_serial_CSM_have_their_third_door_open()
         {
             bool isTrue = false;
-
-
 
             Assert.IsTrue(isTrue);
 
@@ -48,9 +48,6 @@ namespace BusinessCore.Tests
 
             Assert.AreEqual(open,9);
             Assert.AreEqual(close, 7);
-
-
-        
         }
     }
 }

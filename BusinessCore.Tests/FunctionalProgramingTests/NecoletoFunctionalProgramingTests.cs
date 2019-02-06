@@ -25,18 +25,15 @@ namespace BusinessCore.Tests
             int count = 0;
             var vehicles = this.vehicleStorage
             .getAll()
+            .Where(vehicle => vehicle.Color == CarColor.Black)
             .Select(vehicle => new
             {
                 vehicle.Engine.HorsePower
                 //Para que compile
-            });
-
+            })
+            .Count();
             /* Insert code here for boom! */
-
             Assert.AreEqual(15, count);
-
         }
-
-
     }
 }
