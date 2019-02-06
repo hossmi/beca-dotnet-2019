@@ -12,7 +12,6 @@ namespace BusinessCore.Tests
     public class FunctionalProgramingTests
     {
         private readonly ArrayVehicleStorage vehicleStorage;
-        private readonly ArrayVehicleStorage_amunoz vehicleStorage_amunoz;
 
         public FunctionalProgramingTests()
         {

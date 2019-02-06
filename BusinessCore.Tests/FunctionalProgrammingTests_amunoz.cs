@@ -25,6 +25,7 @@ namespace BusinessCore.Tests
             int horsePower = 0;
             /**/
             Assert.AreEqual(1366, horsePower);
+
         }
     }
 }
