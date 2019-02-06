@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
 {
+    [TestCategory("Functional Programing")]
     [TestClass]
     public class FunctionalProgramingTests
     {
