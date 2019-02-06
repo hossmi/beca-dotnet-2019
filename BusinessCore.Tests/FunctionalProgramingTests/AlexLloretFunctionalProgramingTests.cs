@@ -38,20 +38,11 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new
-                {
-                    vehicle.Wheels,
-                    vehicle.Enrollment.Serial,
-                })
-                .GroupBy(keygroup => keygroup.Serial)
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select (group => new
                 {
-                    Pressure = group.SelectMany(vehicle => 
-                        vehicle.Wheels
-                        .Select(pression=> pression
-                            .Pressure)
-                            ),
-                     WheelsCount = group.Sum(vehicle => vehicle.Wheels.Length)
+                    Pressure = group.Select(wheels => wheels.Wheels),
+                    WheelsCount = group.Sum(count => count.Wheels.Length)
                 })
                 .OrderBy(group => group.WheelsCount)
                 .ThenBy(group => group.Pressure)
@@ -82,15 +73,10 @@ namespace BusinessCore.Tests
                 .Select(vehicle => new
                 {
                     vehicle.Doors,
-                    vehicle.Engine.IsStarted
-                    
+                    vehicle.Engine.IsStarted                   
                 }
                 )
-              
                 .ToArray();
-
-
-  
 
             Assert.AreEqual(2, vehicles.Length);
             Type itemTime = vehicles[0].GetType();
