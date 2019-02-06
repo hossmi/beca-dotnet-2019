@@ -21,9 +21,17 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void a_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
         {
+            int minHorsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Engine.IsStarted)
+                .Min(vehicle => vehicle.Engine.HorsePower);
+
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Engine.IsStarted)
+                .Where(vehicle => vehicle.Engine.HorsePower == minHorsePower)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
