@@ -36,18 +36,19 @@ namespace BusinessCore.Tests
             Assert.AreEqual(85, horsePower);
         }
 
-        [TestMethod]
+        [TestMethod] //¡A REVISAR ESTE TEST!
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
             var vehicles = this.vehicleStorage
-
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
-                {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
-                })
-                /* Insert code here for boom! */
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)//Agrupa los elementos de una secuencia.
+                .Select(group =>
+                    new
+                    {
+                        WheelsCount = group.Key,
+                        Pressure = group.Average(vehicle => vehicle.Wheels.)
+                    })
+                .OrderBy(vehicle => vehicle.Serial).ThenBy(vehicle => vehicle.AverageHorsePower)//orderBy ordenacion principal thenBy ordenacion secundaria o complementaria
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
