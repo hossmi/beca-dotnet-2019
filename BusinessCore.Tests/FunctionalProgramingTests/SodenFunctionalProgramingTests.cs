@@ -23,7 +23,9 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(condition1 => condition1.Color == CarColor.Black)
+                .Where(condition2 => condition2.Engine.IsStarted)
+                .Where(condition3 => condition3.Engine.HorsePower >= 100)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -34,7 +36,8 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(condition1 => condition1.Engine.IsStarted)
+                .Where(condition2 => condition2.Doors.Any(door => door.IsOpen))
                 .Select(vehicle => vehicle.Engine);
             Assert.AreEqual(2, engines.Count());
         }
@@ -44,8 +47,9 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .getAll()
-               /**/
-               .Count();
+               .Where(condition1 => condition1.Color == CarColor.Black)
+               .Where(condition2 => condition2.Enrollment.Number > 100)
+               .Sum(vehicle => vehicle.Wheels.Sum(wheel => wheel.Pressure))/6;
 
                 Assert.AreEqual(6, pressure);
         }
@@ -55,8 +59,15 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /**/
-                .Select(vehicle => new { vehicle.Enrollment.Serial})
+                .Where(condition1 => condition1.Color == CarColor.White)
+                .Where(condition2 => condition2.Doors.Any(door => door.IsOpen))
+                .Where(condition3 => condition3.Engine.HorsePower > 500)
+                .Select(vehicle => 
+                    new
+                    {
+                        vehicle.Enrollment.Serial
+                    }
+                )
                 .ToArray();
 
             Assert.AreEqual("PNG", vehicles[0].Serial);
