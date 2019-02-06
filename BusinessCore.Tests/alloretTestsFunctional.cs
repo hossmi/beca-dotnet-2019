@@ -21,8 +21,19 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
-            int horsePower = 0;
-            double pressure = 0;
+            int horsePower = this.vehicleStorage
+                .getAll()
+                .Where
+                (vehicle =>
+                    vehicle.Wheels.Where(wheel => wheel.Pressure == 3.0).Count()
+
+                    ==
+
+                    vehicle.Wheels.Count()
+                )
+                .Select(vehicle => vehicle.Engine.HorsePower)
+                .Min();
+            double pressure = 3.0;
             
               /* Insert code here for boom! */
                
@@ -36,11 +47,15 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
-                {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
-                })
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(group =>
+                    new {
+                        WheelsCount = group.Select(vehicle => vehicle.Wheels.Count()).First(),
+                        Pressure = group.Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure).Average())
+                        }
+                )
+                .OrderBy(anonym => anonym.Pressure)
+                .OrderBy(anonym => anonym.WheelsCount)
                 /* Insert code here for boom! */
                 .ToArray();
 
@@ -64,6 +79,15 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Where(vehicle=>
+                    vehicle.Doors.Where(door => door.IsOpen).Count()
+
+                    >
+
+                    0
+                )
+                .Select(vehicle => new {vehicle.Wheels, vehicle.Engine.IsStarted})
                 /* Insert code here for boom! */
                 .ToArray();
 

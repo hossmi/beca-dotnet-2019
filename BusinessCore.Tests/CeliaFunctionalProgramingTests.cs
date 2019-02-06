@@ -23,8 +23,10 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Select(vehicle => new
                 {
-                    HorsePower = 0
+                    Enrollment = vehicle.Enrollment,
+                    HorsePower = vehicle.Engine.HorsePower,
                 })
+                .OrderByDescending(anonym => anonym.HorsePower)
                 .ToArray();
 
             Assert.AreEqual(666, vehicles[0].HorsePower);
@@ -37,6 +39,14 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle =>
+                    vehicle.Doors.Where(door => door.IsOpen).Count()
+
+                    ==
+
+                    0
+                )
                 /* */
                 .ToArray();
 
