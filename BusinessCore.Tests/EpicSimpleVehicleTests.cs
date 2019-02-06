@@ -44,8 +44,10 @@ namespace BusinessCore.Tests
         {
             IEnrollment querriedEnrollment = this.vehicleStorage
                 .getAll()
+                
+                .Where(vehicle => vehicle.Wheels.Count() == 2)
                 .First().Enrollment
-                /**/;
+                ;
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
             Assert.AreEqual(1, querriedEnrollment.Number);
