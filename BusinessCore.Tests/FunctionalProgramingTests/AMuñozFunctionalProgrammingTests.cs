@@ -9,11 +9,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class FunctionalProgrammingTests_amunoz
+    [TestCategory("Functional Programing")]
+    public class AMuñozFunctionalProgrammingTests
     {
         private readonly ArrayVehicleStorage_amunoz vehicleStorage_amunoz;
 
-        public FunctionalProgrammingTests_amunoz()
+        public AMuñozFunctionalProgrammingTests()
         {
             this.vehicleStorage_amunoz = new ArrayVehicleStorage_amunoz();
         }

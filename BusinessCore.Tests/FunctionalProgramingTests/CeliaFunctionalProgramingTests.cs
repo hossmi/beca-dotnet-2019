@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
+    [TestCategory("Functional Programing")]
     public class CeliaFunctionalProgramingTests
     {
         private readonly CeliaArrayVehicleStorage vehicleStorage;

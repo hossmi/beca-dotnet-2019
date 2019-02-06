@@ -7,12 +7,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
 {
+    [TestCategory("Functional Programing")]
     [TestClass]
-    public class FunctionalProgramingTestsSoden
+    public class SodenFunctionalProgramingTests
     {
         private readonly ArrayVehicleStorageSoden vehicleStorage;
 
-        public FunctionalProgramingTestsSoden()
+        public SodenFunctionalProgramingTests()
         {
             this.vehicleStorage = new ArrayVehicleStorageSoden();
         }
