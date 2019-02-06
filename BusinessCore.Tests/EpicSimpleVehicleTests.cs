@@ -63,8 +63,9 @@ namespace BusinessCore.Tests
                 .Where(vehicle => vehicle.Wheels
                     .OrderByDescending(w => w.Pressure)
                         .ElementAt(0).Pressure > 
-                            vehicle.Wheels.OrderByDescending(w => w.Pressure)
-                                .ElementAt(1).Pressure
+                            vehicle.Wheels
+                                .OrderByDescending(w => w.Pressure)
+                                    .ElementAt(1).Pressure
                 )
                   
                 .Select(vehicle => vehicle.Enrollment)
