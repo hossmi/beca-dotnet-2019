@@ -57,7 +57,7 @@ namespace BusinessCore.Tests
 
         [TestMethod]
         public void d_from_the_two_white_cars_with_any_doors_get_serial_enrollment_and_horsePower_adove_500()
-        {
+        {//Add an assert to check the right or expected serial enrollment.
             var vehicles = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Color==CarColor.Black)
@@ -66,7 +66,7 @@ namespace BusinessCore.Tests
                 .Select( vehicle => new { vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
                 .ToArray();
 
-            Assert.AreEqual(1, vehicles.Length);
+            Assert.AreEqual("PNG", vehicles[0].Serial);
         }
     }
 }

@@ -25,9 +25,9 @@ namespace BusinessCore.Tests
                 .Select(group => new
                 {
                     group.Key,
-                    HorsePower= group.OrderByDescending()
+                    HorsePower= 0
                 })
-                .OrderBy()
+                //.OrderBy()
                 .ToArray();
 
             Assert.AreEqual(666, vehicles[0].HorsePower);
@@ -40,8 +40,6 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Color== CarColor.Black)
-                .Select(vehicle => vehicle.Doors)
                 /**/
                 //.Where(door => door.IsOpen == false)
                 .ToArray();
