@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.Black)
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
-                .Where(vehicle => vehicle.Engine.HorsePower > 100
+                .Where(vehicle => vehicle.Engine.HorsePower > 100)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
