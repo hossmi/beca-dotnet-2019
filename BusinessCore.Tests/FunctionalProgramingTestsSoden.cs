@@ -39,7 +39,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void the_sum_of_pressures_of_black_vehicles_with_enrollment_number_adobe_to_100_is_6()
+        public void get_sum_number_of_wheels_of_black_vehicles_with_enrollment_number_higher_to_100_is_6()
         {
             double pressure = this.vehicleStorage
                .getAll()
