@@ -24,22 +24,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            bool isTrue = false;
-
-            isTrue = this.vehicleStorage
+            bool isTrue = this.vehicleStorage
                 .getAll()
-                .All(vehicle => vehicle.Enrollment.Serial == "CSM" && vehicle.Engine.HorsePower == 666);
-            /*.Where(vehicle => vehicle.Enrollment.Serial == "CSM")
-            .SequenceEqual()
-            .Join(this.vehicleStorage.getAll()
-                .Where(vehicle => vehicle.Engine.HorsePower == 666), 
-                vehicle => vehicle.Enrollment.Serial,
-                vehicle => vehicle.Enrollment.Serial
-
-                );*/
-
-
-
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .All(vehicle => vehicle.Engine.HorsePower == 666);        
+                       
             Assert.IsTrue(isTrue);
         }
 
@@ -48,7 +37,10 @@ namespace BusinessCore.Tests
         {
             bool isTrue = false;
 
-
+            isTrue = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .All(vehicle => vehicle.Doors.ElementAt(2).IsOpen);
 
             Assert.IsTrue(isTrue);
 
