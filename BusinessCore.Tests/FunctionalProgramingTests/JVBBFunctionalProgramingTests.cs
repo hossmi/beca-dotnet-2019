@@ -10,6 +10,7 @@ namespace BusinessCore.Tests
 {
     [TestClass]
     [TestCategory("JVBB Tests")]
+    [TestCategory("Functional Programing")]
     public class JVBBFunctionalProgramingTests
     {
         private readonly JVBBArrayVehicleStorage vehicleStorage;
