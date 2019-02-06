@@ -25,9 +25,15 @@ namespace CarManagement.Services
                 return $"{this.Serial}-{this.Number.ToString("0000")}";
             }
         }
+
         IEnrollment IEnrollmentProvider.getNew()
+
         {
-            throw new System.NotImplementedException();
+            string enrollmentLetters = "";
+            if ((this.serial[1] & this.serial[2])<19)
+            {
+                this.serial
+            }
         }
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
