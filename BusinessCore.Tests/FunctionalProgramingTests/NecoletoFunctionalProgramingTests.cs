@@ -23,18 +23,15 @@ namespace BusinessCore.Tests
         public void get_the_number_of_the_doors_closed_of_all_black_vehicles()
         {
             int count = 0;
-            var vehicles = this.vehicleStorage
-            .getAll()
-            .Where(vehicle => vehicle.Color == CarColor.Black)
-            .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == false))
-            .Select(vehicle => 
-                new
-                    {
-                        count = vehicle.Doors
-                        //Para que compile
-                    });
+            count = this.vehicleStorage
+              
+                .getAll()
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .SelectMany(vehicle => vehicle.Doors
+                .Where(door => door.IsOpen == false))
+                .Count(); // Devuelve el número de elementos de una secuencia.
 
-             Assert.AreEqual(15, count);
+            Assert.AreEqual(15, count);
 
         }
 

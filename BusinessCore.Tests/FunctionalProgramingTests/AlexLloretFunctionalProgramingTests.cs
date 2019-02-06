@@ -50,12 +50,15 @@ namespace BusinessCore.Tests
                        var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
-                {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
-                })
-                /* Insert code here for boom! */
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(vehiclegroup => 
+                    new 
+                        {
+                            WheelsCount = vehiclegroup.Sum(x => x.Wheels.Length),
+                            Pressure = vehiclegroup.SelectMany(x => x.Wheels).Average(p => p.Pressure)
+                        })
+                .OrderBy(wc => wc.WheelsCount)
+                .ThenBy(ap => ap.Pressure)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
