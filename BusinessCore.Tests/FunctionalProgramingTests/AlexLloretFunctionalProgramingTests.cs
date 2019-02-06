@@ -22,10 +22,23 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
-            int horsePower = 0;
-            double pressure = 0;
-            
-              /* Insert code here for boom! */
+            //mínimo cv de los vehículos con ruedas con 3 de presión
+            //int horsePower = 0;
+            double pressure = 0;// this.vehicleStorage
+                /*.getAll()
+                .Where(vehicle => vehicle.Wheels.Any(wheels => wheels.Pressure == 3))
+                .Select(vehicleGroup => new //solo para que compile el test
+                {
+                    pressure = vehicle => vehicle.Wheels.Any(wheels => wheels.Pressure == 3),
+                    Pressure = vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
+                })*/
+
+
+            int horsePower = this.vehicleStorage
+                .getAll()
+                .Where( vehicle => vehicle.Wheels.Any( wheels => wheels.Pressure == 3))
+                
+                .Min( vehicle => vehicle.Engine.HorsePower);
                
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
