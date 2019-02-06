@@ -126,11 +126,6 @@ namespace BusinessCore.Tests
             Assert.AreEqual("ZZZ", vehicles[2].Serial);
             Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
         }
-       
-
-
-        }
-
 
         [TestMethod]
         public void get_horsePower_of_green_vehicles_or_get_12354645_as_default()
@@ -146,5 +141,7 @@ namespace BusinessCore.Tests
 
 
         }
+
     }
 }
+

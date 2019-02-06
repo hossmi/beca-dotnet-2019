@@ -22,7 +22,9 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
+                .Where(vehicle => vehicle.Engine.HorsePower >= 100)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -33,7 +35,8 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicle => vehicle.Engine.IsStarted)
+                .Where(vehicle => vehicle.Doors.Count(door => door.IsOpen == false) > 1)
                 .Select(vehicle => vehicle.Engine);
             Assert.AreEqual(2, engines.Count());
         }
@@ -43,10 +46,12 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .getAll()
-               /**/
+               .Where(vehicle => vehicle.Color == CarColor.Black)
+               .Where(vehicle => vehicle.Enrollment.Number > 100)
+               .Select(vehicle => vehicle.Wheels.Sum(wheel => wheel.Pressure))
                .Count();
 
-                Assert.AreEqual(6, pressure);
+            Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]
@@ -55,7 +60,7 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
                 .getAll()
                 /**/
-                .Select(vehicle => new { vehicle.Enrollment.Serial})
+                .Select(vehicle => new { vehicle.Enrollment.Serial })
                 .ToArray();
 
             Assert.AreEqual("PNG", vehicles[0].Serial);

@@ -21,9 +21,10 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
+                .OrderByDescending(vehicle => vehicle.Engine.HorsePower)
                 .Select(vehicle => new
                 {
-                    HorsePower = 0
+                    HorsePower = vehicle.Engine.HorsePower
                 })
                 .ToArray();
 
@@ -37,7 +38,8 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Doors.All(door => door.IsOpen == false))
                 .ToArray();
 
             Assert.AreEqual(5, vehicles.Length);
