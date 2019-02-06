@@ -9,30 +9,33 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    class necoletoTestFunctional
+    public class FunctionalProgramingTestsNecoleto
     {
         private readonly NecoletoArrayVehicleStorage vehicleStorage;
+        
 
-        public necoletoTestFunctional()
+        public FunctionalProgramingTestsNecoleto()
         {
             this.vehicleStorage = new NecoletoArrayVehicleStorage();
         }
         [TestMethod]
-        public void get_the_number_of_all_black_vehicle_with_all_the_doors_closed()
+        public void get_the_number_of_the_doors_closed_of_all_black_vehicles()
         {
-
             int count = 0;
-            count = this.vehicleStorage
+            var vehicles = this.vehicleStorage
             .getAll()
-            .Where(vehicle => vehicle.Color == CarColor.Black)
-            .SelectMany(vehicle => vehicle.Doors)
-            .Where(doors => doors.IsOpen == false)
-            .Count();
+            .Select(vehicle => new
+            {
+                vehicle.Engine.HorsePower
+                //Para que compile
+            });
 
             /* Insert code here for boom! */
 
-            Assert.AreEqual(3.0, count);
-            
+            Assert.AreEqual(15, count);
+
         }
+
+
     }
 }

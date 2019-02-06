@@ -56,7 +56,6 @@
     <Compile Include="Models\Enrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
-    <Compile Include="necoletoTestFunctional.cs" />
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
     <Compile Include="EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\alloretArrayVehicleStorage.cs" />
@@ -73,6 +72,7 @@
     <Compile Include="FunctionalProgramingTests.cs" />
     <Compile Include="alloretTestsFunctional.cs" />
     <Compile Include="CeliaFunctionalProgramingTests.cs" />
+    <Compile Include="FunctionalProgramingTestsNecoleto.cs" />
     <Compile Include="VehicleStorageTests.cs" />
     <Compile Include="VehicleTests.cs" />
   </ItemGroup>
