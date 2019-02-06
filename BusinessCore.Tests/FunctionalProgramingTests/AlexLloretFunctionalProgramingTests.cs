@@ -41,8 +41,8 @@ namespace BusinessCore.Tests
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group => new
                 {
-                    WheelsCount = group.Select(vehicle => vehicle.Wheels.Length),
-                    Pressure = group.Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure).Average())
+                    WheelsCount = group.Sum(vehicle => vehicle.Wheels.Length),
+                    Pressure = group.SelectMany(vehicle => vehicle.Wheels).Average(wheel => wheel.Pressure)
                 })
                 .OrderBy(group => group.WheelsCount)
                 .ThenBy(group => group.Pressure)
