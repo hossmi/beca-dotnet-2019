@@ -39,7 +39,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void c_adds_the_pressure_of_the_wheels_of_the_cars_with_enrollment_number_above_100_and_black_color()
+        public void the_sum_of_pressures_of_black_vehicles_with_enrollment_number_adobe_to_100_is_6()
         {
             double pressure = this.vehicleStorage
                .getAll()
@@ -50,10 +50,12 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void d_from_the_two_white_cars_with_any_doors_get_serial_enrollment_and_horsePower_adove_500()
+        public void get_serial_enrollment_from_white_vehicles_with_at_least_one_door_and_horsePower_adobe_500cv()
         {
             var vehicles = this.vehicleStorage
                 .getAll()
+                .Where(vehicle => vehicle.Engine.HorsePower >500)
+                .Where(vehicle => vehicle.Color == CarColor.White)
                 /**/
                 .ToArray();
 
