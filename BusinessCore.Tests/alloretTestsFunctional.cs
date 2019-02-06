@@ -24,13 +24,20 @@ namespace BusinessCore.Tests
             int horsePower = 0;
             double pressure = 0;
 
-            horsePower = this.vehicleStorage
-                .getAll()
-                .Select(vehicle => vehicle.Wheels)
-                .Average(wheel => wheel.Average(value => value.Pressure)
-                .Select(vehicle => vehicle.Engine)
-                .Min(engine => engine.HorsePower));
+            var returnedValues = this.vehicleStorage
+              .getAll()
+              .Where(vehicle => vehicle.Wheels
+                  .All(wheel => wheel.Pressure == 3.0))
+              .Select(vehicle =>
+                  new
+                  {
+                      motor = vehicle.Engine.HorsePower,
+                      presion = vehicle.Wheels.First().Pressure
+                  })
+              .OrderBy(x => x.motor);
 
+            horsePower = returnedValues.First().motor;
+            pressure = returnedValues.First().presion;
 
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
@@ -39,16 +46,15 @@ namespace BusinessCore.Tests
         [TestMethod] //¡A REVISAR ESTE TEST!
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
-            var vehicles = this.vehicleStorage
+                       var vehicles = this.vehicleStorage
+
                 .getAll()
-                .GroupBy(vehicle => vehicle.Enrollment.Serial)//Agrupa los elementos de una secuencia.
-                .Select(group =>
-                    new
-                    {
-                        WheelsCount = group.Key,
-                        Pressure = group.Average(vehicle => vehicle.Wheels.)
-                    })
-                .OrderBy(vehicle => vehicle.Serial).ThenBy(vehicle => vehicle.AverageHorsePower)//orderBy ordenacion principal thenBy ordenacion secundaria o complementaria
+                .Select(vehicle => new //solo para que compile el test
+                {
+                    WheelsCount = vehicle.Wheels.Length,
+                    Pressure = 0
+                })
+                /* Insert code here for boom! */
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -69,10 +75,17 @@ namespace BusinessCore.Tests
         public void from_the_two_red_cars_with_opened_doors_get_pressure_value_and_engine_status()
         {
             var vehicles = this.vehicleStorage
-
-                .getAll()
-                /* Insert code here for boom! */
-                .ToArray();
+               .getAll()
+               .Where(v => v.Color == CarColor.Red)
+               .Where(v => v.Doors
+                   .Any(door => door.IsOpen == true))
+               .Select(vehicle =>
+                   new
+                   {
+                       Pressure = vehicle.Wheels.Average(wheel => wheel.Pressure),
+                       EngineStatus = vehicle.Engine.IsStarted
+                   })
+               .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
             Type itemTime = vehicles[0].GetType();
