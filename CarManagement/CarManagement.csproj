@@ -49,6 +49,7 @@
     <Compile Include="Models\Enrollment.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
+    <Compile Include="Services\SqlVehicleStorage.cs" />
     <Compile Include="Services\VehicleBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AbstractVehicleStorage.cs" />
