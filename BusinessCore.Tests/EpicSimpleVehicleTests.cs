@@ -61,7 +61,7 @@ namespace BusinessCore.Tests
             IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .getAll()
                 .Where (vehicle => vehicle.Wheels.Length > 1)
-                .
+                .Where
 
                 .ToArray();
             try
