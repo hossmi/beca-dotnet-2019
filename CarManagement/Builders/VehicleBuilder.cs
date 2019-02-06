@@ -5,24 +5,29 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private CarColor color;
+        private int numDoors;
+        private int numWheels;
+        private int horsePower;
+        
         public void addWheel()
         {
-            throw new NotImplementedException();
+            this.numWheels++;
         }
 
         public void setDoors(int doorsCount)
         {
-            throw new NotImplementedException();
+            this.numDoors = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            throw new NotImplementedException();
+            this.horsePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            throw new NotImplementedException();
+            this.color = color;
         }
 
         public Vehicle build()
