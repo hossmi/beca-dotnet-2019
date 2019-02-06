@@ -24,7 +24,9 @@ namespace BusinessCore.Tests
         {
             bool isTrue = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .Select(vehicle => vehicle.Engine.HorsePower)
+                .All(horsepower => horsepower == 666)
                 ;
 
             Assert.IsTrue(isTrue);
@@ -35,7 +37,9 @@ namespace BusinessCore.Tests
         {
             bool isTrue = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .Select(vehicle => vehicle.Doors)
+                .All(doors => doors.ElementAt(2).IsOpen == true)
                 ;
 
             Assert.IsTrue(isTrue);
@@ -47,28 +51,31 @@ namespace BusinessCore.Tests
         {
             var returnedValues = this.vehicleStorage
                 .getAll()
-                /* */
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors)
+                .GroupBy(door => door.IsOpen)
                 ;
 
             int open = returnedValues.ElementAt(0).Count();
             int close = returnedValues.ElementAt(1).Count();
 
-            Assert.AreEqual(open,9);
+            Assert.AreEqual(open, 9);
             Assert.AreEqual(close, 7);
 
 
         }
 
-        [TestMethod]
-        public void return_all_wheels_with_4point5_pressure()
-        {
-            IEnumerable<IWheel> wheels = this.vehicleStorage
-                .getAll()
-                /* */
-                ;
+        //[TestMethod]
+        //public void return_all_wheels_with_4point5_pressure()
+        //{
+        //    IEnumerable<IWheel> wheels = this.vehicleStorage
+        //        .getAll()
+        //        .SelectMany(vehicle => vehicle.Wheels)
+        //        .Where(wheel => wheel.Pressure == 4.5)
+        //        ;
 
-            Assert.AreEqual(wheels.Count(), 6);
+        //    Assert.AreEqual(wheels.Count(), 6);
 
-        }
+        //}
     }
 }
