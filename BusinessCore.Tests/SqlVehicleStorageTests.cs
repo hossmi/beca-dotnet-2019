@@ -11,5 +11,17 @@ namespace BusinessCore.Tests
             
         }
 
+        [TestInitialize]
+        public void drop_and_create()
+        {
+            drop();
+
+        }
+
+        [TestCleanup]
+        public void drop()
+        {
+
+        }
     }
 }
