@@ -45,13 +45,12 @@ namespace BusinessCore.Tests
                 .GroupBy(keygroup => keygroup.Serial)
                 .Select (group => new
                 {
-                    Serial = group.Key,
                     Pressure = group.SelectMany(vehicle => 
                         vehicle.Wheels
                         .Select(pression=> pression
                             .Pressure)
                             ),
-                     WheelsCount = group.Select(vehicle => vehicle.Wheels .Count())
+                     WheelsCount = group.Sum(vehicle => vehicle.Wheels.Length)
                 })
                 .OrderBy(group => group.WheelsCount)
                 .ThenBy(group => group.Pressure)
