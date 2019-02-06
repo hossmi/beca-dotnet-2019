@@ -7,7 +7,7 @@ using CarManagement.Services;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class amunozeverisTests
+    public class AMuñozTests
     {
         [TestMethod]
         public void wheel_pressure_can_not_be_negative()

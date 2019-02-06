@@ -37,6 +37,8 @@ namespace BusinessCore.Tests
 
             Assert.IsFalse(vehicle0.Wheels[0].Pressure == vehicle1.Wheels[0].Pressure);
         }
+
+        [TestCategory("Functional Programing")]
         [TestMethod]
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
@@ -51,6 +53,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual(1, querriedEnrollment.Number);
         }
 
+        [TestCategory("Functional Programing")]
         [TestMethod]
         public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
