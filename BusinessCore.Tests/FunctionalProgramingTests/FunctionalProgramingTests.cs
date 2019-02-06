@@ -133,8 +133,8 @@ namespace BusinessCore.Tests
             var horsePowers = this.vehicleStorageSoden
                 .getAll()
                 .Where(vehicle => vehicle.Color == CarColor.Green)
-                
                 .Select(vehicle => vehicle.Engine.HorsePower)
+                .DefaultIfEmpty(12354645)
                 .ToArray();
 
             Assert.AreEqual(1, horsePowers.Length);
