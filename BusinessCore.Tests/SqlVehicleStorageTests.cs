@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -39,11 +40,22 @@ namespace BusinessCore.Tests
         private static void create(string connectionString)
         {
             throw new NotImplementedException();
+            dbConect(connectionString);
         }
 
         private static void drop(string connectionString)
         {
             throw new NotImplementedException();
+            dbConect(connectionString);
+        }
+
+        private static void dbConect(string connectionString)
+        {
+            using (SqlConnection connection = new SqlConnection("context connection=true"))
+            {
+                connection.Open();
+                // Use the connection
+            }
         }
 
     }
