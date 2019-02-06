@@ -25,10 +25,18 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
-            horsePower = this.vehicleStorage
+            var value = this.vehicleStorage
                 .getAll()
-                .Select(vehicle => vehicle.Engine.HorsePower)
-                .Min();
+                .Where(vehicle => vehicle.Wheels.All(pre => pre.Pressure == 3))
+                .Select(vehicle => new
+                {
+                    pressure = vehicle.Wheels.First().Pressure,
+                    horsePower = vehicle.Engine.HorsePower
+                }
+                )
+               .OrderBy(pre => pre.pressure);
+            horsePower = value.First().horsePower;
+            pressure = value.First().pressure;
 
             Assert.AreEqual(3.0, pressure = 3);
             Assert.AreEqual(85, horsePower);
