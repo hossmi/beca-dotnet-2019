@@ -23,9 +23,23 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
-            
-              /* Insert code here for boom! */
-               
+
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Engine.HorsePower >= 85)
+                .Where(vehicle => vehicle.Wheels.Any(wheel => wheel.Pressure == 3.0))
+                .Select(vehicle => vehicle.Engine)
+                .Select(engine => engine.HorsePower)
+                .First();
+
+            pressure = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Engine.HorsePower >= 85)
+                .Where(vehicle => vehicle.Wheels.Any(wheel => wheel.Pressure == 3.0))
+                .SelectMany(vehicle => vehicle.Wheels)
+                .Select(wheel => wheel.Pressure)
+                .First();
+
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
         }
@@ -36,6 +50,7 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
+
                 .Select(vehicle => new //solo para que compile el test
                 {
                     WheelsCount = vehicle.Wheels.Length,
@@ -58,13 +73,19 @@ namespace BusinessCore.Tests
         }
 
 
-         [TestMethod]
+        [TestMethod]
         public void from_the_two_red_cars_with_opened_doors_get_pressure_value_and_engine_status()
         {
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                /* Insert code here for boom! */
+                .Where(vehicle => vehicle.Color == CarColor.Red)
+                .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == true))
+                .Select(vehicle => new
+                {
+                    vehicle.Engine.IsStarted,
+                    vehicle.Wheels.First().Pressure
+                })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);

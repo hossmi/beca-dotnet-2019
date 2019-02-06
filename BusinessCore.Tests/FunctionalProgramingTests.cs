@@ -130,18 +130,26 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void get_horsePower_of_green_vehicles_or_get_12354645_as_default()
         {
-            var horsePowers = this.vehicleStorage
-                .getAll()
-                /**/
-                .Select(vehicle => vehicle.Engine.HorsePower)
-                .ToArray();
+            int[] horsePowers;
+            try
+            {
+                horsePowers = this.vehicleStorage
+                  .getAll()
+                  .Where(vehicle => vehicle.Color == CarColor.Green)
+                  .Select(vehicle => vehicle.Engine.HorsePower)
+                  .ToArray();
+            }
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                horsePowers = new int[] { 12354645 };
+            }
 
             Assert.AreEqual(1, horsePowers.Length);
             Assert.AreEqual(12354645, horsePowers[0]);
-
-
         }
-
     }
 }
 

@@ -23,7 +23,15 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            bool isTrue = false;                
+            bool isTrue = false;
+
+            IEnumerable<int> horsePowers = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .Select(vehicle => vehicle.Engine.HorsePower);
+
+            if (horsePowers.All(power => power.Equals(666)))
+                isTrue = true;
 
             Assert.IsTrue(isTrue);
         }
@@ -33,23 +41,37 @@ namespace BusinessCore.Tests
         {
             bool isTrue = false;
 
+            IEnumerable<IDoor> thirdsDoors = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .Select(vehicle => vehicle.Doors[2]);
 
+            if (thirdsDoors.All(door => door.IsOpen == true))
+                isTrue = true;
 
             Assert.IsTrue(isTrue);
-
         }
 
         [TestMethod]
         public void count_of_open_and_closed_doors_from_CSM_vehicles()
         {
             int open = 0;
-            int close = 0;
+            int closed = 0;
 
-            Assert.AreEqual(open,9);
-            Assert.AreEqual(close, 7);
+            open = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors)
+                .Count(door => door.IsOpen == true);
 
+            closed = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors)
+                .Count(door => door.IsOpen == false);
 
-        
+            Assert.AreEqual(open, 9);
+            Assert.AreEqual(closed, 7);
         }
     }
 }
