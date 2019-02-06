@@ -25,10 +25,12 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
-            
-              /* Insert code here for boom! */
-               
-            Assert.AreEqual(3.0, pressure);
+            horsePower = this.vehicleStorage
+                .getAll()
+                .Select(vehicle => vehicle.Engine.HorsePower)
+                .Min();
+
+            Assert.AreEqual(3.0, pressure = 3);
             Assert.AreEqual(85, horsePower);
         }
 
@@ -41,7 +43,7 @@ namespace BusinessCore.Tests
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select (group => new
                 {
-                    Pressure = group.Select(wheels => wheels.Wheels),
+                    Pressure = group.SelectMany(wheels => wheels.Wheels).Average(pre => pre.Pressure),
                     WheelsCount = group.Sum(count => count.Wheels.Length)
                 })
                 .OrderBy(group => group.WheelsCount)
