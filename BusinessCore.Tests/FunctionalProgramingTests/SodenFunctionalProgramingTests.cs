@@ -23,7 +23,9 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicle => vehicle.Color==CarColor.Black)
+                .Where(vehicle => vehicle.Engine.HorsePower >= 100)
+                .Where(vehicle => vehicle.Engine.IsStarted==true)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -34,8 +36,13 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicles => vehicles.Engine.IsStarted==true)
+                .Where(vehicles => vehicles.Doors
+                    .Any(door => door.IsOpen==true))
+                
+
                 .Select(vehicle => vehicle.Engine);
+
             Assert.AreEqual(2, engines.Count());
         }
 
@@ -44,8 +51,12 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .getAll()
-               /**/
-               .Count();
+               .Where(vehicle => vehicle.Color == CarColor.Black)
+               .Where(vehicle => vehicle.Enrollment.Number > 100)
+               .SelectMany(vehicle => vehicle.Wheels)
+               //.Sum(w => w.Pressure)
+               .Count()
+               ;              
 
                 Assert.AreEqual(6, pressure);
         }
@@ -55,7 +66,9 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
                 .getAll()
-                /**/
+                .Where(vehicle => vehicle.Color==CarColor.White)
+                .Where(vehicle => vehicle.Doors.Count() > 1)
+                .Where(vehicle => vehicle.Engine.HorsePower>500)
                 .Select(vehicle => new { vehicle.Enrollment.Serial})
                 .ToArray();
 
