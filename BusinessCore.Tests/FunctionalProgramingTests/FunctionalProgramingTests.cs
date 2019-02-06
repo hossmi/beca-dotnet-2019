@@ -84,7 +84,11 @@ namespace BusinessCore.Tests
                 .getAll()
                 .Where(vehicle => vehicle.Color==CarColor.White)
                 .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == true))
-                .Select( vehicle => new {  vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
+                .Select( vehicle => new
+                {
+                    vehicle.Enrollment.Serial,
+                    vehicle.Engine.HorsePower
+                })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
