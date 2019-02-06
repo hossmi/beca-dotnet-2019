@@ -100,10 +100,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual("PNG", vehicles[1].Serial);
             Assert.AreEqual(633, vehicles[1].AverageHorsePower);
             Assert.AreEqual("ZZZ", vehicles[2].Serial);
-            Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
-
-
-           
+            Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);           
         }
     }
 }
