@@ -23,24 +23,11 @@ namespace BusinessCore.Tests
         public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
             //mínimo cv de los vehículos con ruedas con 3 de presión
-            /*.getAll()
-                .GroupBy(vehicle => vehicle.Enrollment.Serial)
-                .Select(vehicleGroup => new //solo para que compile el test
-                {
-                    Pressure = vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
-                })
-                .OrderBy(a => a.WheelsCount)
-                .ThenBy(a => a.Pressure)
-                .ToArray();*/
-            var pressure = 0;
+            var pressure = 3.0;
             var horsePower = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3))
-                .Select(vehicle => new
-                {
-                    pressure = vehicle.Wheels.Average( wheel => wheel.Pressure),
-                    horsePower = vehicle.Engine.HorsePower
-                });
+                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == pressure))
+                .Min(vehicle => vehicle.Engine.HorsePower);
                
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
@@ -50,7 +37,6 @@ namespace BusinessCore.Tests
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
             var vehicles = this.vehicleStorage
-
                 .getAll()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(vehicleGroup => new //solo para que compile el test
@@ -82,7 +68,13 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                /* Insert code here for boom! */
+                .Where( vehicle => vehicle.Color == CarColor.Red)
+                .Where( vehicle => vehicle.Doors.Count( door => door.IsOpen == true) >=1)
+                .Select(vehicle => new
+                {
+                    pressure = vehicle.Wheels[0].Pressure,
+                    engine_status = vehicle.Engine.IsStarted 
+                })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
