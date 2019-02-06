@@ -1,0 +1,28 @@
+@startuml
+
+title Car Management
+
+class Vehicle {
+    + color : int
+    + engineHorsePower : int
+    + engineIsStarted : bool
+}
+
+class Wheel {
+    + pressure : double
+}
+
+class Door {
+    + isOpen : bool
+}
+
+class Enrollment {
+    + serial : string
+    + number : int
+}
+
+Vehicle "1..1 ID" -up- Enrollment
+Vehicle "0..n" *-- "ID" Door
+Vehicle "0..n" *-- "ID" Wheel
+
+@enduml
