@@ -23,9 +23,22 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
-            
-              /* Insert code here for boom! */
-               
+
+            var returnedValues = this.vehicleStorage
+              .getAll()
+              .Where(vehicle => vehicle.Wheels
+                  .All(wheel => wheel.Pressure == 3.0))
+              .Select(vehicle =>
+                  new
+                  {
+                      hp = vehicle.Engine.HorsePower,
+                      p = vehicle.Wheels.First().Pressure
+                  })
+              .OrderBy(a => a.hp);
+
+            horsePower = returnedValues.First().hp;
+            pressure = returnedValues.First().p;
+
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
         }
@@ -34,14 +47,15 @@ namespace BusinessCore.Tests
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
             var vehicles = this.vehicleStorage
-
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(vehiclegroup => new //solo para que compile el test
                 {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
+                    WheelsCount = vehiclegroup.Select(v => v.Wheels.Length),
+                    Pressure = vehiclegroup.Select(v => v.Wheels.Average(w => w.Pressure))
                 })
-                /* Insert code here for boom! */
+                .OrderBy(a => a.WheelsCount)
+                .ThenBy(a => a.Pressure)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -58,13 +72,20 @@ namespace BusinessCore.Tests
         }
 
 
-         [TestMethod]
+        [TestMethod]
         public void from_the_two_red_cars_with_opened_doors_get_pressure_value_and_engine_status()
         {
             var vehicles = this.vehicleStorage
-
                 .getAll()
-                /* Insert code here for boom! */
+                .Where(v => v.Color == CarColor.Red)
+                .Where(v => v.Doors
+                    .Any(door => door.IsOpen == true))
+                .Select(vehicle =>
+                    new
+                    {
+                        Pressure = vehicle.Wheels.Average(wheel => wheel.Pressure),
+                        EngineStatus = vehicle.Engine.IsStarted
+                    })
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
