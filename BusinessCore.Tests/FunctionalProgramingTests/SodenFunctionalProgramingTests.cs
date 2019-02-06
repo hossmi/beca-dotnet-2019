@@ -11,6 +11,7 @@ namespace BusinessCore.Tests
 {
     [TestClass]
     [TestCategory("Soden")]
+    [TestCategory("Functional Programing")]
     public class SodenFunctionalProgramingTests
     {
         private readonly ArrayVehicleStorageSoden vehicleStorage;
@@ -23,7 +24,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         [TestCategory("Soden")]
         [TestCategory("Functional Programing")]
-        public void a_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
+        public void get_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
@@ -36,12 +37,13 @@ namespace BusinessCore.Tests
         [TestMethod]
         [TestCategory("Soden")]
         [TestCategory("Functional Programing")]
-        public void b_there_are_two_started_engines_more_one_doors_closed()
+        public void get_there_are_two_started_engines_more_one_doors_closed()
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
                 /**/
                 .Select(vehicle => vehicle.Engine);
+
             Assert.AreEqual(2, engines.Count());
         }
 
@@ -55,7 +57,7 @@ namespace BusinessCore.Tests
                /**/
                .Count();
 
-                Assert.AreEqual(6, pressure);
+            Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]
@@ -71,27 +73,5 @@ namespace BusinessCore.Tests
 
             Assert.AreEqual("PNG", vehicles[0].Serial);
         }
-
-        [TestMethod]
-        [TestCategory("Soden")]
-        [TestCategory("VehicleBuilder")]
-        public void Vehicle_entities_shall_not_share_wheels()
-        {
-            DefaultEnrollmentProvider provider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(provider);
-
-            builder.addWheel();
-            builder.setDoors(3);
-            builder.setEngine(12);
-
-            IVehicle vehicle0 = builder.build();
-            IVehicle vehicle1 = builder.build();
-
-            vehicle0.setWheelsPressure(3.2);
-            vehicle1.setWheelsPressure(1.1);
-
-            Assert.IsFalse(vehicle0.Wheels[0].Pressure == vehicle1.Wheels[0].Pressure);
-        }
-
     }
 }
