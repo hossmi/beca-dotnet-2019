@@ -22,9 +22,12 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void get_total_horse_power_from_yellow_vehicles_with_less_than_three_wheels()
         {
-            int horsePower = 0;
-            /**/
-            Assert.AreEqual(1366, horsePower);
+            /*int horsePower = 0;
+            horsePower = this.vehicleStorage_amunoz
+                .getAll()
+                .where()
+            
+            Assert.AreEqual(1366, horsePower);*/
 
         }
 

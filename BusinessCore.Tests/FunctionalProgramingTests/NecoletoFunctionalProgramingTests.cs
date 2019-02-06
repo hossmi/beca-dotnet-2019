@@ -22,18 +22,17 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void get_the_number_of_the_doors_closed_of_all_black_vehicles()
         {
-            int count = 0;
+            /*int count = 0;
             var vehicles = this.vehicleStorage
             .getAll()
+            .Where(condition1 => condition1.Color == CarColor.Black)
+            .Count(vehicle => vehicle.Doors.Any(door => door.IsOpen));
             .Select(vehicle => new
             {
-                vehicle.Engine.HorsePower
-                //Para que compile
-            });
-
-            /* Insert code here for boom! */
-
-            Assert.AreEqual(15, count);
+                count = 
+            })
+            //.Count(countdoors => countdoors.vehicle.Doors.Any(door => door.IsOpen));
+            Assert.AreEqual(15, count);*/
 
         }
 

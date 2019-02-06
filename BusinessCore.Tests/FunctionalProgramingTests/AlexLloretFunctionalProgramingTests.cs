@@ -37,12 +37,14 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                .Select(vehicle => new //solo para que compile el test
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(vehicle => new 
                 {
-                    WheelsCount = vehicle.Wheels.Length,
-                    Pressure = 0
+                    WheelsCount = vehicle.Select(wheel => wheel.Wheels.Length),
+                    Pressure = vehicle.Select(pressure => pressure.Wheels.Select(wp => wp.Pressure))
                 })
-                /* Insert code here for boom! */
+                .OrderBy(order => order.Pressure)
+                .ThenBy(then => then.WheelsCount)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -65,7 +67,15 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                /* Insert code here for boom! */
+                .Where(condition1 => condition1.Color == CarColor.Red)
+                .Where(condition2 => condition2.Doors.Any(door => door.IsOpen))
+                .Select( vehicle =>
+                        new
+                        {
+                            pressure = vehicle.Wheels.Select(wheel => wheel.Pressure),
+                            engine_status = vehicle.Engine.IsStarted
+                        }
+                )
                 .ToArray();
 
             Assert.AreEqual(2, vehicles.Length);
