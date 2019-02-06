@@ -60,7 +60,13 @@ namespace BusinessCore.Tests
             IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Wheels.Count() > 1)
-                //.Where(vehicle => vehicle.Wheels.Distinct())
+                .Where(vehicle => vehicle.Wheels
+                    .OrderByDescending(w => w.Pressure)
+                        .ElementAt(0).Pressure > 
+                            vehicle.Wheels.OrderByDescending(w => w.Pressure)
+                                .ElementAt(1).Pressure
+                )
+                  
                 .Select(vehicle => vehicle.Enrollment)
                 /**/
                 .ToArray();
