@@ -10,11 +10,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class alloretTestsFunctional
+    [TestCategory("Functional Programing")]
+    public class AlexLloretFunctionalProgramingTests
     {
         private readonly alloretArrayVehicleStorage vehicleStorage;
 
-        public alloretTestsFunctional()
+        public AlexLloretFunctionalProgramingTests()
         {
             this.vehicleStorage = new alloretArrayVehicleStorage();
         }
@@ -57,14 +58,16 @@ namespace BusinessCore.Tests
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
-            Type itemTime = vehicles[0].GetType();
-            Assert.AreEqual(2, itemTime.GetProperties().Length);
-            Assert.AreEqual(2, vehicles[0].WheelsCount);
-            Assert.AreEqual(2.5, vehicles[0].Pressure);
-            Assert.AreEqual(4, vehicles[1].WheelsCount);
-            Assert.AreEqual(2.8, vehicles[1].Pressure);
-            Assert.AreEqual(2, vehicles[2].WheelsCount);
-            Assert.AreEqual(2.1, vehicles[2].Pressure);
+
+            Type itemType = vehicles[0].GetType();
+            Assert.AreEqual(2, itemType.GetProperties().Length);
+
+            Assert.AreEqual(3, vehicles[0].WheelsCount);
+            Assert.AreEqual(6, vehicles[0].Pressure);
+            Assert.AreEqual(5, vehicles[1].WheelsCount);
+            Assert.AreEqual(3.6, vehicles[1].Pressure);
+            Assert.AreEqual(14, vehicles[2].WheelsCount);
+            Assert.AreEqual(3.0428571428571423, vehicles[2].Pressure);
         }
 
 

@@ -7,12 +7,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
 {
+    [TestCategory("Functional Programing")]
     [TestClass]
-    public class FunctionalProgramingTestsSoden
+    public class SodenFunctionalProgramingTests
     {
         private readonly ArrayVehicleStorageSoden vehicleStorage;
 
-        public FunctionalProgramingTestsSoden()
+        public SodenFunctionalProgramingTests()
         {
             this.vehicleStorage = new ArrayVehicleStorageSoden();
         }
@@ -45,7 +46,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void the_sum_of_pressures_of_black_vehicles_with_enrollment_number_adobe_to_100_is_6()
+        public void get_sum_number_of_wheels_of_black_vehicles_with_enrollment_number_higher_to_100_is_6()
         {
             double pressure = this.vehicleStorage
                .getAll()

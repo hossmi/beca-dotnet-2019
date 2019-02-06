@@ -8,13 +8,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
 {
+    [TestCategory("Functional Programing")]
     [TestClass]
-    public class FunctionalProgramingTestsNecoleto
+    public class NecoletoFunctionalProgramingTests
     {
         private readonly NecoletoArrayVehicleStorage vehicleStorage;
         
 
-        public FunctionalProgramingTestsNecoleto()
+        public NecoletoFunctionalProgramingTests()
         {
             this.vehicleStorage = new NecoletoArrayVehicleStorage();
         }

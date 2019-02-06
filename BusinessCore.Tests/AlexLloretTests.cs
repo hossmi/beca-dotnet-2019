@@ -8,7 +8,7 @@ using CarManagement.Services.CarManagement.Builders;
 namespace BusinessCore.Tests
 {
     [TestClass]
-    public class alloretTests
+    public class AlexLloretTests
     {
         [TestMethod]
         public void Pressure_must_not_be_less_than_1() // Posible conflicto con el test de JVBB 
