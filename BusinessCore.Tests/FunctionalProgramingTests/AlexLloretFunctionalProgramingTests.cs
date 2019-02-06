@@ -77,13 +77,16 @@ namespace BusinessCore.Tests
             var vehicles = this.vehicleStorage
 
                 .getAll()
-                //.Where (vehicle => vehicle.Color == CarColor.Red && vehicle.Doors.Where (doors  => doors.IsOpen).Count() != 0)
-                //.Select (vehicle => new
-                //{
-                //    Status = vehicle.Engine.IsStarted,
-                //    pressure = vehicle.Wheels.SelectMany(wheels => wheels.Pressure)
-                //}
-                //)
+                .Where (vehicle => vehicle.Color == CarColor.Red)
+                .Where (vehicle => vehicle.Doors.Where (door => door.IsOpen == true).Count() >= 0 )
+                .Select(vehicle => new
+                {
+                    vehicle.Doors,
+                    vehicle.Engine.IsStarted
+                    
+                }
+                )
+              
                 .ToArray();
 
 
