@@ -53,7 +53,6 @@
     <Compile Include="AMuñozTests.cs" />
     <Compile Include="FunctionalProgramingTests\NecoletoFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\JVBBFunctionalProgramingTests.cs" />
-    <Compile Include="Services\NecoletoArrayVehicleStorage.cs" />
     <Compile Include="FunctionalProgramingTests\SodenFunctionalProgramingTests.cs" />
     <Compile Include="Models\Door.cs" />
     <Compile Include="Models\Engine.cs" />
