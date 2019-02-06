@@ -50,16 +50,13 @@ namespace BusinessCore.Tests
         {
             int open = 0;
             int close = 0;
-            //var count = this.vehicleStorage
-            //    .getAll()
-            //    .SelectMany (vehicle => vehicle.Doors )
-            //    .Select(doors => new
-            //    {
-            //        open = doors => doors.
-            //    }
-            //    )
-                
-
+            var values = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors)
+                .GroupBy(door => door.IsOpen);
+                 close = values.ElementAt(1).Count();
+                 open = values.ElementAt(0).Count();
 
             Assert.AreEqual(open,9);
             Assert.AreEqual(close, 7);
