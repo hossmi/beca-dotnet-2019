@@ -23,18 +23,27 @@ namespace BusinessCore.Tests
         public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
             //mínimo cv de los vehículos con ruedas con 3 de presión
-            double pressure = 0;
+            /*.getAll()
+                .GroupBy(vehicle => vehicle.Enrollment.Serial)
+                .Select(vehicleGroup => new //solo para que compile el test
+                {
+                    Pressure = vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
+                })
+                .OrderBy(a => a.WheelsCount)
+                .ThenBy(a => a.Pressure)
+                .ToArray();*/
+            var pressure = 0;
             var horsePower = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3))
                 .Select(vehicle => new
                 {
-                    pressure = vehicle.Wheels[0].Pressure,
+                    pressure = vehicle.Wheels.Average( wheel => wheel.Pressure),
                     horsePower = vehicle.Engine.HorsePower
                 });
                
             Assert.AreEqual(3.0, pressure);
-           // Assert.AreEqual(85, horsePower);
+            Assert.AreEqual(85, horsePower);
         }
 
         [TestMethod]
@@ -47,11 +56,10 @@ namespace BusinessCore.Tests
                 .Select(vehicleGroup => new //solo para que compile el test
                 {
                     WheelsCount = vehicleGroup.Sum(v => v.Wheels.Length),
-                    Pressure =vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
+                    Pressure = vehicleGroup.SelectMany(v => v.Wheels).Average(w => w.Pressure),
                 })
                 .OrderBy(a => a.WheelsCount)
                 .ThenBy(a => a.Pressure)
-                /* Insert code here for boom! */
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
