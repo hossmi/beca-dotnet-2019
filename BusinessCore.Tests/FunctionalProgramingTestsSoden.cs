@@ -22,9 +22,9 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Color == CarColor.Black )
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
-                .Where(vehicle => vehicle.Engine.HorsePower >100)
+                .Where(vehicle => vehicle.Engine.HorsePower > 100
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -36,34 +36,33 @@ namespace BusinessCore.Tests
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
-                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == false).Count() >1)
+                .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == false).Count() > 1)
                 .Select(vehicle => vehicle.Engine);
             Assert.AreEqual(2, engines.Count());
         }
 
         [TestMethod]
-        public void c_adds_the_pressure_of_the_wheels_of_the_cars_with_enrollment_number_above_100_and_black_color()
+        public void the_sum_of_pressures_of_black_vehicles_with_enrollment_number_adobe_to_100_is_6()
         {
             double pressure = this.vehicleStorage
                .getAll()
                .Where(vehicle => vehicle.Color == CarColor.Black)
                .Where(vehicle => vehicle.Enrollment.Number > 100)
                .SelectMany(vehicle => vehicle.Wheels)
-               .Select(wheel => wheel.Pressure)
                .Count();
 
                 Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]
-        public void d_from_the_two_white_cars_with_any_doors_get_serial_enrollment_and_horsePower_adove_500()
-        {//Add an assert to check the right or expected serial enrollment.
+        public void get_serial_enrollment_from_white_vehicles_with_at_least_one_door_and_horsePower_adobe_500cv()
+        {
             var vehicles = this.vehicleStorage
                 .getAll()
-                .Where(vehicle => vehicle.Color==CarColor.Black)
+                .Where(vehicle => vehicle.Color == CarColor.Black)
                 .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == true))
-                .Where(vehicle => vehicle.Engine.HorsePower >500)
-                .Select( vehicle => new { vehicle.Enrollment.Serial,  vehicle.Engine.HorsePower})
+                .Where(vehicle => vehicle.Engine.HorsePower > 500)
+                .Select(vehicle => new { vehicle.Enrollment.Serial})
                 .ToArray();
 
             Assert.AreEqual("PNG", vehicles[0].Serial);
