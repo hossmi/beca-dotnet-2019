@@ -78,7 +78,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual(2, itemTime.GetProperties().Length);
         }
 
-        /*
+        
         [TestMethod]
         public void get_enrollment_serial_and_average_horse_power_grouping_by_enrollment_serial_ordering_by_serial_and_average_horse_power()
         {
@@ -104,7 +104,7 @@ namespace BusinessCore.Tests
             Assert.AreEqual(539.6, vehicles[2].AverageHorsePower);
 
 
-            Assert.Equals(1366, horsePower);
+           
         }
     }
 }
