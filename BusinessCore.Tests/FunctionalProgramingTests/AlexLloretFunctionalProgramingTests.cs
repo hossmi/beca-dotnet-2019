@@ -51,11 +51,10 @@ namespace BusinessCore.Tests
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group =>
                     new {
-                        WheelsCount = group.Select(vehicle => vehicle.Wheels.Count()).First(),
-                        Pressure = group.Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure).Average())
+                        WheelsCount = group.Sum(vehicle => vehicle.Wheels.Count()),
+                        Pressure = group.SelectMany(vehicle => vehicle.Wheels).Average(wheel => wheel.Pressure)
                         }
                 )
-                .OrderBy(anonym => anonym.Pressure)
                 .OrderBy(anonym => anonym.WheelsCount)
                 /* Insert code here for boom! */
                 .ToArray();
