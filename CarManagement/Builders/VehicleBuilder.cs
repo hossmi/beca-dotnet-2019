@@ -10,6 +10,8 @@ namespace CarManagement.Builders
         private int numDoors;
         private int numWheels;
         private int horsePower;
+        private int enrollment;
+
 
         public VehicleBuilder()
         {
@@ -17,11 +19,20 @@ namespace CarManagement.Builders
             this.numDoors = 0;
             this.horsePower = 0;
             this.color = CarColor.Red;
+            this.enrollment = 000000;
         }
 
         public void addWheel()
         {
-            this.numWheels++;
+            if (this.numWheels < 4)
+            {
+                this.numWheels++;
+            }
+            else
+            {
+                throw new Exception();
+            }
+
         }
 
         public void setDoors(int doorsCount)
@@ -48,15 +59,21 @@ namespace CarManagement.Builders
             List<Door> doors = new List<Door>();
             for (int i = 0; i < this.numDoors; i++)
             {
-                Door d = new Door();
-                doors.Add(d);
+                Door door = new Door();
+                doors.Add(door);
             }
 
             List<Wheel> wheels = new List<Wheel>();
+
+            if (this.numWheels == 0)
+            {
+                throw new Exception("vehicle has to have 1 wheel at least");
+            }
+
             for (int i = 0; i < this.numWheels; i++)
             {
-                Wheel w = new Wheel();
-                wheels.Add(w);
+                Wheel wheel = new Wheel();
+                wheels.Add(wheel);
             }
 
             string enrollment = getNextEnrollment();
@@ -67,11 +84,8 @@ namespace CarManagement.Builders
 
         private string getNextEnrollment()
         {
-            string serial = "AAA";
-            string number = "0000";
-
-            string enrollmentString = serial + number;
-
+            this.enrollment++;
+            string enrollmentString = this.enrollment.ToString();
             return enrollmentString;
 
         }
