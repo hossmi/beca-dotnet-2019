@@ -41,13 +41,10 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString)
         {
-            SqlConnection con = new SqlConnection(connectionString);
             string FilePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
             string file = File.ReadAllText(FilePath);
-            SqlCommand sentence = new SqlCommand(file, con);
-            con.Open();
-            int affectedRows = sentence.ExecuteNonQuery();
-            con.Close();
+            SqlConnection con = new SqlConnection(connectionString);
+            ConMethod(file, con);
 
         }
 
@@ -57,10 +54,15 @@ namespace BusinessCore.Tests
             string FilePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
             string file = File.ReadAllText(FilePath);
             SqlCommand sentence = new SqlCommand(file, con);
+            ConMethod(file, con);
+        }
+
+        private static void ConMethod(string file, SqlConnection con)
+        {
+            SqlCommand sentence = new SqlCommand(file, con);
             con.Open();
             int affectedRows = sentence.ExecuteNonQuery();
             con.Close();
         }
-
     }
 }
