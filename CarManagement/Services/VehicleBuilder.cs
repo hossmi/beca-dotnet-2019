@@ -11,12 +11,14 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        #region "CONSTS"
         private const int MAX_WHEELS = 4;
-        private const int MAX_DOORS = 6;
         private const string ERR_WHEEL_ADDITION_CALL = "Cannot add more than 4 wheels";
         private const string ERR_WHEEL_REMOVAL_CALL = "Cannot remove from none wheels";
+        private const int MAX_DOORS = 6;
         private const string ERR_DOOR_NUMBER_OVER_MAX = "You cannot have more than 6 doors";
         private const string ERR_DOOR_NUMBER_UNDER0 = "You cannot have less than 0 doors";
+        #endregion
 
         private readonly IEnrollmentProvider enrollmentProvider;
         
