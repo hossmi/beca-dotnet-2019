@@ -1,11 +1,4 @@
-﻿/****** Object:  Table [dbo].[enrollment]    Script Date: 02/06/2019 16:20:13 ******/
-USE [CarManagement]
-
-SET ANSI_NULLS ON
-
-SET QUOTED_IDENTIFIER ON
-
-SET ANSI_PADDING ON
+﻿USE [CarManagement]
 
 CREATE TABLE [dbo].[enrollment]
 (
@@ -15,14 +8,7 @@ CREATE TABLE [dbo].[enrollment]
 	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
 )
 
-
-SET ANSI_PADDING OFF
-
-CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment] 
-(
-	[serial] ASC,
-	[number] ASC
-)
+CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment] ([serial] ASC,[number] ASC)
 
 
 CREATE TABLE [dbo].[vehicle](
