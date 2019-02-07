@@ -40,6 +40,17 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString)
         {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
+            string sentencies = File.ReadAllText(filePath);
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand();
+            command.CommandText = sentencies;
+            command.Connection = connection;
+
+            connection.Open();
+            int afectedRows = command.ExecuteNonQuery();
+            connection.Close();
         }
 
         private static void drop(string connectionString)
