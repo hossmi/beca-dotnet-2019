@@ -22,4 +22,23 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[enrol
 DROP TABLE [dbo].[enrollment]
 GO
 
+USE [CarManagement]
+GO
+
+/****** Object:  Table [dbo].[Wheels]    Script Date: 07/02/2019 12:52:31 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Wheels]') AND type in (N'U'))
+DROP TABLE [dbo].[Wheels]
+GO
+
+USE [CarManagement]
+GO
+
+/****** Object:  Table [dbo].[Doors]    Script Date: 07/02/2019 12:56:45 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Drop]') AND type in (N'U'))
+DROP TABLE [dbo].[Doors]
+GO
+
+
+
+
 

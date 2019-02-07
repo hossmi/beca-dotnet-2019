@@ -54,27 +54,33 @@ namespace BusinessCore.Tests
             Assert.AreEqual(1, querriedEnrollment.Number);
         }
 
-        [TestCategory("Functional Programing")]
-        [TestMethod]
-        public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
-        { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
-            IEnrollment[] querriedEnrollment = this.vehicleStorage
-                .getAll()
-                .Where (vehicle => vehicle.Wheels.Length > 1)
-                .Where
+        //[TestCategory("Functional Programing")]
+        //[TestMethod]
+        ////public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
+        ////{ // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
+        ////    IEnrollment[] querriedEnrollment = this.vehicleStorage
+        ////   .getAll()
+        ////   .Select(vehicle => new
+        ////   {
+        ////       arg = vehicle.Engine.HorsePower
+        ////   })
+              
+           
+        ////    //    //.Where (vehicle => vehicle.Wheels.Length > 1)
+        ////    //    //.Where
 
-                .ToArray();
-            try
-            {
-                int a = querriedEnrollment[1].Number;
-                Assert.Fail();
-            }
-            catch (IndexOutOfRangeException)
-            {
-                //good
-            }
-            Assert.AreEqual("AAA", querriedEnrollment[0].Serial);
-            Assert.AreEqual(1000, querriedEnrollment[0].Number);
-        }
+
+        ////    try
+        ////    {
+        ////        int a = querriedEnrollment[1].Number;
+        ////        Assert.Fail();
+        ////    }
+        ////    catch (IndexOutOfRangeException)
+        ////    {
+        ////        //good
+        ////    }
+        ////    Assert.AreEqual("AAA", querriedEnrollment[0].Serial);
+        ////    Assert.AreEqual(1000, querriedEnrollment[0].Number);
+        ////}
     }
 }

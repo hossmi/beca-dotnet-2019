@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -16,6 +19,7 @@ namespace BusinessCore.Tests
         {
             Assert.IsTrue(ConfigurationManager.AppSettings.AllKeys.Contains(ConnectionStringKey));
             this.connectionString = ConfigurationManager.AppSettings[ConnectionStringKey].ToString();
+          
         }
 
         [TestInitialize]
@@ -34,16 +38,51 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+            throw new NotImplementedException();
         }
 
         private static void create(string connectionString)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conection = new SqlConnection(connectionString))
+            {
+                using (IDbCommand command = new SqlCommand())
+                {
+
+                    string ruta = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
+                    string sentences = File.ReadAllText(ruta);
+
+                    executeCommand(conection, command, sentences);
+                }
+            }
+
         }
 
         private static void drop(string connectionString)
         {
-            throw new NotImplementedException();
+            using (IDbConnection conection = new SqlConnection(connectionString))
+            {
+
+                using (IDbCommand command = new SqlCommand())
+                {
+
+                    string ruta = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
+                    string sentences = File.ReadAllText(ruta);
+
+                    executeCommand(conection, command, sentences);
+                }
+            }
+
+        }
+
+        private static void executeCommand(IDbConnection conection, IDbCommand command, string sentences)
+        {
+            
+            command.CommandText = sentences;
+            command.Connection = conection;
+
+            conection.Open();
+            command.ExecuteNonQuery();
+            conection.Close();
         }
 
     }

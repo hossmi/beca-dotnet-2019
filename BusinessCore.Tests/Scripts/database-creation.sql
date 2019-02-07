@@ -1,75 +1,60 @@
-﻿/****** Object:  Table [dbo].[enrollment]    Script Date: 02/06/2019 16:20:13 ******/
+﻿
 USE [CarManagement]
-GO
 
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-SET ANSI_PADDING ON
-GO
-
-CREATE TABLE [dbo].[enrollment]
+CREATE TABLE [enrollment]
 (
 	[serial] [varchar](3) NOT NULL,
 	[number] [smallint] NOT NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
-	WITH (
-		PAD_INDEX  = OFF, 
-		STATISTICS_NORECOMPUTE  = OFF, 
-		IGNORE_DUP_KEY = OFF, 
-		ALLOW_ROW_LOCKS  = ON, 
-		ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+)
 
-GO
-
-SET ANSI_PADDING OFF
-GO
+CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [enrollment] ([serial] ASC,[number] ASC)
 
 
-USE [CarManagement]
-GO
 
-CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment] 
-(
-	[serial] ASC,
-	[number] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-GO
+CREATE TABLE [vehicle](
 
-
-USE [CarManagement]
-GO
-
-/****** Object:  Table [dbo].[vehicle]    Script Date: 02/06/2019 16:20:13 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[vehicle](
 	[enrollmentId] [int] NOT NULL,
 	[color] [smallint] NULL,
 	[engineHorsePower] [smallint] NULL,
 	[engineIsStarted] [bit] NULL,
- CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED 
-(
-	[enrollmentId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
 
-GO
+CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED (	[enrollmentId] ASC)
+) 
+
 
 ALTER TABLE [dbo].[vehicle]  WITH CHECK ADD  CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId])
 REFERENCES [dbo].[enrollment] ([id])
-GO
 
 ALTER TABLE [dbo].[vehicle] CHECK CONSTRAINT [FK_vehicle_enrollment]
-GO
+
+
+CREATE TABLE [dbo].[Wheels](
+
+	[pressure] [float] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
+
+ CONSTRAINT [PK_Wheels] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)
+) 
+
+CREATE TABLE [dbo].[Doors](
+
+	[vehicleid] [int] NOT NULL,
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[isopen] [bit] NULL,
+
+ CONSTRAINT [PK_Doors] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)
+) 
+
+
+
+
 
 
