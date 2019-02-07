@@ -66,66 +66,55 @@ namespace BusinessCore.Tests
             foreach (IVehicle vehicle in vehicles)
             {
                 string serial = vehicle.Enrollment.Serial.ToString();
-                string number = vehicle.Enrollment.Number.ToString();
+                int number = vehicle.Enrollment.Number;
                 SqlConnection con = new SqlConnection(connectionString);
                 con.Open();
                 String query;
                 query = "USE [CarManagement]" +
                     "INSERT INTO [enrollment] (serial, number) " +
-                    "VALUES ('" + serial + "', '" + number + "')";
+                    "VALUES ('" + serial + "', " + number + ")";
                 SqlCommand sentence = new SqlCommand(query, con);
                 sentence.ExecuteNonQuery();
-                query = "USE [CarManagement]" +
-                    "SELECT id " +
-                    "FROM enrollment" +
-                    "WHERE (serial = '" + serial + "' AND number = '" + number + "')";
+
+                query = "SELECT id " +
+                    "FROM [enrollment]" +
+                    "WHERE (serial = '" + serial + "' AND number = " + number + ")";
                 sentence = new SqlCommand(query, con);
-                int ressult = sentence.ExecuteNonQuery();
+                SqlDataReader reader = sentence.ExecuteReader();
+                reader.Read();
+                int ressult = (int)reader["id"];
+                reader.Close();
 
                 int color = (int)vehicle.Color;
-
-                int engineIsStarted = 0;
-                bool engineIsStarted_bool = vehicle.Engine.IsStarted;
-                if (engineIsStarted_bool == true)
-                {
-                    engineIsStarted = 1;
-                }
+                int engineIsStarted = (vehicle.Engine.IsStarted?1:0);
 
                 int engineHorsePower = vehicle.Engine.HorsePower;
-                query = "USE [CarManagement]" +
-                    "INSERT INTO vehicle (color, engineHorsePower, engineIsStarted)" +
-                    "VALUES (" + color + ", " + engineHorsePower + ", " + engineIsStarted +
-                    "WHERE vehicleId = " + ressult + ";)";
+                query = "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
+                    "VALUES (" + ressult + ", " + color + ", " + engineHorsePower + ", " + engineIsStarted + ")";
+                sentence = new SqlCommand(query, con);
                 sentence.ExecuteNonQuery();
 
                 IWheel[] wheels = vehicle.Wheels;
                 foreach (IWheel wheel in wheels)
                 {
                     double pressure = wheel.Pressure;
-                    query = "USE [CarManagement]" +
-                        "INSERT INTO wheel (pressure)" +
-                        "VALUES (" + pressure + ")" +
-                        "WHERE vehicleId = " + ressult + ";)";
+                    query = "INSERT INTO wheel (vehicleId, pressure) " +
+                        "VALUES (" + ressult + ", " + pressure + ")";
+                    sentence = new SqlCommand(query, con);
                     sentence.ExecuteNonQuery();
                 }
 
                 IDoor[] doors = vehicle.Doors;
                 foreach (IDoor door in doors)
                 {
-                    bool isOpen = door.IsOpen;
-                    int isOpen_int = 0;
-                    if (door.IsOpen == true)
-                    {
-                        isOpen_int = 1;
-                    }
-                    query = "USE [CarManagement]" +
-                        "INSERT INTO door (isOpen)" +
-                        "VALUES (" + isOpen_int + ")" +
-                        "WHERE vehicleId = " + ressult + ";)";
+                    string isOpen = (door.IsOpen?1:0).ToString();
+                    query = "INSERT INTO door (vehicleId, isOpen) " +
+                        "VALUES (" + ressult + ", " + isOpen + ")";
+                    sentence = new SqlCommand(query, con);
                     sentence.ExecuteNonQuery();
-                    con.Close();
 
                 }
+                con.Close();
             }
         }
 
@@ -146,7 +135,7 @@ namespace BusinessCore.Tests
             SqlCommand sentence = new SqlCommand(file, con);
             ConMethod(file, con);
         }
-
+        public string cosa = Environment.MachineName;
         private static void ConMethod(string file, SqlConnection con)
         {
             SqlCommand sentence = new SqlCommand(file, con);
