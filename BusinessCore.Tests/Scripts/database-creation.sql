@@ -3,9 +3,9 @@ USE [CarManagement]
 
 CREATE TABLE [dbo].[enrollment]
 (
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[serial] [varchar](3) NOT NULL,
 	[number] [smallint] NOT NULL,
-	[id] [int] IDENTITY(1,1) NOT NULL,
 	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
 )
 
@@ -24,16 +24,18 @@ CREATE TABLE [dbo].[vehicle](
 
 /****** Object:  Table [dbo].[door]    Script Date: 06/02/2019 16:56:09 ******/
 CREATE TABLE [dbo].[door](
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[vehicleId] [int] NOT NULL,
-	[id] [int] NOT NULL,
 	[isOpen] [bit] NOT NULL,
  CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED([id] ASC),
  CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId])
 )
 
+ALTER TABLE [dbo].[door] ADD  CONSTRAINT [DF_door_isOpen]  DEFAULT ((0)) FOR [isOpen]
+
 /****** Object:  Table [dbo].[wheel]    Script Date: 06/02/2019 17:08:08 ******/
 CREATE TABLE [dbo].[wheel](
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[vehicleId] [int] NOT NULL,
 	[pressure] [float] NULL,
  CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ( [id] ASC ),
