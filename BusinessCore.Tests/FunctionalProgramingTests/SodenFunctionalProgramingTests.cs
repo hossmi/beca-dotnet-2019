@@ -46,12 +46,12 @@ namespace BusinessCore.Tests
         public void get_sum_number_of_wheels_of_black_vehicles_with_enrollment_number_higher_to_100_is_6()
         {
             double pressure = this.vehicleStorage
-               .getAll()
-               .Where(condition1 => condition1.Color == CarColor.Black)
-               .Where(condition2 => condition2.Enrollment.Number > 100)
-               .Sum(vehicle => vehicle.Wheels.Sum(wheel => wheel.Pressure))/6;
-
-                Assert.AreEqual(6, pressure);
+                .getAll()
+                .Where(condition1 => condition1.Color == CarColor.Black)
+                .Where(condition2 => condition2.Enrollment.Number > 100)
+                .SelectMany(wheels => wheels.Wheels)
+                .Count();
+            Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]

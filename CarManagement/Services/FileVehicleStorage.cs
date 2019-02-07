@@ -15,7 +15,7 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
             : base(readFromFile(fileFullPath, vehicleBuilder))
         {
-            this.filePath = fileFullPath;
+            this.filePath += fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
         }
 
