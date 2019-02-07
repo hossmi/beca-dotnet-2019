@@ -4,6 +4,7 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
+
         private double pressure;
         public double Pressure
         {
@@ -13,7 +14,7 @@ namespace CarManagement.Models
             }
             set
             {
-                value = this.pressure;
+                this.pressure = value;
             }
         }
     }
