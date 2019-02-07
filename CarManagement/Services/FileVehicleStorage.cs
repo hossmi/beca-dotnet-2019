@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using CarManagement.Core.Models.DTOs;
+using System.Linq;
 
 namespace CarManagement.Services
 {
@@ -40,9 +41,8 @@ namespace CarManagement.Services
             if (File.Exists(filePath))
             {
                 string jsonText = System.IO.File.ReadAllText(filePath);
-                List<string> jsonObjects = getIndividualJson(jsonText);
 
-                foreach (string jsonObject in jsonObjects)
+                foreach (string jsonObject in getIndividualJson(jsonText))
                 {
                     VehicleDto vehicleDto = JsonConvert.DeserializeObject<VehicleDto>(jsonObject);
                     IVehicle vehicle = vehicleBuilder.import(vehicleDto);
@@ -52,10 +52,9 @@ namespace CarManagement.Services
 
             return initialVehicles;
         }
-        private static List<string> getIndividualJson(String jsonText)
+        private static IEnumerable<string> getIndividualJson(String jsonText)
         {
             int BracketCount = 0;
-            List<string> JsonObjects = new List<string>();
             StringBuilder Json = new StringBuilder();
 
             foreach (char cCursor in jsonText)
@@ -68,11 +67,10 @@ namespace CarManagement.Services
 
                 if (BracketCount == 0 && cCursor != ' ')
                 {
-                    JsonObjects.Add(Json.ToString());
+                    yield return Json.ToString();
                     Json = new StringBuilder();
                 }
             }
-            return JsonObjects;
         }
     }
 }
