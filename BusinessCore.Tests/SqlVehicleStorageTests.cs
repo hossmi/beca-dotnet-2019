@@ -126,10 +126,9 @@ namespace BusinessCore.Tests
         private static void executeDbCommand(string connectionString, string command)
         {
             using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
+            using (SqlCommand actualCommand = new SqlCommand(command, sqlDbConnection))
             {
                 sqlDbConnection.Open();
-
-                SqlCommand actualCommand = new SqlCommand(command, sqlDbConnection);
                 actualCommand.ExecuteNonQuery();
                 sqlDbConnection.Close();
             }
