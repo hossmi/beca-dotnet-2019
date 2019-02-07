@@ -64,19 +64,40 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            string sentencies = "";
+            string queryEnrollmentId = "";
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                sentencies = "INSERT INTO enrollment (serial, number) " +
+                    "VALUES ('" + vehicle.Enrollment.Serial + "', " + vehicle.Enrollment.Number + ");";
+                executeCommand(connectionString, sentencies);
+
+                queryEnrollmentId = $@"
+                                SELECT id 
+                                FROM enrollment 
+                                WHERE serial = '{vehicle.Enrollment.Serial}' 
+                                AND number = {vehicle.Enrollment.Number};";
+
+                int enrollmentId = executeScalarQuery(connectionString, queryEnrollmentId);
+
+                sentencies = "INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) " +
+                    "VALUES ('" + enrollmentId + "', " + (int)vehicle.Color + ", " + vehicle.Engine.HorsePower + ", " + (vehicle.Engine.IsStarted ? 1 : 0) + ");";
+                executeCommand(connectionString, sentencies);
+            }
+
         }
 
         private static void create(string connectionString, string creationScript)
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
+            string filePath = creationScript;
             string sentencies = File.ReadAllText(filePath);
             executeCommand(connectionString, sentencies);
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
+            string filePath = destructionScript;
             string sentencies = File.ReadAllText(filePath);
             executeCommand(connectionString, sentencies);
         }
@@ -93,6 +114,21 @@ namespace BusinessCore.Tests
                 int afectedRows = command.ExecuteNonQuery();
                 connection.Close();
             }
+        }
+
+        private static int executeScalarQuery(string connectionString, string query)
+        {
+            int result;
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(query, connection);
+
+            result = (int)command.ExecuteScalar();
+
+            connection.Close();
+
+            return result;
         }
     }
 }
