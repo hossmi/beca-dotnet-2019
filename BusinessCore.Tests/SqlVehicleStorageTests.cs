@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
+using System.Data;
 
 namespace BusinessCore.Tests
 {
@@ -42,33 +43,33 @@ namespace BusinessCore.Tests
 
         }
 
-        private static void create(string connectionString)        {
-           
-            FileInfo file = new FileInfo(@"C:\Repositorio_Pablo\BusinessCore.Tests\Scripts\database-creation.sql");
-            string script = file.OpenText().ReadToEnd();
+        private static void create(string connectionString)
+        {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
+            string sentencies = File.ReadAllText(filePath);
+            executeComand(connectionString, sentencies);
 
-            SqlCommand comand = new SqlCommand(script);
-            SqlConnection connection = new SqlConnection();
-
-            connection.ConnectionString = connectionString;
-            connection.Open();
-            comand.ExecuteNonQuery();
-            connection.Close();
         }
 
         private static void drop(string connectionString)
         {
+            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
+            string sentencies = File.ReadAllText(filePath);
+            executeComand(connectionString, sentencies);
+        }
 
-            FileInfo file = new FileInfo(@"C:\Repositorio_Pablo\BusinessCore.Tests\Scripts\database-drop.sql");
-            string script = file.OpenText().ReadToEnd();
+        private static void executeComand(string connectionString, string sentencies)
+        {
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = new SqlCommand())
+            {
+                command.CommandText = sentencies;
+                command.Connection = connection;
 
-            SqlCommand comand = new SqlCommand(script);
-            SqlConnection connection = new SqlConnection();
-
-            connection.ConnectionString = connectionString;
-            connection.Open();
-            comand.ExecuteNonQuery();
-            connection.Close();
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
         }
     }
 }
