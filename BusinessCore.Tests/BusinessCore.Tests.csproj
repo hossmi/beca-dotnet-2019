@@ -46,6 +46,7 @@
       <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +80,7 @@
     <Compile Include="FunctionalProgramingTests\AlexLloretFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\CeliaFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\AMuñozFunctionalProgrammingTests.cs" />
+    <Compile Include="SqlVehicleStorageTests.cs" />
     <Compile Include="VehicleStorageTests.cs" />
     <Compile Include="VehicleTests.cs" />
   </ItemGroup>
@@ -97,7 +99,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\database-drop.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\database-creation.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
