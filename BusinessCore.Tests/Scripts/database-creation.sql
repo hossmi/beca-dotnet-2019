@@ -5,7 +5,7 @@ CREATE TABLE [enrollment]
 	[serial] [varchar](3) NOT NULL,
 	[number] [smallint] NOT NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
+	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC ),
 )
 
 CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [enrollment] ( [serial] ASC, [number] ASC )
@@ -26,7 +26,7 @@ CREATE TABLE [dbo].[wheel]
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[pressure] [float] NULL,
 	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
-	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId])
+	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId]),
 )
 
 CREATE TABLE [dbo].[door]
@@ -35,5 +35,5 @@ CREATE TABLE [dbo].[door]
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[isOpen] [bit] NULL,
 	CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED ([id] ASC),
-	CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId])
+	CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId]),
 )
