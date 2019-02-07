@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
@@ -42,25 +43,29 @@ namespace BusinessCore.Tests
         private static void create(string connectionString)
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
-            executeNonQueryCommandFromFile(connectionString, filePath);
+            string script = File.ReadAllText(filePath);
+            executeNonQueryCommand(connectionString, script);
         }
 
         private static void drop(string connectionString)
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
-            executeNonQueryCommandFromFile(connectionString, filePath);
-        }
-
-        private static void executeNonQueryCommandFromFile(string connectionString, string filePath)
-        {
             string script = File.ReadAllText(filePath);
-
-            SqlConnection sqlConnection = new SqlConnection(connectionString);
-            SqlCommand sqlCommand = new SqlCommand(script, sqlConnection);
-            sqlConnection.Open();
-            sqlCommand.ExecuteNonQuery();
-            sqlConnection.Close();
+            executeNonQueryCommand(connectionString, script);
         }
 
+        private static void executeNonQueryCommand(string connectionString, string script)
+        {
+            using (IDbConnection sqlConnection = new SqlConnection(connectionString))
+            using (IDbCommand sqlCommand = new SqlCommand())
+            {
+                sqlCommand.CommandText = script;
+                sqlCommand.Connection = sqlConnection;
+
+                sqlConnection.Open();
+                int affectedRows = sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+        }
     }
 }
