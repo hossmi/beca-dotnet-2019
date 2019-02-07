@@ -110,46 +110,27 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString, string creationScript)
         {
-            using (IDbConnection conection = new SqlConnection(connectionString))
-            {
-                using (IDbCommand command = new SqlCommand())
-                {
-
-                    string ruta = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
-                    string sentences = File.ReadAllText(ruta);
-
-                    executeCommand(conection, command, sentences);
-                }
-            }
+           executeDbCommand(connectionString, File.ReadAllText(creationScript));
 
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            using (IDbConnection conection = new SqlConnection(connectionString))
-            {
-
-                using (IDbCommand command = new SqlCommand())
-                {
-
-                    string ruta = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
-                    string sentences = File.ReadAllText(ruta);
-
-                    executeCommand(conection, command, sentences);
-                }
-            }
+          executeDbCommand(connectionString, File.ReadAllText(destructionScript));
 
         }
 
-        private static void executeCommand(IDbConnection conection, IDbCommand command, string sentences)
+        private static void executeDbCommand(string connectionString, string command)
         {
-            
-            command.CommandText = sentences;
-            command.Connection = conection;
 
-            conection.Open();
-            command.ExecuteNonQuery();
-            conection.Close();
+            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
+            using (SqlCommand actualCommand = new SqlCommand(command, sqlDbConnection))
+            {
+                sqlDbConnection.Open();
+                actualCommand.ExecuteNonQuery();
+                sqlDbConnection.Close();
+            }
+
         }
 
     }
