@@ -64,7 +64,38 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            String pushToEnrollment = "INSERT INTO vehicle(serial,number)"+"VALUES(@serial,@number)";
+            String pushToVehicle = "INSERT INTO vehicle(emrollmentid,color,engineHorsePower,engineIsStarted)"+"VALUES(@emrollmentid,@color,@engineHorsePower,@engineIsStarted)";
+            String pushToWheel = "INSERT INTO vehicle(serial,number)"+"VALUES(@serial,@number)";
+            String pushToDoor = "INSERT INTO vehicle(isopen)"+"VALUES(@isopen)";
+
+            SqlConnection conection = new SqlConnection(connectionString);
+            SqlCommand pusher;
+            conection.Open();
+            foreach (IVehicle vehicle in vehicles)
+            {
+                pusher = new SqlCommand(pushToEnrollment, conection);
+                pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                int enrollmentId = (int)pusher.ExecuteScalar();
+
+                pusher = new SqlCommand(pushToVehicle, conection);
+                pusher.Parameters.AddWithValue("@enrolmentid", enrollmentId);
+                pusher.Parameters.AddWithValue("@color", vehicle.Color);
+                pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+
+
+                foreach (IWheel wheels in vehicles)
+                {
+                    pusher = new SqlCommand(pushToWheel, conection);
+
+                }
+
+            }
+            conection.Close();
+            
+
         }
 
         private static void create(string connectionString, string creationScript)
