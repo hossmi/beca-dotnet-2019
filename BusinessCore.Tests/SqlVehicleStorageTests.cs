@@ -37,7 +37,6 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
-            recreate();
         }
 
         private static void create(string connectionString)
