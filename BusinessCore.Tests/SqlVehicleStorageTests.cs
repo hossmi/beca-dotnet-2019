@@ -43,23 +43,22 @@ namespace BusinessCore.Tests
         private static void create(string connectionString)
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
-            string script = File.ReadAllText(filePath);
-
-            SqlConnection sqlConnection = new SqlConnection(connectionString);
-            sqlConnection.Open();
-            SqlCommand sqlCommand = new SqlCommand(script, sqlConnection);
-            sqlCommand.ExecuteNonQuery();
-            sqlConnection.Close();
+            executeNonQueryCommandFromFile(connectionString, filePath);
         }
 
         private static void drop(string connectionString)
         {
             string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
+            executeNonQueryCommandFromFile(connectionString, filePath);
+        }
+
+        private static void executeNonQueryCommandFromFile(string connectionString, string filePath)
+        {
             string script = File.ReadAllText(filePath);
 
             SqlConnection sqlConnection = new SqlConnection(connectionString);
-            sqlConnection.Open();
             SqlCommand sqlCommand = new SqlCommand(script, sqlConnection);
+            sqlConnection.Open();
             sqlCommand.ExecuteNonQuery();
             sqlConnection.Close();
         }
