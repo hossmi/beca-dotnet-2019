@@ -41,27 +41,27 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString)
         {
-            using (SqlConnection cnn = new SqlConnection(connectionString))
+            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
             {
                 string script = File.ReadAllText(@"Scripts\database-creation.sql");
-                cnn.Open();
+                sqlDbConnection.Open();
 
-                SqlCommand dropCommand = new SqlCommand(script, cnn);
-                dropCommand.ExecuteNonQuery();
-                cnn.Close();
+                SqlCommand createTablesCommand = new SqlCommand(script, sqlDbConnection);
+                createTablesCommand.ExecuteNonQuery();
+                sqlDbConnection.Close();
             }
         }
 
         private static void drop(string connectionString)
         {
-            using (SqlConnection cnn = new SqlConnection(connectionString))
+            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
             {
                 string script = File.ReadAllText(@"Scripts\database-drop.sql");
-                cnn.Open();
+                sqlDbConnection.Open();
 
-                SqlCommand dropCommand = new SqlCommand(script, cnn);
-                dropCommand.ExecuteNonQuery();
-                cnn.Close();
+                SqlCommand dropTablesCommand = new SqlCommand(script, sqlDbConnection);
+                dropTablesCommand.ExecuteNonQuery();
+                sqlDbConnection.Close();
             }
         }
 
