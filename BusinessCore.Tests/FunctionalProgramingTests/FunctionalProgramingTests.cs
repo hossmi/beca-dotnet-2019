@@ -142,6 +142,7 @@ namespace BusinessCore.Tests
             }
             catch (Exception e)
             {
+                Console.Write(e);
             }
             finally
             {

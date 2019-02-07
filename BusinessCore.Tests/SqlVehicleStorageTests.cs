@@ -3,6 +3,8 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.IO;
 
 namespace BusinessCore.Tests
 {
@@ -10,13 +12,8 @@ namespace BusinessCore.Tests
     [TestClass]
     public class SqlVehicleStorageTests
     {
-        private const string ConnectionStringKey = "Data Source = ALC-45W9LQ1\SQLEXPRESS; " +
-                               "Initial Catalog=DataBaseName;" +
-                               "User id=UserName;" +
-                               "Password=Secret;";
 
-        private const string ConnectionStringAlt = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-
+        private const string ConnectionStringKey = "CarManagerConnectionString";
 
         private readonly string connectionString;
 
@@ -42,30 +39,36 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+
         }
 
-        private static void create(string connectionString)
-        {
-            throw new NotImplementedException();
-            dbConect(connectionString);
+        private static void create(string connectionString)        {
+           
+            FileInfo file = new FileInfo(@"C:\Repositorio_Pablo\BusinessCore.Tests\Scripts\database-creation.sql");
+            string script = file.OpenText().ReadToEnd();
+
+            SqlCommand comand = new SqlCommand(script);
+            SqlConnection connection = new SqlConnection();
+
+            connection.ConnectionString = connectionString;
+            connection.Open();
+            comand.ExecuteNonQuery();
+            connection.Close();
         }
 
         private static void drop(string connectionString)
         {
-            throw new NotImplementedException();
-            dbConect(connectionString);
+
+            FileInfo file = new FileInfo(@"C:\Repositorio_Pablo\BusinessCore.Tests\Scripts\database-drop.sql");
+            string script = file.OpenText().ReadToEnd();
+
+            SqlCommand comand = new SqlCommand(script);
+            SqlConnection connection = new SqlConnection();
+
+            connection.ConnectionString = connectionString;
+            connection.Open();
+            comand.ExecuteNonQuery();
+            connection.Close();
         }
-
-        private static void dbConect(string connectionString)
-        {
-            using (SqlConnection connection = new SqlConnection("context connection=true"))
-            {
-                connection.ConnectionString = connectionString;
-
-                connection.Open();
-                // Use the connection
-            }
-        }
-
     }
 }
