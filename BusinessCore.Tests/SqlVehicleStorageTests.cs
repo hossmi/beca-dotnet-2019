@@ -23,6 +23,16 @@ namespace BusinessCore.Tests
         private const string DESTRUCTION_SCRIPT_FILE_KEY = "DestructionScriptFile";
         private const string SCRIPTS_FOLDER_KEY = "scriptsFolder";
 
+        private const string INSERT_ENROLLMENT = "INSERT INTO [enrollment] (serial,number) " +
+                    "OUTPUT INSERTED.ID " +
+                    "VALUES ('@serial', @number)";
+        private const string INSERT_VEHICLE = "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
+                    "VALUES (@enrollmentKEY, @color, @horsepower, @started)";
+        private const string INSERT_WHEEL = "INSERT INTO [wheel] (pressure,vehicleId) " +
+                        "VALUES (@pressure, @enrollmentKEY)";
+        private const string INSERT_DOOR = "INSERT INTO [door] (isOpen, vehicleId) " +
+                             "VALUES (@open, @enrollmentKEY)";
+
         private readonly string connectionString;
         private readonly string creationScript;
         private readonly string destructionScript;
@@ -65,20 +75,55 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            int insertedVehicles = 0;
+            int insertedWheels = 0;
+            int insertedDoors = 0;
+
+            SqlConnection sqlConnection = new SqlConnection(connectionString);
+            sqlConnection.Open();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                SqlCommand sqlCommand = new SqlCommand(INSERT_ENROLLMENT, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@serial", "'"+vehicle.Enrollment.Serial+"'");
+                sqlCommand.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                string enrollmentKEY = sqlCommand.ExecuteScalar().ToString();
+
+                sqlCommand = new SqlCommand(INSERT_VEHICLE, sqlConnection);
+                sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
+                sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color).ToString());
+                sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower.ToString());
+                sqlCommand.Parameters.AddWithValue("@started", Convert.ToInt32(vehicle.Engine.IsStarted).ToString());
+                insertedVehicles = sqlCommand.ExecuteNonQuery();
+                
+                foreach (IWheel wheel in vehicle.Wheels)
+                {
+                    sqlCommand = new SqlCommand(INSERT_WHEEL, sqlConnection);
+                    sqlCommand.Parameters.AddWithValue("@pressure", wheel.Pressure.ToString());
+                    sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
+                    insertedWheels = insertedWheels + sqlCommand.ExecuteNonQuery();
+                }
+
+                foreach (IDoor door in vehicle.Doors)
+                {
+                    sqlCommand = new SqlCommand(INSERT_DOOR, sqlConnection);
+                    sqlCommand.Parameters.AddWithValue("@open", Convert.ToInt32(door.IsOpen).ToString());
+                    sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
+                    insertedDoors = insertedDoors + sqlCommand.ExecuteNonQuery();
+                }
+            }
+            sqlConnection.Close();
         }
 
         private static void create(string connectionString, string creationScript)
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
-            string script = File.ReadAllText(filePath);
+            string script = File.ReadAllText(creationScript);
             executeNonQueryCommand(connectionString, script);
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
-            string script = File.ReadAllText(filePath);
+            string script = File.ReadAllText(destructionScript);
             executeNonQueryCommand(connectionString, script);
         }
 
