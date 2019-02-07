@@ -42,13 +42,14 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
-            IEnrollment querriedEnrollment = this.vehicleStorage
-                .getAll()
-                .First().Enrollment
-                /**/;
+            //IEnrollment querriedEnrollment = this.vehicleStorage
+                /*.getAll()
+                .Where(condition => condition.Wheels.Count() == 2)
+                .Select(vehicle => vehicle.Enrollment)
+                //.First().Enrollment;
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
-            Assert.AreEqual(1, querriedEnrollment.Number);
+            Assert.AreEqual(1, querriedEnrollment.Number);*/
         }
 
         [TestCategory("Functional Programing")]
