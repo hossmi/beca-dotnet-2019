@@ -11,7 +11,8 @@ namespace CarManagement.Models
         private CarColor color;
         private Enrollment enrollment;
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color,Enrollment enrollment)
+
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, Enrollment enrollment)
         {
             this.doors = doors;
             this.engine = engine;

@@ -5,8 +5,13 @@ namespace CarManagement.Models
 {
     public class Enrollment
     {
-        private string serial;
-        private int number;
+        private string serial = "AAA";
+        private string number="0000";
+
+        public Enrollment()
+        {
+            string enrollmentString = this.Serial + this.Number;
+        }
 
         private string Serial
         {
@@ -19,8 +24,8 @@ namespace CarManagement.Models
                 value = this.serial;
             }
         }
-        
-        private int Number
+
+        private string Number
         {
             get
             {
@@ -31,5 +36,7 @@ namespace CarManagement.Models
                 value = this.number;
             }
         }
+       
     }
 }
+
