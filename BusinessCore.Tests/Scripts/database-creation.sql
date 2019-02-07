@@ -1,75 +1,47 @@
-﻿/****** Object:  Table [dbo].[enrollment]    Script Date: 02/06/2019 16:20:13 ******/
-USE [CarManagement]
-GO
+﻿USE [CarManagement]
 
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-SET ANSI_PADDING ON
-GO
-
-CREATE TABLE [dbo].[enrollment]
+CREATE TABLE [enrollment]
 (
 	[serial] [varchar](3) NOT NULL,
 	[number] [smallint] NOT NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
-	WITH (
-		PAD_INDEX  = OFF, 
-		STATISTICS_NORECOMPUTE  = OFF, 
-		IGNORE_DUP_KEY = OFF, 
-		ALLOW_ROW_LOCKS  = ON, 
-		ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) 
 
-GO
-
-SET ANSI_PADDING OFF
-GO
+CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [enrollment] (	[serial] ASC,[number] ASC)
 
 
-USE [CarManagement]
-GO
 
-CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment] 
+CREATE TABLE [vehicle]
 (
-	[serial] ASC,
-	[number] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-GO
-
-
-USE [CarManagement]
-GO
-
-/****** Object:  Table [dbo].[vehicle]    Script Date: 02/06/2019 16:20:13 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[vehicle](
 	[enrollmentId] [int] NOT NULL,
 	[color] [smallint] NULL,
 	[engineHorsePower] [smallint] NULL,
 	[engineIsStarted] [bit] NULL,
- CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED 
+	CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED ([enrollmentId] ASC),
+	CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId])REFERENCES [enrollment] ([id])
+)
+
+
+
+CREATE TABLE [wheel]
 (
-	[enrollmentId] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE [dbo].[vehicle]  WITH CHECK ADD  CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId])
-REFERENCES [dbo].[enrollment] ([id])
-GO
-
-ALTER TABLE [dbo].[vehicle] CHECK CONSTRAINT [FK_vehicle_enrollment]
-GO
+	[id] [int] NOT NULL,
+	[pressure] [real] NULL,
+	[vehicleId] [int] NOT NULL,	
+	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
+	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId])REFERENCES [vehicle] ([enrollmentId])
+) 
 
 
+
+
+
+CREATE TABLE [door]
+(
+	[id] [int] NOT NULL,
+	[vehicleId] [int] NOT NULL,
+	[isOpen] [bit] NULL,
+	CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED ([id] ASC),
+	CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId])REFERENCES [vehicle] ([enrollmentId])
+)
