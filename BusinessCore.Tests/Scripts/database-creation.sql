@@ -73,3 +73,63 @@ ALTER TABLE [dbo].[vehicle] CHECK CONSTRAINT [FK_vehicle_enrollment]
 GO
 
 
+
+/****** Object:  Table [dbo].[wheel]    Script Date: 07/02/2019 9:06:51 ******/
+
+USE [CarManagement]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[wheel](
+	[pressure] [real] NULL,
+	[vehicleId] [int] NOT NULL,
+ CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED 
+(
+	[vehicleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[wheel]  WITH CHECK ADD  CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId])
+REFERENCES [dbo].[vehicle] ([enrollmentId])
+GO
+
+ALTER TABLE [dbo].[wheel] CHECK CONSTRAINT [FK_wheel_vehicle]
+GO
+
+/****** Object:  Table [dbo].[door]    Script Date: 07/02/2019 9:13:12 ******/
+
+USE [CarManagement]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[door](
+	[vehicleId] [int] NOT NULL,
+	[isOpen] [bit] NULL,
+ CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED 
+(
+	[vehicleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[door]  WITH CHECK ADD  CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId])
+REFERENCES [dbo].[vehicle] ([enrollmentId])
+GO
+
+ALTER TABLE [dbo].[door] CHECK CONSTRAINT [FK_door_vehicle]
+GO
+
+
+
+
