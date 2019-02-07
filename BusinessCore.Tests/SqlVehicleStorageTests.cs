@@ -64,10 +64,10 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            String pushToEnrollment = "INSERT INTO vehicle(serial,number)"+"VALUES(@serial,@number)";
+            String pushToEnrollment = "INSERT INTO enrollment(serial,number)"+"VALUES(@serial,@number)";
             String pushToVehicle = "INSERT INTO vehicle(emrollmentid,color,engineHorsePower,engineIsStarted)"+"VALUES(@emrollmentid,@color,@engineHorsePower,@engineIsStarted)";
-            String pushToWheel = "INSERT INTO vehicle(serial,number)"+"VALUES(@serial,@number)";
-            String pushToDoor = "INSERT INTO vehicle(isopen)"+"VALUES(@isopen)";
+            String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)"+"VALUES(@vehicleid,pressure)";
+            String pushToDoor = "INSERT INTO door(vehicleid,isopen)"+"VALUES(@isopen)";
 
             SqlConnection conection = new SqlConnection(connectionString);
             SqlCommand pusher;
@@ -89,8 +89,18 @@ namespace BusinessCore.Tests
                 foreach (IWheel wheels in vehicles)
                 {
                     pusher = new SqlCommand(pushToWheel, conection);
+                    pusher.Parameters.AddWithValue("@pressure", wheels.Pressure);
+                    int vehicleid = (int)pusher.ExecuteScalar();
 
                 }
+                foreach (IDoor doors in vehicles)
+                {
+                    pusher = new SqlCommand(pushToDoor, conection);
+                    pusher.Parameters.AddWithValue("@pressure", doors.IsOpen);
+                    int vehicleid = (int)pusher.ExecuteScalar();
+
+                }
+               
 
             }
             conection.Close();
