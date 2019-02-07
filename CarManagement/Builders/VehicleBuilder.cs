@@ -12,7 +12,7 @@ namespace CarManagement.Builders
         private int numWheels;
         private int horsePower;
         private int enrollment;
-
+        private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder()
         {
@@ -22,8 +22,6 @@ namespace CarManagement.Builders
             this.color = CarColor.Red;
             this.enrollment = 000000;
         }
-
-        private readonly IEnrollmentProvider enrollmentProvider;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -40,7 +38,6 @@ namespace CarManagement.Builders
             {
                 throw new Exception();
             }
-
         }
 
         public void setDoors(int doorsCount)
