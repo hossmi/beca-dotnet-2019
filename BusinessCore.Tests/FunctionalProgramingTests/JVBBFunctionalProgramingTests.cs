@@ -46,6 +46,15 @@ namespace BusinessCore.Tests
             int open = 0;
             int close = 0;
 
+            open = this.vehicleStorage
+                .getAll()
+                .Select( vehicle => new
+                {
+                    open = vehicle.Doors.Where(door => door.IsOpen == true).Count(),
+                    close = vehicle.Doors.Where(door => door.IsOpen == false).Count()
+                })
+                .Count();
+
             Assert.AreEqual(open,9);
             Assert.AreEqual(close, 7);
         }
