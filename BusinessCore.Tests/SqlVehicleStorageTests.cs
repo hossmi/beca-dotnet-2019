@@ -10,7 +10,14 @@ namespace BusinessCore.Tests
     [TestClass]
     public class SqlVehicleStorageTests
     {
-        private const string ConnectionStringKey = "CarManagerConnectionString";
+        private const string ConnectionStringKey = "Data Source = ALC-45W9LQ1\SQLEXPRESS; " +
+                               "Initial Catalog=DataBaseName;" +
+                               "User id=UserName;" +
+                               "Password=Secret;";
+
+        private const string ConnectionStringAlt = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+
+
         private readonly string connectionString;
 
         public SqlVehicleStorageTests()
@@ -53,6 +60,8 @@ namespace BusinessCore.Tests
         {
             using (SqlConnection connection = new SqlConnection("context connection=true"))
             {
+                connection.ConnectionString = connectionString;
+
                 connection.Open();
                 // Use the connection
             }
