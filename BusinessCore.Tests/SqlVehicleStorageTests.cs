@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace BusinessCore.Tests
 {
@@ -34,16 +37,31 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+            recreate();
         }
 
         private static void create(string connectionString)
         {
-            throw new NotImplementedException();
+            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-creation.sql");
+            string script = File.ReadAllText(filePath);
+
+            SqlConnection sqlConnection = new SqlConnection(connectionString);
+            sqlConnection.Open();
+            SqlCommand sqlCommand = new SqlCommand(script, sqlConnection);
+            sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
         }
 
         private static void drop(string connectionString)
         {
-            throw new NotImplementedException();
+            string filePath = Path.Combine(Environment.CurrentDirectory, "Scripts", "database-drop.sql");
+            string script = File.ReadAllText(filePath);
+
+            SqlConnection sqlConnection = new SqlConnection(connectionString);
+            sqlConnection.Open();
+            SqlCommand sqlCommand = new SqlCommand(script, sqlConnection);
+            sqlCommand.ExecuteNonQuery();
+            sqlConnection.Close();
         }
 
     }
