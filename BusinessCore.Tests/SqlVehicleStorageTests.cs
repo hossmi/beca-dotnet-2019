@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using BusinessCore.Tests.Services;
@@ -62,18 +64,35 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            //
         }
 
         private static void create(string connectionString, string creationScript)
         {
-            throw new NotImplementedException();
+            execute(connectionString, creationScript);
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            throw new NotImplementedException();
+            execute(connectionString, destructionScript);
         }
 
+        private static void execute(string connectionString, string script)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(script, connection))
+            {
+                connection.Open();
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e);
+                }
+                connection.Close();
+            }
+        }
     }
 }
