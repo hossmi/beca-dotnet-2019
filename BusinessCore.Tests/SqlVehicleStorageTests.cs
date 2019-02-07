@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using CarManagement.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -38,12 +41,28 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                string script = File.ReadAllText(@"Scripts\database-creation.sql");
+                cnn.Open();
+
+                SqlCommand dropCommand = new SqlCommand(script, cnn);
+                dropCommand.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
 
         private static void drop(string connectionString)
         {
-            throw new NotImplementedException();
+            using (SqlConnection cnn = new SqlConnection(connectionString))
+            {
+                string script = File.ReadAllText(@"Scripts\database-drop.sql");
+                cnn.Open();
+
+                SqlCommand dropCommand = new SqlCommand(script, cnn);
+                dropCommand.ExecuteNonQuery();
+                cnn.Close();
+            }
         }
 
     }
