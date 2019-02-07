@@ -9,10 +9,10 @@ namespace CarManagement.Models
         private List<Door> doors;
         private Engine engine;
         private CarColor color;
-        private Enrollment enrollment;
+        private string enrollment;
 
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, Enrollment enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, string enrollment)
         {
             this.doors = doors;
             this.engine = engine;
@@ -46,7 +46,7 @@ namespace CarManagement.Models
             }
         }
 
-        public Enrollment Enrollment
+        public string Enrollment
         {
             get
             {

@@ -59,10 +59,21 @@ namespace CarManagement.Builders
                 wheels.Add(w);
             }
 
-            Enrollment enrollment = new Enrollment();
+            string enrollment = getNextEnrollment();
 
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color,enrollment);
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
+        }
+
+        private string getNextEnrollment()
+        {
+            string serial = "AAA";
+            string number = "0000";
+
+            string enrollmentString = serial + number;
+
+            return enrollmentString;
+
         }
     }
 }
