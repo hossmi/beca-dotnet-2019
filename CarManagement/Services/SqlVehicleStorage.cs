@@ -142,7 +142,7 @@ namespace CarManagement.Services
             connection.Open();
             SqlCommand command = new SqlCommand(query, connection);
 
-            result = (int)command.ExecuteScalar();
+            result = command.ExecuteScalar();
  
             connection.Close();
 
