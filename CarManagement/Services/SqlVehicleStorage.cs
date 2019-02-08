@@ -14,10 +14,12 @@ namespace CarManagement.Services
     public class SqlVehicleStorage : IVehicleStorage
     {
         private readonly string connectionString;
+        private readonly IVehicleBuilder vehicleBuilder;
 
-        public SqlVehicleStorage(string connectionString)
+        public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
             this.connectionString = connectionString;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
         public int Count { get; }
