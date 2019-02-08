@@ -71,6 +71,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+            IVehicleStorage sqltest = new SqlVehicleStorage(this.connectionString,new VehicleBuilder(new SingleEnrollmentProvider()));
+            sqltest.getAll();
+            //sqltest.clear();
+            //fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
+            //sqltest.clear();
         }
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
