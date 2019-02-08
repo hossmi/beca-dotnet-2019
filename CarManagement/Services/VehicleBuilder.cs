@@ -368,7 +368,7 @@ namespace CarManagement.Services
         public IVehicle import(VehicleDto vehicleDto)
         {
 
-            CarColor color = vehicleDto.Color;
+            /*CarColor color = vehicleDto.Color;
 
             List<Wheel> wheels = new List<Wheel>();
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
@@ -388,13 +388,11 @@ namespace CarManagement.Services
 
             Engine engine = new Engine(vehicleDto.Engine.HorsePower);
 
-            return new Vehicle(color, wheels, enrollment, doors, engine);
+            return new Vehicle(color, wheels, enrollment, doors, engine);*/
         }
         public VehicleDto export(IVehicle vehicle)
         {
             return convert(vehicle);
         }
-
-       
     }
 }

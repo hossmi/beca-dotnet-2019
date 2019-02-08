@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,18 @@ namespace CarManagement.Services
         {
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
+            /*this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY].ToString();
+
+            string baseFolder = ConfigurationManager.AppSettings[SCRIPTS_FOLDER_KEY].ToString();
+            baseFolder = Path.Combine(Environment.CurrentDirectory, baseFolder);
+
+            this.creationScript = ConfigurationManager.AppSettings[CREATION_SCRIPT_FILE_KEY].ToString();
+            this.creationScript = Path.Combine(baseFolder, this.creationScript);
+
+            this.destructionScript = ConfigurationManager.AppSettings[DESTRUCTION_SCRIPT_FILE_KEY].ToString();
+            this.destructionScript = Path.Combine(baseFolder, this.destructionScript);
+
+            this.fakeStorage = new ArrayVehicleStorage();*/
         }
 
         public int Count { get; }
@@ -44,6 +57,21 @@ namespace CarManagement.Services
         public void set(IVehicle vehicle)
         {
             throw new NotImplementedException();
+        }
+
+        private static int executeScalarQuery(string connectionString, string query)
+        {
+            int result;
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(query, connection);
+
+            result = (int)command.ExecuteScalar();
+
+            connection.Close();
+
+            return result;
         }
     }
 }
