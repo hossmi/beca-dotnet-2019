@@ -203,14 +203,13 @@ namespace CarManagement.Services
             private IEngine engine;
             private CarColor color;
             private IEnrollment enrollment;
-            private CarColor colorCode;
-
+            
             public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor colorCode, IEnrollment enrollment)
             {
                 this.wheels = wheels;
                 this.doors = doors;
                 this.engine = engine;
-                this.colorCode = colorCode;
+                this.color = colorCode;
                 this.enrollment = enrollment;
             }
 
@@ -280,7 +279,13 @@ namespace CarManagement.Services
                 }
             }
 
-            public CarColor Color { get; }
+            public CarColor Color
+            {
+                get
+                {
+                    return this.color;
+                }
+            }
 
             public void setWheelsPressure(double pression)
             {
