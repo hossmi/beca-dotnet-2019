@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using BusinessCore.Tests.Services;
@@ -52,7 +54,7 @@ namespace BusinessCore.Tests
         [TestCleanup]
         public void cleanUp()
         {
-            drop(this.connectionString, this.destructionScript);
+            //drop(this.connectionString, this.destructionScript);
         }
 
         [TestMethod]
@@ -62,28 +64,84 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
+            string sentencies = "";
+            string queryEnrollmentId = "";
 
+            foreach (IVehicle vehicle in vehicles)
+            {
+                sentencies = "INSERT INTO enrollment (serial, number) " +
+                    "VALUES ('" + vehicle.Enrollment.Serial + "', " + vehicle.Enrollment.Number + ");";
+                executeCommand(connectionString, sentencies);
+
+                queryEnrollmentId = $@"
+                                SELECT id 
+                                FROM enrollment 
+                                WHERE serial = '{vehicle.Enrollment.Serial}' 
+                                AND number = {vehicle.Enrollment.Number};";
+
+                int enrollmentId = executeScalarQuery(connectionString, queryEnrollmentId);
+
+                sentencies = "INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) " +
+                    "VALUES ('" + enrollmentId + "', " + (int)vehicle.Color + ", " + vehicle.Engine.HorsePower + ", " + (vehicle.Engine.IsStarted ? 1 : 0) + ");";
+                executeCommand(connectionString, sentencies);
+
+                foreach (IWheel wheel in vehicle.Wheels)
+                {
+                    sentencies = "INSERT INTO wheel (pressure, vehicleId) " +
+                        "VALUES (" + wheel.Pressure + ", " + enrollmentId + ");";
+                    executeCommand(connectionString, sentencies);
+                }
+
+                foreach (IDoor door in vehicle.Doors)
+                {
+                    sentencies = "INSERT INTO door (isOpen, vehicleId) " +
+                        "VALUES (" + (door.IsOpen ? 1 : 0) + ", " + enrollmentId + ");";
+                    executeCommand(connectionString, sentencies);
+                }
+            }
         }
 
         private static void create(string connectionString, string creationScript)
         {
-            executeDbCommand(connectionString, File.ReadAllText(creationScript));
+            string filePath = creationScript;
+            string sentencies = File.ReadAllText(filePath);
+            executeCommand(connectionString, sentencies);
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            executeDbCommand(connectionString, File.ReadAllText(destructionScript));
+            string filePath = destructionScript;
+            string sentencies = File.ReadAllText(filePath);
+            executeCommand(connectionString, sentencies);
         }
 
-        private static void executeDbCommand(string connectionString, string command)
+        private static void executeCommand(string connectionString, string sentencies)
         {
-            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
-            using (SqlCommand actualCommand = new SqlCommand(command, sqlDbConnection))
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = new SqlCommand())
             {
-                sqlDbConnection.Open();
-                actualCommand.ExecuteNonQuery();
-                sqlDbConnection.Close();
+                command.CommandText = sentencies;
+                command.Connection = connection;
+
+                connection.Open();
+                int afectedRows = command.ExecuteNonQuery();
+                connection.Close();
             }
+        }
+
+        private static int executeScalarQuery(string connectionString, string query)
+        {
+            int result;
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(query, connection);
+
+            result = (int)command.ExecuteScalar();
+
+            connection.Close();
+
+            return result;
         }
     }
 }
