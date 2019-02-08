@@ -13,6 +13,7 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
+        private const string sentenceCountVehicle = "SELECT count(*) FROM vehicle;";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -32,7 +33,12 @@ namespace CarManagement.Services
             this.fakeStorage = new ArrayVehicleStorage();*/
         }
 
-        public int Count { get; }
+        public int Count {
+            get
+            {
+                return executeScalarQuery(this.connectionString, sentenceCountVehicle);
+            }
+        }
 
         public void clear()
         {
@@ -46,6 +52,20 @@ namespace CarManagement.Services
 
         public IVehicle get(IEnrollment enrollment)
         {
+            if(existsEntollment(this.connectionString, enrollment))
+            {
+                int enrollmentId = getEnrollmentId(this.connectionString, enrollment);
+            }
+            throw new NotImplementedException();
+        }
+
+        private int getEnrollmentId(string connectionString, IEnrollment enrollment)
+        {
+            string sentenceEnrollmentID = "SELECT id FROM enrollment " +
+                "WHERE serial=" + enrollment.Serial + " AND number=" + enrollment.Number + ";";
+
+            int enrollmentID = 0;
+
             throw new NotImplementedException();
         }
 
@@ -72,6 +92,24 @@ namespace CarManagement.Services
             connection.Close();
 
             return result;
+        }
+
+        private bool existsEntollment(String connectionString, IEnrollment enrollment)
+        {
+            string serial = enrollment.Serial;
+            int number = enrollment.Number;
+            bool existeEnrollment = false;
+
+            string sentenceExistEnrollment = "SELECT count(*) FROM enrollment " +
+                "WHERE serial=" + serial + " AND number=" + number + ";";
+            int enrollmentId = 0;
+            enrollmentId = executeScalarQuery(connectionString, sentenceExistEnrollment);
+
+            if (enrollmentId != 0)
+            {
+                existeEnrollment = true;
+            }
+            return existeEnrollment;
         }
     }
 }
