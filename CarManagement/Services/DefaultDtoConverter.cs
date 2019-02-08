@@ -17,21 +17,6 @@ namespace CarManagement.Services
             
 
         }
-        //public IEnrollment convert(EnrollmentDto enrollmentDto)
-        //{
-        //    return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        //}
-
-        //public IEngine convert(EngineDto engineDto)
-        //{
-        //    //IEngine toMemory = new Engine(engineDto .HorsePower);
-        //    //if (engineDto .IsStarted == true)
-        //    //{
-        //    //    toMemory.start(); 
-        //    //}
-        //    //toMemory.stop();
-        //    //return toMemory;
-        //}
 
         public EngineDto convert(IEngine engine)
         {
@@ -41,16 +26,6 @@ namespace CarManagement.Services
             return toDto;
 
         }
-        //public IDoor convert(DoorDto doorDto)
-        //{
-        //    IDoor toMemory = new Door();
-        //    if (doorDto.IsOpen == true)
-        //    {
-        //        toMemory.open();
-        //    }
-        //    toMemory.close();
-        //    return toMemory;
-        //}
 
         public DoorDto convert(IDoor door)
         {
@@ -60,12 +35,6 @@ namespace CarManagement.Services
        
         }
 
-        //public IWheel convert(WheelDto wheelDto)
-        //{
-        //    return new Wheel(wheelDto.Pressure);
-
-        //}
-       
         public WheelDto convert(IWheel wheel)
         {
             WheelDto toDto = new WheelDto();
@@ -80,29 +49,6 @@ namespace CarManagement.Services
             toDto.Serial = enrollment.Serial;
             return toDto;
         }
-
-        //public IVehicle convert(VehicleDto vehicleDto)
-        //{
-        //    List<IWheel> listWheels = new List<IWheel>();
-        //    List<IDoor> listDoor = new List<IDoor>();
-        //    IEnrollment enrollment = convertTo(vehicleDto.Enrollment);
-        //    foreach (WheelDto wheelsDto in vehicleDto.Wheels)
-        //    {
-        //        IWheel setwheel = convertTo(wheelsDto);
-        //        listWheels.Add(setwheel);
-
-        //    }
-        //    foreach (DoorDto doorDto in vehicleDto.Doors)
-        //    {
-        //        IDoor setdoor = convertTo(doorDto);
-        //        listDoor.Add(setdoor);
-
-        //    }
-        //    IEngine engine = convertTo(vehicleDto.Engine);
-    
-      
-        //    return new Vehicle(vehicleDto.Color, listWheels, enrollment, listDoor, engine);
-        //}
 
         public VehicleDto convert(IVehicle vehicle)
         {
@@ -129,36 +75,6 @@ namespace CarManagement.Services
 
         }
 
-        //private IWheel convertTo(WheelDto wheelDto)
-        //{
-        //    return new Wheel(wheelDto.Pressure);
-
-        //}
-        //private IDoor convertTo(DoorDto doorDto)
-        //{
-        //    IDoor toMemory = new Door();
-        //    if (doorDto.IsOpen == true)
-        //    {
-        //        toMemory.open();
-        //    }
-        //    toMemory.close();
-        //    return toMemory;
-        //}
-        //private IEnrollment convertTo(EnrollmentDto enrollmentDto)
-        //{
-        //    return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        //}
-        //private IEngine convertTo(EngineDto engineDto)
-        //{
-
-        //    IEngine toMemory = new Engine(engineDto.HorsePower);
-        //    if (engineDto.IsStarted == true)
-        //    {
-        //        toMemory.start();
-        //    }
-        //    toMemory.stop();
-        //    return toMemory;
-        //}
         private EnrollmentDto convertTo(IEnrollment enrollment)
         {
             EnrollmentDto toDto = new EnrollmentDto();
