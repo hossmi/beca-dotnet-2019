@@ -60,6 +60,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+
         }
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
@@ -67,7 +68,7 @@ namespace BusinessCore.Tests
             String pushToEnrollment = "INSERT INTO enrollment(serial,number)"+"VALUES(@serial,@number)";
             String pushToVehicle = "INSERT INTO vehicle(emrollmentid,color,engineHorsePower,engineIsStarted)"+"VALUES(@emrollmentid,@color,@engineHorsePower,@engineIsStarted)";
             String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)"+"VALUES(@vehicleid,pressure)";
-            String pushToDoor = "INSERT INTO door(vehicleid,isopen)"+"VALUES(@isopen)";
+            String pushToDoor = "INSERT INTO door(vehicleid,isopen)"+"VALUES(@vehicleid,@isopen)";
 
             SqlConnection conection = new SqlConnection(connectionString);
             SqlCommand pusher;
@@ -84,21 +85,23 @@ namespace BusinessCore.Tests
                 pusher.Parameters.AddWithValue("@color", vehicle.Color);
                 pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
                 pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                pusher.ExecuteNonQuery();
 
 
                 foreach (IWheel wheels in vehicles)
                 {
                     pusher = new SqlCommand(pushToWheel, conection);
                     pusher.Parameters.AddWithValue("@pressure", wheels.Pressure);
-                    int vehicleid = (int)pusher.ExecuteScalar();
+                    pusher.Parameters.AddWithValue("@vehiculoid", enrollmentId);
+                    pusher.ExecuteNonQuery();
 
                 }
                 foreach (IDoor doors in vehicles)
                 {
                     pusher = new SqlCommand(pushToDoor, conection);
                     pusher.Parameters.AddWithValue("@pressure", doors.IsOpen);
-                    int vehicleid = (int)pusher.ExecuteScalar();
-
+                    pusher.Parameters.AddWithValue("@vehiculoid", enrollmentId);
+                    pusher.ExecuteNonQuery();
                 }
                
 
@@ -110,25 +113,25 @@ namespace BusinessCore.Tests
 
         private static void create(string connectionString, string creationScript)
         {
-           executeDbCommand(connectionString, File.ReadAllText(creationScript));
+           executeCommand(connectionString, File.ReadAllText(creationScript));
 
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-          executeDbCommand(connectionString, File.ReadAllText(destructionScript));
+          executeCommand(connectionString, File.ReadAllText(destructionScript));
 
         }
 
-        private static void executeDbCommand(string connectionString, string command)
+        private static void executeCommand(string connectionString, string command)
         {
 
-            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
-            using (SqlCommand actualCommand = new SqlCommand(command, sqlDbConnection))
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            using (SqlCommand sqlCommand = new SqlCommand(command, sqlConnection))
             {
-                sqlDbConnection.Open();
-                actualCommand.ExecuteNonQuery();
-                sqlDbConnection.Close();
+                sqlConnection.Open();
+                sqlCommand.ExecuteNonQuery();
+                sqlConnection.Close();
             }
 
         }
