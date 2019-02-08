@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using CarManagement.Models;
-using System.Collections.Generic;
-using System.IO;
 using System.Xml.Serialization;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -17,8 +16,8 @@ namespace CarManagement.Services
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
+            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
         }
 
         public int Count
@@ -30,39 +29,67 @@ namespace CarManagement.Services
         }
         public void clear()
         {
-            throw new System.NotImplementedException();
+            this.vehicles.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            Vehicle returnedVehicle = default(Vehicle);
-            foreach(Vehicle vehicle in this.vehicles.Values)
-            {
-                if (vehicle.Enrollment == enrollment)
-                {
-                    returnedVehicle = vehicle;
-                }
-            }
+            Vehicle returnedVehicle;
+
+            bool exists = this.vehicles.TryGetValue(enrollment, out returnedVehicle);
+
+            Asserts.isTrue(exists);
+
             return returnedVehicle;
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
             this.vehicles.Add(vehicle.Enrollment, vehicle);
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
         {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            throw new NotImplementedException();
+            VehicleDto[] vehiclesArray = new VehicleDto[vehicles.Count];
+            int i = 0;
+
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(filePath);
+
+            foreach (Vehicle vehicle in vehicles.Values)
+            {
+                vehiclesArray[i] = dtoConverter.convert(vehicle);
+                i++;
+            }
+
+            ser.Serialize(writer, vehiclesArray);
+            writer.Close();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            throw new NotImplementedException();
+            EnrollmentEqualityComparer enrollmentComparer = new EnrollmentEqualityComparer();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentComparer);
+
+            if (File.Exists(fileFullPath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+                TextReader reader = new StreamReader(fileFullPath);
+                
+                VehicleDto[] vehiclesArray = (VehicleDto[])ser.Deserialize(reader);
+                reader.Close();
+
+                for (int i = 0; i < vehiclesArray.Length; i++)
+                {
+                    Vehicle vehicle = dtoConverter.convert(vehiclesArray[i]);
+                    vehicles.Add(vehicle.Enrollment, vehicle);
+                }
+
+            }
+
+            return vehicles;
         }
 
     }

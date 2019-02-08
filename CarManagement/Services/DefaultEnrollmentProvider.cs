@@ -60,7 +60,8 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            throw new System.NotImplementedException();
+            IEnrollment enrollment = new Enrollment(serial, number);
+            return enrollment;
         }
 
         private class Enrollment : IEnrollment

@@ -30,7 +30,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return (int)this.horsepower;
             }
         }
 
@@ -46,7 +46,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
-            throw new NotImplementedException();
+            this.isStarted = false;
         }
     }
 }

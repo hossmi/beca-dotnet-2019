@@ -25,15 +25,8 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (this.wheels < 4)
-            {
-                this.wheels++;
-            }
-            else
-            {
-                throw new ArgumentException("The number maximun of wheels is 4");
-            }
-
+            Asserts.isTrue(this.wheels < 4);
+            this.wheels++;
         }
 
         public void setDoors(int doorsCount)
@@ -53,6 +46,7 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
+            Asserts.isEnumDefined(color);
             this.vehicleColor = color;
         }
 
@@ -93,7 +87,9 @@ namespace CarManagement.Builders
 
             IEnrollment enrollment = this.enrollmentProvider.getNew();
 
-            Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
+            CarColor carColor = this.vehicleColor;
+
+            Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment, carColor);
             return vehicle;
         }
 

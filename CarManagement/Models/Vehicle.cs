@@ -8,9 +8,9 @@ namespace CarManagement.Models
         private readonly List<Wheel> wheels;
         private readonly List<Door> doors;
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment, CarColor carColor)
         {
-            if (doors.Count > 0 && doors.Count <= 6)
+            if (doors.Count >= 0 && doors.Count <= 6)
             {
                 this.doors = doors;
             }

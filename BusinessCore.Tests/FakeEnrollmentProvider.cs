@@ -37,7 +37,8 @@ namespace BusinessCore.Tests
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            throw new System.NotImplementedException();
+            IEnrollment enrollment = new Enrollment(serial, number);
+            return enrollment;
         }
     }
 }
