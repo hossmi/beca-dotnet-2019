@@ -381,8 +381,8 @@ namespace CarManagement.Services
 
             if (doorDto.IsOpen)
                 d.open();
-            else
-                d.close();
+            //else
+                //d.close();
 
             return d;
         }

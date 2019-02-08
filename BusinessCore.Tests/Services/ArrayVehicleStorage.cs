@@ -71,7 +71,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 
@@ -95,7 +95,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 
@@ -119,7 +119,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 
@@ -143,7 +143,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 
@@ -169,7 +169,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 
@@ -195,7 +195,7 @@ namespace BusinessCore.Tests.Services
                 },
                 Wheels = new IWheel[]
                 {
-                    new Wheel{Pressure = 6},
+                    new Wheel{Pressure = 5},
                 },
             };
 

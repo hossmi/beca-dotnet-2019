@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 
@@ -17,7 +18,7 @@ namespace CarManagement.Services
             //"DBCC CHECKIDENT (wheel, RESEED, 0); " +
             "DELETE FROM vehicle; " +
             "DELETE FROM enrollment;";
-            //"DBCC CHECKIDENT (enrollment, RESEED, 0);";
+        //"DBCC CHECKIDENT (enrollment, RESEED, 0);";
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly SqlConnection connection;
@@ -36,7 +37,7 @@ namespace CarManagement.Services
         public void clear()
         {
             SqlCommand command = new SqlCommand(clearCommand, this.connection);
-            int affectedRows=command.ExecuteNonQuery();
+            int affectedRows = command.ExecuteNonQuery();
         }
 
         public void Dispose()
@@ -62,8 +63,9 @@ namespace CarManagement.Services
 
             while (enrollmentResults.Read())
             {
-                string serial = enrollmentResults.GetValue(0).ToString();
-                int number = Convert.ToInt32(enrollmentResults.GetValue(1));
+                EnrollmentDto enrollment = new EnrollmentDto();
+                enrollment.Serial = enrollmentResults.GetValue(0).ToString();
+                enrollment.Number = Convert.ToInt32(enrollmentResults.GetValue(1));
                 int enrollmentId = (int)enrollmentResults.GetValue(2);
 
                 string getVehicle = "SELECT color, engineHorsePower, engineIsStarted FROM vehicle " +
@@ -75,10 +77,46 @@ namespace CarManagement.Services
 
                 vehicleResults.Read();
 
-                CarColor color = (CarColor)vehicleResults.GetValue(0);
-                int horseposer = (int)vehicleResults.GetValue(1);
-                bool isStarted = (bool)vehicleResults.GetValue(2);
-                                                                                           
+                VehicleDto vehicle = new VehicleDto();
+                vehicle.Enrollment = enrollment;
+                CarColor color;
+                Enum.TryParse<CarColor>(vehicleResults.GetValue(0).ToString(), out color);
+                vehicle.Color = color;
+                EngineDto engine = new EngineDto();
+                engine.HorsePower = Convert.ToInt32(vehicleResults.GetValue(1));
+                engine.IsStarted = Convert.ToBoolean(vehicleResults.GetValue(2));
+                vehicle.Engine = engine;
+                string getWheels = "SELECT pressure FROM wheel " +
+                    "WHERE (vehicleId=@id)";
+                SqlCommand commandWheels = new SqlCommand(getWheels, this.connection);
+                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                SqlDataReader wheelsResults = commandWheels.ExecuteReader();
+
+                List<WheelDto> wheels = new List<WheelDto>();
+                while (wheelsResults.Read())
+                {
+                    WheelDto wheel = new WheelDto();
+                    wheel.Pressure = Convert.ToDouble(wheelsResults.GetValue(0));
+                    wheels.Add(wheel);
+                }
+                vehicle.Wheels = wheels.ToArray();
+
+                string getDoors = "SELECT isOpen FROM door " +
+                     "WHERE (vehicleId=@id)";
+                SqlCommand commandDoors = new SqlCommand(getDoors, this.connection);
+                commandDoors.Parameters.AddWithValue("@id", enrollmentId);
+                SqlDataReader doorsResults = commandDoors.ExecuteReader();
+
+                List<DoorDto> doors = new List<DoorDto>();
+                while (doorsResults.Read())
+                {
+                    DoorDto door = new DoorDto();
+                    door.IsOpen = Convert.ToBoolean(vehicleResults.GetValue(0));
+                    doors.Add(door);
+                }
+                vehicle.Doors = doors.ToArray();
+
+                vehicleCollection.Add(this.vehicleBuilder.import(vehicle));
             }
 
             return vehicleCollection;
