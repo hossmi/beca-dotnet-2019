@@ -26,12 +26,30 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            throw new NotImplementedException();
+            const string DELETE_ENROLL_SKEL = "DELETE FROM enrollment";
+            const string DELETE_VEHICLE_SKEL = "DELETE FROM vehicle";
+            const string DELETE_WHEEL_SKEL = "DELETE FROM wheel";
+            const string DELETE_DOOR_SKEL = "DELETE FROM door";
+
+            using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
+            {
+                SqlCommand deletionCommand = new SqlCommand(DELETE_DOOR_SKEL, sqlDbConnection);
+
+                sqlDbConnection.Open();
+                deletionCommand.ExecuteNonQuery();
+                deletionCommand = new SqlCommand(DELETE_WHEEL_SKEL, sqlDbConnection);
+                deletionCommand.ExecuteNonQuery();
+                deletionCommand = new SqlCommand(DELETE_VEHICLE_SKEL, sqlDbConnection);
+                deletionCommand.ExecuteNonQuery();
+                deletionCommand = new SqlCommand(DELETE_ENROLL_SKEL, sqlDbConnection);
+                deletionCommand.ExecuteNonQuery();
+
+                sqlDbConnection.Close();
+            }
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public IVehicle get(IEnrollment enrollment)
@@ -41,97 +59,96 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
-            const int QUERY_TOP_NUM_ENTRIES = 32;
-            const string QUERY_ENROLL_SKEL = "SELECT TOP @cuantity * FROM enrollment";
-            const string QUERY_VEHICLE_SKEL = "SELECT (color, engineHorsePower, engineIsStarted) FROM vehicle WHERE enrollmentId=@id";
-            const string QUERY_WHEEL_SKEL = "SELECT (isOpen) FROM wheel WHERE vehicleId=@id";
-            const string QUERY_DOOR_SKEL = "SELECT (pressure) FROM door WHERE vehicleId=@id";
+            const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment";
+            const string QUERY_VEHICLE_SKEL = "SELECT * FROM vehicle WHERE enrollmentId=@id";
+            const string QUERY_WHEEL_SKEL = "SELECT * FROM wheel WHERE vehicleId=@id";
+            const string QUERY_DOOR_SKEL = "SELECT * FROM door WHERE vehicleId=@id";
 
             List<IVehicle> vehiclesToReturn = new List<IVehicle>();
-
-            IEnrollmentProvider EnrollProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicleBuilder = new VehicleBuilder(EnrollProvider);
 
             using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
             {
                 SqlCommand querier = new SqlCommand(QUERY_ENROLL_SKEL, sqlDbConnection);
                 sqlDbConnection.Open();
-                querier.Parameters.AddWithValue("@cuantity", QUERY_TOP_NUM_ENTRIES);
 
 
                 using (SqlDataReader sqlReader = querier.ExecuteReader())
                 {
-                    DataTable enrollTable = sqlReader.GetSchemaTable();
-
-                    foreach (DataRow row in enrollTable.Rows)
+                    while (sqlReader.Read())
                     {
                         EnrollmentDto enrollment = new EnrollmentDto();
-                        enrollment.Number = row.Field<int>("number");
-                        enrollment.Serial = row.Field<string>("serial");
+                        enrollment.Number = (short)sqlReader["number"];
+                        enrollment.Serial = sqlReader["serial"].ToString();
 
                         querier = new SqlCommand(QUERY_VEHICLE_SKEL, sqlDbConnection);
-                        querier.Parameters.AddWithValue("@id", row.Field<int>("id"));
-                        DataRow dbVehicle = querier
-                            .ExecuteReader()
-                            .GetSchemaTable()
-                            .Rows[0];
+                        querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                        SqlDataReader dbVehicle = querier
+                            .ExecuteReader();
 
-                        if (dbVehicle.IsNull(0) == false)
+                        if (dbVehicle.Read())
                         {
-                            VehicleDto vehicle = new VehicleDto();
-                            EngineDto engine = new EngineDto();
-
-                            engine.HorsePower = dbVehicle.Field<int>("engineHorsePower");
-                            engine.IsStarted = dbVehicle.Field<bool>("engineIsStarted");
-
-                            vehicle.Color = dbVehicle.Field<CarColor>("color");
-                            vehicle.Engine = engine;
+                            VehicleDto vehicle = new VehicleDto
+                            {
+                                Enrollment = enrollment,
+                                Engine = new EngineDto
+                                {
+                                    HorsePower = Convert.ToInt32( dbVehicle["engineHorsePower"]),
+                                    IsStarted = Convert.ToBoolean(dbVehicle["engineIsStarted"])
+                                },
+                                Color = (CarColor)Convert.ToInt32(dbVehicle["color"])
+                            };
 
                             querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
-                            querier.Parameters.AddWithValue("@id", row.Field<int>("id"));
+                            querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
 
                             List<DoorDto> doors = new List<DoorDto>();
 
-                            DataTable doorTable = querier
-                                .ExecuteReader()
-                                .GetSchemaTable();
+                            IDataReader doorReader = querier
+                                .ExecuteReader();
 
-                            foreach (DataRow doorRow in doorTable.Rows)
+                            while (doorReader.Read())
                             {
                                 DoorDto door = new DoorDto
                                 {
-                                    IsOpen = doorRow.Field<bool>("isOpen")
+                                    IsOpen = Convert.ToBoolean(doorReader["isOpen"])
                                 };
                                 doors.Add(door);
+
                             }
+
+                            doorReader.Close();
 
                             vehicle.Doors = doors.ToArray();
 
                             querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
-                            querier.Parameters.AddWithValue("@id", row.Field<int>("id"));
+                            querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
 
                             List<WheelDto> wheels = new List<WheelDto>();
 
-                            DataTable wheelTable = querier
-                                .ExecuteReader()
-                                .GetSchemaTable();
+                            IDataReader wheelReader = querier
+                                .ExecuteReader();
 
-                            foreach (DataRow wheelRow in wheelTable.Rows)
+                            while (wheelReader.Read())
                             {
                                 WheelDto wheel = new WheelDto
                                 {
-                                    Pressure = wheelRow.Field<double>("pressure")
+                                    Pressure = Convert.ToDouble(wheelReader["pressure"])
                                 };
                                 wheels.Add(wheel);
+
                             }
+
+                            wheelReader.Close();
 
                             vehicle.Wheels = wheels.ToArray();
 
-                            vehiclesToReturn.Add(vehicleBuilder.import(vehicle));
+                            vehiclesToReturn.Add(this.vehicleBuilder.import(vehicle));
+
+                            dbVehicle.Close();
                         }
                     }
+                    sqlReader.Close();
                 }
-
 
                 sqlDbConnection.Close();
 
