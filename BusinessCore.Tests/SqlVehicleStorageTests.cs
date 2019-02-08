@@ -54,7 +54,7 @@ namespace BusinessCore.Tests
         [TestCleanup]
         public void cleanUp()
         {
-            //drop(this.connectionString, this.destructionScript);
+            drop(this.connectionString, this.destructionScript);
         }
 
         [TestMethod]
