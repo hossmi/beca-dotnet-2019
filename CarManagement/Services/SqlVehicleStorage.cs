@@ -22,7 +22,12 @@ namespace CarManagement.Services
             this.vehicleBuilder = vehicleBuilder;
         }
 
-        public int Count { get; }
+        public int Count {
+            get
+            {
+                return (int) executeScalarQuery(this.connectionString, "SELECT count(*) FROM vehicle");
+            }
+        }
 
         public void clear()
         {
@@ -40,6 +45,54 @@ namespace CarManagement.Services
             string query;
 
             query = $@"
+                     SELECT *
+                     FROM enrollment
+                     WHERE serial = '{enrollment.Serial}' 
+                     AND number = {enrollment.Number};";            
+            vehicleDto.Enrollment.Serial = executeReaderQuery(this.connectionString, query, "serial").ToString();
+            vehicleDto.Enrollment.Number = (int) executeReaderQuery(this.connectionString, query, "number");
+
+            query = $@"
+                     SELECT id
+                     FROM enrollment
+                     WHERE serial = '{enrollment.Serial}' 
+                     AND number = {enrollment.Number};";
+            int enrollmentId = (int) executeReaderQuery(this.connectionString, query, "id");
+
+            query = $@"
+                     SELECT * 
+                     FROM vehicle
+                     WHERE enrollmentId = '{enrollmentId}';";
+            vehicleDto.Engine.IsStarted = (bool) executeReaderQuery(this.connectionString, query, "engineIsStarted");
+            vehicleDto.Engine.HorsePower = (int) executeReaderQuery(this.connectionString, query, "engineHorsePower");
+            vehicleDto.Color = (CarColor) executeReaderQuery(this.connectionString, query, "color");
+
+            query = $@"
+                     SELECT presure
+                     FROM wheel
+                     WHERE vehicleId = '{enrollmentId}';";
+            double[] pressure = (double[]) executeReaderQuery(this.connectionString, query, "pressure");
+            int i = 0;
+            foreach (WheelDto wheelDto in vehicleDto.Wheels)
+            {
+                wheelDto.Pressure = pressure[i];
+                i++;
+            }
+
+            query = $@"
+                     SELECT isOpen
+                     FROM door
+                     WHERE vehicleId = '{enrollmentId}';";
+            bool[] isOpen = (bool[]) executeReaderQuery(this.connectionString, query, "isOpen");
+            i = 0;
+            foreach (DoorDto doorDto in vehicleDto.Doors)
+            {
+                doorDto.IsOpen = isOpen[i];
+                i++;
+            }
+
+
+            /*query = $@"
                      SELECT serial
                      FROM enrollment
                      WHERE serial = '{enrollment.Serial}' 
@@ -105,14 +158,26 @@ namespace CarManagement.Services
             {
                 doorDto.IsOpen = isOpen[i];
                 i++;
-            }
+            }*/
 
             return this.vehicleBuilder.import(vehicleDto);
         }
 
         public IEnumerable<IVehicle> getAll()
         {
-            throw new NotImplementedException();
+            IList<IVehicle> vehicles = new List<IVehicle>();
+
+            string query = $@"
+                     SELECT *
+                     FROM vehicle;";
+            int[] enrollments = (int[]) executeReaderQuery(this.connectionString, query, "enrollmentId");
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                //vehicles.Add(get());
+            }
+
+            return vehicles;
         }
 
         public void set(IVehicle vehicle)
@@ -134,6 +199,27 @@ namespace CarManagement.Services
             }
         }
 
+        private static object executeReaderQuery(string connectionString, string query, string atributo)
+        {
+            object[] result = null;
+            int i = 0;
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            connection.Open();
+            SqlCommand command = new SqlCommand(query, connection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {                
+                result[i] = reader[atributo];
+                i++;
+            }
+
+            connection.Close();
+
+            return result;
+        }
+
         private static object executeScalarQuery(string connectionString, string query)
         {
             object result = null;
@@ -143,7 +229,7 @@ namespace CarManagement.Services
             SqlCommand command = new SqlCommand(query, connection);
 
             result = command.ExecuteScalar();
- 
+            
             connection.Close();
 
             return result;

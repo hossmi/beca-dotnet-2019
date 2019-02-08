@@ -124,9 +124,6 @@ namespace BusinessCore.Tests
                     executeCommand(connectionString, sentencies);
                 }
             }
-
-
-
         }
 
         private static void create(string connectionString, string creationScript)
