@@ -40,53 +40,68 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
+            List<IVehicle> lVehicle = new List<IVehicle>();
             SqlConnection con = new SqlConnection(this.connectionString);
             con.Open();
             String query;
-            query = "SELECT *  " +
-                "FROM enrollment";
+            query = "USE Carmanagement;" +
+                "SELECT * FROM enrollment";
             SqlCommand sentence = new SqlCommand(query, con);
             SqlDataReader reader = sentence.ExecuteReader();
+            VehicleDto vehicleDto = new VehicleDto();
             while (reader.Read())
             {
                 EnrollmentDto enrollmentDto = new EnrollmentDto();
                 EngineDto engineDto = new EngineDto();
-                WheelDto wheelDto = new WheelDto();
-                DoorDto doorDto = new DoorDto();
-                VehicleDto vehicleDto = new VehicleDto();
-                int id = (int)reader["e.id"];
+                List<WheelDto> wheelsDto = new List<WheelDto>();
+                List<DoorDto> doorsDto = new List<DoorDto>();
+                int id = (int)reader["id"];
+                enrollmentDto.Serial = (string)reader["serial"];
+                enrollmentDto.Number = Convert.ToInt32(reader["number"]);
+
                 String query2 = "SELECT color, engineHorsePower, engineIsStarted " +
                     "FROM vehicle " +
-                    "WHERE vehicleId =" + id;
+                    "WHERE enrollmentId =" + id;
                 SqlCommand sentence2 = new SqlCommand(query2, con);
                 SqlDataReader reader2 = sentence2.ExecuteReader();
                 reader2.Read();
-                int color_int;
-                color_int = (int)reader2["color"];
-                CarColor color = new CarColor();
-                color = color_int;
-                //https://stackoverflow.com/questions/29482/cast-int-to-enum-in-c-sharp
 
+                CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader2["color"].ToString());
+                engineDto.HorsePower = Convert.ToInt32(reader2["engineHorsePower"]);
+                engineDto.IsStarted = Convert.ToBoolean(reader2["engineIsStarted"]);
+                reader2.Close();
 
+                query2 = "SELECT pressure FROM wheel WHERE vehicleId =" + id;
 
-
-                enrollmentDto.Serial = (string)reader["e.serial"];
-                enrollmentDto.Number = (int)reader["e.number"];
-                engineDto.HorsePower = (int)reader["v.engineHorsePower"];
-                int isStarted_int = (int)reader["v.engineIsStarted"];
-                bool isStarted = false;
-                if (isStarted_int == 1)
+                sentence2 = new SqlCommand(query2, con);
+                reader2 = sentence2.ExecuteReader();
+                while (reader2.Read())
                 {
-                    isStarted = true;
+                    WheelDto wheelDto = new WheelDto();
+                    wheelDto.Pressure = Convert.ToInt32(reader2["pressure"]);
+                    wheelsDto.Add(wheelDto);
                 }
-                engineDto.IsStarted = isStarted;
-                wheelDto.Pressure = (int)reader["w.pressure"];
-
-
+                reader2.Close();
+                query2 = "SELECT isOpen FROM door WHERE vehicleId =" + id;
+                sentence2 = new SqlCommand(query2, con);
+                reader2 = sentence2.ExecuteReader();
+                while (reader2.Read())
+                {
+                    DoorDto doorDto = new DoorDto();
+                    doorDto.IsOpen = Convert.ToBoolean(reader2["isOpen"]);
+                    doorsDto.Add(doorDto);
+                }
+                reader2.Close();
+                vehicleDto.Color = color;
+                vehicleDto.Doors = doorsDto.ToArray();
+                vehicleDto.Wheels = wheelsDto.ToArray();
+                vehicleDto.Engine = engineDto;
+                vehicleDto.Enrollment = enrollmentDto;
+                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+                lVehicle.Add(vehicle);
             }
-
-
-            throw new NotImplementedException();
+            reader.Close();
+            return lVehicle;
         }
 
         public void set(IVehicle vehicle)
