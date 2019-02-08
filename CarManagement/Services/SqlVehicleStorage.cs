@@ -182,7 +182,40 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            throw new NotImplementedException();
+            //VehicleDto vehicleDto = new VehicleDto();
+            string query;
+
+            query = $@"
+                     SELECT *
+                     FROM enrollment
+                     WHERE serial = '{vehicle.Enrollment.Serial}' 
+                     AND number = {vehicle.Enrollment.Number};";
+            string serial = executeReaderQuery(this.connectionString, query, "serial").ToString();
+            int number = (int)executeReaderQuery(this.connectionString, query, "number");
+            int enrollmentId = (int)executeReaderQuery(this.connectionString, query, "id");                     
+
+            query = $@"
+                     SELECT * 
+                     FROM vehicle
+                     WHERE enrollmentId = '{enrollmentId}';";
+            int isStarted = (int) executeReaderQuery(this.connectionString, query, "engineIsStarted");
+            int horsePower = (int) executeReaderQuery(this.connectionString, query, "engineHorsePower");
+            CarColor color = (CarColor) executeReaderQuery(this.connectionString, query, "color");
+
+            query = $@"
+                     SELECT presure
+                     FROM wheel
+                     WHERE vehicleId = '{enrollmentId}';";
+            float[] pressure = (float[]) executeReaderQuery(this.connectionString, query, "pressure");
+            
+            query = $@"
+                     SELECT isOpen
+                     FROM door
+                     WHERE vehicleId = '{enrollmentId}';";
+            int[] isOpen = (int[]) executeReaderQuery(this.connectionString, query, "isOpen");
+
+            query = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIstarted) 
+                    VALUES ({enrollmentId}, {color}, {horsePower}, {isStarted});";
         }
 
         private static void executeCommand(string connectionString, string sentencies)
