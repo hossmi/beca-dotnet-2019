@@ -36,6 +36,29 @@ namespace CarManagement.Services
             Asserts.isTrue(this.numberWheel >0);
             this.numberWheel--;
         }
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.numberWheel > 0);
+            //Generamos puertas
+            List<Door> doors = createList<Door>(this.numberDoor);
+
+            //Generamos motor
+            Engine engine = new Engine(this.engine);
+
+            //Generamos ruedas
+            List<Wheel> wheels = createList<Wheel>(this.numberWheel);
+
+            //Generamos matricula
+            IEnrollment enrollment = enrollmentProvider.getNew();
+
+            //Generamos coche
+            return new Vehicle(this.color, wheels, enrollment, doors, engine);
+        }
+        public void setColor(CarColor color)
+        {
+            Asserts.isEnumDefined(color);
+            this.color = color;
+        }
         public void setDoors(int doorsCount)
         {
             Asserts.isTrue( doorsCount>=0 && doorsCount <=6);
@@ -46,13 +69,35 @@ namespace CarManagement.Services
             Asserts.isTrue(horsePower > 0);
             this.engine = horsePower;
         }
-        public void setColor(CarColor color)
+        public IVehicle import(VehicleDto vehicleDto)
         {
-            Asserts.isEnumDefined(color);
-            this.color = color;
+            CarColor color = vehicleDto.Color;            
+            List<Wheel> listWheels = createList<Wheel>(vehicleDto.Wheels.Length);
+            List<Door> listDoors = createList<Door>(vehicleDto.Doors.Length);
+            IEnrollment enrollment = convert(vehicleDto.Enrollment);
+            Engine engine = new Engine(vehicleDto.Engine.HorsePower);
+
+            return new Vehicle(color, listWheels, enrollment, listDoors, engine);
+        }
+        public VehicleDto export(IVehicle vehicle)
+        {
+            return convert(vehicle);
         }
 
-        public EnrollmentDto convert(IEnrollment enrollment)
+        private List<T> createList<T>(int numberItem) where T : class, new()
+        {
+            List<T> listItems = new List<T>();
+            for (int x = 0; x < numberItem; x++)
+            {
+                listItems.Add(new T());
+            }
+            return listItems;
+        }
+        
+
+
+
+        private EnrollmentDto convert(IEnrollment enrollment)
         {
             return new EnrollmentDto
             {
@@ -66,11 +111,11 @@ namespace CarManagement.Services
                                                   enrollmentDto.Number);
         }
 
-        public IWheel convert(WheelDto weelDto)
+        private IWheel convert(WheelDto weelDto)
         {
             return new Wheel(weelDto.Pressure);
         }
-        public WheelDto convert(IWheel wheel)
+        private WheelDto convert(IWheel wheel)
         {
             return new WheelDto
             {
@@ -78,23 +123,23 @@ namespace CarManagement.Services
             };
         }
 
-        public IDoor convert(DoorDto doorDto)
+        private IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
         }
-        public DoorDto convert(IDoor door)
+        private DoorDto convert(IDoor door)
         {
             return new DoorDto
             {
                 IsOpen = door.IsOpen
             };
         }
- 
-        public IEngine convert(EngineDto engineDto)
+
+        private IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
         }
-        public EngineDto convert(IEngine engine)
+        private EngineDto convert(IEngine engine)
         {
             return new EngineDto
             {
@@ -102,13 +147,8 @@ namespace CarManagement.Services
                 IsStarted = engine.IsStarted
             };
         }
-
-        public IVehicle convert(VehicleDto vehicleDto)
-        {
-            IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            return new Vehicle(vehicleDto, enrollment);
-        }
-        public VehicleDto convert(IVehicle vehicle)
+        
+        private VehicleDto convert(IVehicle vehicle)
         {
             CarColor color = vehicle.Color;
 
@@ -143,34 +183,13 @@ namespace CarManagement.Services
                 Doors = doorDtos
             };
         }
-
-        public IVehicle build()
+        private IVehicle convert(VehicleDto vehicleDto)
         {
-            Asserts.isTrue(this.numberWheel > 0);
-            //Generamos puertas
-            List<Door> doors = createList<Door>(this.numberDoor);
-
-            //Generamos motor
-            Engine engine = new Engine(this.engine);
-
-            //Generamos ruedas
-            List<Wheel> wheels = createList<Wheel>(this.numberWheel);
-
-            //Generamos matricula
-            IEnrollment enrollment = enrollmentProvider.getNew();
-
-            //Generamos coche
-            return new Vehicle(this.color, wheels, enrollment, doors, engine);
+            IEnrollment enrollment = convert(vehicleDto.Enrollment);
+            return new Vehicle(vehicleDto, enrollment);
         }
-        public List<T> createList<T>(int numberItem) where T : class, new()
-        {
-            List<T> items = new List<T>();
-            for (int x = 0; x < numberItem; x++)
-            {
-                items.Add(new T());
-            }
-            return items;
-        }
+        
+        
 
         private class Wheel :IWheel
         {
@@ -363,36 +382,6 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.openDoor);
                 this.openDoor = false;
             }
-        }
-
-        public IVehicle import(VehicleDto vehicleDto)
-        {
-
-            /*CarColor color = vehicleDto.Color;
-
-            List<Wheel> wheels = new List<Wheel>();
-            foreach (WheelDto wheelDto in vehicleDto.Wheels)
-            {
-                Wheel r = new Wheel(wheelDto.Pressure);
-                wheels.Add(r);
-            }
-
-            IEnrollment enrollment = convert(vehicleDto.Enrollment);
-
-            List<Door> doors = new List<Door>();
-            foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
-                Door door = new Door(doorDto.IsOpen);
-                doors.Add(door);
-            }
-
-            Engine engine = new Engine(vehicleDto.Engine.HorsePower);
-
-            return new Vehicle(color, wheels, enrollment, doors, engine);*/
-        }
-        public VehicleDto export(IVehicle vehicle)
-        {
-            return convert(vehicle);
         }
     }
 }
