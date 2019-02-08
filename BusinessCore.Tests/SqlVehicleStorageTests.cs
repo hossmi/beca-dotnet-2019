@@ -84,7 +84,23 @@ namespace BusinessCore.Tests
                 sentencies = "INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) " +
                     "VALUES ('" + enrollmentId + "', " + (int)vehicle.Color + ", " + vehicle.Engine.HorsePower + ", " + (vehicle.Engine.IsStarted ? 1 : 0) + ");";
                 executeCommand(connectionString, sentencies);
+
+                foreach (IWheel wheel in vehicle.Wheels)
+                {                    
+                    sentencies = "INSERT INTO wheel (pressure, vehicleId) " +
+                        "VALUES (" + wheel.Pressure + ", " + enrollmentId + ");";
+                    executeCommand(connectionString, sentencies);
+                }
+
+                foreach (IDoor door in vehicle.Doors)
+                {
+                    sentencies = "INSERT INTO door (isOpen, vehicleId) " +
+                        "VALUES (" + (door.IsOpen ? 1 : 0) + ", " + enrollmentId + ");";
+                    executeCommand(connectionString, sentencies);
+                }
             }
+
+
 
         }
 

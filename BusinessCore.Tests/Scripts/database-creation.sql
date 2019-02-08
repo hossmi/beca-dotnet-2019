@@ -27,7 +27,7 @@ CREATE TABLE [vehicle]
 
 CREATE TABLE [wheel]
 (
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[pressure] [real] NULL,
 	[vehicleId] [int] NOT NULL,	
 	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
@@ -40,7 +40,7 @@ CREATE TABLE [wheel]
 
 CREATE TABLE [door]
 (
-	[id] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[vehicleId] [int] NOT NULL,
 	[isOpen] [bit] NULL,
 	CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED ([id] ASC),
