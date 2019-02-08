@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
+using CarManagement.Extensions.Vehicles;
+using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
 {
-    [TestCategory("Functional Programing")]
     [TestClass]
+    [TestCategory("Soden")]
+    [TestCategory("Functional Programing")]
     public class SodenFunctionalProgramingTests
     {
         private readonly ArrayVehicleStorageSoden vehicleStorage;
@@ -19,7 +22,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void a_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
+        public void get_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .getAll()
@@ -32,7 +35,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void b_there_are_two_started_engines_more_one_doors_closed()
+        public void get_there_are_two_started_engines_more_one_doors_closed()
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .getAll()
@@ -58,7 +61,7 @@ namespace BusinessCore.Tests
                .Count()
                ;              
 
-                Assert.AreEqual(6, pressure);
+            Assert.AreEqual(6, pressure);
         }
 
         [TestMethod]
