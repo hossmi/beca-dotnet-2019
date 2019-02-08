@@ -68,7 +68,7 @@ namespace BusinessCore.Tests
             String pushToEnrollment = "INSERT INTO enrollment(serial,number)"+ 
                " output INSERTED.ID VALUES (@serial, @number)";
             String pushToVehicle = "INSERT INTO vehicle(enrollmentid,color,engineHorsePower,engineIsStarted)"+"VALUES(@enrollmentid,@color,@engineHorsePower,@engineIsStarted)";
-            String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)"+"VALUES(@vehicleid,pressure)";
+            String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)"+"VALUES(@vehicleid,@pressure)";
             String pushToDoor = "INSERT INTO door(vehicleid,isopen)"+"VALUES(@vehicleid,@isopen)";
 
             SqlConnection conection = new SqlConnection(connectionString);
@@ -90,19 +90,19 @@ namespace BusinessCore.Tests
                 pusher.ExecuteNonQuery();
 
 
-                foreach (IWheel wheels in vehicles)
+                foreach (IWheel wheels in vehicle.Wheels)
                 {
                     pusher = new SqlCommand(pushToWheel, conection);
                     pusher.Parameters.AddWithValue("@pressure", wheels.Pressure);
-                    pusher.Parameters.AddWithValue("@vehiculoid", enrollmentId);
+                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
                     pusher.ExecuteNonQuery();
 
                 }
-                foreach (IDoor doors in vehicles)
+                foreach (IDoor doors in vehicle.Doors)
                 {
                     pusher = new SqlCommand(pushToDoor, conection);
-                    pusher.Parameters.AddWithValue("@pressure", doors.IsOpen);
-                    pusher.Parameters.AddWithValue("@vehiculoid", enrollmentId);
+                    pusher.Parameters.AddWithValue("@isopen", doors.IsOpen);
+                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
                     pusher.ExecuteNonQuery();
                 }
                
