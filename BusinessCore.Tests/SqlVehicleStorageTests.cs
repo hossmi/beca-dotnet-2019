@@ -79,6 +79,7 @@ namespace BusinessCore.Tests
                 pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
                 pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
                 int enrollmentId = (int)pusher.ExecuteScalar();
+               
 
                 pusher = new SqlCommand(pushToVehicle, conection);
                 pusher.Parameters.AddWithValue("@enrolmentid", enrollmentId);
