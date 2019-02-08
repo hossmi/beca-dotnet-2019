@@ -91,15 +91,15 @@ namespace BusinessCore.Tests
 
                 sqlCommand = new SqlCommand(INSERT_VEHICLE, sqlConnection);
                 sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
-                sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color).ToString());
-                sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower.ToString());
-                sqlCommand.Parameters.AddWithValue("@started", Convert.ToInt32(vehicle.Engine.IsStarted).ToString());
+                sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color));
+                sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower);
+                sqlCommand.Parameters.AddWithValue("@started", Convert.ToInt32(vehicle.Engine.IsStarted));
                 insertedVehicles = insertedVehicles + sqlCommand.ExecuteNonQuery();
                 
                 foreach (IWheel wheel in vehicle.Wheels)
                 {
                     sqlCommand = new SqlCommand(INSERT_WHEEL, sqlConnection);
-                    sqlCommand.Parameters.AddWithValue("@pressure", wheel.Pressure.ToString());
+                    sqlCommand.Parameters.AddWithValue("@pressure", wheel.Pressure);
                     sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                     insertedWheels = insertedWheels + sqlCommand.ExecuteNonQuery();
                 }
@@ -107,7 +107,7 @@ namespace BusinessCore.Tests
                 foreach (IDoor door in vehicle.Doors)
                 {
                     sqlCommand = new SqlCommand(INSERT_DOOR, sqlConnection);
-                    sqlCommand.Parameters.AddWithValue("@open", Convert.ToInt32(door.IsOpen).ToString());
+                    sqlCommand.Parameters.AddWithValue("@open", Convert.ToInt32(door.IsOpen));
                     sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                     insertedDoors = insertedDoors + sqlCommand.ExecuteNonQuery();
                 }
