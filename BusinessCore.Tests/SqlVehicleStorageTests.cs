@@ -62,53 +62,7 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            #region "skeletal inserts"
-            string insertEnrollmentSkeleton = "INSERT INTO enrollment (serial, number) output INSERTED.ID VALUES (@serial, @number)";
-            string insertVehicleSkeleton = "INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) VALUES (@enrollmentId, @color, @engineHorsePower, @engineIsStarted)";
-            string insertDoorSkeleton = "INSERT INTO door (vehicleId, isOpen) VALUES (@vehicleId, @isOpen)";
-            string insertWheelSkeleton = "INSERT INTO wheel (vehicleId, pressure) VALUES (@vehicleId, @pressure)";
-            #endregion
 
-            using (SqlConnection sqlDbConnection = new SqlConnection(connectionString))
-            {
-                sqlDbConnection.Open();
-                foreach (IVehicle vehicle in vehicles)
-                {
-                    #region "Enrollment"
-                    SqlCommand inserter = new SqlCommand(insertEnrollmentSkeleton, sqlDbConnection);
-                    inserter.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
-                    inserter.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
-                    int databaseEnrollmentId = (int)inserter.ExecuteScalar();
-                    #endregion
-                    #region "Vehicle"
-                    inserter = new SqlCommand(insertVehicleSkeleton, sqlDbConnection);
-                    inserter.Parameters.AddWithValue("@enrollmentId", databaseEnrollmentId);
-                    inserter.Parameters.AddWithValue("@color", vehicle.Color);
-                    inserter.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
-                    inserter.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
-                    inserter.ExecuteNonQuery();
-                    #endregion
-                    #region "Doors"
-                    foreach (IDoor door in vehicle.Doors)
-                    {
-                        inserter = new SqlCommand(insertDoorSkeleton, sqlDbConnection);
-                        inserter.Parameters.AddWithValue("@vehicleId", databaseEnrollmentId);
-                        inserter.Parameters.AddWithValue("@isOpen", door.IsOpen);
-                        inserter.ExecuteNonQuery();
-                    }
-                    #endregion
-                    #region "Wheels"
-                    foreach (IWheel wheel in vehicle.Wheels)
-                    {
-                        inserter = new SqlCommand(insertWheelSkeleton, sqlDbConnection);
-                        inserter.Parameters.AddWithValue("@vehicleId", databaseEnrollmentId);
-                        inserter.Parameters.AddWithValue("@pressure", wheel.Pressure);
-                        inserter.ExecuteNonQuery();
-                    }
-                    #endregion
-                }
-                sqlDbConnection.Close();
-            }
         }
 
         private static void create(string connectionString, string creationScript)
