@@ -7,47 +7,22 @@ using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
         private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter) : base(load(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
             this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
         }
 
-        public int Count
+        private static IDictionary<IEnrollment, Vehicle> load(string fileFullPath, IDtoConverter dtoConverter)
         {
-            get
-            {
-                return this.vehicles.Count;
-            }
-        }
-        public void clear()
-        {
-            this.vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            Vehicle returnedVehicle;
-
-            bool exists = this.vehicles.TryGetValue(enrollment, out returnedVehicle);
-
-            Asserts.isTrue(exists);
-
-            return returnedVehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
+            return readFromFile(fileFullPath, dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
@@ -70,8 +45,7 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            EnrollmentEqualityComparer enrollmentComparer = new EnrollmentEqualityComparer();
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentComparer);
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(fileFullPath))
             {
@@ -92,5 +66,31 @@ namespace CarManagement.Services
             return vehicles;
         }
 
+        protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+            int counter;
+            int i;
+
+            counter = 0;
+            foreach (Vehicle vehicle in vehicles)
+            {
+                counter++;
+            }
+
+            VehicleDto[] vehiclesArray = new VehicleDto[counter];
+            
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(this.filePath);
+
+            i = 0;
+            foreach (Vehicle vehicle in vehicles)
+            {
+                vehiclesArray[i] = this.dtoConverter.convert(vehicle);
+                i++;
+            }
+
+            ser.Serialize(writer, vehiclesArray);
+            writer.Close();
+        }
     }
 }

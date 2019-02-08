@@ -10,14 +10,12 @@ namespace CarManagement.Models
 
         public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment, CarColor carColor)
         {
-            if (doors.Count >= 0 && doors.Count <= 6)
-            {
-                this.doors = doors;
-            }
-            if(wheels.Count > 0 && wheels.Count <= 4)
-            {
-                this.wheels = wheels;
-            }
+            Asserts.isTrue(doors.Count >= 0 && doors.Count <= 6);
+            this.doors = doors;
+            
+            Asserts.isTrue(wheels.Count > 0 && wheels.Count <= 4);
+            this.wheels = wheels;
+            
 
             this.Engine = engine;
             this.Enrollment = enrollment;
@@ -39,7 +37,7 @@ namespace CarManagement.Models
             }
         }
 
-        public Engine Engine{ get;}
+        public Engine Engine { get; }
 
         public IEnrollment Enrollment { get; }
 
@@ -63,18 +61,11 @@ namespace CarManagement.Models
 
         public void setWheelsPressure(double pression)
         {
-            if (pression >= 0)
+            Asserts.isTrue(pression > 1);
+            foreach (Wheel iterWheel in this.wheels)
             {
-                foreach (Wheel iterWheel in this.wheels)
-                {
-                    iterWheel.Pressure = pression;
-                }
+                iterWheel.Pressure = pression;
             }
-            else
-            {
-                throw new ArgumentException("Pression must be greater than 0.");
-            }
-
         }
     }
 }

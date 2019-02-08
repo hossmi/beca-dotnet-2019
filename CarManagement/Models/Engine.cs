@@ -9,6 +9,7 @@ namespace CarManagement.Models
 
         public Engine(double horsepower)
         {
+            Asserts.isTrue(horsepower >= 1);
             this.horsepower = horsepower;
         }
 
@@ -41,6 +42,7 @@ namespace CarManagement.Models
 
         public void setHorsePower(double nHorsePower)
         {
+            Asserts.isTrue(horsepower >= 1);
             this.horsepower = nHorsePower;
         }
 

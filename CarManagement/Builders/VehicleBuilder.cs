@@ -13,7 +13,7 @@ namespace CarManagement.Builders
         private int doors;
         private int horsepowerValue;
         private CarColor vehicleColor;
-                      
+
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.wheels = 0;
@@ -32,15 +32,14 @@ namespace CarManagement.Builders
         public void setDoors(int doorsCount)
         {
 
-            if (doorsCount > 0 && doorsCount <= 6)
-            {
-                this.doors = doorsCount;
-            }
+            Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
+            this.doors = doorsCount;
 
         }
 
         public void setEngine(int horsePower)
         {
+            Asserts.isTrue(horsePower >= 1);
             this.horsepowerValue = horsePower;
         }
 
@@ -55,32 +54,20 @@ namespace CarManagement.Builders
 
             List<Wheel> wheelsList = new List<Wheel>();
 
-            if (this.wheels > 0 && this.wheels <=4)
+            //Asserts.isTrue(this.wheels > 0 && this.wheels <= 4);
+            for (int i = 1; i <= this.wheels; i++)
             {
-                for (int i = 1; i <= this.wheels; i++)
-                {
-                    Wheel newWheel = new Wheel();
-                    wheelsList.Add(newWheel);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("The number maximun of wheels is 4");
+                Wheel newWheel = new Wheel();
+                wheelsList.Add(newWheel);
             }
 
             List<Door> doorsList = new List<Door>();
 
-            if (this.doors <= 6)
+            //Asserts.isTrue(this.doors >= 0 && this.doors <= 6);
+            for (int i = 1; i <= this.doors; i++)
             {
-                for (int i = 1; i <= this.doors; i++)
-                {
-                    Door newDoor = new Door(false);
-                    doorsList.Add(newDoor);
-                }
-            }
-            else
-            {
-                throw new ArgumentException("The number maximun of doors is 6");
+                Door newDoor = new Door(false);
+                doorsList.Add(newDoor);
             }
 
             Engine engine = new Engine(this.horsepowerValue);
