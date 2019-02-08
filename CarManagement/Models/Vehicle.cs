@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CarManagement.Models
 {
@@ -8,13 +7,10 @@ namespace CarManagement.Models
     {
         private readonly List<Wheel> wheels;
         private readonly List<Door> doors;
-        private List<Wheel> wheelsList;
-        private List<Door> doorsList;
-        private string ienrollment;
 
-        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment)
+        public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, IEnrollment enrollment, CarColor carColor)
         {
-            if (doors.Count > 0 && doors.Count <= 6)
+            if (doors.Count >= 0 && doors.Count <= 6)
             {
                 this.doors = doors;
             }
@@ -25,14 +21,6 @@ namespace CarManagement.Models
 
             this.Engine = engine;
             this.Enrollment = enrollment;
-        }
-
-        public Vehicle(List<Wheel> wheelsList, List<Door> doorsList, Engine engine, string ienrollment)
-        {
-            this.wheelsList = wheelsList;
-            this.doorsList = doorsList;
-            this.Engine = engine;
-            this.ienrollment = ienrollment;
         }
 
         public int DoorsCount

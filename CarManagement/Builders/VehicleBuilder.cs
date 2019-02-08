@@ -7,19 +7,12 @@ namespace CarManagement.Builders
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
 
         private int wheels;
         private int doors;
         private int horsepowerValue;
         private CarColor vehicleColor;
-
-        private int numbers = 0000;
-        private readonly string[] letters = { "B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "X", "Y", "Z" };
-        private int[] serial = { 0, 0, 0 };
-
-        private readonly IEnrollmentProvider enrollmentProvider;
-
-        public IEnrollment Ienrollment { get; private set; }
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -32,15 +25,8 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (this.wheels < 4)
-            {
-                this.wheels++;
-            }
-            else
-            {
-                throw new ArgumentException("The number maximun of wheels is 4");
-            }
-
+            Asserts.isTrue(this.wheels < 4);
+            this.wheels++;
         }
 
         public void setDoors(int doorsCount)
@@ -60,6 +46,7 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
+            Asserts.isEnumDefined(color);
             this.vehicleColor = color;
         }
 
@@ -78,12 +65,12 @@ namespace CarManagement.Builders
             }
             else
             {
-                throw new ArgumentException("The maximum number of wheels is 4");
+                throw new ArgumentException("The number maximun of wheels is 4");
             }
 
             List<Door> doorsList = new List<Door>();
 
-            if (this.doors > 0 && this.doors <= 4)
+            if (this.doors <= 6)
             {
                 for (int i = 1; i <= this.doors; i++)
                 {
@@ -93,66 +80,29 @@ namespace CarManagement.Builders
             }
             else
             {
-                throw new ArgumentException("The maximum number of doors is 6");
+                throw new ArgumentException("The number maximun of doors is 6");
             }
 
             Engine engine = new Engine(this.horsepowerValue);
 
             IEnrollment enrollment = this.enrollmentProvider.getNew();
 
-            Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment);
+            CarColor carColor = this.vehicleColor;
+
+            Vehicle vehicle = new Vehicle(wheelsList, doorsList, engine, enrollment, carColor);
             return vehicle;
-        }
-
-        private string generateEnrollment()
-        {
-            string enrollment = "";
-
-
-            if (this.numbers >= 9999)
-            {
-                if ((this.serial[0] & this.serial[1] & this.serial[2]) < 19)
-                {
-                    if ((this.serial[1] & this.serial[2]) < 19)
-                    {
-                        if (this.serial[2] < 19)
-                        {
-                            this.serial[2] += 1;
-                            this.numbers = 0000;
-                        }
-                        else
-                        {
-                            this.serial[1] += 1;
-                            this.serial[2] = 0;
-                            this.numbers = 0000;
-                        }
-                    }
-                    else
-                    {
-                        this.serial[0] += 1;
-                        this.serial[1] = 0;
-                        this.serial[2] = 0;
-                        this.numbers = 0000;
-                    }
-                }
-                else
-                {
-                    throw new SystemException("Unexpected Error in generateEnrollment");
-                }
-            }
-            else
-            {
-                this.numbers += 1;
-            }
-
-            enrollment = this.numbers.ToString("D4") + "-" + this.letters[this.serial[0]] + this.letters[this.serial[1]] + this.letters[this.serial[2]];
-
-            return enrollment;
         }
 
         public void removeWheel()
         {
-            throw new NotImplementedException();
+            if (this.wheels > 0)
+            {
+                this.wheels--;
+            }
+            else
+            {
+                throw new ArgumentException("The number maximun of wheels is 4");
+            }
         }
     }
 }

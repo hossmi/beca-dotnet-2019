@@ -11,12 +11,12 @@ namespace CarManagement.Services
     {
         public bool Equals(IEnrollment x, IEnrollment y)
         {
-            throw new NotImplementedException();
+            return x.Number == y.Number && x.Serial == y.Serial;
         }
 
         public int GetHashCode(IEnrollment obj)
         {
-            throw new NotImplementedException();
+            return ((int)obj.Serial[2] - 65) * 100000000 + ((int)obj.Serial[1] - 65) * 1000000 + ((int)obj.Serial[0] - 65) * 10000 + obj.Number;
         }
     }
 }

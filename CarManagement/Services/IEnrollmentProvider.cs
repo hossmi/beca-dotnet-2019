@@ -12,5 +12,4 @@ namespace CarManagement.Services
         IEnrollment getNew();
         IEnrollment import(string serial, int number);
     }
-
 }
