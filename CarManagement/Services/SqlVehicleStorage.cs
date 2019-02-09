@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
@@ -31,8 +32,26 @@ namespace CarManagement.Services
 
         public void clear()
         {
+            string sentenceClearEnrollment = "DELETE FROM enrollment";
+            string sentenceClearVehicle = "DELETE FROM vehicle";
+            string sentenceClearWherl = "DELETE FROM wheel";
+            string sentenceClearDoor = "DELETE FORM door";
+            List<String> deleteTables = new List<String>();
+            deleteTables.Add(sentenceClearDoor);
+            deleteTables.Add(sentenceClearWherl);
+            deleteTables.Add(sentenceClearVehicle);
+            deleteTables.Add(sentenceClearEnrollment);
 
-            throw new NotImplementedException();
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            {
+                connection.Open();
+                foreach (String sentenceDeleteTable in deleteTables)
+                {
+                    SqlCommand deleteComand = new SqlCommand(sentenceDeleteTable, connection);
+                    deleteComand.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
         }
 
         public void Dispose()
@@ -42,21 +61,42 @@ namespace CarManagement.Services
 
         public IVehicle get(IEnrollment enrollment)
         {
-            if (existsEntollment(this.connectionString, enrollment))
-            {
-                int enrollmentId = getEnrollmentId(this.connectionString, enrollment);
-            }
+            int enrollmentId = getEnrollmentId(this.connectionString, enrollment);//0-enrollmentId-NULL
+
+            string queryGetVehicle = "SELECT * FROM vehicle WHERE enrollmentId=" + enrollmentId + "";
+            
+
+            EnrollmentDto enrollmentDto = new EnrollmentDto();
+            enrollmentDto.Serial = enrollment.Serial;
+            enrollmentDto.Number = enrollment.Number;
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto.Enrollment = enrollmentDto;
+
+            SqlConnection connection = new SqlConnection(this.connectionString);
+            connection.Open();
+            SqlCommand sentenceGetVehicle = new SqlCommand(queryGetVehicle, connection);
+
+
+            SqlDataReader reader = sentenceGetVehicle.ExecuteReader();
+            reader.Read();
+
+            vehicleDto.Color = (CarColor)reader["color"];
+
+            vehicleDto.Engine = new EngineDto();
+            vehicleDto.Engine.HorsePower = (int)reader["engineHorsePower"];
+            vehicleDto.Engine.IsStarted = (bool)reader["engineIsStarted"];
+
+
+            vehicleDto.Color = (CarColor)reader["engineIsStarted"];
+
+            connection.Close();
+            
+
+            IVehicle car =  vehicleBuilder.import(vehicleDto);
+
             throw new NotImplementedException();
         }
 
-        private int getEnrollmentId(string connectionString, IEnrollment enrollment)
-        {
-            string sentenceEnrollmentID = "SELECT id FROM enrollment " +
-                "WHERE serial=" + enrollment.Serial + " AND number=" + enrollment.Number + ";";
-
-
-            throw new NotImplementedException();
-        }
 
         public IEnumerable<IVehicle> getAll()
         {
@@ -90,7 +130,6 @@ namespace CarManagement.Services
                 "WHERE serial=" + serial + " AND number=" + number + ";";
             int enrollmentId = 0;
             enrollmentId = executeScalarQuery(connectionString, sentenceExistsEnrollment);
-            enrollmentId = executeScalarQuery(connectionString, sentenceExistsEnrollment);
 
             if (enrollmentId != 0)
             {
@@ -98,6 +137,20 @@ namespace CarManagement.Services
             }
 
             return existeEnrollment;
+        }
+
+        private int getEnrollmentId(String connectionString, IEnrollment enrollment)
+        {
+            string serial = enrollment.Serial;
+            int number = enrollment.Number;
+            int enrollmentId = 0;
+
+            string sentenceGetEnrollmentId = "SELECT id FROM enrollment " +
+                "WHERE serial=" + serial + " AND number=" + number + ";";
+            enrollmentId = executeScalarQuery(connectionString, sentenceGetEnrollmentId);
+
+
+            return enrollmentId;
         }
     }
 }
