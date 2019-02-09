@@ -21,7 +21,8 @@ namespace CarManagement.Services
             this.vehicleBuilder = vehicleBuilder;
         }
 
-        public int Count {
+        public int Count
+        {
             get
             {
                 return executeScalarQuery(this.connectionString, sentenceCountVehicle);
@@ -30,6 +31,7 @@ namespace CarManagement.Services
 
         public void clear()
         {
+
             throw new NotImplementedException();
         }
 
@@ -40,7 +42,7 @@ namespace CarManagement.Services
 
         public IVehicle get(IEnrollment enrollment)
         {
-            if(existsEntollment(this.connectionString, enrollment))
+            if (existsEntollment(this.connectionString, enrollment))
             {
                 int enrollmentId = getEnrollmentId(this.connectionString, enrollment);
             }
@@ -87,6 +89,7 @@ namespace CarManagement.Services
             string sentenceExistsEnrollment = "SELECT count(*) FROM enrollment " +
                 "WHERE serial=" + serial + " AND number=" + number + ";";
             int enrollmentId = 0;
+            enrollmentId = executeScalarQuery(connectionString, sentenceExistsEnrollment);
             enrollmentId = executeScalarQuery(connectionString, sentenceExistsEnrollment);
 
             if (enrollmentId != 0)
