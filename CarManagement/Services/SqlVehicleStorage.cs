@@ -26,12 +26,29 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            string clearAllDb = "DELETE * from enrollment,vehicle,door,wheel";
+            List<string> clearDbQuerry = null;
+            clearDbQuerry.Add("DELETE * from wheel");
+            clearDbQuerry.Add("DELETE * from door");
+            clearDbQuerry.Add("DELETE * from vehicle");
+            clearDbQuerry.Add("DELETE * from enrollment");
+            //------------------------------------------------------------------------------------------
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
-                SqlCommand command = new SqlCommand(clearAllDb, connection);
-                command.ExecuteNonQuery();
+                //------------------------------------------------------------------------------------------
+                connection.Open();
+                //------------------------------------------------------------------------------------------
+                for (int i = 0; i <= clearDbQuerry.Count; i++)
+                {
+
+                    SqlCommand command = new SqlCommand(clearDbQuerry[i], connection);
+                    command.ExecuteNonQuery();
+
+                }
+                //------------------------------------------------------------------------------------------
+                connection.Close();
+                //------------------------------------------------------------------------------------------
             }
+
         }
 
         public void Dispose()
@@ -197,6 +214,7 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
+            //this.vehicleBuilder.export(vehicle);
             string pushToEnrollmentb = "INSERT INTO enrollment(seria,number) output INSERTED.ID VALUES(@serial,@number)";
             String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
             String pushToDoor = "INSERT INTO door(vehicleid,isopen)" + "VALUES(@vehicleid,@isopen)";
@@ -239,6 +257,7 @@ namespace CarManagement.Services
                 }
                 //------------------------------------------------------------------------------------------
                 conection.Close();
+
                 //------------------------------------------------------------------------------------------
             }
         }
