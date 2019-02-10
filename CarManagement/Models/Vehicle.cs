@@ -31,19 +31,12 @@ namespace CarManagement.Models
             }
         }
 
-        public string Enrollment
+        public IEnrollment Enrollment
         {
             get
             {
                 throw new NotImplementedException();
             }
-            //set
-            //{
-            //    if (string.IsNullOrWhiteSpace(value))
-            //        throw new ArgumentException();
-
-            //    this.enrollment = value;
-            //}
         }
 
         public Wheel[] Wheels
