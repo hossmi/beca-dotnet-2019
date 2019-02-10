@@ -167,55 +167,41 @@ namespace CarManagement.Services
         {
             IList<IVehicle> vehicles = new List<IVehicle>();
 
-            string query = $@"
-                     SELECT *
-                     FROM vehicle;";
-            int[] enrollments = (int[]) executeReaderQuery(this.connectionString, query, "enrollmentId");
-
-            for (int i = 0; i < this.Count; i++)
-            {
-                //vehicles.Add(get());
-            }
-
             return vehicles;
         }
 
         public void set(IVehicle vehicle)
         {
-            //VehicleDto vehicleDto = new VehicleDto();
-            string query;
+            string query, sentences;
+
+            sentences = $@"INSERT INTO enrollment (serial, number) 
+                    VALUES ({vehicle.Enrollment.Serial}, {vehicle.Enrollment.Number});";
+            executeCommand(this.connectionString, sentences);
 
             query = $@"
-                     SELECT *
+                     SELECT id
                      FROM enrollment
                      WHERE serial = '{vehicle.Enrollment.Serial}' 
                      AND number = {vehicle.Enrollment.Number};";
-            string serial = executeReaderQuery(this.connectionString, query, "serial").ToString();
-            int number = (int)executeReaderQuery(this.connectionString, query, "number");
-            int enrollmentId = (int)executeReaderQuery(this.connectionString, query, "id");                     
+            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
 
-            query = $@"
-                     SELECT * 
-                     FROM vehicle
-                     WHERE enrollmentId = '{enrollmentId}';";
-            int isStarted = (int) executeReaderQuery(this.connectionString, query, "engineIsStarted");
-            int horsePower = (int) executeReaderQuery(this.connectionString, query, "engineHorsePower");
-            CarColor color = (CarColor) executeReaderQuery(this.connectionString, query, "color");
+            sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
+                    VALUES ({enrollmentId}, {vehicle.Color}, {vehicle.Engine.HorsePower}, {vehicle.Engine.IsStarted});";
+            executeCommand(this.connectionString, sentences);
 
-            query = $@"
-                     SELECT presure
-                     FROM wheel
-                     WHERE vehicleId = '{enrollmentId}';";
-            float[] pressure = (float[]) executeReaderQuery(this.connectionString, query, "pressure");
-            
-            query = $@"
-                     SELECT isOpen
-                     FROM door
-                     WHERE vehicleId = '{enrollmentId}';";
-            int[] isOpen = (int[]) executeReaderQuery(this.connectionString, query, "isOpen");
+            foreach(IWheel wheel in vehicle.Wheels)
+            {
+                sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
+                    VALUES ({enrollmentId}, {wheel.Pressure});";
+                executeCommand(this.connectionString, sentences);
+            }
 
-            query = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIstarted) 
-                    VALUES ({enrollmentId}, {color}, {horsePower}, {isStarted});";
+            foreach (IDoor door in vehicle.Doors)
+            {
+                sentences = $@"INSERT INTO door (vehicleId, isOpen) 
+                    VALUES ({enrollmentId}, {door.IsOpen});";
+                executeCommand(this.connectionString, sentences);
+            }
         }
 
         private static void executeCommand(string connectionString, string sentencies)
@@ -225,7 +211,7 @@ namespace CarManagement.Services
             {
                 command.CommandText = sentencies;
                 command.Connection = connection;
-
+                
                 connection.Open();
                 int afectedRows = command.ExecuteNonQuery();
                 connection.Close();
@@ -236,7 +222,7 @@ namespace CarManagement.Services
         {
             object[] result = null;
             int i = 0;
-
+            
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             SqlCommand command = new SqlCommand(query, connection);
@@ -267,5 +253,6 @@ namespace CarManagement.Services
 
             return result;
         }
+        
     }
 }
