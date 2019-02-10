@@ -64,10 +64,12 @@ namespace BusinessCore.Tests
             IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .getAll()                
                 .Where(vehicle => vehicle.Wheels.Count() > 1)
-                //.Where(vehicle => vehicle.Wheels.GroupBy(wheel => wheel.Pressure).Any(group => group.Count() == 1 && ))
+                //.Where(vehicle => vehicle.Wheels.OrderByDescending(wheel => wheel.Pressure).Select(wheel => wheel.Pressure).First() >
+                //vehicle.Wheels.OrderByDescending(wheel => wheel.Pressure).Select(wheel => wheel.Pressure).ElementAt(1))
+                .Where(vehicle => vehicle.Wheels.GroupBy(wheel => wheel.Pressure)
+                                .OrderByDescending(group => group.Key)
+                                .First().Count() == 1)
                 .Select(vehicle => vehicle.Enrollment)
-                
-                /**/
                 .ToArray();
             try
             {
