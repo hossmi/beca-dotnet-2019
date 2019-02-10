@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace CarManagement
+namespace CarManagement.Core
 {
-    class Asserts
+    public class Asserts
     {
         private const string ASSERT_FAILED_MESSAGE = "Assert failed.";
 

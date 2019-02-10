@@ -1,8 +1,9 @@
 ﻿using System;
-using CarManagement.Models;
-using CarManagement.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
-namespace CarManagement.Builders
+namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
@@ -33,12 +34,22 @@ namespace CarManagement.Builders
             throw new NotImplementedException();
         }
 
-        public Vehicle build()
+        public IVehicle build()
         {
             throw new NotImplementedException();
         }
 
         public void removeWheel()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public VehicleDto export(IVehicle vehicleDto)
         {
             throw new NotImplementedException();
         }
