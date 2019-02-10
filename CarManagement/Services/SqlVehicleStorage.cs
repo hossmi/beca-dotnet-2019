@@ -13,22 +13,29 @@ namespace CarManagement.Services
     public class SqlVehicleStorage : IVehicleStorage
     {
         private const string clearCommand = "DELETE FROM door; " +
-            //"DBCC CHECKIDENT(door, RESEED, 0); " +
             "DELETE FROM wheel; " +
-            //"DBCC CHECKIDENT (wheel, RESEED, 0); " +
             "DELETE FROM vehicle; " +
             "DELETE FROM enrollment;";
-        //"DBCC CHECKIDENT (enrollment, RESEED, 0);";
 
         private const string INSERT_ENROLLMENT = "INSERT INTO [enrollment] (serial,number) " +
-"OUTPUT INSERTED.ID " +
-"VALUES (@serial, @number)";
+            "OUTPUT INSERTED.ID " +
+            "VALUES (@serial, @number)";
         private const string INSERT_VEHICLE = "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
             "VALUES (@enrollmentKEY, @color, @horsepower, @started)";
         private const string INSERT_WHEEL = "INSERT INTO [wheel] (pressure,vehicleId) " +
             "VALUES (@pressure, @enrollmentKEY)";
         private const string INSERT_DOOR = "INSERT INTO [door] (isOpen, vehicleId) " +
             "VALUES (@open, @enrollmentKEY)";
+
+        private const string UPDATE_VEHICLE = "UPDATE [vehicle] " +
+            "SET color = @color, engineHorsePower = @horsepower, engineIsStarted = @started " +
+            "WHERE enrollmentId = @enrollmentKEY";
+        private const string UPDATE_WHEEL = "UPDATE [wheel] " +
+            "SET pressure = @pressure " +
+            "WHERE vehicleId = @enrollmentKEY ";
+        private const string UPDATE_DOOR = "UPDATE [door] " +
+            "SET isOpen = @open " +
+            "WHERE vehicleId = @enrollmentKEY";
 
 
 
@@ -45,7 +52,10 @@ namespace CarManagement.Services
             this.connection.Open();
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get;
+        }
 
         public void clear()
         {
@@ -230,26 +240,50 @@ namespace CarManagement.Services
 
             if (enrollmentId > 0)
             {
-                //int updatedVehicles = 0;
-                //int insertedWheels = 0;
-                //int insertedDoors = 0;
+                int updatedVehicles = 0;
+                int updatedWheels = 0;
+                int updatedDoors = 0;
 
-                //UPDATE table_name
-                //SET column1 = value1, column2 = value2, ...
-                //WHERE condition;
+                SqlCommand sqlCommand = new SqlCommand(UPDATE_VEHICLE, this.connection);
+                sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentId);
+                sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color));
+                sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower);
+                sqlCommand.Parameters.AddWithValue("@started", Convert.ToInt32(vehicle.Engine.IsStarted));
+                updatedVehicles = updatedVehicles + sqlCommand.ExecuteNonQuery();
 
+                string selectWheel = "SELECT id from wheel " +
+                    "WHERE vehicleId=@id";
+                SqlCommand commandWheels = new SqlCommand(selectWheel, this.connection);
+                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                SqlDataReader wheelsResults = commandWheels.ExecuteReader();
 
+                while (wheelsResults.Read())
+                {
+                    int i = 0;
+                    int wheelId = Convert.ToInt32(wheelsResults.GetValue(0));
 
-                //SqlConnection sqlConnection = new SqlConnection(connectionString);
-                //sqlConnection.Open();
-                //SqlCommand sqlCommand = new SqlCommand(UPDATE_VEHICLE, sqlConnection);
-                //sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentId);
-                //sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color));
-                //sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower);
-                //sqlCommand.Parameters.AddWithValue("@started", Convert.ToInt32(vehicle.Engine.IsStarted));
-                //updatedVehicles = updatedVehicles + sqlCommand.ExecuteNonQuery();
+                    sqlCommand = new SqlCommand(UPDATE_WHEEL, this.connection);
+                    sqlCommand.Parameters.AddWithValue("@pressure", vehicle.Wheels[i].Pressure);
+                    sqlCommand.Parameters.AddWithValue("@id", wheelId);
+                    updatedWheels = updatedWheels + sqlCommand.ExecuteNonQuery();
+                }
 
+                string selectDoor = "SELECT id from door " +
+                    "WHERE vehicleId=@id";
+                SqlCommand commandDoors = new SqlCommand(selectDoor, this.connection);
+                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                SqlDataReader doorsResults = commandDoors.ExecuteReader();
 
+                while (doorsResults.Read())
+                {
+                    int i = 0;
+                    int doorId = Convert.ToInt32(doorsResults.GetValue(0));
+
+                    sqlCommand = new SqlCommand(UPDATE_DOOR, this.connection);
+                    sqlCommand.Parameters.AddWithValue("@isOpen", vehicle.Doors[i].IsOpen);
+                    sqlCommand.Parameters.AddWithValue("@id", doorId);
+                    updatedWheels = updatedWheels + sqlCommand.ExecuteNonQuery();
+                }
             }
             else
             {
@@ -257,15 +291,12 @@ namespace CarManagement.Services
                 int insertedWheels = 0;
                 int insertedDoors = 0;
 
-                SqlConnection sqlConnection = new SqlConnection(connectionString);
-                sqlConnection.Open();
-
-                SqlCommand sqlCommand = new SqlCommand(INSERT_ENROLLMENT, sqlConnection);
+                SqlCommand sqlCommand = new SqlCommand(INSERT_ENROLLMENT, this.connection);
                 sqlCommand.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
                 sqlCommand.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
                 string enrollmentKEY = sqlCommand.ExecuteScalar().ToString();
 
-                sqlCommand = new SqlCommand(INSERT_VEHICLE, sqlConnection);
+                sqlCommand = new SqlCommand(INSERT_VEHICLE, this.connection);
                 sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                 sqlCommand.Parameters.AddWithValue("@color", ((int)vehicle.Color));
                 sqlCommand.Parameters.AddWithValue("@horsepower", vehicle.Engine.HorsePower);
@@ -274,7 +305,7 @@ namespace CarManagement.Services
 
                 foreach (IWheel wheel in vehicle.Wheels)
                 {
-                    sqlCommand = new SqlCommand(INSERT_WHEEL, sqlConnection);
+                    sqlCommand = new SqlCommand(INSERT_WHEEL, this.connection);
                     sqlCommand.Parameters.AddWithValue("@pressure", wheel.Pressure);
                     sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                     insertedWheels = insertedWheels + sqlCommand.ExecuteNonQuery();
@@ -282,22 +313,12 @@ namespace CarManagement.Services
 
                 foreach (IDoor door in vehicle.Doors)
                 {
-                    sqlCommand = new SqlCommand(INSERT_DOOR, sqlConnection);
+                    sqlCommand = new SqlCommand(INSERT_DOOR, this.connection);
                     sqlCommand.Parameters.AddWithValue("@open", Convert.ToInt32(door.IsOpen));
                     sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                     insertedDoors = insertedDoors + sqlCommand.ExecuteNonQuery();
                 }
-
-                sqlConnection.Close();
             }
-
-
-
-
-
-
-
-
         }
     }
 }
