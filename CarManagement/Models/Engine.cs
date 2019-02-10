@@ -12,7 +12,20 @@ namespace CarManagement.Models
             }
         }
 
+        public int HorsePower
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public void start()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void stop()
         {
             throw new NotImplementedException();
         }

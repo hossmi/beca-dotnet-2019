@@ -20,7 +20,7 @@ namespace BusinessCore.Tests
         public void builder_default_functionality()
         {
             FakeEnrollmentProvider enrollmentProvider = new FakeEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -69,7 +69,7 @@ namespace BusinessCore.Tests
         public void cannot_create_the_same_vechicle_twice()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -90,55 +90,34 @@ namespace BusinessCore.Tests
         public void cannot_add_more_than_4_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
             builder.addWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.removeWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
+            builder.addWheel();
 
-            try
-            {
-                builder.addWheel();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            Negassert.mustFail(() => builder.addWheel());
         }
 
         [TestMethod]
         public void cannot_create_vehicle_without_wheels()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
-            try
+            Negassert.mustFail(() =>
             {
                 Vehicle vehicle = builder.build();
-                Assert.Fail();
-            }
-            catch (UnitTestAssertException)
-            {
-                throw;
-            }
-            catch (NotImplementedException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                //good
-            }
+            });
         }
 
         [TestMethod]
@@ -166,7 +145,7 @@ namespace BusinessCore.Tests
         public void enrollment_must_be_always_the_same()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
 
             builder.addWheel();
             builder.addWheel();
@@ -188,12 +167,12 @@ namespace BusinessCore.Tests
         public void enrollments_must_complaint_requested_format()
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IEnrollment enrollment = enrollmentProvider.getNewEnrollment();
+            IEnrollment enrollment = enrollmentProvider.getNew();
 
-            Regex fullRegex = new Regex("[A-Z][A-Z][A-Z]-[0-9][0-9][0-9][0-9]");
+            Regex fullRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}-[0-9]{4}");
             Assert.IsTrue(fullRegex.IsMatch(enrollment.ToString()));
 
-            Regex serialRegex = new Regex("[A-Z][A-Z][A-Z]");
+            Regex serialRegex = new Regex("[BCDFGHJKLMNPRSTVWXYZ]{3}");
             Assert.IsTrue(serialRegex.IsMatch(enrollment.Serial));
 
             Assert.IsTrue(0 <= enrollment.Number && enrollment.Number <= 9999);
@@ -202,7 +181,7 @@ namespace BusinessCore.Tests
         private static void buildMassiveVehicles(int numberOfVehicles, TimeSpan maxTime)
         {
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
+            IVehicleBuilder builder = new VehicleBuilder(enrollmentProvider);
             IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
 
             builder.addWheel();
