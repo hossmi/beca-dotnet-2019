@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessCore", "BusinessCore\BusinessCore.csproj", "{9DCD9A54-59F9-4855-B242-7335C9FE7A49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{2D0ACD4F-0F82-4B84-8CAD-E2732F05ED4D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessCore.Tests", "BusinessCore.Tests\BusinessCore.Tests.csproj", "{915B1520-2B41-4AC2-8411-F22158862D34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarManagement", "CarManagement\CarManagement.csproj", "{6542EE62-2A8A-4BAF-869F-4427B0416032}"
@@ -23,10 +21,6 @@ Global
 		{9DCD9A54-59F9-4855-B242-7335C9FE7A49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DCD9A54-59F9-4855-B242-7335C9FE7A49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DCD9A54-59F9-4855-B242-7335C9FE7A49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D0ACD4F-0F82-4B84-8CAD-E2732F05ED4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D0ACD4F-0F82-4B84-8CAD-E2732F05ED4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D0ACD4F-0F82-4B84-8CAD-E2732F05ED4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D0ACD4F-0F82-4B84-8CAD-E2732F05ED4D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{915B1520-2B41-4AC2-8411-F22158862D34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{915B1520-2B41-4AC2-8411-F22158862D34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{915B1520-2B41-4AC2-8411-F22158862D34}.Release|Any CPU.ActiveCfg = Release|Any CPU
