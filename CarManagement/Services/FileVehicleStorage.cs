@@ -5,41 +5,20 @@ using CarManagement.Models;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count { get; }
-
-        public void clear()
+        protected override void save(IEnumerable<Vehicle> vehicles)
         {
-            throw new System.NotImplementedException();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            throw new System.NotImplementedException();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
             throw new NotImplementedException();
         }
 
@@ -47,6 +26,5 @@ namespace CarManagement.Services
         {
             throw new NotImplementedException();
         }
-
     }
 }
