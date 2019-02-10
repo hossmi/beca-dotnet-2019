@@ -69,7 +69,7 @@ namespace CarManagement.Services
                 command = new SqlCommand(getFromWheel, connection);
                 reader = command.ExecuteReader();
                 reader.Read();
-                float[] vehiclePressure = null; _
+                float[] vehiclePressure = null;
                 for (int i = 0; reader.Read(); i++)
                 {
                     vehiclePressure[i] = (float)(reader["pressure"]);
@@ -188,9 +188,10 @@ namespace CarManagement.Services
                 }
                 //------------------------------------------------------------------------------------------
                 connection.Close();
+                //------------------------------------------------------------------------------------------
             }
             return vehicles;
-            //------------------------------------------------------------------------------------------
+            S
 
         }
 
@@ -202,19 +203,22 @@ namespace CarManagement.Services
             string pushToVehicle = "INSERT INTO vehicle(color,engineHorsePower,engineIsStarted) VALUES(@color,@engineHorsePower,@engineIsStarted)";
             using (SqlConnection conection = new SqlConnection(this.connectionString))
             {
+                //------------------------------------------------------------------------------------------
+                conection.Open();
+                //------------------------------------------------------------------------------------------
                 SqlCommand pusher = new SqlCommand(pushToEnrollmentb, conection);
                 pusher = new SqlCommand(pushToEnrollmentb, conection);
                 pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
                 pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
                 int enrollmentId = (int)pusher.ExecuteScalar();
-
-
+                //------------------------------------------------------------------------------------------
                 pusher = new SqlCommand(pushToVehicle, conection);
                 pusher.Parameters.AddWithValue("@enrollmentid", enrollmentId);
                 pusher.Parameters.AddWithValue("@color", vehicle.Color);
                 pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
                 pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
                 pusher.ExecuteNonQuery();
+                //------------------------------------------------------------------------------------------
 
 
                 foreach (IWheel wheels in vehicle.Wheels)
@@ -225,6 +229,7 @@ namespace CarManagement.Services
                     pusher.ExecuteNonQuery();
 
                 }
+                //------------------------------------------------------------------------------------------
                 foreach (IDoor doors in vehicle.Doors)
                 {
                     pusher = new SqlCommand(pushToDoor, conection);
@@ -232,7 +237,9 @@ namespace CarManagement.Services
                     pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
                     pusher.ExecuteNonQuery();
                 }
-
+                //------------------------------------------------------------------------------------------
+                conection.Close();
+                //------------------------------------------------------------------------------------------
             }
         }
     }

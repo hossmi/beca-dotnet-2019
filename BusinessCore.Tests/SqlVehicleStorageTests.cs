@@ -91,31 +91,28 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            String pushToEnrollment = "INSERT INTO enrollment(serial,number)"+ 
-               " output INSERTED.ID VALUES (@serial, @number)";
+            String pushToEnrollment = "INSERT INTO enrollment(serial,number) output INSERTED.ID VALUES (@serial, @number)";
             String pushToVehicle = "INSERT INTO vehicle(enrollmentid,color,engineHorsePower,engineIsStarted)"+"VALUES(@enrollmentid,@color,@engineHorsePower,@engineIsStarted)";
             String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)"+"VALUES(@vehicleid,@pressure)";
             String pushToDoor = "INSERT INTO door(vehicleid,isopen)"+"VALUES(@vehicleid,@isopen)";
-
             SqlConnection conection = new SqlConnection(connectionString);
             SqlCommand pusher;
             conection.Open();
             foreach (IVehicle vehicle in vehicles)
             {
+                //------------------------------------------------------------------------------------------
                 pusher = new SqlCommand(pushToEnrollment, conection);
                 pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
                 pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
                 int enrollmentId = (int)pusher.ExecuteScalar();
-               
-
+                //------------------------------------------------------------------------------------------
                 pusher = new SqlCommand(pushToVehicle, conection);
                 pusher.Parameters.AddWithValue("@enrollmentid", enrollmentId);
                 pusher.Parameters.AddWithValue("@color", vehicle.Color);
                 pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
                 pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
                 pusher.ExecuteNonQuery();
-
-
+                //------------------------------------------------------------------------------------------
                 foreach (IWheel wheels in vehicle.Wheels)
                 {
                     pusher = new SqlCommand(pushToWheel, conection);
@@ -124,6 +121,7 @@ namespace BusinessCore.Tests
                     pusher.ExecuteNonQuery();
 
                 }
+                //------------------------------------------------------------------------------------------
                 foreach (IDoor doors in vehicle.Doors)
                 {
                     pusher = new SqlCommand(pushToDoor, conection);
@@ -131,11 +129,12 @@ namespace BusinessCore.Tests
                     pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
                     pusher.ExecuteNonQuery();
                 }
-               
+                //------------------------------------------------------------------------------------------
 
             }
+            //------------------------------------------------------------------------------------------
             conection.Close();
-            
+            //------------------------------------------------------------------------------------------
 
         }
 
