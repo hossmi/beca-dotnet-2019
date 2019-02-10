@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Extensions.Filters;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -115,9 +117,52 @@ namespace BusinessCore.Tests
 
             foreach (IVehicleStorage vehicleStorage in vehicleStorages)
             {
-                IVehicle[] vehicles = vehicleStorage.getAll();
-                Assert.AreEqual(enrollmentProvider.Count, vehicles.Length);
+                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                Assert.AreEqual(enrollmentProvider.Count, vehicles.Count());
             }
+        }
+
+        [TestMethod]
+        public void filtering_vehicle_items()
+        {
+            ArrayEnrollmentProvider enrollmentProvider = new ArrayEnrollmentProvider();
+            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+
+            IVehicleStorage vehicleStorage = new InMemoryVehicleStorage();
+
+            vehicleBuilder.addWheel();
+            vehicleBuilder.addWheel();
+            vehicleBuilder.setColor(CarColor.Blue);
+            vehicleBuilder.setDoors(0);
+            vehicleBuilder.setEngine(40);
+
+            for (int i = 0; i < enrollmentProvider.Count; i++)
+            {
+                IVehicle vehicle = vehicleBuilder.build();
+
+                if(i % 3 == 0)
+                    vehicle.Engine.start();
+
+                vehicleStorage.set(vehicle);
+            }
+
+            IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+            IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filterByPairEnrollments();
+            IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filterByEnrollmentsSerial("BBC");
+            IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.selectEngines();
+
+            Assert.AreEqual(4, pairEnrollmentVehicles.Count());
+            Assert.AreEqual(2, selectedEnrollmentVehicles.Count());
+            Assert.AreEqual(2, selectedEngines.Count());
+
+            IEnumerable<IEngine> selectedEngines2 = vehicleStorage
+                .getAll()
+                .filterByPairEnrollments()          //4
+                .filterByEnrollmentsSerial("BBC")   //2
+                .selectEngines()                    //2
+                .filterByStarted();                 //1
+
+            Assert.AreEqual(1, selectedEngines2.Count());
         }
     }
 }
