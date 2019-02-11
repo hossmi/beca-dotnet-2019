@@ -6,11 +6,9 @@ CREATE TABLE [enrollment]
 	[number] [smallint] NOT NULL,
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ( [id] ASC )
-) 
+)
 
-CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [enrollment] (	[serial] ASC,[number] ASC)
-
-
+CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [enrollment] ( [serial] ASC, [number] ASC )
 
 CREATE TABLE [vehicle]
 (
@@ -19,29 +17,23 @@ CREATE TABLE [vehicle]
 	[engineHorsePower] [smallint] NULL,
 	[engineIsStarted] [bit] NULL,
 	CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED ([enrollmentId] ASC),
-	CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId])REFERENCES [enrollment] ([id])
+	CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId]) REFERENCES [enrollment] ([id]),
 )
 
-
-
-CREATE TABLE [wheel]
+CREATE TABLE [dbo].[wheel]
 (
-	[id] [int] NOT NULL,
-	[pressure] [real] NULL,
-	[vehicleId] [int] NOT NULL,	
-	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
-	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId])REFERENCES [vehicle] ([enrollmentId])
-) 
-
-
-
-
-
-CREATE TABLE [door]
-(
-	[id] [int] NOT NULL,
 	[vehicleId] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[pressure] [float] NULL,
+	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
+	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId])
+)
+
+CREATE TABLE [dbo].[door]
+(
+	[vehicleId] [int] NOT NULL,
+	[id] [int] IDENTITY(1,1) NOT NULL,
 	[isOpen] [bit] NULL,
 	CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED ([id] ASC),
-	CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId])REFERENCES [vehicle] ([enrollmentId])
+	CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [dbo].[vehicle] ([enrollmentId])
 )
