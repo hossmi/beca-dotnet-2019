@@ -4,7 +4,6 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
@@ -114,7 +113,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void there_are_ten_vehicles_stored_at_database_using_Count()
         {
-            IVehicleStorage databaseVehicleStorage = 
+            IVehicleStorage databaseVehicleStorage =
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             Assert.AreEqual(10, databaseVehicleStorage.Count);
