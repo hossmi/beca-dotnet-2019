@@ -336,6 +336,20 @@ public IEnumerable<IVehicle> get()
         {
             private string connectionString;
             private IVehicleBuilder vehicleBuilder;
+            private CarColor color;
+            private bool colorHasValue = false;
+            private bool engineIsStarted;
+            private bool engineIsStartedHasValue;
+            private IEnrollment enrollment;
+            private bool enrollmentHasValue;
+            private string enrollmentSerial;
+            private bool enrollmentSerialHasValue;
+            private int engineHorsePower;
+            private bool engineHorsePowerHasValue;
+            private int engineHorsePowerMin;
+            private int engineHorsePowerMax;
+            private bool enginePowerBetweenHasValues;
+
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -350,32 +364,45 @@ public IEnumerable<IVehicle> get()
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                throw new NotImplementedException();
+                this.color = color;
+                this.colorHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new NotImplementedException();
+                this.engineIsStarted = started;
+                this.engineIsStartedHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new NotImplementedException();
+                this.enrollment = enrollment;
+                this.enrollmentHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new NotImplementedException();
+                this.enrollmentSerial = serial;
+                this.enrollmentSerialHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new NotImplementedException();
+                this.engineHorsePower = horsePower;
+                this.engineHorsePowerHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new NotImplementedException();
+                this.engineHorsePowerMin = min;
+                this.engineHorsePowerMax = max;
+                this.enginePowerBetweenHasValues = true;
+                return this;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -385,6 +412,43 @@ public IEnumerable<IVehicle> get()
 
             private IEnumerator<IVehicle> enumerate()
             {
+                string selectVehicle = "SELECT * FROM VEHICLE ";
+                string conditions = "WHERE (";
+
+                if (this.colorHasValue)
+                {
+                    conditions = conditions + "color = @color ";
+                }
+
+                if (this.engineIsStartedHasValue)
+                {
+                    conditions = conditions + "engineIsStarted = @engineIsStarted";
+                }
+
+                if (this.enrollmentHasValue)
+                {
+                    conditions = conditions + "";
+                }
+
+                if (this.enrollmentSerialHasValue)
+                {
+                    conditions = conditions + "";
+                }
+
+                if (this.engineHorsePowerHasValue)
+                {
+                    conditions = conditions + "engineHorsePower = @engineHorsePower";
+                }
+
+                if (this.enginePowerBetweenHasValues)
+                {
+                    conditions = conditions + "engineHorsePower > @HPMin AND engineHorsePower < @HPMax";
+                }
+
+
+
+                conditions = selectVehicle + conditions + ")";
+
                 throw new NotImplementedException();
             }
         }
