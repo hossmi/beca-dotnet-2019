@@ -13,6 +13,7 @@ namespace CarManagement.Services
 {
     public class SqlVehicleStorage : IVehicleStorage
     {
+
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
 
@@ -129,87 +130,92 @@ namespace CarManagement.Services
         public IEnumerable<IVehicle> getAll()
         {
             //------------------------------------------------------------------------------------------
-            List<IVehicle> vehicles = null;
-            string getVehiceProperties = "SELECT enrollmentid,vehicleid, serial, number, color, engineHorsePower, engineIsStarted" +
+            List<IVehicle> vehicles = new List<IVehicle>();
+            string getVehiceProperties = "SELECT enrollmentId, serial, number, color, engineHorsePower, engineIsStarted " +
                 "FROM enrollment, vehicle";
-            string getVehicleWheel = "SELECT vehicleId, pressure FROM wheel";
-            string getVehicleDoor = "SELECT vehicleId, IsOpen FROM door";
             //------------------------------------------------------------------------------------------
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
 
                 //------------------------------------------------------------------------------------------
-                connection.Open();
+               
                 //------------------------------------------------------------------------------------------
                 SqlCommand command = new SqlCommand(getVehiceProperties, connection);
+                connection.Open();
                 IDataReader reader = command.ExecuteReader();
                 reader.Read();
+
                 //------------------------------------------------------------------------------------------
                 while (reader.Read())
                 {
+                    VehicleDto vehicleDto = new VehicleDto();
+                    vehicleDto.Enrollment = new EnrollmentDto();
+                    vehicleDto.Engine = new EngineDto();
+                    List<WheelDto> vehicleDtoWheel = new List<WheelDto>();
+                    List<DoorDto> vehicleDtoDoor = new List<DoorDto>();
 
                     int enrollmentID = Convert.ToInt32(reader["enrollmentid"]);
-                    VehicleDto vehicleDto = new VehicleDto();
-
-                    for (int i = 0; reader.Read(); i++)
-                    {
-                        vehicleDto.Enrollment.Number = Convert.ToInt32(reader["number"]);
-                        vehicleDto.Enrollment.Serial = Convert.ToString(reader["serial"]); ;
-                        vehicleDto.Engine.IsStarted = Convert.ToBoolean(reader["IsStarted"]);
-                        vehicleDto.Engine.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
-                        vehicleDto.Color = (CarColor)(Convert.ToInt32(reader["color"]));
-                        reader.Read();
-                    }
+                    vehicleDto.Enrollment.Number = Convert.ToInt32(reader["number"]);
+                    vehicleDto.Enrollment.Serial = Convert.ToString(reader["serial"]);
+                    vehicleDto.Engine.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
+                    vehicleDto.Engine.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
+                    vehicleDto.Color = (CarColor)(Convert.ToInt32(reader["color"]));
+                    
 
                     //------------------------------------------------------------------------------------------
+                    string getVehicleWheel = $@"SELECT pressure FROM wheel WHERE vehicleId =   {enrollmentID};";
                     command = new SqlCommand(getVehicleWheel, connection);
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    int vehicleID = Convert.ToInt32(reader["vehicleId"]);
-                    float[] vehicleDtoPressure = null;
-                    for (int i = 0; enrollmentID == vehicleID; i++)
+                    IDataReader readerWheel = command.ExecuteReader();
+                    readerWheel.Read();
+
+                    while (readerWheel.Read())
                     {
-                        vehicleDtoPressure[i] = (float)reader["pressure"];
                         int counter = 0;
-                        foreach (WheelDto wheel in vehicleDto.Wheels)
+                        foreach (WheelDto wheel in vehicleDtoWheel)
                         {
-                            wheel.Pressure = vehicleDtoPressure[counter];
+                            wheel.Pressure = Convert.ToSingle(reader["pressure"]);
+
+                            readerWheel.Read();
                             counter++;
 
                         }
+
                     }
 
+                    vehicleDto.Wheels = vehicleDtoWheel.ToArray();
+                   
+
                     //------------------------------------------------------------------------------------------
+                    string getVehicleDoor = $@"SELECT isOpen FROM door WHERE vehicleId =   {enrollmentID};"; ;
                     command = new SqlCommand(getVehicleDoor, connection);
-                    reader = command.ExecuteReader();
-                    reader.Read();
-                    vehicleID = Convert.ToInt32(reader["vehicleId"]);
-                    bool[] vehicleDtoIsOpen = null;
-                    for (int i = 0; enrollmentID == vehicleID; i++)
+                    IDataReader readerDoor = command.ExecuteReader();
+                    readerDoor.Read();
+
+                    while (readerDoor.Read())
                     {
-                        vehicleDtoIsOpen[i] = Convert.ToBoolean(reader["IsOpen"]);
                         int counter = 0;
-                        foreach (DoorDto door in vehicleDto.Doors)
+                        foreach (DoorDto door in vehicleDtoDoor)
                         {
-                            door.IsOpen = vehicleDtoIsOpen[counter];
+                            door.IsOpen = Convert.ToBoolean(reader["IsOpen"]);
+                            readerDoor.Read();
                             counter++;
 
                         }
+
                     }
+                    vehicleDto.Doors = vehicleDtoDoor.ToArray();
                     //------------------------------------------------------------------------------------------
-                    IVehicle vehicle = vehicleBuilder.import(vehicleDto);
-                    vehicles.Add(vehicle);
-                    //vehicles = vehicles.Concat(new[] { vehicle });
+                    vehicles.Add(this.vehicleBuilder.import(vehicleDto));
                     reader.Read();
+                    //------------------------------------------------------------------------------------------
+                    connection.Close();
                     //------------------------------------------------------------------------------------------
                 }
-                //------------------------------------------------------------------------------------------
-                connection.Close();
-                //------------------------------------------------------------------------------------------
-            }
-            return vehicles;
-            S
 
+                return vehicles;
+
+
+            }
         }
 
         public void set(IVehicle vehicle)
@@ -261,5 +267,6 @@ namespace CarManagement.Services
                 //------------------------------------------------------------------------------------------
             }
         }
+
     }
 }
