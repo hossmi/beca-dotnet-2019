@@ -7,10 +7,8 @@ namespace CarManagement.Core.Services
     public interface IVehicleStorage : IDisposable
     {
         int Count { get; }
-
         void set(IVehicle vehicle);
-        IVehicle get(IEnrollment enrollment);
         void clear();
-        IEnumerable<IVehicle> get();
+        IVehicleQuery get();
     }
 }
