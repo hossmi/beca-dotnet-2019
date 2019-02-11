@@ -24,17 +24,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            bool isTrue = true;
-            IVehicle[] vehiclesWithCSM = this.vehicleStorage
+            bool isTrue = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
-                .ToArray();
-
-            foreach (IVehicle vehicle in vehiclesWithCSM)
-            {
-                if (vehicle.Engine.HorsePower != 666)
-                    isTrue = false;
-            }
+                .FirstOrDefault( vehicle => vehicle.Engine.HorsePower != 666)
+                == null;
 
             Assert.IsTrue(isTrue);
         }
@@ -42,22 +36,13 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_their_third_door_open()
         {
-            bool isTrue = true;
-            IVehicle[] vehiclesWithCSM = this.vehicleStorage
+            bool isTrue = this.vehicleStorage
                 .getAll()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
-                .ToArray();
-
-            foreach (IVehicle vehicle in vehiclesWithCSM)
-            {
-                if (vehicle.Doors[2].IsOpen == false)
-                    isTrue = false;
-            }
-
-
-
+                .FirstOrDefault(vehicle => vehicle.Doors[2].IsOpen == false)
+                == null;
+            
             Assert.IsTrue(isTrue);
-
         }
 
         [TestMethod]
