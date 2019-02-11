@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
         {
             int count = 0;
             var vehicles = this.vehicleStorage
-            .getAll()
+            .get()
             .Select(vehicle => new
             {
                 vehicle.Engine.HorsePower

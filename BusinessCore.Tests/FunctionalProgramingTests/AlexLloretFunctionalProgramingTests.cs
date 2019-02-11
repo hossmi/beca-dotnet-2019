@@ -36,7 +36,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .Select(vehicle => new //solo para que compile el test
                 {
                     WheelsCount = vehicle.Wheels.Length,
@@ -64,7 +64,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 /* Insert code here for boom! */
                 .ToArray();
 
