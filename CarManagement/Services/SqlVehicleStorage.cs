@@ -5,17 +5,29 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
+   
+
     public class SqlVehicleStorage : IVehicleStorage
     {
+        private const string SELECT_FROM_VEHICLE = @"
+                        SELECT v.[enrollmentId]
+                              ,v.[color]
+                              ,v.[engineHorsePower]
+                              ,v.[engineIsStarted]
+	                          ,e.serial
+	                          ,e.number
+                          FROM [vehicle] v
+                          INNER JOIN enrollment e ON v.enrollmentId = e.id ;";
+
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private const string sentenceCountVehicle = "SELECT count(*) FROM vehicle;";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -27,7 +39,7 @@ namespace CarManagement.Services
         {
             get
             {
-                return executeScalarQuery(this.connectionString, sentenceCountVehicle);
+                return (int)executeScalarQuery(this.connectionString, "SELECT count(*) FROM vehicle");
             }
         }
 
@@ -59,6 +71,7 @@ namespace CarManagement.Services
         {
             throw new NotImplementedException();
         }
+
         public IVehicle get(IEnrollment enrollment)
         {
             VehicleDto vehicleDto = new VehicleDto();
@@ -131,8 +144,6 @@ namespace CarManagement.Services
                 doorDto.IsOpen = isOpen[i];
                 i++;
             }
-
-
             return this.vehicleBuilder.import(vehicleDto);
         }
 
@@ -146,28 +157,37 @@ namespace CarManagement.Services
                 connection.Open();
                 command.Connection = connection;
                 command.CommandText = SELECT_FROM_VEHICLE;
-                SqlDataReader readerVehicle = command.ExecuteReader();
-
-                while (readerVehicle.Read())
+                using (SqlDataReader readerVehicle = command.ExecuteReader())
                 {
-                    VehicleDto vehicleDto = new VehicleDto();
+                    while (readerVehicle.Read())
+                    {
+                        VehicleDto vehicleDto = new VehicleDto();
 
-                    int enrollmentId = (int)readerVehicle["enrollmentId"];
-                    vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
-                    vehicleDto.Engine.HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]);
-                    vehicleDto.Engine.IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]);
-                    vehicleDto.Enrollment.Serial = readerVehicle["serial"].ToString();
-                    vehicleDto.Enrollment.Number = Convert.ToInt16(readerVehicle["number"]);
+                        int enrollmentId = (int)readerVehicle["enrollmentId"];
+                        vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
+                        vehicleDto.Engine = new EngineDto
+                        {
+                            HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
+                            IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
+                        };
+                        vehicleDto.Enrollment = new EnrollmentDto
+                        {
+                            Serial = readerVehicle["serial"].ToString(),
+                            Number = Convert.ToInt16(readerVehicle["number"]),
+                        };
 
-                    List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
-                    List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
+                        List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
+                        List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
 
-                    vehicleDto.Wheels = wheelDtos.ToArray();
-                    vehicleDto.Doors = doorDtos.ToArray();
+                        vehicleDto.Wheels = wheelDtos.ToArray();
+                        vehicleDto.Doors = doorDtos.ToArray();
 
-                    IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
-                    vehicles.Add(vehicle);
+                        IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+                        vehicles.Add(vehicle);
+                    }
                 }
+
+
                 connection.Close();
             }
 
@@ -185,9 +205,12 @@ namespace CarManagement.Services
                                         WHERE vehicleId = {vehicleId};";
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    WheelDto wheelDto = new WheelDto();
-                    wheelDto.Pressure = (double)reader["pressure"];
-                    wheelsDto.Add(wheelDto);
+                    while (reader.Read())
+                    {
+                        WheelDto wheelDto = new WheelDto();
+                        wheelDto.Pressure = Convert.ToDouble(reader["pressure"]);
+                        wheelsDto.Add(wheelDto);
+                    }
                 }
             }
 
@@ -205,9 +228,12 @@ namespace CarManagement.Services
                                         WHERE vehicleId = {vehicleId};";
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    DoorDto doorDto = new DoorDto();
-                    doorDto.IsOpen = Convert.ToBoolean(reader["isOpen"]);
-                    doorsDto.Add(doorDto);
+                    while (reader.Read())
+                    {
+                        DoorDto doorDto = new DoorDto();
+                        doorDto.IsOpen = Convert.ToBoolean(reader["isOpen"]);
+                        doorsDto.Add(doorDto);
+                    }
                 }
             }
             return doorsDto;
@@ -226,7 +252,7 @@ namespace CarManagement.Services
                      FROM enrollment
                      WHERE serial = '{vehicle.Enrollment.Serial}' 
                      AND number = {vehicle.Enrollment.Number};";
-            int enrollmentId = (int)executeScalarQuery(connectionString, query);
+            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
 
             sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
                     VALUES ({enrollmentId}, {vehicle.Color}, {vehicle.Engine.HorsePower}, {vehicle.Engine.IsStarted});";
@@ -296,5 +322,6 @@ namespace CarManagement.Services
 
             return result;
         }
+
     }
 }
