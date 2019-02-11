@@ -115,11 +115,11 @@ namespace CarManagement.Services
                     VehicleDto vehicle = new VehicleDto();
                     vehicle.Enrollment = enrollmentdto;
                     CarColor color;
-                    Enum.TryParse<CarColor>(vehicleResults.GetValue(0).ToString(), out color);
+                    Enum.TryParse<CarColor>(vehicleResults["color"].ToString(), out color);
                     vehicle.Color = color;
                     EngineDto engine = new EngineDto();
-                    engine.HorsePower = Convert.ToInt32(vehicleResults.GetValue(1));
-                    engine.IsStarted = Convert.ToBoolean(vehicleResults.GetValue(2));
+                    engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
+                    engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
                     vehicle.Engine = engine;
 
                     SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
@@ -173,9 +173,9 @@ namespace CarManagement.Services
             while (enrollmentResults.Read())
             {
                 EnrollmentDto enrollment = new EnrollmentDto();
-                enrollment.Serial = enrollmentResults.GetValue(0).ToString();
-                enrollment.Number = Convert.ToInt32(enrollmentResults.GetValue(1));
-                int enrollmentId = (int)enrollmentResults.GetValue(2);
+                enrollment.Serial = enrollmentResults["serial"].ToString();
+                enrollment.Number = Convert.ToInt32(enrollmentResults["number"]);
+                int enrollmentId = (int)enrollmentResults["id"];
 
 
 
@@ -188,11 +188,11 @@ namespace CarManagement.Services
                 VehicleDto vehicle = new VehicleDto();
                 vehicle.Enrollment = enrollment;
                 CarColor color;
-                Enum.TryParse<CarColor>(vehicleResults.GetValue(0).ToString(), out color);
+                Enum.TryParse<CarColor>(vehicleResults["color"].ToString(), out color);
                 vehicle.Color = color;
                 EngineDto engine = new EngineDto();
-                engine.HorsePower = Convert.ToInt32(vehicleResults.GetValue(1));
-                engine.IsStarted = Convert.ToBoolean(vehicleResults.GetValue(2));
+                engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
+                engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
                 vehicle.Engine = engine;
 
                 SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
@@ -216,7 +216,7 @@ namespace CarManagement.Services
                 while (doorsResults.Read())
                 {
                     DoorDto door = new DoorDto();
-                    door.IsOpen = Convert.ToBoolean(vehicleResults["isOpen"]);
+                    door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
                     doors.Add(door);
                 }
                 vehicle.Doors = doors.ToArray();
