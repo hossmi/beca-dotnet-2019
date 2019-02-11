@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
@@ -13,6 +14,16 @@ namespace CarManagement.Services
 {
     public class SqlVehicleStorage : IVehicleStorage
     {
+        private const string SELECT_FROM_VEHICLE = @"
+                        SELECT v.[enrollmentId]
+                              ,v.[color]
+                              ,v.[engineHorsePower]
+                              ,v.[engineIsStarted]
+	                          ,e.serial
+	                          ,e.number
+                          FROM [vehicle] v
+                          INNER JOIN enrollment e ON v.enrollmentId = e.id ;";
+
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
 
@@ -43,21 +54,42 @@ namespace CarManagement.Services
         {
             VehicleDto vehicleDto = new VehicleDto();
             string query;
+            int enrollmentId;
+            bool exist = false;
 
-            query = $@"
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            using (SqlCommand command = new SqlCommand())
+            {
+                query = $@"
+                     SELECT id
+                     FROM enrollment
+                     CONTAINS serial = '{enrollment.Serial}' 
+                     AND number = {enrollment.Number};";
+                exist = (bool) command.ExecuteScalar();
+                if (exist)
+                {
+                    query = $@"
+                         SELECT *
+                         FROM enrollment
+                         WHERE serial = '{enrollment.Serial}' 
+                         AND number = {enrollment.Number};";
+                    enrollmentId = (int) command.ExecuteScalar();
+                    query = $@"
+                         SELECT enrollmentId
+                         FROM vehicle
+                         CONTAINS enrollmentId = {enrollmentId};";
+                    exist = (bool)command.ExecuteScalar();
+                }
+            }
+            Asserts.isTrue(exist);
+                query = $@"
                      SELECT *
                      FROM enrollment
                      WHERE serial = '{enrollment.Serial}' 
                      AND number = {enrollment.Number};";            
             vehicleDto.Enrollment.Serial = executeReaderQuery(this.connectionString, query, "serial").ToString();
             vehicleDto.Enrollment.Number = (int) executeReaderQuery(this.connectionString, query, "number");
-
-            query = $@"
-                     SELECT id
-                     FROM enrollment
-                     WHERE serial = '{enrollment.Serial}' 
-                     AND number = {enrollment.Number};";
-            int enrollmentId = (int) executeReaderQuery(this.connectionString, query, "id");
+            enrollmentId = (int) executeReaderQuery(this.connectionString, query, "id");            
 
             query = $@"
                      SELECT * 
@@ -166,8 +198,78 @@ namespace CarManagement.Services
         public IEnumerable<IVehicle> getAll()
         {
             IList<IVehicle> vehicles = new List<IVehicle>();
+                    
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            using (SqlCommand command = new SqlCommand())
+            {
+                connection.Open();                
+                command.Connection = connection;
+                command.CommandText = SELECT_FROM_VEHICLE;
+                SqlDataReader readerVehicle = command.ExecuteReader();                
+
+                while (readerVehicle.Read())
+                {
+                    VehicleDto vehicleDto = new VehicleDto();
+
+                    int enrollmentId = (int) readerVehicle["enrollmentId"];
+                    vehicleDto.Color = (CarColor) Convert.ToInt32(readerVehicle["color"]);
+                    vehicleDto.Engine.HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]);
+                    vehicleDto.Engine.IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]);
+                    vehicleDto.Enrollment.Serial = readerVehicle["serial"].ToString();
+                    vehicleDto.Enrollment.Number = Convert.ToInt16(readerVehicle["number"]);
+
+                    List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
+                    List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
+
+                    vehicleDto.Wheels = wheelDtos.ToArray();
+                    vehicleDto.Doors = doorDtos.ToArray();
+
+                    IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+                    vehicles.Add(vehicle);
+                }
+                connection.Close();
+            }
 
             return vehicles;
+        }
+
+        private static List<WheelDto> readWheels(SqlConnection connection, int vehicleId)
+        {
+            List<WheelDto> wheelsDto = new List<WheelDto>();
+
+            using(SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connection;
+                command.CommandText = $@"SELECT * FROM wheel
+                                        WHERE vehicleId = {vehicleId};";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    WheelDto wheelDto = new WheelDto();
+                    wheelDto.Pressure = (double) reader["pressure"];
+                    wheelsDto.Add(wheelDto);
+                }
+            }
+
+            return wheelsDto;
+        }
+
+        private static List<DoorDto> readDoors(SqlConnection connection, int vehicleId)
+        {
+            List<DoorDto> doorsDto = new List<DoorDto>();
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connection;
+                command.CommandText = $@"SELECT * FROM door
+                                        WHERE vehicleId = {vehicleId};";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    DoorDto doorDto = new DoorDto();
+                    doorDto.IsOpen = Convert.ToBoolean(reader["isOpen"]);
+                    doorsDto.Add(doorDto);
+                }
+            }
+            return doorsDto;
         }
 
         public void set(IVehicle vehicle)
@@ -248,7 +350,7 @@ namespace CarManagement.Services
             SqlCommand command = new SqlCommand(query, connection);
 
             result = command.ExecuteScalar();
-            
+                        
             connection.Close();
 
             return result;
