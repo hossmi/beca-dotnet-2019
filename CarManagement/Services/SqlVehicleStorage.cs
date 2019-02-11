@@ -128,7 +128,6 @@ namespace CarManagement.Services
         public IEnumerable<IVehicle> getAll()
         {
             List<IVehicle> lVehicle = new List<IVehicle>();
-
             SqlConnection con;
             con = new SqlConnection(this.connectionString);
             con.Open();
@@ -166,7 +165,7 @@ namespace CarManagement.Services
                 while (reader2.Read())
                 {
                     WheelDto wheelDto = new WheelDto();
-                    wheelDto.Pressure = Convert.ToInt32(reader2["pressure"]);
+                    wheelDto.Pressure = Convert.ToDouble(reader2["pressure"]);
                     wheelsDto.Add(wheelDto);
                 }
                 reader2.Close();
@@ -186,10 +185,11 @@ namespace CarManagement.Services
                 vehicleDto.Engine = engineDto;
                 vehicleDto.Enrollment = enrollmentDto;
                 IVehicle vehicle_get = this.vehicleBuilder.import(vehicleDto);
-                yield return vehicle_get;
+                lVehicle.Add(vehicle_get);
             }
             reader.Close();
             con.Close();
+            return lVehicle;
         }
 
         public void set(IVehicle vehicle)
@@ -278,7 +278,7 @@ namespace CarManagement.Services
                 IWheel[] wheels = vehicle.Wheels;
                 foreach (IWheel wheel in wheels)
                 {
-                    double pressure = wheel.Pressure;
+                    string pressure = wheel.Pressure.ToString().Replace(",",".");
                     query = "INSERT INTO wheel (vehicleId, pressure) " +
                         "VALUES (" + ressult + ", " + pressure + ")";
                     sentence = new SqlCommand(query, con);

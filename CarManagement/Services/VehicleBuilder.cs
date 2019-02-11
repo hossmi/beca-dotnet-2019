@@ -292,7 +292,7 @@ namespace CarManagement.Services
                 doors.Add(convert(vehicleDto.Doors[i]));
             }
             engine = convert(vehicleDto.Engine);
-            this.color = vehicleDto.Color;
+            color = vehicleDto.Color;
             enrollment = convert(vehicleDto.Enrollment);
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
