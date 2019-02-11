@@ -7,5 +7,6 @@
         public EnrollmentDto Enrollment { get; set; }
         public WheelDto[] Wheels { get; set; }
         public DoorDto[] Doors { get; set; }
+        public EnrollmentDto enrollmentDto { get; set; }
     }
 }
