@@ -40,7 +40,16 @@ namespace CarManagement.Services
 
         public Vehicle[] getAll()
         {
-            throw new System.NotImplementedException();
+            Vehicle[] vehicles = new Vehicle[this.vehicles.Count];
+            int i = 0;
+
+            foreach (Vehicle vehicle in this.vehicles.Values)
+            {
+                vehicles[i] = vehicle;
+                i++;
+            }
+
+            return vehicles;
         }
 
         public void set(Vehicle vehicle)

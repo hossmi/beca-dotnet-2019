@@ -37,6 +37,7 @@ namespace CarManagement.Models
 
         public void start()
         {
+            Asserts.isTrue(this.isStarted == false);
             this.isStarted = true;
         }
 
@@ -48,6 +49,7 @@ namespace CarManagement.Models
 
         public void stop()
         {
+            Asserts.isTrue(this.isStarted = false);
             this.isStarted = false;
         }
     }

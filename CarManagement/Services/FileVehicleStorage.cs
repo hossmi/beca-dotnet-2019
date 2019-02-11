@@ -47,12 +47,21 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
+            int counter;
+            int i;
+
+            counter = 0;
+            foreach (Vehicle vehicle in vehicles)
+            {
+                counter++;
+            }
+
             VehicleDto[] vehiclesArray = new VehicleDto[vehicles.Count()];
-            int i = 0;
 
             XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
             TextWriter writer = new StreamWriter(this.filePath);
 
+            i = 0;
             foreach (Vehicle vehicle in vehicles)
             {
                 vehiclesArray[i] = this.dtoConverter.convert(vehicle);

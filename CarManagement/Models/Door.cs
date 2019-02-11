@@ -25,6 +25,7 @@ namespace CarManagement.Models
 
         public void open()
         {
+            Asserts.isTrue(this.isOpen == false);
             this.isOpen = true;
         }
 
