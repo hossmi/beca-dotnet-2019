@@ -249,21 +249,33 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            string query, sentences;
-
-            sentences = $@"INSERT INTO enrollment (serial, number) 
-                    VALUES ({vehicle.Enrollment.Serial}, {vehicle.Enrollment.Number});";
-            executeCommand(this.connectionString, sentences);
-
-            query = $@"
+            string query = $@"
                      SELECT id
                      FROM enrollment
-                     WHERE serial = '{vehicle.Enrollment.Serial}' 
+                     WHERE serial = '{vehicle.Enrollment.Serial}'
                      AND number = {vehicle.Enrollment.Number};";
-            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
+
+            string sentences = "";
+            int enrollmentId;
+
+            sentences = $@"INSERT INTO enrollment (serial, number) 
+                    VALUES ('{vehicle.Enrollment.Serial}', {vehicle.Enrollment.Number});";
+            executeCommand(this.connectionString, sentences);
+
+            using (IDbConnection connection = new SqlConnection(this.connectionString))
+            using (IDbCommand command = new SqlCommand())
+            {
+                connection.Open();
+                command.CommandText = query;
+                command.Connection = connection;
+
+                enrollmentId = (int) command.ExecuteScalar();
+
+                connection.Close();
+            }            
 
             sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
-                    VALUES ({enrollmentId}, {vehicle.Color}, {vehicle.Engine.HorsePower}, {vehicle.Engine.IsStarted});";
+                    VALUES ({enrollmentId}, {(int)vehicle.Color}, {vehicle.Engine.HorsePower}, {(vehicle.Engine.IsStarted ? 1 : 0)});";
             executeCommand(this.connectionString, sentences);
 
             foreach (IWheel wheel in vehicle.Wheels)
@@ -276,7 +288,7 @@ namespace CarManagement.Services
             foreach (IDoor door in vehicle.Doors)
             {
                 sentences = $@"INSERT INTO door (vehicleId, isOpen) 
-                    VALUES ({enrollmentId}, {door.IsOpen});";
+                    VALUES ({enrollmentId}, {(door.IsOpen ? 1 : 0)});";
                 executeCommand(this.connectionString, sentences);
             }
         }
@@ -294,21 +306,5 @@ namespace CarManagement.Services
                 connection.Close();
             }
         }
-      
-        private static object executeScalarQuery(string connectionString, string query)
-        {
-            object result = null;
-
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.Open();
-            SqlCommand command = new SqlCommand(query, connection);
-
-            result = command.ExecuteScalar();
-
-            connection.Close();
-
-            return result;
-        }
-
     }
 }
