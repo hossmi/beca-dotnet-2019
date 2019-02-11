@@ -24,10 +24,11 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            //IVehicle[] vehicles = this.vehicleStorage
-            bool isTrue = false;
-            
-            //isTrue = true;
+            bool isTrue = this.vehicleStorage
+               .getAll()
+               .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+               .All(vehicle => vehicle.Engine.HorsePower == 666);
+
             Assert.IsTrue(isTrue);
         }
 
@@ -36,6 +37,10 @@ namespace BusinessCore.Tests
         {
             bool isTrue = false;
 
+            isTrue = this.vehicleStorage
+                .getAll()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .All(vehicle => vehicle.Doors.ElementAt(2).IsOpen);
             Assert.IsTrue(isTrue);
 
         }
@@ -46,14 +51,20 @@ namespace BusinessCore.Tests
             int open = 0;
             int close = 0;
 
-            open = this.vehicleStorage
+            IDoor[] doorsOpen = this.vehicleStorage
                 .getAll()
-                .Select( vehicle => new
-                {
-                    open = vehicle.Doors.Where(door => door.IsOpen == true).Count(),
-                    close = vehicle.Doors.Where(door => door.IsOpen == false).Count()
-                })
-                .Count();
+                .SelectMany(vehicle => vehicle.Doors)
+                .Where(door => door.IsOpen)
+                .ToArray();
+
+            IDoor[] doorsClose = this.vehicleStorage
+                .getAll()
+                .SelectMany(vehicle => vehicle.Doors)
+                .Where(door => door.IsOpen == false)
+                .ToArray();
+
+            open = doorsOpen.Length;
+            close = doorsClose.Length;
 
             Assert.AreEqual(open,9);
             Assert.AreEqual(close, 7);
