@@ -67,6 +67,7 @@ namespace BusinessCore.Tests
 
             IVehicle[] vehicles = databaseVehicleStorage
                 .getAll()
+
                 .ToArray();
 
             Assert.AreEqual(10, vehicles.Length);
