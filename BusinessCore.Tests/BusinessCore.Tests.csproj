@@ -63,7 +63,7 @@
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
-    <Compile Include="EpicSimpleVehicleTests.cs" />
+    <Compile Include="FunctionalProgramingTests\EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\alloretArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorageSoden.cs" />
