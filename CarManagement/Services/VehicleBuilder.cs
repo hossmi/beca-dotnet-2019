@@ -262,7 +262,7 @@ namespace CarManagement.Services
             }
             public Wheel(double pressure)
             {
-                Asserts.isTrue(pressure >= 1 && pressure <= 6);
+                Asserts.isTrue(pressure >= 1 && pressure <= 5);
                 this.Pressure = pressure;
             }
             public double Pressure
@@ -273,7 +273,7 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >=1  && value <=6 );
+                    Asserts.isTrue(value >=1  && value <=5 );
                     this.pressure = value;
                 }
             }
