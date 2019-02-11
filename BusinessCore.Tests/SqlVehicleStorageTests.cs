@@ -71,7 +71,7 @@ namespace BusinessCore.Tests
         }
 
         [TestMethod]
-        public void there_exists_a_vehicle_with_ZZZ_serial_and_2010_number_as_enrollment()
+        public void clear_erases_vehicles_from_DB()
         {
             IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
