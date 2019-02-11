@@ -94,12 +94,15 @@ namespace CarManagement.Services
 
         public IVehicle import(VehicleDto vehicleDto)
         {
-            throw new NotImplementedException();
+            IVehicle ivehicle = convert(vehicleDto, this.enrollmentProvider);
+            return ivehicle;
         }
 
         public VehicleDto export(IVehicle vehicleDto)
         {
-            throw new NotImplementedException();
+            VehicleDto newVehicleDto = convert(vehicleDto);
+
+            return newVehicleDto;
         }
 
         private static IEngine convert(EngineDto engineDto)
@@ -215,7 +218,6 @@ namespace CarManagement.Services
             return enrollmentDto;
         }
 
-
         private class Door : IDoor
         {
             private bool isOpen;
@@ -239,11 +241,13 @@ namespace CarManagement.Services
 
             public void open()
             {
+                Asserts.isTrue(this.isOpen == false);
                 this.isOpen = true;
             }
 
             public void close()
             {
+                Asserts.isTrue(this.isOpen == true);
                 this.isOpen = false;
             }
         }
@@ -254,10 +258,11 @@ namespace CarManagement.Services
 
             public Wheel()
             {
-                this.pressure = 0;
+                this.pressure = 1;
             }
             public Wheel(double pressure)
             {
+                Asserts.isTrue(pressure >= 1 && pressure <= 6);
                 this.Pressure = pressure;
             }
             public double Pressure
@@ -268,6 +273,7 @@ namespace CarManagement.Services
                 }
                 set
                 {
+                    Asserts.isTrue(value >=1  && value <=6 );
                     this.pressure = value;
                 }
             }
@@ -308,6 +314,7 @@ namespace CarManagement.Services
 
             public void start()
             {
+                Asserts.isTrue(this.isStarted == false);
                 this.isStarted = true;
             }
 
@@ -319,6 +326,7 @@ namespace CarManagement.Services
 
             public void stop()
             {
+                Asserts.isTrue(this.isStarted == true);
                 this.isStarted = false;
             }
         }
