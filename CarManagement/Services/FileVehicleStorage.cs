@@ -4,69 +4,22 @@ using System.IO;
 using CarManagement.Models;
 using System.Xml.Serialization;
 using CarManagement.Models.DTOs;
+using System.Linq;
 
 namespace CarManagement.Services
 {
-    public class FileVehicleStorage : IVehicleStorage
+    public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
 
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
+            : base(readFromFile(fileFullPath, dtoConverter))
         {
             this.filePath = fileFullPath;
             this.dtoConverter = dtoConverter;
-            this.vehicles = readFromFile(fileFullPath, this.dtoConverter);
         }
 
-        public int Count
-        {
-            get
-            {
-                return this.vehicles.Count;
-            }
-        }
-        public void clear()
-        {
-            this.vehicles.Clear();
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        public Vehicle get(IEnrollment enrollment)
-        {
-            Vehicle returnedVehicle;
-
-            bool exists = this.vehicles.TryGetValue(enrollment, out returnedVehicle);
-
-            Asserts.isTrue(exists);
-
-            return returnedVehicle;
-        }
-
-        public void set(Vehicle vehicle)
-        {
-            this.vehicles.Add(vehicle.Enrollment, vehicle);
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
-        {
-            VehicleDto[] vehiclesArray = new VehicleDto[vehicles.Count];
-            int i = 0;
-
-            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
-            TextWriter writer = new StreamWriter(filePath);
-
-            foreach (Vehicle vehicle in vehicles.Values)
-            {
-                vehiclesArray[i] = dtoConverter.convert(vehicle);
-                i++;
-            }
-
-            ser.Serialize(writer, vehiclesArray);
-            writer.Close();
-        }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
@@ -92,5 +45,22 @@ namespace CarManagement.Services
             return vehicles;
         }
 
+        protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+            VehicleDto[] vehiclesArray = new VehicleDto[vehicles.Count()];
+            int i = 0;
+
+            XmlSerializer ser = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(this.filePath);
+
+            foreach (Vehicle vehicle in vehicles)
+            {
+                vehiclesArray[i] = this.dtoConverter.convert(vehicle);
+                i++;
+            }
+
+            ser.Serialize(writer, vehiclesArray);
+            writer.Close();
+        }
     }
 }
