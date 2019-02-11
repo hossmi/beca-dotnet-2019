@@ -68,16 +68,11 @@ namespace CarManagement.Services
             {
                 String getFromEnrollment = "SELECT  id,serial,enrollment FROM enrollment WHERE serial = " + enrollment.Serial + ", number = " + enrollment.Number;
                 SqlCommand command = new SqlCommand(getFromEnrollment, connection);
-                //------------------------------------------------------------------------------------------
                 connection.Open();
-                //------------------------------------------------------------------------------------------
                 IDataReader reader = command.ExecuteReader();
-                reader.Read();
-                //------------------------------------------------------------------------------------------
                 String getFromVehicle = "SELECT  color,engineHorsePower,engineIsStarted FROM wheel WHERE id =" + Convert.ToInt32(reader["id"]);
                 command = new SqlCommand(getFromVehicle, connection);
                 reader = command.ExecuteReader();
-                reader.Read();
                 vehicleDto.Color = (CarColor)Convert.ToInt32(reader["color"]);
                 vehicleDto.Engine.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
                 vehicleDto.Engine.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
@@ -159,7 +154,7 @@ namespace CarManagement.Services
                     while (readerWheel.Read())
                     {
                         WheelDto wheel = new WheelDto();
-                        wheel.Pressure = Convert.ToSingle(reader["pressure"]);
+                        wheel.Pressure = Convert.ToDouble(readerWheel["pressure"]);
                         wheels.Add(wheel);
                     }
 
@@ -168,12 +163,12 @@ namespace CarManagement.Services
 
                     string getVehicleDoor = $@"SELECT isOpen FROM door WHERE vehicleId =   {enrollmentID};"; ;
                     command = new SqlCommand(getVehicleDoor, connection);
-                    reader = command.ExecuteReader();
+                    IDataReader readerDoor = command.ExecuteReader();
 
-                    while (reader.Read())
+                    while (readerDoor.Read())
                     {
                         DoorDto door = new DoorDto();
-                        door.IsOpen = Convert.ToBoolean(reader["IsOpen"]);
+                        door.IsOpen = Convert.ToBoolean(readerDoor["isOpen"]);
                         doors.Add(door);
                     }
                     vehicleDto.Doors = doors.ToArray();
