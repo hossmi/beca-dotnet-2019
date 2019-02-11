@@ -138,10 +138,9 @@ namespace CarManagement.Services
             {
 
                 //------------------------------------------------------------------------------------------
-               
+                connection.Open();
                 //------------------------------------------------------------------------------------------
                 SqlCommand command = new SqlCommand(getVehiceProperties, connection);
-                connection.Open();
                 IDataReader reader = command.ExecuteReader();
                 reader.Read();
 
@@ -206,7 +205,6 @@ namespace CarManagement.Services
                     vehicleDto.Doors = vehicleDtoDoor.ToArray();
                     //------------------------------------------------------------------------------------------
                     vehicles.Add(this.vehicleBuilder.import(vehicleDto));
-                    reader.Read();
                     //------------------------------------------------------------------------------------------
                     connection.Close();
                     //------------------------------------------------------------------------------------------
