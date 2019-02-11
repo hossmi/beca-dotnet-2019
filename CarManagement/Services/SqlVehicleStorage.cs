@@ -34,10 +34,10 @@ namespace CarManagement.Services
         private const string SELECT_ENROLLMENTS = "SELECT serial, number, id FROM enrollment";
         private const string SELECT_VEHICLE = "SELECT color, engineHorsePower, engineIsStarted FROM vehicle " +
             "WHERE (enrollmentId=@id)";
-        private const string SELECT_WHEEL = "SELECT pressure FROM wheel " +
-            "WHERE (vehicleId=@id)";
-        private const string SELECT_DOOR = "SELECT id from door " +
-            "WHERE vehicleId=@id";
+        private const string SELECT_WHEEL = "SELECT id, pressure FROM wheel " +
+            "WHERE (vehicleId=@vehicleId)";
+        private const string SELECT_DOOR = "SELECT id, isOpen from door " +
+            "WHERE (vehicleId=@vehicleId)";
 
 
         private const string UPDATE_VEHICLE = "UPDATE [vehicle] " +
@@ -45,10 +45,10 @@ namespace CarManagement.Services
             "WHERE enrollmentId = @enrollmentKEY";
         private const string UPDATE_WHEEL = "UPDATE [wheel] " +
             "SET pressure = @pressure " +
-            "WHERE vehicleId = @enrollmentKEY ";
+            "WHERE id = @id ";
         private const string UPDATE_DOOR = "UPDATE [door] " +
             "SET isOpen = @open " +
-            "WHERE vehicleId = @enrollmentKEY";
+            "WHERE id = @id";
 
 
 
@@ -123,7 +123,7 @@ namespace CarManagement.Services
                     vehicle.Engine = engine;
 
                     SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
-                    commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                    commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
                     SqlDataReader wheelsResults = commandWheels.ExecuteReader();
 
                     if (wheelsResults.HasRows)
@@ -132,14 +132,14 @@ namespace CarManagement.Services
                         while (wheelsResults.Read())
                         {
                             WheelDto wheel = new WheelDto();
-                            wheel.Pressure = Convert.ToDouble(wheelsResults.GetValue(0));
+                            wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
                             wheels.Add(wheel);
                         }
                         vehicle.Wheels = wheels.ToArray();
                     }
 
                     SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
-                    commandDoors.Parameters.AddWithValue("@id", enrollmentId);
+                    commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
                     SqlDataReader doorsResults = commandDoors.ExecuteReader();
 
                     if (doorsResults.HasRows)
@@ -148,7 +148,7 @@ namespace CarManagement.Services
                         while (doorsResults.Read())
                         {
                             DoorDto door = new DoorDto();
-                            door.IsOpen = Convert.ToBoolean(vehicleResults.GetValue(0));
+                            door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
                             doors.Add(door);
                         }
                         vehicle.Doors = doors.ToArray();
@@ -196,27 +196,27 @@ namespace CarManagement.Services
                 vehicle.Engine = engine;
 
                 SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
-                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 SqlDataReader wheelsResults = commandWheels.ExecuteReader();
 
                 List<WheelDto> wheels = new List<WheelDto>();
                 while (wheelsResults.Read())
                 {
                     WheelDto wheel = new WheelDto();
-                    wheel.Pressure = Convert.ToDouble(wheelsResults.GetValue(0));
+                    wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
                     wheels.Add(wheel);
                 }
                 vehicle.Wheels = wheels.ToArray();
 
                 SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
-                commandDoors.Parameters.AddWithValue("@id", enrollmentId);
+                commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 SqlDataReader doorsResults = commandDoors.ExecuteReader();
 
                 List<DoorDto> doors = new List<DoorDto>();
                 while (doorsResults.Read())
                 {
                     DoorDto door = new DoorDto();
-                    door.IsOpen = Convert.ToBoolean(vehicleResults.GetValue(0));
+                    door.IsOpen = Convert.ToBoolean(vehicleResults["isOpen"]);
                     doors.Add(door);
                 }
                 vehicle.Doors = doors.ToArray();
@@ -252,33 +252,35 @@ namespace CarManagement.Services
                 updatedVehicles = updatedVehicles + sqlCommand.ExecuteNonQuery();
 
                 SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
-                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 SqlDataReader wheelsResults = commandWheels.ExecuteReader();
 
+                int i = 0;
                 while (wheelsResults.Read())
                 {
-                    int i = 0;
-                    int wheelId = Convert.ToInt32(wheelsResults.GetValue(0));
+                    int wheelId = Convert.ToInt32(wheelsResults["id"]);
 
                     sqlCommand = new SqlCommand(UPDATE_WHEEL, this.connection);
                     sqlCommand.Parameters.AddWithValue("@pressure", vehicle.Wheels[i].Pressure);
                     sqlCommand.Parameters.AddWithValue("@id", wheelId);
                     updatedWheels = updatedWheels + sqlCommand.ExecuteNonQuery();
+                    i++;
                 }
 
                 SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
-                commandWheels.Parameters.AddWithValue("@id", enrollmentId);
+                commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 SqlDataReader doorsResults = commandDoors.ExecuteReader();
 
+                i = 0;
                 while (doorsResults.Read())
                 {
-                    int i = 0;
-                    int doorId = Convert.ToInt32(doorsResults.GetValue(0));
+                    int doorId = Convert.ToInt32(doorsResults["id"]);
 
                     sqlCommand = new SqlCommand(UPDATE_DOOR, this.connection);
-                    sqlCommand.Parameters.AddWithValue("@isOpen", vehicle.Doors[i].IsOpen);
+                    sqlCommand.Parameters.AddWithValue("@open", vehicle.Doors[i].IsOpen);
                     sqlCommand.Parameters.AddWithValue("@id", doorId);
                     updatedDoors = updatedDoors + sqlCommand.ExecuteNonQuery();
+                    i++;
                 }
             }
             else
