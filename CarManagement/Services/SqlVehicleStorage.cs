@@ -133,74 +133,6 @@ namespace CarManagement.Services
             }
 
 
-            /*query = $@"
-                     SELECT serial
-                     FROM enrollment
-                     WHERE serial = '{enrollment.Serial}' 
-                     AND number = {enrollment.Number};";
-            string serial = executeScalarQuery(this.connectionString, query).ToString();
-            vehicleDto.Enrollment.Serial = serial;
-
-            query = $@"
-                     SELECT number
-                     FROM enrollment
-                     WHERE serial = '{enrollment.Serial}' 
-                     AND number = {enrollment.Number};";
-            int number = (int) executeScalarQuery(this.connectionString, query);
-            vehicleDto.Enrollment.Number = number;
-
-            query = $@"
-                     SELECT id
-                     FROM enrollment
-                     WHERE serial = '{enrollment.Serial}' 
-                     AND number = {enrollment.Number};";
-            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
-
-            query = $@"
-                     SELECT engineIsStarted 
-                     FROM vehicle
-                     WHERE enrollmentId = '{enrollmentId}';";
-            bool isStarted = (bool) executeScalarQuery(this.connectionString, query);
-            vehicleDto.Engine.IsStarted = isStarted;
-
-            query = $@"
-                     SELECT engineHorsePower
-                     FROM vehicle
-                     WHERE enrollmentId = '{enrollmentId}';";
-            int horsePower = (int) executeScalarQuery(this.connectionString, query);
-            vehicleDto.Engine.HorsePower = horsePower;
-
-            query = $@"
-                     SELECT color
-                     FROM vehicle
-                     WHERE enrollmentId = '{enrollmentId}';";
-            CarColor color = (CarColor) executeScalarQuery(this.connectionString, query);
-            vehicleDto.Color = color;
-
-            query = $@"
-                     SELECT presure
-                     FROM wheel
-                     WHERE id = '{enrollmentId}';";
-            double[] pressure = (double[]) executeScalarQuery(this.connectionString, query);
-            int i = 0;
-            foreach(WheelDto wheelDto in vehicleDto.Wheels)
-            {
-                wheelDto.Pressure = pressure[i];
-                i++;
-            }
-
-            query = $@"
-                     SELECT isOpen
-                     FROM door
-                     WHERE id = '{enrollmentId}';";
-            bool[] isOpen = (bool[])executeScalarQuery(this.connectionString, query);
-            i = 0;
-            foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
-                doorDto.IsOpen = isOpen[i];
-                i++;
-            }*/
-
             return this.vehicleBuilder.import(vehicleDto);
         }
 
@@ -294,7 +226,7 @@ namespace CarManagement.Services
                      FROM enrollment
                      WHERE serial = '{vehicle.Enrollment.Serial}' 
                      AND number = {vehicle.Enrollment.Number};";
-            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
+            int enrollmentId = (int)executeScalarQuery(connectionString, query);
 
             sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
                     VALUES ({enrollmentId}, {vehicle.Color}, {vehicle.Engine.HorsePower}, {vehicle.Engine.IsStarted});";
@@ -363,107 +295,6 @@ namespace CarManagement.Services
             connection.Close();
 
             return result;
-        }
-
-        public IVehicle get(IEnrollment enrollment)
-        {
-            int enrollmentId = getEnrollmentId(this.connectionString, enrollment);//0-enrollmentId-NULL
-
-            string queryGetVehicle = "SELECT * FROM vehicle WHERE enrollmentId=" + enrollmentId + "";
-            String queryGetDoors = "SELECT * FORM door where vehicleId=" + enrollmentId + "";
-
-            VehicleDto vehicleDto = new VehicleDto();
-
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Serial = enrollment.Serial;
-            enrollmentDto.Number = enrollment.Number;
-            vehicleDto.Enrollment = enrollmentDto;
-
-            SqlConnection connection = new SqlConnection(this.connectionString);
-            connection.Open();
-            SqlCommand sentenceGetVehicle = new SqlCommand(queryGetVehicle, connection);
-            SqlDataReader reader = sentenceGetVehicle.ExecuteReader();
-            reader = sentenceGetVehicle.ExecuteReader();
-            reader.Read();
-            
-            vehicleDto.Color = (CarColor) (int) reader["color"];
-
-            vehicleDto.Engine = new EngineDto();
-            vehicleDto.Engine.HorsePower = (int)reader["engineHorsePower"];
-            vehicleDto.Engine.IsStarted = Convert.ToBoolean( reader["engineIsStarted"]);
-
-            List<IDoor> doors = new List<IDoor>();
-            SqlCommand sentenceGetDoors = new SqlCommand(queryGetDoors, connection);
-            reader = sentenceGetDoors.ExecuteReader();
-            reader.Read();
-            connection.Close();
-
-            //falta wheels y doors
-            //DoorDto[] = new DoorDto();
-            
-            
-            List<IWheel> wheels = new List<IWheel>();
-            vehicleDto.Doors = doors.ToArray();
-            vehicleDto.Wheels = wheels.ToArray();
-            IVehicle car =  vehicleBuilder.import(vehicleDto);
-
-            throw new NotImplementedException();
-        }
-
-
-        public IEnumerable<IVehicle> getAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void set(IVehicle vehicle)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static int executeScalarQuery(string connectionString, string query)
-        {
-            int result;
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.Open();
-            SqlCommand command = new SqlCommand(query, connection);
-            result = Convert.ToInt32(command.ExecuteScalar());
-            connection.Close();
-
-            return result;
-        }
-
-        private bool existsEntollment(String connectionString, IEnrollment enrollment)
-        {
-            string serial = enrollment.Serial;
-            int number = enrollment.Number;
-            bool existeEnrollment = false;
-
-            string sentenceExistsEnrollment = "SELECT count(*) FROM enrollment " +
-                "WHERE serial=" + serial + " AND number=" + number + ";";
-            int enrollmentId = 0;
-            enrollmentId = executeScalarQuery(connectionString, sentenceExistsEnrollment);
-
-            if (enrollmentId != 0)
-            {
-                existeEnrollment = true;
-            }
-
-            return existeEnrollment;
-        }
-
-        private int getEnrollmentId(String connectionString, IEnrollment enrollment) 
-        {
-            string serial = enrollment.Serial;
-            int number = enrollment.Number;
-            int enrollmentId = 0;
-
-            string sentenceGetEnrollmentId = "SELECT id FROM enrollment " +
-                "WHERE serial=" + serial + " AND number=" + number + ";";
-            enrollmentId = executeScalarQuery(connectionString, sentenceGetEnrollmentId);
-
-
-            return enrollmentId;
         }
     }
 }
