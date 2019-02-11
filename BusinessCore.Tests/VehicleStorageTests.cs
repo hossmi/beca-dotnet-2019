@@ -99,7 +99,8 @@ namespace BusinessCore.Tests
             Negassert.mustFail(() =>
             {
                 vehicle = vehicleStorage.get(enrollmentProvider.DefaultEnrollment);
-            });
+            }
+            );
         }
 
         [TestMethod]

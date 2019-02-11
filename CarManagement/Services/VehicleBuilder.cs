@@ -349,7 +349,6 @@ namespace CarManagement.Services
         }
         private class Door :IDoor
         {
-
             private bool openDoor;
 
             public Door()
@@ -359,7 +358,7 @@ namespace CarManagement.Services
 
             public Door(bool openClose)
             {
-                Asserts.isFalse(this.openDoor);
+                //Asserts.isFalse(this.openDoor);
                 this.openDoor = openClose;
             }
 

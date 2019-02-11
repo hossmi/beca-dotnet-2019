@@ -64,34 +64,31 @@ namespace CarManagement.Services
             int enrollmentId = getEnrollmentId(this.connectionString, enrollment);//0-enrollmentId-NULL
 
             string queryGetVehicle = "SELECT * FROM vehicle WHERE enrollmentId=" + enrollmentId + "";
-            
+
+            VehicleDto vehicleDto = new VehicleDto();
 
             EnrollmentDto enrollmentDto = new EnrollmentDto();
             enrollmentDto.Serial = enrollment.Serial;
             enrollmentDto.Number = enrollment.Number;
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto.Enrollment = enrollmentDto;
-
             SqlConnection connection = new SqlConnection(this.connectionString);
             connection.Open();
             SqlCommand sentenceGetVehicle = new SqlCommand(queryGetVehicle, connection);
-
-
             SqlDataReader reader = sentenceGetVehicle.ExecuteReader();
             reader.Read();
-
+            vehicleDto.Enrollment = enrollmentDto;
             vehicleDto.Color = (CarColor)reader["color"];
-
             vehicleDto.Engine = new EngineDto();
             vehicleDto.Engine.HorsePower = (int)reader["engineHorsePower"];
             vehicleDto.Engine.IsStarted = (bool)reader["engineIsStarted"];
+            connection.Close();
 
-
-            vehicleDto.Color = (CarColor)reader["engineIsStarted"];
+            //falta wheels y doors
+            //DoorDto[] = new DoorDto();
 
             connection.Close();
-            
 
+            
+            
             IVehicle car =  vehicleBuilder.import(vehicleDto);
 
             throw new NotImplementedException();
@@ -139,7 +136,7 @@ namespace CarManagement.Services
             return existeEnrollment;
         }
 
-        private int getEnrollmentId(String connectionString, IEnrollment enrollment)
+        private int getEnrollmentId(String connectionString, IEnrollment enrollment) 
         {
             string serial = enrollment.Serial;
             int number = enrollment.Number;
