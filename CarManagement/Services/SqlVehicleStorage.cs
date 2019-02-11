@@ -48,7 +48,7 @@ namespace CarManagement.Services
             string sentenceClearEnrollment = "DELETE FROM enrollment";
             string sentenceClearVehicle = "DELETE FROM vehicle";
             string sentenceClearWherl = "DELETE FROM wheel";
-            string sentenceClearDoor = "DELETE FORM door";
+            string sentenceClearDoor = "DELETE FROM door";
             List<String> deleteTables = new List<String>();
             deleteTables.Add(sentenceClearDoor);
             deleteTables.Add(sentenceClearWherl);
@@ -186,11 +186,8 @@ namespace CarManagement.Services
                         vehicles.Add(vehicle);
                     }
                 }
-
-
                 connection.Close();
             }
-
             return vehicles;
         }
 
@@ -213,7 +210,6 @@ namespace CarManagement.Services
                     }
                 }
             }
-
             return wheelsDto;
         }
 
@@ -322,6 +318,5 @@ namespace CarManagement.Services
 
             return result;
         }
-
     }
 }
