@@ -60,7 +60,7 @@ namespace BusinessCore.Tests
         {
             drop(this.connectionString, this.destructionScript);
             create(this.connectionString, this.creationScript);
-            fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
+            fullfillWithSampleData(this.connectionString, this.fakeStorage.get());
         }
 
         [TestMethod]

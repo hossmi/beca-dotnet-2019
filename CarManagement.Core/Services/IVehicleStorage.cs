@@ -11,6 +11,6 @@ namespace CarManagement.Core.Services
         void set(IVehicle vehicle);
         IVehicle get(IEnrollment enrollment);
         void clear();
-        IEnumerable<IVehicle> getAll();
+        IEnumerable<IVehicle> get();
     }
 }

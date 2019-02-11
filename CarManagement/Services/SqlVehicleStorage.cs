@@ -36,7 +36,7 @@ namespace CarManagement.Services
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IVehicle> getAll()
+        public IEnumerable<IVehicle> get()
         {
             throw new NotImplementedException();
         }

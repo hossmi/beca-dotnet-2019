@@ -45,7 +45,7 @@ namespace CarManagement.Services
             return vehicleResult;
         }
 
-        public IEnumerable<IVehicle> getAll()
+        public IEnumerable<IVehicle> get()
         {
             throw new System.NotImplementedException();
         }
