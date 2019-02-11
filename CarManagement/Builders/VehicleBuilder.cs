@@ -11,20 +11,14 @@ namespace CarManagement.Builders
         private int numDoors;
         private int numWheels;
         private int horsePower;
-        private int enrollment;
         private readonly IEnrollmentProvider enrollmentProvider;
 
-        public VehicleBuilder()
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.numWheels = 0;
             this.numDoors = 0;
             this.horsePower = 0;
             this.color = CarColor.Red;
-            this.enrollment = 000000;
-        }
-
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
-        {
             this.enrollmentProvider = enrollmentProvider;
         }
 
@@ -81,18 +75,10 @@ namespace CarManagement.Builders
                 wheels.Add(wheel);
             }
 
-            string enrollment = getNextEnrollment();
+            IEnrollment enrollment = this.enrollmentProvider.getNewEnrollment();
 
             Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
             return vehicle;
-        }
-
-        private string getNextEnrollment()
-        {
-            this.enrollment++;
-            string enrollmentString = this.enrollment.ToString();
-            return enrollmentString;
-
         }
     }
 }
