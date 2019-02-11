@@ -64,31 +64,41 @@ namespace CarManagement.Services
             int enrollmentId = getEnrollmentId(this.connectionString, enrollment);//0-enrollmentId-NULL
 
             string queryGetVehicle = "SELECT * FROM vehicle WHERE enrollmentId=" + enrollmentId + "";
+            String queryGetDoors = "SELECT * FORM door where vehicleId=" + enrollmentId + "";
 
             VehicleDto vehicleDto = new VehicleDto();
 
             EnrollmentDto enrollmentDto = new EnrollmentDto();
             enrollmentDto.Serial = enrollment.Serial;
             enrollmentDto.Number = enrollment.Number;
+            vehicleDto.Enrollment = enrollmentDto;
+
             SqlConnection connection = new SqlConnection(this.connectionString);
             connection.Open();
             SqlCommand sentenceGetVehicle = new SqlCommand(queryGetVehicle, connection);
             SqlDataReader reader = sentenceGetVehicle.ExecuteReader();
+            reader = sentenceGetVehicle.ExecuteReader();
             reader.Read();
-            vehicleDto.Enrollment = enrollmentDto;
-            vehicleDto.Color = (CarColor)reader["color"];
+            
+            vehicleDto.Color = (CarColor) (int) reader["color"];
+
             vehicleDto.Engine = new EngineDto();
             vehicleDto.Engine.HorsePower = (int)reader["engineHorsePower"];
-            vehicleDto.Engine.IsStarted = (bool)reader["engineIsStarted"];
+            vehicleDto.Engine.IsStarted = Convert.ToBoolean( reader["engineIsStarted"]);
+
+            List<IDoor> doors = new List<IDoor>();
+            SqlCommand sentenceGetDoors = new SqlCommand(queryGetDoors, connection);
+            reader = sentenceGetDoors.ExecuteReader();
+            reader.Read();
             connection.Close();
 
             //falta wheels y doors
             //DoorDto[] = new DoorDto();
-
-            connection.Close();
-
             
             
+            List<IWheel> wheels = new List<IWheel>();
+            vehicleDto.Doors = doors.ToArray();
+            vehicleDto.Wheels = wheels.ToArray();
             IVehicle car =  vehicleBuilder.import(vehicleDto);
 
             throw new NotImplementedException();
@@ -111,7 +121,7 @@ namespace CarManagement.Services
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             SqlCommand command = new SqlCommand(query, connection);
-            result = (int)command.ExecuteScalar();
+            result = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
 
             return result;
