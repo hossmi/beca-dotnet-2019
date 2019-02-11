@@ -32,7 +32,7 @@ namespace CarManagement.Services
         private const string SELECT_ENROLLMENT_WITH_PARAMS = "SELECT id FROM enrollment " +
             "WHERE (serial = @serial AND number = @number)";
         private const string SELECT_ENROLLMENTS = "SELECT serial, number, id FROM enrollment";
-        private const string SELECT_VEHICLE = "SELECT color, engineHorsePower, engineIsStarted FROM vehicle " +
+        private const string SELECT_VEHICLE = "SELECT enrollmentId, color, engineHorsePower, engineIsStarted FROM vehicle " +
             "WHERE (enrollmentId=@id)";
         private const string SELECT_WHEEL = "SELECT id, pressure FROM wheel " +
             "WHERE (vehicleId=@vehicleId)";
@@ -230,6 +230,7 @@ namespace CarManagement.Services
         public void set(IVehicle vehicle)
         {
             int enrollmentId;
+            int vehicleId;
 
             using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENT_WITH_PARAMS, this.connection))
             {
@@ -238,7 +239,13 @@ namespace CarManagement.Services
                 enrollmentId = Convert.ToInt32(command.ExecuteScalar());
             }
 
-            if (enrollmentId > 0)
+            using (SqlCommand command = new SqlCommand(SELECT_VEHICLE, this.connection))
+            {
+                command.Parameters.AddWithValue("@id", enrollmentId);
+                vehicleId = Convert.ToInt32(command.ExecuteScalar());
+            }
+
+            if (enrollmentId >0 && vehicleId>0)
             {
                 int updatedVehicles = 0;
                 int updatedWheels = 0;
