@@ -262,9 +262,11 @@ namespace CarManagement.Services
                         querier = new SqlCommand(UPDATE_VEHICLE_SKEL, sqlDbConnection);
                         querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
                         SqlDataReader sqlVehicleReader = querier.ExecuteReader();
+                        throw new NotImplementedException();
                     }
                     else
                     {
+                        throw new NotImplementedException();
                         //insert it
                     }
                 }
