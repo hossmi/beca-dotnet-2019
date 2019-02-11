@@ -1,9 +1,9 @@
-﻿using CarManagement.Models;
-using CarManagement.Services;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace BusinessCore.Tests
 {
-    public class FakeEnrollmentProvider : IEnrollmentProvider
+    public class SingleEnrollmentProvider : IEnrollmentProvider
     {
         private class Enrollment : IEnrollment
         {
@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
             }
         }
 
-        public FakeEnrollmentProvider()
+        public SingleEnrollmentProvider()
         {
             this.DefaultEnrollment = new Enrollment(serial: "XXX", number: 666);
         }
