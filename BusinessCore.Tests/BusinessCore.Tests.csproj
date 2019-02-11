@@ -81,6 +81,7 @@
     <Compile Include="FunctionalProgramingTests\AlexLloretFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\CeliaFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\AMuñozFunctionalProgrammingTests.cs" />
+    <Compile Include="JVBBSqlVehicleStorageTests.cs" />
     <Compile Include="SqlVehicleStorageTests.cs" />
     <Compile Include="VehicleStorageTests.cs" />
     <Compile Include="VehicleTests.cs" />
