@@ -26,7 +26,21 @@ namespace CarManagement.Services
             this.vehicleBuilder = vehicleBuilder;
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get
+            {
+                const string COUNT_QUERRY_ENROLL = "SELECT COUNT(*) FROM enrollment";
+                using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
+                {
+                    SqlCommand sqlOperation = new SqlCommand(COUNT_QUERRY_ENROLL, sqlDbConnection);
+                    sqlDbConnection.Open();
+                    int enrollmentCount = (int)sqlOperation.ExecuteScalar();
+                    sqlDbConnection.Close();
+                    return enrollmentCount;
+                }
+            }
+        }
 
         public void clear()
         {
@@ -60,9 +74,13 @@ namespace CarManagement.Services
         {
             const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment WHERE serial=@serial AND number=@number";
 
+            IVehicle queriedVehicleOrNull;
+
             using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
             {
                 SqlCommand querier = new SqlCommand(QUERY_ENROLL_SKEL, sqlDbConnection);
+                querier.Parameters.AddWithValue("@serial", enrollment.Serial);
+                querier.Parameters.AddWithValue("@number", enrollment.Number);
                 sqlDbConnection.Open();
 
                 using (SqlDataReader sqlReader = querier.ExecuteReader())
@@ -73,55 +91,66 @@ namespace CarManagement.Services
                         querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
                         SqlDataReader sqlVehicleReader = querier.ExecuteReader();
 
-
-                        List<DoorDto> doorList = new List<DoorDto>();
-                        querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
-                        querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-                        using (SqlDataReader sqlDoorReader = querier.ExecuteReader())
+                        if (sqlVehicleReader.Read())
                         {
-                            while (sqlDoorReader.Read())
-                            {
-                                doorList.Add(new DoorDto { IsOpen = Convert.ToBoolean(sqlDoorReader["isOpen"]) });
-                            }
-                        }
 
-                        List<WheelDto> wheelList = new List<WheelDto>();
-                        querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
-                        querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-                        using (SqlDataReader sqlWheelReader = querier.ExecuteReader())
-                        {
-                            while (sqlWheelReader.Read())
+                            List<DoorDto> doorList = new List<DoorDto>();
+                            querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
+                            querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                            using (SqlDataReader sqlDoorReader = querier.ExecuteReader())
                             {
-                                wheelList.Add(new WheelDto { Pressure = Convert.ToDouble(sqlWheelReader["pressure"]) });
-                            }
-                        }
-
-                        return this.vehicleBuilder
-                            .import(
-                                new VehicleDto
+                                while (sqlDoorReader.Read())
                                 {
-                                    Enrollment = new EnrollmentDto
-                                    {
-                                        Serial = sqlReader["serial"].ToString(),
-                                        Number = Convert.ToInt32(sqlReader["number"]),
-                                    },
-                                    Engine = new EngineDto
-                                    {
-                                        IsStarted = Convert.ToBoolean(sqlVehicleReader["engineIsStarted"]),
-                                        HorsePower = Convert.ToInt16(sqlVehicleReader["engineHorsePower"]),
-                                    },
-                                    Color = (CarColor)Convert.ToInt32(sqlVehicleReader["color"]),
-                                    Doors = doorList.ToArray(),
-                                    Wheels = wheelList.ToArray(),
+                                    doorList.Add(new DoorDto { IsOpen = Convert.ToBoolean(sqlDoorReader["isOpen"]) });
                                 }
-                            );
+                            }
+
+                            List<WheelDto> wheelList = new List<WheelDto>();
+                            querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
+                            querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                            using (SqlDataReader sqlWheelReader = querier.ExecuteReader())
+                            {
+                                while (sqlWheelReader.Read())
+                                {
+                                    wheelList.Add(new WheelDto { Pressure = Convert.ToDouble(sqlWheelReader["pressure"]) });
+                                }
+                            }
+
+                            queriedVehicleOrNull = this.vehicleBuilder
+                                .import(
+                                    new VehicleDto
+                                    {
+                                        Enrollment = new EnrollmentDto
+                                        {
+                                            Serial = sqlReader["serial"].ToString(),
+                                            Number = Convert.ToInt32(sqlReader["number"]),
+                                        },
+                                        Engine = new EngineDto
+                                        {
+                                            IsStarted = Convert.ToBoolean(sqlVehicleReader["engineIsStarted"]),
+                                            HorsePower = Convert.ToInt16(sqlVehicleReader["engineHorsePower"]),
+                                        },
+                                        Color = (CarColor)Convert.ToInt32(sqlVehicleReader["color"]),
+                                        Doors = doorList.ToArray(),
+                                        Wheels = wheelList.ToArray(),
+                                    }
+                                );
+                        }
+                        else
+                        {
+                            queriedVehicleOrNull = null;
+                        }
                     }
                     else
                     {
-                        return null;
+                        queriedVehicleOrNull = null;
                     }
                 }
+
+                sqlDbConnection.Close();
             }
+
+            return queriedVehicleOrNull;
         }
 
         public IEnumerable<IVehicle> getAll()
@@ -226,14 +255,18 @@ namespace CarManagement.Services
             #region "SQL skels CONSTS"
             const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment " +
                 "WHERE serial=@serial AND number=@number";
+            const string QUERY_DOOR_SKEL = "SELECT id FROM door " +
+                "WHERE vehicleId=@id";
+            const string QUERY_WHEEL_SKEL = "SELECT id FROM wheel " +
+                "WHERE  vehicleId=@id";
 
             const string UPDATE_VEHICLE_SKEL = "UPDATE vehicle" +
-                "(color, engineIsStarted, engineHorsePower)" +
-                " VALUES (@color, @engineIsStarted, @engineHorsePower) WHERE enrollmentId=@id";
-            const string UPDATE_DOOR_SKEL = "UPDATE door(isOpen)" +
-                " VALUES (@isOpen) WHERE vehicleId=@id";
-            const string UPDATE_WHEEL_SKEL = "UPDATE vehicle(pressure)" +
-                " VALUES (@pressure) WHERE vehicleId=@id";
+                " SET color=@color, engineIsStarted=@engineIsStarted, engineHorsePower=@engineHorsePower" +
+                " WHERE enrollmentId=@id";
+            const string UPDATE_DOOR_SKEL = "UPDATE door SET isOpen=@isOpen " +
+                "WHERE vehicleId=@vehicleId AND id=@id";
+            const string UPDATE_WHEEL_SKEL = "UPDATE wheel SET pressure=@pressure " +
+                "WHERE vehicleId=@vehicleId AND id=@id";
 
             const string INSERT_ENROLL_SKEL = "INSERT INTO enrollment " +
                 "(serial, number)" +
@@ -252,22 +285,83 @@ namespace CarManagement.Services
 
             using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
             {
-                SqlCommand querier = new SqlCommand(QUERY_ENROLL_SKEL, sqlDbConnection);
+                SqlCommand sqlOperation = new SqlCommand(QUERY_ENROLL_SKEL, sqlDbConnection);
+                sqlOperation.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                sqlOperation.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
                 sqlDbConnection.Open();
 
-                using (SqlDataReader sqlReader = querier.ExecuteReader())
+                using (SqlDataReader sqlReader = sqlOperation.ExecuteReader())
                 {
                     if (sqlReader.Read())
                     {
-                        querier = new SqlCommand(UPDATE_VEHICLE_SKEL, sqlDbConnection);
-                        querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-                        SqlDataReader sqlVehicleReader = querier.ExecuteReader();
-                        throw new NotImplementedException();
+                        sqlOperation = new SqlCommand(UPDATE_VEHICLE_SKEL, sqlDbConnection);
+                        sqlOperation.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                        sqlOperation.Parameters.AddWithValue("@color", vehicle.Color);
+                        sqlOperation.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                        sqlOperation.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                        sqlOperation.ExecuteNonQuery();
+
+                        int i = 0;
+                        sqlOperation = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
+                        sqlOperation.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                        using (SqlDataReader sqlDoorReader = sqlOperation.ExecuteReader())
+                        {
+                            while (sqlDoorReader.Read())
+                            {
+                                sqlOperation = new SqlCommand(UPDATE_DOOR_SKEL, sqlDbConnection);
+                                sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
+                                sqlOperation.Parameters.AddWithValue("@id", (int)sqlDoorReader["id"]);
+                                sqlOperation.Parameters.AddWithValue("@isOpen", vehicle.Doors[i].IsOpen);
+                                sqlOperation.ExecuteNonQuery();
+                                i++;
+                            }
+                        }
+
+                        i = 0;
+                        sqlOperation = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
+                        sqlOperation.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
+                        using (SqlDataReader sqlWheelReader = sqlOperation.ExecuteReader())
+                        {
+                            while (sqlWheelReader.Read())
+                            {
+                                sqlOperation = new SqlCommand(UPDATE_WHEEL_SKEL, sqlDbConnection);
+                                sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
+                                sqlOperation.Parameters.AddWithValue("@id", (int)sqlWheelReader["id"]);
+                                sqlOperation.Parameters.AddWithValue("@pressure", vehicle.Wheels[i].Pressure);
+                                sqlOperation.ExecuteNonQuery();
+                                i++;
+                            }
+                        }
                     }
                     else
                     {
-                        throw new NotImplementedException();
-                        //insert it
+                        SqlCommand inserter = new SqlCommand(INSERT_ENROLL_SKEL, sqlDbConnection);
+                        inserter.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                        inserter.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                        int databaseEnrollmentId = (int)inserter.ExecuteScalar();
+
+                        inserter = new SqlCommand(INSERT_VEHICLE_SKEL, sqlDbConnection);
+                        inserter.Parameters.AddWithValue("@enrollmentId", databaseEnrollmentId);
+                        inserter.Parameters.AddWithValue("@color", vehicle.Color);
+                        inserter.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                        inserter.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                        inserter.ExecuteNonQuery();
+
+                        foreach (IDoor door in vehicle.Doors)
+                        {
+                            inserter = new SqlCommand(INSERT_DOOR_SKEL, sqlDbConnection);
+                            inserter.Parameters.AddWithValue("@vehicleId", databaseEnrollmentId);
+                            inserter.Parameters.AddWithValue("@isOpen", door.IsOpen);
+                            inserter.ExecuteNonQuery();
+                        }
+
+                        foreach (IWheel wheel in vehicle.Wheels)
+                        {
+                            inserter = new SqlCommand(INSERT_WHEEL_SKEL, sqlDbConnection);
+                            inserter.Parameters.AddWithValue("@vehicleId", databaseEnrollmentId);
+                            inserter.Parameters.AddWithValue("@pressure", wheel.Pressure);
+                            inserter.ExecuteNonQuery();
+                        }
                     }
                 }
             }
