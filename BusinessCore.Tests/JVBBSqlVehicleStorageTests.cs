@@ -7,6 +7,7 @@ using System.IO;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using CarManagement.Extensions.Filters;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -60,7 +61,7 @@ namespace BusinessCore.Tests
         {
             drop(this.connectionString, this.destructionScript);
             create(this.connectionString, this.creationScript);
-            fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
+            fullfillWithSampleData(this.connectionString, this.fakeStorage.get());
         }
 
         [TestMethod]

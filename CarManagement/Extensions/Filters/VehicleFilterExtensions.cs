@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Extensions.Filters
 {
@@ -85,5 +87,14 @@ namespace CarManagement.Extensions.Filters
             foreach (TIn item in items)
                 yield return selectDelegate(item);
         }
+
+        public static IVehicle get(this IVehicleStorage vehicleStorage, IEnrollment enrollment)
+        {
+            return vehicleStorage
+                .get()
+                .whereEnrollmentIs(enrollment)
+                .Single();
+        }
+
     }
 }

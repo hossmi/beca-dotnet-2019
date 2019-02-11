@@ -26,7 +26,7 @@ namespace BusinessCore.Tests
             double pressure = 0;
 
             var returnedValues = this.vehicleStorage
-              .getAll()
+              .get()
               .Where(vehicle => vehicle.Wheels
                   .All(wheel => wheel.Pressure == 3.0))
               .Select(vehicle =>
@@ -49,7 +49,7 @@ namespace BusinessCore.Tests
         {
                        var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(vehiclegroup => 
                     new 
@@ -79,7 +79,7 @@ namespace BusinessCore.Tests
         public void from_the_two_red_cars_with_opened_doors_get_pressure_value_and_engine_status()
         {
             var vehicles = this.vehicleStorage
-               .getAll()
+               .get()
                .Where(v => v.Color == CarColor.Red)
                .Where(v => v.Doors
                    .Any(door => door.IsOpen == true))
@@ -90,6 +90,7 @@ namespace BusinessCore.Tests
                        EngineStatus = vehicle.Engine.IsStarted
                    })
                .ToArray();
+
 
             Assert.AreEqual(2, vehicles.Length);
             Type itemTime = vehicles[0].GetType();
