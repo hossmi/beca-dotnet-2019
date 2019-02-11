@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Filters\VehicleFilterExtensions.cs" />
+    <Compile Include="Services\SqlVehicleStorage.cs" />
     <Compile Include="Services\VehicleBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AbstractVehicleStorage.cs" />
