@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
         {
             int count = 0;
             count = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Black)
                 .SelectMany(vehicle => vehicle.Doors
                 .Where(door => door.IsOpen == false))

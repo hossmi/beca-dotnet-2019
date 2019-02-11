@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using System.Collections;
 
 namespace CarManagement.Services
 {
@@ -87,145 +88,151 @@ namespace CarManagement.Services
             this.connection.Close();
         }
 
-        public IVehicle get(IEnrollment enrollment)
+        public IVehicleQuery get()
         {
-            int enrollmentId;
-
-            using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENT_WITH_PARAMS, this.connection))
-            {
-                command.Parameters.AddWithValue("@serial", enrollment.Serial);
-                command.Parameters.AddWithValue("@number", enrollment.Number);
-                enrollmentId = Convert.ToInt32(command.ExecuteScalar());
-            }
-
-            if (enrollmentId > 0)
-            {
-                EnrollmentDto enrollmentdto = new EnrollmentDto();
-                enrollmentdto.Number = enrollment.Number;
-                enrollmentdto.Serial = enrollment.Serial;
-
-                SqlCommand commandVehicle = new SqlCommand(SELECT_VEHICLE, this.connection);
-                commandVehicle.Parameters.AddWithValue("@id", enrollmentId);
-                SqlDataReader vehicleResults = commandVehicle.ExecuteReader();
-
-                vehicleResults.Read();
-
-                if (vehicleResults.HasRows)
-                {
-                    VehicleDto vehicle = new VehicleDto();
-                    vehicle.Enrollment = enrollmentdto;
-                    vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
-                    EngineDto engine = new EngineDto();
-                    engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
-                    engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
-                    vehicle.Engine = engine;
-
-                    SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
-                    commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
-                    SqlDataReader wheelsResults = commandWheels.ExecuteReader();
-
-                    if (wheelsResults.HasRows)
-                    {
-                        List<WheelDto> wheels = new List<WheelDto>();
-                        while (wheelsResults.Read())
-                        {
-                            WheelDto wheel = new WheelDto();
-                            wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
-                            wheels.Add(wheel);
-                        }
-                        vehicle.Wheels = wheels.ToArray();
-                    }
-
-                    SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
-                    commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
-                    SqlDataReader doorsResults = commandDoors.ExecuteReader();
-
-                    if (doorsResults.HasRows)
-                    {
-                        List<DoorDto> doors = new List<DoorDto>();
-                        while (doorsResults.Read())
-                        {
-                            DoorDto door = new DoorDto();
-                            door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
-                            doors.Add(door);
-                        }
-                        vehicle.Doors = doors.ToArray();
-                    }
-                    return this.vehicleBuilder.import(vehicle);
-                }
-            }
-
-            return null;
+            return new PrvVehicleQuery(this.connectionString,this.vehicleBuilder);
         }
 
-        public IEnumerable<IVehicle> getAll()
-        {
-            List<IVehicle> vehicleCollection = new List<IVehicle>();
-            SqlDataReader enrollmentResults;
+        /*
+public IVehicle get(IEnrollment enrollment)
+{
+   int enrollmentId;
 
-            using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENTS, this.connection))
-            {
-                enrollmentResults = command.ExecuteReader();
-            }
+   using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENT_WITH_PARAMS, this.connection))
+   {
+       command.Parameters.AddWithValue("@serial", enrollment.Serial);
+       command.Parameters.AddWithValue("@number", enrollment.Number);
+       enrollmentId = Convert.ToInt32(command.ExecuteScalar());
+   }
 
-            while (enrollmentResults.Read())
-            {
-                EnrollmentDto enrollment = new EnrollmentDto();
-                enrollment.Serial = enrollmentResults["serial"].ToString();
-                enrollment.Number = Convert.ToInt32(enrollmentResults["number"]);
-                int enrollmentId = (int)enrollmentResults["id"];
+   if (enrollmentId > 0)
+   {
+       EnrollmentDto enrollmentdto = new EnrollmentDto();
+       enrollmentdto.Number = enrollment.Number;
+       enrollmentdto.Serial = enrollment.Serial;
+
+       SqlCommand commandVehicle = new SqlCommand(SELECT_VEHICLE, this.connection);
+       commandVehicle.Parameters.AddWithValue("@id", enrollmentId);
+       SqlDataReader vehicleResults = commandVehicle.ExecuteReader();
+
+       vehicleResults.Read();
+
+       if (vehicleResults.HasRows)
+       {
+           VehicleDto vehicle = new VehicleDto();
+           vehicle.Enrollment = enrollmentdto;
+           vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
+           EngineDto engine = new EngineDto();
+           engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
+           engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
+           vehicle.Engine = engine;
+
+           SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
+           commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
+           SqlDataReader wheelsResults = commandWheels.ExecuteReader();
+
+           if (wheelsResults.HasRows)
+           {
+               List<WheelDto> wheels = new List<WheelDto>();
+               while (wheelsResults.Read())
+               {
+                   WheelDto wheel = new WheelDto();
+                   wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
+                   wheels.Add(wheel);
+               }
+               vehicle.Wheels = wheels.ToArray();
+           }
+
+           SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
+           commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
+           SqlDataReader doorsResults = commandDoors.ExecuteReader();
+
+           if (doorsResults.HasRows)
+           {
+               List<DoorDto> doors = new List<DoorDto>();
+               while (doorsResults.Read())
+               {
+                   DoorDto door = new DoorDto();
+                   door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
+                   doors.Add(door);
+               }
+               vehicle.Doors = doors.ToArray();
+           }
+           return this.vehicleBuilder.import(vehicle);
+       }
+   }
+
+   return null;
+}
+
+public IEnumerable<IVehicle> get()
+{
+   List<IVehicle> vehicleCollection = new List<IVehicle>();
+   SqlDataReader enrollmentResults;
+
+   using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENTS, this.connection))
+   {
+       enrollmentResults = command.ExecuteReader();
+   }
+
+   while (enrollmentResults.Read())
+   {
+       EnrollmentDto enrollment = new EnrollmentDto();
+       enrollment.Serial = enrollmentResults["serial"].ToString();
+       enrollment.Number = Convert.ToInt32(enrollmentResults["number"]);
+       int enrollmentId = (int)enrollmentResults["id"];
 
 
 
-                SqlCommand commandVehicle = new SqlCommand(SELECT_VEHICLE, this.connection);
-                commandVehicle.Parameters.AddWithValue("@id", enrollmentId);
-                SqlDataReader vehicleResults = commandVehicle.ExecuteReader();
+       SqlCommand commandVehicle = new SqlCommand(SELECT_VEHICLE, this.connection);
+       commandVehicle.Parameters.AddWithValue("@id", enrollmentId);
+       SqlDataReader vehicleResults = commandVehicle.ExecuteReader();
 
-                vehicleResults.Read();
+       vehicleResults.Read();
 
-                VehicleDto vehicle = new VehicleDto();
-                vehicle.Enrollment = enrollment;
-                vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
-                EngineDto engine = new EngineDto
-                {
-                    HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]),
-                    IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]),
+       VehicleDto vehicle = new VehicleDto();
+       vehicle.Enrollment = enrollment;
+       vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
+       EngineDto engine = new EngineDto
+       {
+           HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]),
+           IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]),
 
-                };
-                vehicle.Engine = engine;
+       };
+       vehicle.Engine = engine;
 
-                SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
-                commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
-                SqlDataReader wheelsResults = commandWheels.ExecuteReader();
+       SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
+       commandWheels.Parameters.AddWithValue("@vehicleId", enrollmentId);
+       SqlDataReader wheelsResults = commandWheels.ExecuteReader();
 
-                List<WheelDto> wheels = new List<WheelDto>();
-                while (wheelsResults.Read())
-                {
-                    WheelDto wheel = new WheelDto();
-                    wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
-                    wheels.Add(wheel);
-                }
-                vehicle.Wheels = wheels.ToArray();
+       List<WheelDto> wheels = new List<WheelDto>();
+       while (wheelsResults.Read())
+       {
+           WheelDto wheel = new WheelDto();
+           wheel.Pressure = Convert.ToDouble(wheelsResults["pressure"]);
+           wheels.Add(wheel);
+       }
+       vehicle.Wheels = wheels.ToArray();
 
-                SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
-                commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
-                SqlDataReader doorsResults = commandDoors.ExecuteReader();
+       SqlCommand commandDoors = new SqlCommand(SELECT_DOOR, this.connection);
+       commandDoors.Parameters.AddWithValue("@vehicleId", enrollmentId);
+       SqlDataReader doorsResults = commandDoors.ExecuteReader();
 
-                List<DoorDto> doors = new List<DoorDto>();
-                while (doorsResults.Read())
-                {
-                    DoorDto door = new DoorDto();
-                    door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
-                    doors.Add(door);
-                }
-                vehicle.Doors = doors.ToArray();
+       List<DoorDto> doors = new List<DoorDto>();
+       while (doorsResults.Read())
+       {
+           DoorDto door = new DoorDto();
+           door.IsOpen = Convert.ToBoolean(doorsResults["isOpen"]);
+           doors.Add(door);
+       }
+       vehicle.Doors = doors.ToArray();
 
-                vehicleCollection.Add(this.vehicleBuilder.import(vehicle));
-            }
+       vehicleCollection.Add(this.vehicleBuilder.import(vehicle));
+   }
 
-            return vehicleCollection;
-        }
-
+   return vehicleCollection;
+}
+*/
         public void set(IVehicle vehicle)
         {
             int enrollmentId;
@@ -322,6 +329,63 @@ namespace CarManagement.Services
                     sqlCommand.Parameters.AddWithValue("@enrollmentKEY", enrollmentKEY);
                     insertedDoors = insertedDoors + sqlCommand.ExecuteNonQuery();
                 }
+            }
+        }
+
+        private class PrvVehicleQuery : IVehicleQuery
+        {
+            private string connectionString;
+            private IVehicleBuilder vehicleBuilder;
+
+            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
+            {
+                this.connectionString = connectionString;
+                this.vehicleBuilder = vehicleBuilder;
+            }
+
+            public IEnumerator<IVehicle> GetEnumerator()
+            {
+                return enumerate();
+            }
+
+            public IVehicleQuery whereColorIs(CarColor color)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEngineIsStarted(bool started)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentSerialIs(string serial)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerEquals(int horsePower)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
+            {
+                throw new NotImplementedException();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return enumerate();
+            }
+
+            private IEnumerator<IVehicle> enumerate()
+            {
+                throw new NotImplementedException();
             }
         }
     }
