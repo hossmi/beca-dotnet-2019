@@ -1,4 +1,5 @@
 ﻿using CarManagement.Models;
+using System.Collections.Generic;
 using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
@@ -11,6 +12,22 @@ namespace CarManagement.Services
         {
             this.enrollmentProvider = enrollmentProvider;
         }
+
+        private Engine engine;
+        private EngineDto engineDto;
+        
+        private Vehicle vehicle;
+        private VehicleDto vehicleDto;
+
+        private Door door;
+        private DoorDto doorDto;
+
+        private Wheel wheel;
+        private WheelDto wheelDto;
+
+        private IEnrollment enrollment;
+        private EnrollmentDto enrollmentDto;
+    
 
         public Engine convert(EngineDto engineDto)
         {
