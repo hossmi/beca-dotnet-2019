@@ -42,7 +42,7 @@ namespace BusinessCore.Tests
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
             IEnrollment querriedEnrollment = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.Count() == 2)
                 .Select( Vehicle => new
                 {
@@ -61,7 +61,7 @@ namespace BusinessCore.Tests
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
             
             IEnrollment[] querriedEnrollment = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => (vehicle.Wheels
                         .GroupBy( wheel => wheel.Pressure )
                         .OrderByDescending( group => group.Key)

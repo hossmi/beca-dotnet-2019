@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -22,7 +23,7 @@ namespace BusinessCore.Tests
         public void there_are_six_black_vehicles()
         {
             IVehicle[] vehicles = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
 
@@ -33,7 +34,7 @@ namespace BusinessCore.Tests
         public void there_are_four_started_engines()
         {
             IEnumerable<IEngine> engines = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
                 .Select(vehicle => vehicle.Engine);
 
@@ -44,7 +45,7 @@ namespace BusinessCore.Tests
         public void average_pressure_for_white_vehicles_is_3()
         {
             double pressure = this.vehicleStorageSoden
-               .getAll()
+               .get()
                .Where(vehicle => vehicle.Color == CarColor.White)
                .SelectMany(vehicle => vehicle.Wheels)
                .Select(wheel => wheel.Pressure)
@@ -57,7 +58,7 @@ namespace BusinessCore.Tests
         public void minimal_horsepower_is_100cv()
         {
             int horsePower = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Select( vehicle => vehicle.Engine.HorsePower)
                 .Min();
 
@@ -68,7 +69,7 @@ namespace BusinessCore.Tests
         public void maximal_horsepower_of_red_colored_and_stopped_cars_is_666cv()
         {
             int horsePower = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Red)
                 .Where(vehicle => vehicle.Engine.IsStarted == false)
                 .Select( vehicle => vehicle.Engine.HorsePower)
@@ -81,7 +82,7 @@ namespace BusinessCore.Tests
         public void from_the_two_white_cars_with_opened_doors_get_serial_enrollment_and_horsePower()
         {
             var vehicles = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color==CarColor.White)
                 .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen == true))
                 .Select( vehicle => new
@@ -101,7 +102,7 @@ namespace BusinessCore.Tests
         public void get_enrollment_serial_and_average_horse_power_grouping_by_enrollment_serial_ordering_by_serial_and_average_horse_power()
         {
             var vehicles = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select( group => new
                 {
@@ -131,7 +132,7 @@ namespace BusinessCore.Tests
         public void get_horsePower_of_green_vehicles_or_get_12354645_as_default()
         {
             var horsePowers = this.vehicleStorageSoden
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Green)
                 .Select(vehicle => vehicle.Engine.HorsePower)
                 .DefaultIfEmpty(12354645)

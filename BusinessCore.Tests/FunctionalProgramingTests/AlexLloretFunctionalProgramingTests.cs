@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
             //mínimo cv de los vehículos con ruedas con 3 de presión
             var pressure = 3.0;
             var horsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == pressure))
                 .Min(vehicle => vehicle.Engine.HorsePower);
                
@@ -37,7 +37,7 @@ namespace BusinessCore.Tests
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(vehicleGroup => new //solo para que compile el test
                 {
@@ -67,7 +67,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .Where( vehicle => vehicle.Color == CarColor.Red)
                 .Where( vehicle => vehicle.Doors.Count( door => door.IsOpen == true) >=1)
                 .Select(vehicle => new
