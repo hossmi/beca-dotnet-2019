@@ -114,9 +114,7 @@ namespace CarManagement.Services
                 {
                     VehicleDto vehicle = new VehicleDto();
                     vehicle.Enrollment = enrollmentdto;
-                    CarColor color;
-                    Enum.TryParse<CarColor>(vehicleResults["color"].ToString(), out color);
-                    vehicle.Color = color;
+                    vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
                     EngineDto engine = new EngineDto();
                     engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
                     engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
@@ -187,12 +185,13 @@ namespace CarManagement.Services
 
                 VehicleDto vehicle = new VehicleDto();
                 vehicle.Enrollment = enrollment;
-                CarColor color;
-                Enum.TryParse<CarColor>(vehicleResults["color"].ToString(), out color);
-                vehicle.Color = color;
-                EngineDto engine = new EngineDto();
-                engine.HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]);
-                engine.IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]);
+                vehicle.Color = (CarColor)Convert.ToInt32(vehicleResults["color"]);
+                EngineDto engine = new EngineDto
+                {
+                    HorsePower = Convert.ToInt32(vehicleResults["engineHorsePower"]),
+                    IsStarted = Convert.ToBoolean(vehicleResults["engineIsStarted"]),
+
+                };
                 vehicle.Engine = engine;
 
                 SqlCommand commandWheels = new SqlCommand(SELECT_WHEEL, this.connection);
