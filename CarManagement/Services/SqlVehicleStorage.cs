@@ -200,8 +200,9 @@ namespace CarManagement.Services
             con = new SqlConnection(this.connectionString);
             con.Open();
             string query;
-            query = "SELECT count(*) AS 'count' FROM enrollment" +
-                "WHERE serial =" + serial + "AND number =" + number;
+            query = "USE CarManagement;" +
+                "SELECT count(*) AS 'count' FROM enrollment " +
+                "WHERE serial = '" + serial + "' AND number = " + number;
             SqlCommand sentence = new SqlCommand(query, con);
             SqlDataReader reader = sentence.ExecuteReader();
             reader.Read();
