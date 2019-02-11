@@ -118,6 +118,7 @@ namespace BusinessCore.Tests
                 Engine = new Engine
                 {
                     IsStarted = true,
+                    HorsePower=1000,
                 },
                 Color = CarColor.Purple,
                 Doors = new Door[] { new Door{ IsOpen = false }, new Door { IsOpen = true }},
