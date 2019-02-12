@@ -138,6 +138,10 @@ namespace CarManagement.Services
             private readonly IVehicleBuilder vehicleBuilder;
             private CarColor color;
             private bool colorHasValue;
+            private bool isStartedHasValue;
+            private bool isStarted;
+            private IEnrollment enrollment;
+            private bool enrollmentHasValue;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -159,12 +163,16 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new NotImplementedException();
+                this.isStarted = started;
+                this.isStartedHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new NotImplementedException();
+                this.enrollment = enrollment;
+                this.enrollmentHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
@@ -182,7 +190,7 @@ namespace CarManagement.Services
                 throw new NotImplementedException();
             }
 
-        public void set(IVehicle vehicle)
+            public void set(IVehicle vehicle)
         {
             //this.vehicleBuilder.export(vehicle);
             string pushToEnrollmentb = "INSERT INTO enrollment(seria,number) output INSERTED.ID VALUES(@serial,@number)";

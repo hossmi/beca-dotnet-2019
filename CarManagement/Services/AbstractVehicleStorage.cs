@@ -91,28 +91,34 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new System.NotImplementedException();
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.IsStarted == started);
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new System.NotImplementedException();
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment == enrollment);
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new System.NotImplementedException();
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment.Serial == serial);
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new System.NotImplementedException();
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower == horsePower);
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new System.NotImplementedException();
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower >= min && vehicle.Engine.HorsePower <= max);
+                return this;
             }
+
 
             IEnumerator IEnumerable.GetEnumerator()
             {
