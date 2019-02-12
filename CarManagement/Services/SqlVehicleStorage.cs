@@ -432,6 +432,7 @@ namespace CarManagement.Services
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
+            private readonly IDictionary<string, string> filters;
             private CarColor color;
             private bool colorHasValue;
 
@@ -439,6 +440,7 @@ namespace CarManagement.Services
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
+                this.filters = new Dictionary<string, string>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -448,34 +450,50 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                this.color = color;
-                this.colorHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
+                this.filters[nameof(whereColorIs)] = $" v.color = {(int)color} ";
+
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
+                this.filters[nameof(whereEngineIsStarted)] = $" v.engineIsStarted = {(started ? 0 : 1)} ";
+
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
+                this.filters[nameof(whereEnrollmentIs)] = $" e.serial = '{enrollment.Serial}' AND e.number = {enrollment.Number} ";
+
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
+                this.filters[nameof(whereEnrollmentSerialIs)] = $" e.serial = '{serial}' ";
+
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerEquals)));
+                this.filters[nameof(whereHorsePowerEquals)] = $" v.engineHorsePower = {horsePower} ";
+
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerIsBetween)));
+                this.filters[nameof(whereHorsePowerIsBetween)] = $" v.engineHorsePower >= {min} AND v.engineHorsePower <= {max} ";
+
+                return this;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -485,9 +503,60 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                
+                string query = composeQuery(this.filters.Values);
+                IEnumerable<IVehicle> vehicles = executeQuery(query, this.connectionString, this.vehicleBuilder);
 
-                throw new NotImplementedException();
+                return vehicles.GetEnumerator();
+            }
+
+            private static IEnumerable<IVehicle> executeQuery(string query, string connectionString, IVehicleBuilder vehicleBuilder)
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int enrollmentId = (int)reader["id"];
+                            VehicleDto vehicleDto = new VehicleDto
+                            {
+                                Color = (CarColor)Convert.ToInt32(reader["color"]),
+                                Engine = new EngineDto
+                                {
+                                    HorsePower = (int)reader["engineHorsePower"],
+                                    IsStarted = Convert.ToBoolean(reader["engineIsStarted"]),
+                                },
+                                Enrollment = new EnrollmentDto
+                                {
+                                    Number = (int)reader["number"],
+                                    Serial = reader["serial"].ToString(),
+                                },
+                            };
+                        }
+                    }
+
+
+
+                    yield return vehicleBuilder.import(new VehicleDto());
+                }
+            }
+
+            private static string composeQuery(IEnumerable<string> filters)
+            {
+                string query = "";
+
+                foreach (string filter in filters)
+                {
+                    query += $" AND {filter}";
+                }
+                if (query != "")
+                {
+                    query = $" WHERE {query.Substring(4)} ";
+                }
+                query = SELECT_FROM_VEHICLE + query;
+
+                return query;
             }
 
             //public IEnumerable<IVehicle> getAll()
