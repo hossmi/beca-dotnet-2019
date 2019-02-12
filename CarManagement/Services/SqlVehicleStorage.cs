@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
@@ -142,6 +143,7 @@ namespace CarManagement.Services
             private bool isStarted;
             private IEnrollment enrollment;
             private bool enrollmentHasValue;
+            IDictionary<string, string> filters = null;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -156,8 +158,8 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                this.color = color;
-                this.colorHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
+                this.filters[nameof(whereColorIs)] = " AND v.color = " + (int)(color) + " ";
                 return this;
             }
 
