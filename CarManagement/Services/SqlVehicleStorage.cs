@@ -5,7 +5,9 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CarManagement.Core;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 
 namespace CarManagement.Services
@@ -178,22 +180,53 @@ namespace CarManagement.Services
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
             private CarColor color;
-            private bool colorHasValue;
-            private bool engineIsStartedHasValue;
             private bool engineIsStarted;
-            private bool enrollmentHasValue;
             private IEnrollment enrollment;
             private string enrollmentSerial;
             private int horsePower;
-            private bool horsePowerHasValue;
             private int min;
             private int max;
-            private bool horsePowerIsBetweenHasValue;
+            private List<string> queryParts;
+            private string query;
+            private string queryId = "USE CarManagement; " +
+                "SELECT id " +
+                "FROM enrollment ";
+            private string queryHeadvehicle = "USE CarManagement; " +
+                "SELECT e.serial AS 'serial', " +
+                "e.number AS 'number', " +
+                "v.engineHorsePower AS 'horsePower', " +
+                "v.engineIsStarted AS 'isStarted', " +
+                "v.color AS 'carColor', " +
+                "d.isOpen AS 'isOpen', " +
+                "w.pressure AS 'pressure' " +
+                "FROM enrollment e " +
+                "INNER JOIN vehicle v " +
+                "ON e.id = v.enrollmentId " +
+                "INNER JOIN door d " +
+                "ON e.id = d.vehicleId " +
+                "INNER JOIN wheel w " +
+                "ON e.id = w.vehicleId ";
+            private string queryHeaddoorwheel = "USE CarManagement; " +
+                "SELECT e.serial AS 'serial', " +
+                "e.number AS 'number', " +
+                "v.engineHorsePower AS 'horsePower', " +
+                "v.engineIsStarted AS 'isStarted', " +
+                "v.color AS 'carColor', " +
+                "d.isOpen AS 'isOpen', " +
+                "w.pressure AS 'pressure' " +
+                "FROM enrollment e " +
+                "INNER JOIN vehicle v " +
+                "ON e.id = v.enrollmentId " +
+                "INNER JOIN door d " +
+                "ON e.id = d.vehicleId " +
+                "INNER JOIN wheel w " +
+                "ON e.id = w.vehicleId ";
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
+                this.queryParts = new List<string>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -203,43 +236,46 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                this.color = color;
-                this.colorHasValue = true;
+                Asserts.isTrue(color != null);
+                this.queryParts.Add("carColor = " + Convert.ToInt32(color) + " ");
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-
-                this.engineIsStartedHasValue = true;
-                this.engineIsStarted = started;
+                Asserts.isTrue(started != null);
+                this.queryParts.Add("isStarted = " + Convert.ToInt16(started) + " ");
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
+                Asserts.isTrue(enrollment != null);
+                //this.queryParts.Add("number = " + enrollment.Number + " ");
                 this.enrollment = enrollment;
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
+                Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
+                //this.queryParts.Add("serial = " + serial + " ");
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.horsePowerHasValue = true;
-                this.horsePower = horsePower;
+                Asserts.isTrue(horsePower != null);
+                this.queryParts.Add("horsePower = " + horsePower + " ");
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                this.min = min;
-                this.max = max;
-                this.horsePowerIsBetweenHasValue = true;
+                Asserts.isTrue(min != null);
+                Asserts.isTrue(max != null);
+                this.queryParts.Add("horsePower BETWEEN " + min + " AND " + max + " ");
                 return this;
             }
 
@@ -250,16 +286,18 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
+                /*foreach (string partcondition in this.queryParts)
+                {
+                    this.query += " AND " + partcondition;
+                }
+                this.query = this.query.Remove(0, 4);
+                this.query = " WHERE " + this.query;
+                this.query = this.queryHead + this.query;*/
+                this.queryId += "WHERE serial = '" + this.enrollmentSerial + "'";
 
-                /*
-                SqlConnection con = conOpen();
-                string serial = enrollment.Serial;
-                int number = enrollment.Number;
-                String query;
-                query = "USE Carmanagement;" +
-                    "SELECT id FROM enrollment" +
-                    "WHERE serial = " + serial + "AND number = " + number;
-                SqlCommand sentence = new SqlCommand(query, con);
+                SqlConnection con = new SqlConnection(this.connectionString);
+                con.Open();
+                SqlCommand sentence = new SqlCommand(this.queryId, con);
                 SqlDataReader reader = sentence.ExecuteReader();
                 VehicleDto vehicleDto = new VehicleDto();
                 reader.Read();
@@ -268,8 +306,8 @@ namespace CarManagement.Services
                 List<WheelDto> wheelsDto = new List<WheelDto>();
                 List<DoorDto> doorsDto = new List<DoorDto>();
                 int id = (int)reader["id"];
-                enrollmentDto.Serial = serial;
-                enrollmentDto.Number = number;
+                enrollmentDto.Serial = this.enrollmentSerial;
+                enrollmentDto.Number = this.enrollment.Number;
 
                 String query2 = "SELECT color, engineHorsePower, engineIsStarted " +
                     "FROM vehicle " +
@@ -310,9 +348,7 @@ namespace CarManagement.Services
                 vehicleDto.Engine = engineDto;
                 vehicleDto.Enrollment = enrollmentDto;
                 IVehicle vehicle_get = this.vehicleBuilder.import(vehicleDto);
-                return vehicle_get;
-                 */
-                throw new NotImplementedException();
+                yield return vehicle_get;
             }
 
         }
