@@ -12,6 +12,8 @@ using CarManagement.Core;
 using ToolBox.Services;
 using System.Data;
 using System.Data.Common;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CarManagement.Services
 {
@@ -352,12 +354,14 @@ public IEnumerable<IVehicle> get()
             private string connectionString;
             private IVehicleBuilder vehicleBuilder;
             private readonly IDictionary<string, string> filters;
+            private readonly IDictionary<string, object> parameters;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
                 this.filters = new Dictionary<string, string>();
+                this.parameters = new Dictionary<string, object>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -368,7 +372,8 @@ public IEnumerable<IVehicle> get()
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(COLOR),"Color value has already been assigned");
-                this.filters[COLOR] = $" vehicle.color = {(int)color} ";
+                this.filters[COLOR] = " vehicle.color = @color ";
+                this.parameters["@color"] = (int)color;
                 return this;
             }
 
@@ -376,13 +381,19 @@ public IEnumerable<IVehicle> get()
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)), "EngineIsStarted value has already been assigned");
                 this.filters[nameof(whereEngineIsStarted)] = $" vehicle.engineIsStarted = {Convert.ToInt32(started)} ";
+
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENROLLMENT), "Enrollment value has already been assigned");
-                this.filters[ENROLLMENT] = $" enrollment.serial = '{enrollment.Serial}' AND enrollment.number = {enrollment.Number} ";
+                this.filters[ENROLLMENT] = $" enrollment.serial = @serial AND enrollment.number = @number ";
+
+                IDataParameter serial = new SqlParameter("serial", enrollment.Serial);
+
+                this.parameters["@serial"] = serial;
+                this.parameters["@number"] = enrollment.Number;
                 return this;
             }
 
@@ -424,13 +435,14 @@ public IEnumerable<IVehicle> get()
                 }
                                                
                 DB<SqlConnection> db = new DB<SqlConnection> (this.connectionString);
-                IEnumerable<IVehicle> vehicles = db.executeQuery(selectVehicle, reader => conversor(reader), dictionary);
+                IEnumerable<IVehicle> vehicles = db.executeQuery(selectVehicle, reader => conversor(reader), this.parameters);
 
                 return vehicles.GetEnumerator();
             }
 
             private IVehicle conversor(IDataRecord reader)
             {
+                int enrollmentId = (int)reader["enrollmentId"];
                 VehicleDto vehicleDto = new VehicleDto()
                 {
                     Color = (CarColor)Convert.ToInt32(reader["color"]),
@@ -446,37 +458,11 @@ public IEnumerable<IVehicle> get()
                     },
                 };
                 SqlConnection connection = new SqlConnection(this.connectionString);
-                SqlCommand command = new SqlCommand(SELECT_WHEEL, connection);
 
-                command.Parameters.AddWithValue("@vehicleId", reader["enrollmentId"]);
-                SqlDataReader wheelReader = command.ExecuteReader();
-                List<WheelDto> wheels = new List<WheelDto>();
+                vehicleDto.Wheels = SelectWheels(connection,SELECT_WHEEL, enrollmentId).ToArray();
+                vehicleDto.Doors = SelectDoors(connection,SELECT_DOOR,enrollmentId).ToArray();
 
-                while (wheelReader.Read())
-                {
-                    WheelDto wheel = new WheelDto()
-                    {
-                        Pressure = Convert.ToDouble(wheelReader["pressure"]),
-                    };
-                    wheels.Add(wheel);
-                }
-                vehicleDto.Wheels = wheels.ToArray();
-
-                command = new SqlCommand(SELECT_DOOR, connection);
-                command.Parameters.AddWithValue("@vehicleId", reader["enrollmentId"]);
-                SqlDataReader doorReader = command.ExecuteReader();
-                List<DoorDto> doors = new List<DoorDto>();
-
-                while (doorReader.Read())
-                {
-                    DoorDto door = new DoorDto()
-                    {
-                        IsOpen = Convert.ToBoolean(doorReader["isOpen"]),
-                    };
-                    doors.Add(door);
-                }
-                vehicleDto.Doors = doors.ToArray();
-
+                connection.Close();
                 IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
                 return vehicle;
             }
@@ -543,6 +529,56 @@ public IEnumerable<IVehicle> get()
                 }
                 connection.Close();
                 return vehicles.GetEnumerator();
+            }
+
+            private static IEnumerable<T> SelectSubTable<T>(SqlConnection connection, string query, int id)
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@vehicleId", id);
+                SqlDataReader reader = command.ExecuteReader();
+                List<T> items = new List<T>();
+
+                while (reader.Read())
+                {                    
+                 //   items.Add(item);
+                }
+                return items;
+            }
+
+            private static IEnumerable<WheelDto> SelectWheels(SqlConnection connection, string query, int id)
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@vehicleId", id);
+                SqlDataReader wheelReader = command.ExecuteReader();
+                List<WheelDto> wheels = new List<WheelDto>();
+
+                while (wheelReader.Read())
+                {
+                    WheelDto wheel = new WheelDto()
+                    {
+                        Pressure = Convert.ToDouble(wheelReader["pressure"]),
+                    };
+                    wheels.Add(wheel);
+                }
+                return wheels;
+            }
+
+            private static IEnumerable<DoorDto> SelectDoors(SqlConnection connection, string query, int id)
+            {
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@vehicleId", id);
+                SqlDataReader doorReader = command.ExecuteReader();
+                List<DoorDto> doors = new List<DoorDto>();
+                
+                while (doorReader.Read())
+                {
+                    DoorDto door = new DoorDto()
+                    {
+                        IsOpen = Convert.ToBoolean(doorReader["isOpen"]),
+                    };
+                    doors.Add(door);
+                }
+                return doors;
             }
 
             private static string ComposeQuery(IEnumerable<string> filters)
