@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarManagement.Core", "CarMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBox", "ToolBox\ToolBox.csproj", "{67DCA661-F0A4-4EFA-91BA-A005F3A028BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinCarManager", "WinCarManager\WinCarManager.csproj", "{D9166B90-C950-4C4C-A370-F780457E13BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{67DCA661-F0A4-4EFA-91BA-A005F3A028BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67DCA661-F0A4-4EFA-91BA-A005F3A028BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67DCA661-F0A4-4EFA-91BA-A005F3A028BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9166B90-C950-4C4C-A370-F780457E13BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9166B90-C950-4C4C-A370-F780457E13BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9166B90-C950-4C4C-A370-F780457E13BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9166B90-C950-4C4C-A370-F780457E13BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
