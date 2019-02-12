@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
             double pressure = 3.0;
             
             int horsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == pressure))
                 .Min(vehicle => vehicle.Engine.HorsePower);
                
@@ -37,7 +37,7 @@ namespace BusinessCore.Tests
         public void get_wheels_and_pressure_value_grouping_by_enrollment_serial_ordering_by_wheels_number_and_pressure_value()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(group => new
                 {
@@ -66,7 +66,7 @@ namespace BusinessCore.Tests
         public void from_the_two_red_cars_with_opened_doors_get_pressure_value_and_engine_status()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Red)
                 .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen))
                 .Select(vehicle => new

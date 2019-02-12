@@ -43,12 +43,12 @@ namespace BusinessCore.Tests
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
             int maxHorsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.Count() == 2)
                 .Max(vehicle => vehicle.Engine.HorsePower);
 
             IEnrollment querriedEnrollment = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.Count() == 2)
                 .Where(vehicle => vehicle.Engine.HorsePower == maxHorsePower)
                 .First().Enrollment;
@@ -62,7 +62,7 @@ namespace BusinessCore.Tests
         public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
             IEnrollment[] querriedEnrollment = this.vehicleStorage
-                .getAll()                
+                .get()                
                 .Where(vehicle => vehicle.Wheels.Count() > 1)
                 //.Where(vehicle => vehicle.Wheels.OrderByDescending(wheel => wheel.Pressure).Select(wheel => wheel.Pressure).First() >
                 //vehicle.Wheels.OrderByDescending(wheel => wheel.Pressure).Select(wheel => wheel.Pressure).ElementAt(1))
