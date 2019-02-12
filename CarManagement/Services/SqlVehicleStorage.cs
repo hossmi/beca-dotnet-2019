@@ -26,6 +26,8 @@ namespace CarManagement.Services
 	                          ,e.number
                           FROM vehicle v
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
+        private const string SELECT_FROM_DOOR = "";
+                
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
@@ -365,7 +367,7 @@ namespace CarManagement.Services
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
                 this.filters[nameof(whereEnrollmentIs)] = " AND e.serial = " + enrollment.Serial +
-                                                      " AND e.number = " + enrollment.Number + " ";
+                                                          " AND e.number = " + enrollment.Number + " ";
 
                 return this;
             }
@@ -403,44 +405,86 @@ namespace CarManagement.Services
             private IEnumerator<IVehicle> enumerate()
             {
                 string query = composeQuery(this.filters.Values);
-                IEnumerable<IVehicle> vehicles = executeQuery(query);
+                IEnumerable<IVehicle> vehicles = executeQuery(query, this.connectionString, this.vehicleBuilder);
 
                 return vehicles.GetEnumerator();
             }
 
-            private IEnumerable<IVehicle> executeQuery(string query)
+            private static IEnumerable<IVehicle> executeQuery(string query, string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 //  conectar a la BD y hacer la consulta
                 //  Montar los vehiculos
-                //     
                 //  transformar la consulta en un IEnumerable<IVehicle>
-                using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
-                    SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
-                    SqlDataReader reader= sqlCommand.ExecuteReader();
-
-                    /*SELECT v.enrollmentId
-                              ,v.color
-                              ,v.engineHorsePower
-                              ,v.engineIsStarted
-	                          ,e.serial
-	                          ,e.number*/
-
-                    while (reader.Read())
+                    sqlConnection.Open();
+                    using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                     {
-                        VehicleDto vehicleDto = new VehicleDto
-                        {
-                            Color = (CarColor)(int)reader["v.color"],
-                             Engine =new EngineDto
-                             {
-                                  HorsePower = (int)reader["v.engineHorsePower"],
-                                  IsStarted = (bool) reader["v.engineIsStarted"]
-                             },
-                              Enrollment = new EnrollmentDto
-                              {
-                                   Number 
+                        
 
-                              }
+                        using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                        {
+
+                            while (reader.Read())
+                            {
+                                int enrollmentId =  (int) reader["enrollmentId"];
+                                VehicleDto vehicleDto = new VehicleDto
+                                {
+                                    Color = (CarColor)(int)reader["color"],
+                                    Engine = new EngineDto
+                                    {
+                                        HorsePower = (int)reader["engineHorsePower"],
+                                        IsStarted = (bool)reader["engineIsStarted"]
+                                    },
+                                    Enrollment = new EnrollmentDto
+                                    {
+                                        Number = (int)reader["number"],
+                                        Serial = (string)reader["serial"]
+                                    }
+                                };
+
+                                vehicleDto.Doors = getDoor(sqlConnection, enrollmentId).ToArray();
+                                //resto de código
+                                yield return vehicleBuilder.import(vehicleDto); ;
+                            }
+                        }
+                        
+                    }
+                    sqlConnection.Close();
+                }
+            }
+
+            private static IEnumerable<DoorDto> getDoor(SqlConnection sqlConnection, int enrollmentId)
+            {
+                string query = "S";//MIRAR
+                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                {
+                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            yield return new DoorDto
+                            {
+                                 IsOpen = Convert.ToBoolean(reader["isOpen"])                                
+                            };
+                        }
+                    }
+                }
+            }
+
+            private static IEnumerable<WheelDto> getWheel(SqlConnection sqlConnection, int enrollmentId)
+            {
+                string query = "S";//MIRAR
+                using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                {
+                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    {
+                        while (reader.Read())//double Pressure
+                        {
+                            yield return new WheelDto
+                            {
+                                  Pressure = Convert.ToDouble(reader["pressure"])
+                            };
                         }
                     }
                 }
