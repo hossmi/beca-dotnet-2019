@@ -37,20 +37,6 @@ namespace CarManagement.Services
             this.vehicles.Clear();
         }
 
-        // public IVehicle get(IEnrollment enrollment)
-        // {
-        //     bool vehicleExists = this.vehicles.TryGetValue(enrollment, out IVehicle vehicleResult);
-        //     Asserts.isTrue(vehicleExists);
-        // }
-
-        // public IEnumerable<IVehicle> getAll()
-        // {
-        //     foreach (KeyValuePair<IEnrollment, IVehicle> entry in this.vehicles)
-        //     {
-        //         yield return entry.Value;
-        //     }
-        // }
-
         public void set(IVehicle vehicle)
         {
             Asserts.isFalse(this.vehicles.ContainsKey(vehicle.Enrollment));

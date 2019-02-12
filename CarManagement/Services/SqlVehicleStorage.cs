@@ -32,10 +32,10 @@ namespace CarManagement.Services
         {
             get
             {
-                const string COUNT_QUERRY_ENROLL = "SELECT COUNT(*) FROM enrollment";
+                const string COUNT_QUERY_ENROLL = "SELECT COUNT(*) FROM enrollment";
                 using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
                 {
-                    SqlCommand sqlOperation = new SqlCommand(COUNT_QUERRY_ENROLL, sqlDbConnection);
+                    SqlCommand sqlOperation = new SqlCommand(COUNT_QUERY_ENROLL, sqlDbConnection);
                     sqlDbConnection.Open();
                     int enrollmentCount = (int)sqlOperation.ExecuteScalar();
                     sqlDbConnection.Close();
@@ -217,7 +217,7 @@ namespace CarManagement.Services
             const string ENROLL_COND = "enrollment.serial = @serial AND enrollment.number = @number";
             #endregion
 
-            private string specifiedQuerry = SELECT_STANDART;
+            private string specifiedQuery = SELECT_STANDART;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -235,7 +235,7 @@ namespace CarManagement.Services
 
                 this.arguments.Add("@color", color);
 
-                this.specifiedQuerry += AND + COLOR_COND;
+                this.specifiedQuery += AND + COLOR_COND;
 
                 return this;
             }
@@ -244,7 +244,7 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@isStarted", started);
 
-                this.specifiedQuerry += AND + ENGINE_STARTED_COND;
+                this.specifiedQuery += AND + ENGINE_STARTED_COND;
 
                 return this;
             }
@@ -254,7 +254,7 @@ namespace CarManagement.Services
                 this.arguments.Add("@serial", enrollment.Serial);
                 this.arguments.Add("@number", enrollment.Number);
 
-                this.specifiedQuerry += AND + ENROLL_COND;
+                this.specifiedQuery += AND + ENROLL_COND;
 
                 return this;
             }
@@ -263,7 +263,7 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@serial", serial);
 
-                this.specifiedQuerry += AND + ENROLL_SERIAL_COND;
+                this.specifiedQuery += AND + ENROLL_SERIAL_COND;
 
                 return this;
             }
@@ -272,7 +272,7 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@horsePower", horsePower);
 
-                this.specifiedQuerry += AND + ENGINE_HORSE_COND;
+                this.specifiedQuery += AND + ENGINE_HORSE_COND;
 
                 return this;
             }
@@ -282,7 +282,7 @@ namespace CarManagement.Services
                 this.arguments.Add("@horsePower", min);
                 this.arguments.Add("@maxHorsePower", max);
 
-                this.specifiedQuerry += AND + ENGINE_MINMAX_HORSE_COND;
+                this.specifiedQuery += AND + ENGINE_MINMAX_HORSE_COND;
 
                 return this;
             }
@@ -296,7 +296,7 @@ namespace CarManagement.Services
             {
                 using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
                 {
-                    SqlCommand querier = new SqlCommand(this.specifiedQuerry, sqlDbConnection);
+                    SqlCommand querier = new SqlCommand(this.specifiedQuery, sqlDbConnection);
                     foreach ( KeyValuePair<string,object> argEntry in this.arguments)
                     {
                         querier.Parameters.AddWithValue(argEntry.Key, argEntry.Value);
@@ -324,43 +324,27 @@ namespace CarManagement.Services
                                     Color = (CarColor) Convert.ToInt32(vehicleReader["color"]),
                                 };
 
-                                List<WheelDto> wheels = new List<WheelDto>();
-                                querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
-                                querier.Parameters.AddWithValue("@id", (int)vehicleReader["id"]);
-                                using (SqlDataReader sqlWheelReader = querier.ExecuteReader())
-                                {
-                                    while (sqlWheelReader.Read())
-                                    {
-                                        wheels.Add
-                                        (
-                                            new WheelDto
-                                            {
-                                                Pressure = Convert.ToDouble(sqlWheelReader["pressure"]),
-                                            }
-                                        );
-                                    }
-                                }
+                                vehicleDto.Wheels = queryArrayItemsOfId
+                                    (
+                                        (int)vehicleReader["id"],
+                                        QUERY_WHEEL_SKEL,
+                                        sqlDbConnection,
+                                        dataReader => new WheelDto
+                                        {
+                                            Pressure = Convert.ToDouble(dataReader["pressure"]),
+                                        }
+                                    );
 
-                                vehicleDto.Wheels = wheels.ToArray();
-
-                                List<DoorDto> doors = new List<DoorDto>();
-                                querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
-                                querier.Parameters.AddWithValue("@id", (int)vehicleReader["id"]);
-                                using (SqlDataReader sqlDoorReader = querier.ExecuteReader())
-                                {
-                                    while (sqlDoorReader.Read())
-                                    {
-                                        doors.Add
-                                        (
-                                            new DoorDto
-                                            {
-                                                IsOpen = Convert.ToBoolean(sqlDoorReader["isOpen"]),
-                                            }
-                                        );
-                                    }
-                                }
-
-                                vehicleDto.Doors = doors.ToArray();
+                                vehicleDto.Doors = queryArrayItemsOfId
+                                    (
+                                        (int)vehicleReader["id"],
+                                        QUERY_DOOR_SKEL,
+                                        sqlDbConnection,
+                                        dataReader => new DoorDto
+                                        {
+                                            IsOpen = Convert.ToBoolean(dataReader["isOpen"]),
+                                        }
+                                    );
 
                                 yield return this.vehicleBuilder.import(vehicleDto);
                             }
@@ -368,6 +352,28 @@ namespace CarManagement.Services
                     }
                     sqlDbConnection.Close();
                 }
+            }
+
+            private static T[] queryArrayItemsOfId<T>(int masterId, string comand,
+                SqlConnection sqlDbConnection, Func<SqlDataReader, T> func,
+                string identifier = "@id")
+            {
+                SqlCommand querier;
+                List<T> items = new List<T>();
+                querier = new SqlCommand(comand, sqlDbConnection);
+                querier.Parameters.AddWithValue(identifier, masterId);
+                using (SqlDataReader sqlItemReader = querier.ExecuteReader())
+                {
+                    while (sqlItemReader.Read())
+                    {
+                        items.Add
+                        (
+                            func(sqlItemReader)
+                        );
+                    }
+                }
+
+                return items.ToArray();
             }
 
         }
