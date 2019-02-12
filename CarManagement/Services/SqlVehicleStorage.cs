@@ -136,7 +136,7 @@ namespace CarManagement.Services
             }
         }
 
-        private List<IVehicle> giveMeValues(SqlCommand command)
+        private  List<IVehicle> giveMeValues(SqlCommand command)
         {
             IDataReader reader = command.ExecuteReader();
             List<IVehicle> vehicles = new List<IVehicle>();
@@ -172,7 +172,7 @@ namespace CarManagement.Services
             return vehicles;
         }
 
-        private DoorDto[] giveMeDoors(SqlCommand command)
+        private static DoorDto[] giveMeDoors(SqlCommand command)
         {
             IDataReader readerDoor = command.ExecuteReader();
             List<DoorDto> doors = new List<DoorDto>();
@@ -186,7 +186,7 @@ namespace CarManagement.Services
            return doors.ToArray();
         }
 
-        private WheelDto[] giveMeWheels(SqlCommand command)
+        private  static WheelDto[] giveMeWheels(SqlCommand command)
         {
             List<WheelDto> wheels = new List<WheelDto>();
             IDataReader readerWheel = command.ExecuteReader();
