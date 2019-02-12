@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         public void minimal_horsePower_for_vehicles_with_wheel_that_have_three_atmospheres_of_pressure_is_85cv()
         {
             int horsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where
                 (vehicle =>
                     vehicle.Wheels.Where(wheel => wheel.Pressure == 3.0).Count()

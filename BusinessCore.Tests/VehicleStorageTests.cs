@@ -162,7 +162,7 @@ namespace BusinessCore.Tests
                     vehicleStorage.set(vehicle);
                 }
 
-                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                IEnumerable<IVehicle> vehicles = vehicleStorage.get();
                 IEnumerable<IVehicle> pairEnrollmentVehicles = vehicles.filter(VehicleFilterExtensions.filterByPairEnrollments);
                 IEnumerable<IVehicle> selectedEnrollmentVehicles = pairEnrollmentVehicles.filter(VehicleFilterExtensions.filterByEnrollmentsSerial, "BBC");
                 IEnumerable<IEngine> selectedEngines = selectedEnrollmentVehicles.select(vehicle => vehicle.Engine);
@@ -175,7 +175,7 @@ namespace BusinessCore.Tests
 
                 IEnumerable<IEngine> selectedEngines2 = vehicleStorage
                     .get()
-                    .filter(byOddEnrollment)          //4
+                    .filter(vehicle => vehicle.Enrollment.Number % 2 == 1)          //4
                     .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1
