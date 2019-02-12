@@ -348,7 +348,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " v.color = " + (int)(color) + " ";
+                this.filters[nameof(whereColorIs)] = " AND v.color = " + (int)(color) + " ";
 
                 return this;
             }
@@ -356,7 +356,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
-                this.filters[nameof(whereEngineIsStarted)] = " v.engineIsStarted = " + (started ? 0 : 1) + " ";
+                this.filters[nameof(whereEngineIsStarted)] = " AND v.engineIsStarted = " + (started ? 0 : 1) + " ";
 
                 return this;
             }
@@ -364,7 +364,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = " e.serial = " + enrollment.Serial +
+                this.filters[nameof(whereEnrollmentIs)] = " AND e.serial = " + enrollment.Serial +
                                                       " AND e.number = " + enrollment.Number + " ";
 
                 return this;
@@ -373,7 +373,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
-                this.filters[nameof(whereEnrollmentSerialIs)] = "e.serial = " + serial + " ";
+                this.filters[nameof(whereEnrollmentSerialIs)] = " AND e.serial = " + serial + " ";
 
                 return this;
             }
@@ -381,7 +381,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
-                this.filters[this.indexWhereHorsePower] = " v.engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
+                this.filters[this.indexWhereHorsePower] = " AND v.engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
 
                 return this;
             }
@@ -389,7 +389,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
-                this.filters[this.indexWhereHorsePower] = " v.engineHorsePower >= " + Convert.ToInt32(min)
+                this.filters[this.indexWhereHorsePower] = " AND v.engineHorsePower >= " + Convert.ToInt32(min)
                                                     + " AND v.engineHorsePower <= " + Convert.ToInt32(max) + " ";
 
                 return this;
@@ -412,9 +412,38 @@ namespace CarManagement.Services
             {
                 //  conectar a la BD y hacer la consulta
                 //  Montar los vehiculos
+                //     
                 //  transformar la consulta en un IEnumerable<IVehicle>
+                using (SqlConnection sqlConnection = new SqlConnection(this.connectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+                    SqlDataReader reader= sqlCommand.ExecuteReader();
 
-                throw new NotImplementedException();
+                    /*SELECT v.enrollmentId
+                              ,v.color
+                              ,v.engineHorsePower
+                              ,v.engineIsStarted
+	                          ,e.serial
+	                          ,e.number*/
+
+                    while (reader.Read())
+                    {
+                        VehicleDto vehicleDto = new VehicleDto
+                        {
+                            Color = (CarColor)(int)reader["v.color"],
+                             Engine =new EngineDto
+                             {
+                                  HorsePower = (int)reader["v.engineHorsePower"],
+                                  IsStarted = (bool) reader["v.engineIsStarted"]
+                             },
+                              Enrollment = new EnrollmentDto
+                              {
+                                   Number 
+
+                              }
+                        }
+                    }
+                }
             }
 
             private static string composeQuery(IEnumerable<string> filters)
