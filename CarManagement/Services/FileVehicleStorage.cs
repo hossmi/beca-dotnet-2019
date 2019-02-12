@@ -1,30 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 using System.IO;
-using CarManagement.Models;
 using System.Xml.Serialization;
-using CarManagement.Models.DTOs;
 using System.Linq;
 
 namespace CarManagement.Services
 {
     public class FileVehicleStorage : AbstractVehicleStorage
     {
-        private readonly IDtoConverter dtoConverter;
+        private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
 
-        public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
-            : base(readFromFile(fileFullPath, dtoConverter))
+        public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
+            : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath = fileFullPath;
-            this.dtoConverter = dtoConverter;
+            this.vehicleBuilder = vehicleBuilder;
         }
 
 
-        private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
+        private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             EnrollmentEqualityComparer enrollmentComparer = new EnrollmentEqualityComparer();
-            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>(enrollmentComparer);
+            IDictionary<IEnrollment, IVehicle> vehicles = new Dictionary<IEnrollment, IVehicle>(enrollmentComparer);
 
             if (File.Exists(fileFullPath))
             {
@@ -36,7 +37,7 @@ namespace CarManagement.Services
 
                 for (int i = 0; i < vehiclesArray.Length; i++)
                 {
-                    Vehicle vehicle = dtoConverter.convert(vehiclesArray[i]);
+                    IVehicle vehicle = vehicleBuilder.import(vehiclesArray[i]);
                     vehicles.Add(vehicle.Enrollment, vehicle);
                 }
 
@@ -45,13 +46,13 @@ namespace CarManagement.Services
             return vehicles;
         }
 
-        protected override void save(IEnumerable<Vehicle> vehicles)
+        protected override void save(IEnumerable<IVehicle> vehicles)
         {
             int counter;
             int i;
 
             counter = 0;
-            foreach (Vehicle vehicle in vehicles)
+            foreach (IVehicle vehicle in vehicles)
             {
                 counter++;
             }
@@ -62,9 +63,9 @@ namespace CarManagement.Services
             TextWriter writer = new StreamWriter(this.filePath);
 
             i = 0;
-            foreach (Vehicle vehicle in vehicles)
+            foreach (IVehicle vehicle in vehicles)
             {
-                vehiclesArray[i] = this.dtoConverter.convert(vehicle);
+                vehiclesArray[i] = this.vehicleBuilder.export(vehicle);
                 i++;
             }
 
