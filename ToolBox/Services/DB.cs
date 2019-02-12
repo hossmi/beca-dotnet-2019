@@ -22,15 +22,20 @@ namespace ToolBox.Services
             using (TConnection connection = new TConnection())
             using (IDbCommand command = connection.CreateCommand())
             {
+
                 if (parameters != null)
                     foreach (var parameter in parameters)
                     command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
 
+                connection.Open();
+
                 using (IDataReader reader = command.ExecuteReader())
                     while (reader.Read())
                         yield return buildDelegate(reader);
+
+                connection.Close();
             }
         }
 
@@ -44,7 +49,9 @@ namespace ToolBox.Services
                     command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
+                connection.Open();
                 object returned = command.ExecuteScalar();
+                connection.Close();
 
                 return buildDelegate(returned);
             }
@@ -60,7 +67,11 @@ namespace ToolBox.Services
                         command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
-                return command.ExecuteNonQuery();
+                connection.Open();
+                int affectedRows = command.ExecuteNonQuery();
+                connection.Close();
+
+                return affectedRows;
             }
         }
     }
