@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CarManagement.Core.Models;
+using CarManagement.Core.Services;
 
 namespace CarManagement.Extensions.Filters
 {
@@ -23,6 +25,14 @@ namespace CarManagement.Extensions.Filters
                 if (filterDelegate(item))
                     yield return item;
             }
+        }
+        
+        public static IVehicle get(this IVehicleStorage vehicleStorage, IEnrollment enrollment)
+        {
+            return vehicleStorage
+                .get()
+                .whereEnrollmentIs(enrollment)
+                .Single();
         }
 
         public static IEnumerable<TOut> select<TIn, TOut>(
@@ -54,5 +64,6 @@ namespace CarManagement.Extensions.Filters
             return engine.HorsePower >= horsePower;
         }
         #endregion
+
     }
 }

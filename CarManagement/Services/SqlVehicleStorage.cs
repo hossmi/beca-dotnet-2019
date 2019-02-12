@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -70,7 +71,7 @@ namespace CarManagement.Services
         {
         }
 
-        public IVehicle get(IEnrollment enrollment)
+        public IVehicleQuery get()
         {
             const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment WHERE serial=@serial AND number=@number";
 
@@ -149,11 +150,10 @@ namespace CarManagement.Services
 
                 sqlDbConnection.Close();
             }
-
-            return queriedVehicleOrNull;
+            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
         }
 
-        public IEnumerable<IVehicle> getAll()
+        public void set(IVehicle vehicle)
         {
             const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment";
 
@@ -250,9 +250,9 @@ namespace CarManagement.Services
             return vehiclesToReturn;
         }
 
-        public void set(IVehicle vehicle)
+        private class PrvVehicleQuery : IVehicleQuery
         {
-            #region "SQL skels CONSTS"
+            /*#region "SQL skels CONSTS"
             const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment " +
                 "WHERE serial=@serial AND number=@number";
             const string QUERY_DOOR_SKEL = "SELECT id FROM door " +
@@ -364,7 +364,66 @@ namespace CarManagement.Services
                         }
                     }
                 }
+            
+            }*/
+            private readonly string connectionString;
+            private readonly IVehicleBuilder vehicleBuilder;
+            private CarColor color;
+            private bool colorHasValue;
+
+            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
+            {
+                this.connectionString = connectionString;
+                this.vehicleBuilder = vehicleBuilder;
             }
+
+            public IEnumerator<IVehicle> GetEnumerator()
+            {
+                return enumerate();
+            }
+
+            public IVehicleQuery whereColorIs(CarColor color)
+            {
+                this.color = color;
+                this.colorHasValue = true;
+                return this;
+            }
+
+            public IVehicleQuery whereEngineIsStarted(bool started)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentSerialIs(string serial)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerEquals(int horsePower)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
+            {
+                throw new NotImplementedException();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return enumerate();
+            }
+
+            private IEnumerator<IVehicle> enumerate()
+            {
+                throw new NotImplementedException();
+            }
+
         }
     }
 }
