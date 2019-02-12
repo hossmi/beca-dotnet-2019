@@ -80,22 +80,22 @@ namespace CarManagement.Services
         private class PrvVehicleQuery : IVehicleQuery
         {
             private IEnumerable<IVehicle> vehicles;
-            private bool hasStarted;
-            private bool hasColor;
-            private bool hasHorsePowerBetween;
-            private bool hasHorsePower;
-            private bool hasSerial;
-            private bool hasEnrollment;
+            private bool startedHasValue;
+            private bool colorHasValue;
+            private bool horsePowerBetweenHasValue;
+            private bool horsePowerHasValue;
+            private bool serialHasValue;
+            private bool enrollmentHasValue;
 
             public PrvVehicleQuery(IEnumerable<IVehicle> vehicles)
             {
                 this.vehicles = vehicles;
-                this.hasStarted = false;
-                this.hasColor = false;
-                this.hasHorsePowerBetween = false;
-                this.hasHorsePower = false;
-                this.hasSerial = false;
-                this.hasEnrollment = false;
+                this.startedHasValue = false;
+                this.colorHasValue = false;
+                this.horsePowerBetweenHasValue = false;
+                this.horsePowerHasValue = false;
+                this.serialHasValue = false;
+                this.enrollmentHasValue = false;
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -105,49 +105,49 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                Asserts.isFalse(this.hasColor);
+                Asserts.isFalse(this.colorHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Color == color);
-                this.hasColor = true;
+                this.colorHasValue = true;
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                Asserts.isFalse(this.hasStarted);
+                Asserts.isFalse(this.startedHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.IsStarted == started);
-                this.hasStarted = true;
+                this.startedHasValue = true;
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                Asserts.isFalse(this.hasSerial && this.hasEnrollment);
+                Asserts.isFalse(this.serialHasValue && this.enrollmentHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment == enrollment);
-                this.hasEnrollment = true;
+                this.enrollmentHasValue = true;
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                Asserts.isFalse(this.hasEnrollment && this.hasSerial);
+                Asserts.isFalse(this.enrollmentHasValue && this.serialHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment.Serial == serial);
-                this.hasSerial = true;
+                this.serialHasValue = true;
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                Asserts.isFalse(this.hasHorsePowerBetween && this.hasHorsePower);
+                Asserts.isFalse(this.horsePowerBetweenHasValue && this.horsePowerHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower == horsePower);
-                this.hasHorsePower = true;
+                this.horsePowerHasValue = true;
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                Asserts.isFalse(this.hasHorsePower && this.hasHorsePowerBetween);
+                Asserts.isFalse(this.horsePowerHasValue && this.horsePowerBetweenHasValue);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower >= min && vehicle.Engine.HorsePower <= max);
-                this.hasHorsePowerBetween = true;
+                this.horsePowerBetweenHasValue = true;
                 return this;
             }
 
