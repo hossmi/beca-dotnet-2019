@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
         public void get_there_are_3_black_vehicles_and_horsePorwer_min100_and_started()
         {
             IVehicle[] vehicles = this.vehicleStorage
-             .getAll()
+             .get()
              .Where(vehicle => vehicle.Color == CarColor.Black)
              .Where(vehicle => vehicle.Engine.HorsePower >= 100)
              .Where(vehicle => vehicle.Engine.IsStarted == true)
@@ -40,7 +40,7 @@ namespace BusinessCore.Tests
         public void get_there_are_two_started_engines_more_one_doors_closed()
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
                 .Where(vehicle => vehicle.Doors.Where(door => door.IsOpen == false).Count() == 1)
                 .Select(vehicle => vehicle.Engine);
@@ -53,9 +53,7 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .getAll()
-               .Where(vehicle => vehicle.Color == CarColor.Black)
-               .Where(vehicle => vehicle.Enrollment.Number > 100)
-               .SelectMany(vehicle => vehicle.Wheels)
+               /**/
                .Count();
 
             Assert.AreEqual(6, pressure);
@@ -65,7 +63,7 @@ namespace BusinessCore.Tests
         public void get_serial_enrollment_from_white_vehicles_with_at_least_one_door_and_horsePower_adobe_500cv()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 /**/
                 .Select(vehicle => new { vehicle.Enrollment.Serial})
                 .ToArray();

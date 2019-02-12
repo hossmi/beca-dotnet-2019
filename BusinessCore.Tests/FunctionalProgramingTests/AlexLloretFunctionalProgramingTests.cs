@@ -26,7 +26,7 @@ namespace BusinessCore.Tests
             int horsePower = 0;
             double pressure = 0;
             var value = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Wheels.All(pre => pre.Pressure == 3))
                 .Select(vehicle => new
                 {
@@ -47,7 +47,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select (group => new
                 {
@@ -77,7 +77,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .Where (vehicle => vehicle.Color == CarColor.Red)
                 .Where (vehicle => vehicle.Doors.Where (door => door.IsOpen == true).Count() >= 0 )
                 .Select(vehicle => new

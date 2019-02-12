@@ -130,7 +130,7 @@ namespace BusinessCore.Tests
 
             foreach (IVehicleStorage vehicleStorage in vehicleStorages)
             {
-                IEnumerable<IVehicle> vehicles = vehicleStorage.getAll();
+                IEnumerable<IVehicle> vehicles = vehicleStorage.get();
                 Assert.AreEqual(enrollmentProvider.Count, vehicles.Count());
             }
 
@@ -163,12 +163,11 @@ namespace BusinessCore.Tests
                     vehicleStorage.set(vehicle);
                 }
 
-                //Func<IVehicle, bool> byOddEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
+                Func<IVehicle, bool> byOddEnrollment = vehicle => vehicle.Enrollment.Number % 2 == 0;
 
-
-                IEnumerable<IEngine> selectedEngines2 = vehicleStorage
-                    .getAll()
-                    .filter(vehicle => vehicle.Enrollment.Number % 2 == 0)          //4
+                IEnumerable<IEngine> selectedEngines = vehicleStorage
+                    .get()
+                    .filter(byOddEnrollment)          //4
                     .filter(vehicle => vehicle.Enrollment.Serial == "BBC")   //2
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1

@@ -23,7 +23,7 @@ namespace BusinessCore.Tests
         public void get_the_enrollment_and_horsePower_of_the_vehicles_ordered_descending_by_horsePower()
         {
             var vehicles = this.vehicleStorage
-              .getAll()
+              .get()
               .Select(vehicle => new
               {
                   vehicle.Engine.HorsePower,
@@ -44,7 +44,7 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Black)
                 .Where(vehicle => vehicle.Doors.Where(doors => doors.IsOpen == false).Count() != 1)
                 .ToArray();

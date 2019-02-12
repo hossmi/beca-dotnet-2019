@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using BusinessCore.Tests.Models;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
@@ -52,7 +53,7 @@ namespace BusinessCore.Tests
         {
             drop(this.connectionString, this.destructionScript);
             create(this.connectionString, this.creationScript);
-            fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
+            fullfillWithSampleData(this.connectionString, this.fakeStorage.get());
         }
 
         [TestMethod]
@@ -67,26 +68,66 @@ namespace BusinessCore.Tests
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             IVehicle[] vehicles = databaseVehicleStorage
-                .getAll()
+                .get()
                 .ToArray();
 
             Assert.AreEqual(10, vehicles.Length);
         }
 
         [TestMethod]
-        public void there_exists_a_vehicle_with_ZZZ_serial_and_2010_number_as_enrollment()
+        public void clear_erases_vehicles_from_DB()
         {
             IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             databaseVehicleStorage.clear();
 
-            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.getAll();
+            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
             databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
-            vehicles = databaseVehicleStorage.getAll();
+            vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
+        }
+
+        [TestMethod]
+        public void save_vehicle_to_DB_and_retrieve_it()
+        {
+            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+
+            databaseVehicleStorage.clear();
+            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
+            Assert.AreEqual(0, vehicles.Count());
+
+            IVehicle firstVehicle = new Vehicle
+            {
+                Enrollment = new Enrollment
+                {
+                    Serial = "AZD",
+                    Number = 4444
+                },
+                Engine = new Engine
+                {
+                    IsStarted = true,
+                },
+                Color = CarColor.Purple,
+                Doors = new Door[] { new Door{ IsOpen = false }, new Door { IsOpen = true }},
+                Wheels = new Wheel[] { new Wheel { Pressure = 2.3 }, new Wheel { Pressure = 1.2 }},
+            };
+
+            databaseVehicleStorage.set(firstVehicle);
+
+            databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+            IVehicle retrievedVehicle = databaseVehicleStorage.get().First();
+
+            Assert.AreEqual(firstVehicle.Enrollment.Serial , retrievedVehicle.Enrollment.Serial);
+            Assert.AreEqual(firstVehicle.Enrollment.Number , retrievedVehicle.Enrollment.Number);
+            Assert.AreEqual(firstVehicle.Color, retrievedVehicle.Color);
+            Assert.AreEqual(firstVehicle.Engine.HorsePower, retrievedVehicle.Engine.HorsePower);
+            Assert.AreEqual(firstVehicle.Doors[0].IsOpen, retrievedVehicle.Doors[0].IsOpen);
+            Assert.AreEqual(firstVehicle.Doors[1].IsOpen, retrievedVehicle.Doors[1].IsOpen);
+            Assert.AreEqual(firstVehicle.Wheels[0].Pressure, retrievedVehicle.Wheels[0].Pressure);
+            Assert.AreEqual(firstVehicle.Wheels[1].Pressure, retrievedVehicle.Wheels[1].Pressure);
         }
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)

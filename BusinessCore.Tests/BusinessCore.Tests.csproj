@@ -62,7 +62,7 @@
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\Wheel.cs" />
     <Compile Include="Services\ArrayEnrollmentProvider.cs" />
-    <Compile Include="EpicSimpleVehicleTests.cs" />
+    <Compile Include="FunctionalProgramingTests\EpicSimpleVehicleTests.cs" />
     <Compile Include="Services\alloretArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorage.cs" />
     <Compile Include="Services\ArrayVehicleStorageSoden.cs" />
@@ -81,6 +81,7 @@
     <Compile Include="FunctionalProgramingTests\AlexLloretFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\CeliaFunctionalProgramingTests.cs" />
     <Compile Include="FunctionalProgramingTests\AMuñozFunctionalProgrammingTests.cs" />
+    <Compile Include="JVBBSqlVehicleStorageTests.cs" />
     <Compile Include="SqlVehicleStorageTests.cs" />
     <Compile Include="VehicleStorageTests.cs" />
     <Compile Include="VehicleTests.cs" />
