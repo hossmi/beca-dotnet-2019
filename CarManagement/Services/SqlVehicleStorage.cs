@@ -81,81 +81,82 @@ namespace CarManagement.Services
             }
         }
 
-        public IVehicle get(IEnrollment enrollment)
-        {
-            bool exist = false;
+        //public IVehicle get(IEnrollment enrollment)
+        //{
+        //    bool exist = false;
 
-            using (SqlConnection connection = new SqlConnection(this.connectionString))
-            using (SqlCommand command = new SqlCommand())
-            {
-                string selectEnrollment = $@"
-                        SELECT count(*)
-                        FROM enrollment                        
-                        WHERE serial = {enrollment.Serial} 
-                        AND number = {enrollment.Number};";
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = selectEnrollment;
+        //    using (SqlConnection connection = new SqlConnection(this.connectionString))
+        //    using (SqlCommand command = new SqlCommand())
+        //    {
+        //        string selectEnrollment = $@"
+        //                SELECT count(*)
+        //                FROM enrollment                        
+        //                WHERE serial = {enrollment.Serial} 
+        //                AND number = {enrollment.Number};";
+        //        connection.Open();
+        //        command.Connection = connection;
+        //        command.CommandText = selectEnrollment;
 
-                int filas = (int)command.ExecuteScalar();
-                exist = filas > 0;
-            }
+        //        int filas = (int)command.ExecuteScalar();
+        //        exist = filas > 0;
+        //    }
 
-            Asserts.isTrue(exist);
+        //    Asserts.isTrue(exist);
 
-            IVehicle vehicle = null;
+        //    IVehicle vehicle = null;
 
-            string query = $@"
-                        SELECT v.enrollmentId
-                            , v.color
-                            , v.engineHorsePower
-                            , v.engineIsStarted
-                            , e.serial
-                            , e.number
-                        FROM vehicle v
-                        INNER JOIN enrollment e ON v.enrollmentId = e.id
-                        WHERE serial = {enrollment.Serial} 
-                        AND number = {enrollment.Number};";
+        //    string query = $@"
+        //                SELECT v.enrollmentId
+        //                    , v.color
+        //                    , v.engineHorsePower
+        //                    , v.engineIsStarted
+        //                    , e.serial
+        //                    , e.number
+        //                FROM vehicle v
+        //                INNER JOIN enrollment e ON v.enrollmentId = e.id
+        //                WHERE serial = {enrollment.Serial} 
+        //                AND number = {enrollment.Number};";
 
-            using (SqlConnection connection = new SqlConnection(this.connectionString))
-            using (SqlCommand command = new SqlCommand())
-            {
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = query;
-                using (SqlDataReader readerVehicle = command.ExecuteReader())
-                {
-                    if (readerVehicle.Read())
-                    {
-                        VehicleDto vehicleDto = new VehicleDto();
+        //    using (SqlConnection connection = new SqlConnection(this.connectionString))
+        //    using (SqlCommand command = new SqlCommand())
+        //    {
+        //        connection.Open();
+        //        command.Connection = connection;
+        //        command.CommandText = query;
+        //        using (SqlDataReader readerVehicle = command.ExecuteReader())
+        //        {
+        //            if (readerVehicle.Read())
+        //            {
+        //                VehicleDto vehicleDto = new VehicleDto();
 
-                        int enrollmentId = (int)readerVehicle["enrollmentId"];
-                        vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
-                        vehicleDto.Engine = new EngineDto
-                        {
-                            HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
-                            IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
-                        };
-                        vehicleDto.Enrollment = new EnrollmentDto
-                        {
-                            Serial = readerVehicle["serial"].ToString(),
-                            Number = Convert.ToInt16(readerVehicle["number"]),
-                        };
+        //                int enrollmentId = (int)readerVehicle["enrollmentId"];
+        //                vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
+        //                vehicleDto.Engine = new EngineDto
+        //                {
+        //                    HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
+        //                    IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
+        //                };
+        //                vehicleDto.Enrollment = new EnrollmentDto
+        //                {
+        //                    Serial = readerVehicle["serial"].ToString(),
+        //                    Number = Convert.ToInt16(readerVehicle["number"]),
+        //                };
 
-                        List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
-                        List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
+        //                List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
+        //                List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
 
-                        vehicleDto.Wheels = wheelDtos.ToArray();
-                        vehicleDto.Doors = doorDtos.ToArray();
+        //                vehicleDto.Wheels = wheelDtos.ToArray();
+        //                vehicleDto.Doors = doorDtos.ToArray();
 
-                        vehicle = this.vehicleBuilder.import(vehicleDto);
+        //                vehicle = this.vehicleBuilder.import(vehicleDto);
 
-                    }
-                }
-                connection.Close();
-                return vehicle;
-            }
-        }
+        //            }
+        //        }
+        //        connection.Close();
+        //        return vehicle;
+        //    }
+        //}
+
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
@@ -257,11 +258,11 @@ namespace CarManagement.Services
             //        }
 
 
-                connection.Close();
-            }
+        //        connection.Close();
+        //    }
 
-            return vehicles;
-        }
+        //    return vehicles;
+        //}
 
 
         public void set(IVehicle vehicle)
