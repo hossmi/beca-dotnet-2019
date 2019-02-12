@@ -36,17 +36,7 @@ namespace CarManagement.Services
         {
             this.vehicles.Clear();
         }
-
-        //public IVehicle get(IEnrollment enrollment)
-        //{
-        //    IVehicle vehicleResult;
-
-        //    bool vehicleExists = this.vehicles.TryGetValue(enrollment, out vehicleResult);
-        //    Asserts.isTrue(vehicleExists);
-
-        //    return vehicleResult;
-        //}
-
+                
         //public IVehicle get(IEnrollment enrollment)
         //{
         //    IVehicle vehicleResult;
@@ -90,10 +80,22 @@ namespace CarManagement.Services
         private class PrvVehicleQuery : IVehicleQuery
         {
             private IEnumerable<IVehicle> vehicles;
+            private bool hasStarted;
+            private bool hasColor;
+            private bool hasHorsePowerBetween;
+            private bool hasHorsePower;
+            private bool hasSerial;
+            private bool hasEnrollment;
 
             public PrvVehicleQuery(IEnumerable<IVehicle> vehicles)
             {
                 this.vehicles = vehicles;
+                this.hasStarted = false;
+                this.hasColor = false;
+                this.hasHorsePowerBetween = false;
+                this.hasHorsePower = false;
+                this.hasSerial = false;
+                this.hasEnrollment = false;
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -103,33 +105,50 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
+                Asserts.isFalse(this.hasColor);
                 this.vehicles = this.vehicles.Where(vehicle => vehicle.Color == color);
+                this.hasColor = true;
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new System.NotImplementedException();
+                Asserts.isFalse(this.hasStarted);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.IsStarted == started);
+                this.hasStarted = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new System.NotImplementedException();
+                Asserts.isFalse(this.hasSerial && this.hasEnrollment);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment == enrollment);
+                this.hasEnrollment = true;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new System.NotImplementedException();
+                Asserts.isFalse(this.hasEnrollment && this.hasSerial);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment.Serial == serial);
+                this.hasSerial = true;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new System.NotImplementedException();
+                Asserts.isFalse(this.hasHorsePowerBetween && this.hasHorsePower);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower == horsePower);
+                this.hasHorsePower = true;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new System.NotImplementedException();
+                Asserts.isFalse(this.hasHorsePower && this.hasHorsePowerBetween);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower >= min && vehicle.Engine.HorsePower <= max);
+                this.hasHorsePowerBetween = true;
+                return this;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
