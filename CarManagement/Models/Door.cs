@@ -5,6 +5,16 @@ namespace CarManagement.Models
     public class Door
     {
         private bool isOpen;
+
+        public Door()
+        {
+
+        }
+
+        public Door(bool isOpen)
+        {
+            this.isOpen = isOpen;
+        }
         public bool IsOpen
         {
             get

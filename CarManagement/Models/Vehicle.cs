@@ -11,6 +11,9 @@ namespace CarManagement.Models
         private CarColor color;
         private IEnrollment enrollment;
 
+        public Vehicle()
+        {
+        }
 
         public Vehicle(List<Wheel> wheels, List<Door> doors, Engine engine, CarColor color, IEnrollment enrollment)
         {

@@ -6,6 +6,12 @@ namespace CarManagement.Models
     {
 
         private double pressure;
+
+        public Wheel(double pressure)
+        {
+            this.pressure = pressure;
+        }
+
         public double Pressure
         {
             get

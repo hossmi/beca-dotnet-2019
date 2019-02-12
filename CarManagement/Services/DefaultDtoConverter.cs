@@ -8,7 +8,7 @@ namespace CarManagement.Services
     {
         private IEnrollmentProvider enrollmentProvider;
 
-    
+
 
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
@@ -17,7 +17,7 @@ namespace CarManagement.Services
 
         public Engine convert(EngineDto engineDto)
         {
-            Engine engine = new Engine(engineDto.HorsePower,engineDto.IsStarted);
+            Engine engine = new Engine(engineDto.HorsePower, engineDto.IsStarted);
             return engine;
         }
 
@@ -34,7 +34,19 @@ namespace CarManagement.Services
 
         public Vehicle convert(VehicleDto vehicleDto)
         {
-            throw new System.NotImplementedException();
+            Wheel wheel = convert(vehicleDto.Wheels[0]);
+            foreach (Wheel wheels in )
+            {
+               
+            }
+
+
+            Door door = convert(vehicleDto.Doors[0]);
+            Engine engine = convert(vehicleDto.Engine);
+            IEnrollment enrollment = convert(vehicleDto.Enrollment);
+            
+            Vehicle vehicle = new Vehicle(vehicleDto.Wheels, vehicleDto.Door, engine, vehicleDto.Color, enrollment);
+            return vehicle;
         }
 
         public VehicleDto convert(Vehicle vehicle)
@@ -44,22 +56,35 @@ namespace CarManagement.Services
 
         public Door convert(DoorDto doorDto)
         {
-            throw new System.NotImplementedException();
+            Door door = new Door(doorDto.IsOpen);
+            return door;
         }
 
         public DoorDto convert(Door door)
         {
-            throw new System.NotImplementedException();
+            DoorDto doorDto = new DoorDto
+            {
+                IsOpen = door.IsOpen
+
+            };
+
+            return doorDto;
         }
 
         public Wheel convert(WheelDto wheelDto)
         {
-            throw new System.NotImplementedException();
+            Wheel wheel = new Wheel(wheelDto.Pressure);
+            return wheel;
         }
 
         public WheelDto convert(Wheel wheel)
         {
-            throw new System.NotImplementedException();
+            WheelDto wheelDto = new WheelDto
+            {
+                Pressure = wheel.Pressure
+            };
+
+            return wheelDto;
         }
 
         public IEnrollment convert(EnrollmentDto enrollmentDto)
