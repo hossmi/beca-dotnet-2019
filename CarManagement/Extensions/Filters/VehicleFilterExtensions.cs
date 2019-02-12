@@ -9,20 +9,26 @@ namespace CarManagement.Extensions.Filters
     public static class VehicleFilterExtensions
     {
         public static IEnumerable<IVehicle> filterByPairEnrollments(
-            this IEnumerable<IVehicle> vehicles)
+            this IEnumerable<IVehicle> vehicles, string enrollmentSerial, int enrollmentNumber)
         {
-            throw new NotImplementedException();
+            return vehicles
+                .Where(condition1 => condition1.Enrollment.Serial == enrollmentSerial)
+                .Where(condition2 => condition2.Enrollment.Number == enrollmentNumber);
         }
 
         public static IEnumerable<IVehicle> filterByEnrollmentsSerial(
             this IEnumerable<IVehicle> vehicles, string enrollmentSerial)
         {
-            throw new NotImplementedException();
+            return vehicles
+                .Where(vehicle => vehicle.Enrollment.Serial == enrollmentSerial);
         }
 
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            foreach (IVehicle vehicle in vehicles)
+            {
+                yield return vehicle.Engine;
+            }
         }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)
@@ -67,7 +73,7 @@ namespace CarManagement.Extensions.Filters
 
         public static IVehicle get(this IVehicleStorage vehicleStorage, IEnrollment enrollment)
         {
-            return vehicleStorage
+            return vehicleStorage   
                 .get()
                 .whereEnrollmentIs(enrollment)
                 .Single();
