@@ -74,83 +74,6 @@ namespace CarManagement.Services
 
         public IVehicleQuery get()
         {
-        //    const string QUERY_ENROLL_SKEL = "SELECT * FROM enrollment WHERE serial=@serial AND number=@number";
-
-        //    IVehicle queriedVehicleOrNull;
-
-        //    using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
-        //    {
-        //        SqlCommand querier = new SqlCommand(QUERY_ENROLL_SKEL, sqlDbConnection);
-        //        querier.Parameters.AddWithValue("@serial", enrollment.Serial);
-        //        querier.Parameters.AddWithValue("@number", enrollment.Number);
-        //        sqlDbConnection.Open();
-
-        //        using (SqlDataReader sqlReader = querier.ExecuteReader())
-        //        {
-        //            if(sqlReader.Read())
-        //            {
-        //                querier = new SqlCommand(QUERY_VEHICLE_SKEL, sqlDbConnection);
-        //                querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-        //                SqlDataReader sqlVehicleReader = querier.ExecuteReader();
-
-        //                if (sqlVehicleReader.Read())
-        //                {
-
-        //                    List<DoorDto> doorList = new List<DoorDto>();
-        //                    querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
-        //                    querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-        //                    using (SqlDataReader sqlDoorReader = querier.ExecuteReader())
-        //                    {
-        //                        while (sqlDoorReader.Read())
-        //                        {
-        //                            doorList.Add(new DoorDto { IsOpen = Convert.ToBoolean(sqlDoorReader["isOpen"]) });
-        //                        }
-        //                    }
-
-        //                    List<WheelDto> wheelList = new List<WheelDto>();
-        //                    querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
-        //                    querier.Parameters.AddWithValue("@id", (int)sqlReader["id"]);
-        //                    using (SqlDataReader sqlWheelReader = querier.ExecuteReader())
-        //                    {
-        //                        while (sqlWheelReader.Read())
-        //                        {
-        //                            wheelList.Add(new WheelDto { Pressure = Convert.ToDouble(sqlWheelReader["pressure"]) });
-        //                        }
-        //                    }
-
-        //                    queriedVehicleOrNull = this.vehicleBuilder
-        //                        .import(
-        //                            new VehicleDto
-        //                            {
-        //                                Enrollment = new EnrollmentDto
-        //                                {
-        //                                    Serial = sqlReader["serial"].ToString(),
-        //                                    Number = Convert.ToInt32(sqlReader["number"]),
-        //                                },
-        //                                Engine = new EngineDto
-        //                                {
-        //                                    IsStarted = Convert.ToBoolean(sqlVehicleReader["engineIsStarted"]),
-        //                                    HorsePower = Convert.ToInt16(sqlVehicleReader["engineHorsePower"]),
-        //                                },
-        //                                Color = (CarColor)Convert.ToInt32(sqlVehicleReader["color"]),
-        //                                Doors = doorList.ToArray(),
-        //                                Wheels = wheelList.ToArray(),
-        //                            }
-        //                        );
-        //                }
-        //                else
-        //                {
-        //                    queriedVehicleOrNull = null;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                queriedVehicleOrNull = null;
-        //            }
-        //        }
-
-        //        sqlDbConnection.Close();
-        //    }
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
         }
 
@@ -276,30 +199,25 @@ namespace CarManagement.Services
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
-
-            private CarColor? color;
-            private string enrollSerial;
-            private int? enrollNumber;
-            private bool? isStarted;
-            private int? horsePower;
-            private int? maxHorsePower;
+            
+            private Dictionary<string, object> arguments = new Dictionary<string, object>();
 
             #region "query CONST"
             const string SELECT_STANDART = "SELECT id, serial, number, color, engineIsStarted, engineHorsePower" +
                 "  FROM vehicle, enrollment WHERE enrollmentId = id";
-            const string SELECT_WHEELS = "SELECT pressure FROM wheel WHERE vehicleId = @id";
-            const string SELECT_DOORS = "SELECT isOpen FROM door WHERE vehicleId = @id";
 
             const string AND = " AND ";
 
             const string COLOR_COND = "vehicle.color = @color";
             const string ENGINE_STARTED_COND = "vehicle.engineIsStarted = @isStarted";
             const string ENGINE_HORSE_COND = "vehicle.engineHorsePower = @horsePower";
-            const string ENGINE_MINMAX_HORSE_COND = "vehicle.engineHorsePower >= @minHorsePower " +
+            const string ENGINE_MINMAX_HORSE_COND = "vehicle.engineHorsePower >= @horsePower " +
                 "AND vehicle.engineHorsePower <= @maxHorsePower";
             const string ENROLL_SERIAL_COND = "enrollment.serial = @serial";
             const string ENROLL_COND = "enrollment.serial = @serial AND enrollment.number = @number";
             #endregion
+
+            private string specifiedQuerry = SELECT_STANDART;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -314,71 +232,58 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                if(this.color != null)
-                {
-                    Asserts.isTrue(false, "Color must be specified only once");
-                }
-                this.color = color;
+
+                this.arguments.Add("@color", color);
+
+                this.specifiedQuerry += AND + COLOR_COND;
+
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                if (this.isStarted != null)
-                {
-                    Asserts.isTrue(false, "isStarted must be specified only once");
-                }
-                this.isStarted = started;
+                this.arguments.Add("@isStarted", started);
+
+                this.specifiedQuerry += AND + ENGINE_STARTED_COND;
+
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                if (this.enrollSerial != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with serial");
-                }
-                if (this.enrollNumber != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with serial");
-                }
-                this.enrollNumber = enrollment.Number;
-                this.enrollSerial = enrollment.Serial;
+                this.arguments.Add("@serial", enrollment.Serial);
+                this.arguments.Add("@number", enrollment.Number);
+
+                this.specifiedQuerry += AND + ENROLL_COND;
+
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                if (this.enrollSerial != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with serial");
-                }
-                this.enrollSerial =serial;
+                this.arguments.Add("@serial", serial);
+
+                this.specifiedQuerry += AND + ENROLL_SERIAL_COND;
+
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                if (this.horsePower != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with horsePower");
-                }
-                this.horsePower = horsePower;
+                this.arguments.Add("@horsePower", horsePower);
+
+                this.specifiedQuerry += AND + ENGINE_HORSE_COND;
+
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                if (this.horsePower != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with horsePower");
-                }
-                if (this.maxHorsePower != null)
-                {
-                    Asserts.isTrue(false, "There is already an active filter with horsePower");
-                }
-                this.maxHorsePower = max;
-                this.horsePower = min;
+                this.arguments.Add("@horsePower", min);
+                this.arguments.Add("@maxHorsePower", max);
+
+                this.specifiedQuerry += AND + ENGINE_MINMAX_HORSE_COND;
+
                 return this;
             }
 
@@ -389,7 +294,80 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                return hateIfTheyBringLove;
+                using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
+                {
+                    SqlCommand querier = new SqlCommand(this.specifiedQuerry, sqlDbConnection);
+                    foreach ( KeyValuePair<string,object> argEntry in this.arguments)
+                    {
+                        querier.Parameters.AddWithValue(argEntry.Key, argEntry.Value);
+                    }
+
+                    sqlDbConnection.Open();
+                    using (SqlDataReader vehicleReader = querier.ExecuteReader())
+                    {
+                        while(vehicleReader.Read())
+                        {
+                            if (vehicleReader["color"] != null)
+                            {
+                                VehicleDto vehicleDto = new VehicleDto
+                                {
+                                    Enrollment = new EnrollmentDto
+                                    {
+                                        Serial = vehicleReader["serial"].ToString(),
+                                        Number = Convert.ToInt32(vehicleReader["number"]),
+                                    },
+                                    Engine = new EngineDto
+                                    {
+                                        HorsePower = Convert.ToInt16(vehicleReader["engineHorsePower"]),
+                                        IsStarted = Convert.ToBoolean(vehicleReader["engineIsStarted"]),
+                                    },
+                                    Color = (CarColor) Convert.ToInt32(vehicleReader["color"]),
+                                };
+
+                                List<WheelDto> wheels = new List<WheelDto>();
+                                querier = new SqlCommand(QUERY_WHEEL_SKEL, sqlDbConnection);
+                                querier.Parameters.AddWithValue("@id", (int)vehicleReader["id"]);
+                                using (SqlDataReader sqlWheelReader = querier.ExecuteReader())
+                                {
+                                    while (sqlWheelReader.Read())
+                                    {
+                                        wheels.Add
+                                        (
+                                            new WheelDto
+                                            {
+                                                Pressure = Convert.ToDouble(sqlWheelReader["pressure"]),
+                                            }
+                                        );
+                                    }
+                                }
+
+                                vehicleDto.Wheels = wheels.ToArray();
+
+                                List<DoorDto> doors = new List<DoorDto>();
+                                querier = new SqlCommand(QUERY_DOOR_SKEL, sqlDbConnection);
+                                querier.Parameters.AddWithValue("@id", (int)vehicleReader["id"]);
+                                using (SqlDataReader sqlDoorReader = querier.ExecuteReader())
+                                {
+                                    while (sqlDoorReader.Read())
+                                    {
+                                        doors.Add
+                                        (
+                                            new DoorDto
+                                            {
+                                                IsOpen = Convert.ToBoolean(sqlDoorReader["isOpen"]),
+                                            }
+                                        );
+                                    }
+                                }
+
+                                vehicleDto.Doors = doors.ToArray();
+
+                                yield return this.vehicleBuilder.import(vehicleDto);
+                            }
+                        }
+                    }
+                    sqlDbConnection.Close();
+                }
             }
 
         }

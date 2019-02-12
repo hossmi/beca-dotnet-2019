@@ -102,7 +102,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 this.vehicles = this.vehicles.Where(vehicle =>vehicle.Enrollment.Serial == enrollment.Serial 
-                && vehicle.Enrollment.Number == enrollment.Number));
+                && vehicle.Enrollment.Number == enrollment.Number);
                 return this;
             }
 
