@@ -24,7 +24,7 @@ namespace BusinessCore.Tests
         public void there_are_six_black_vehicles()
         {
             IVehicle[] vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Black)
                 .ToArray();
             Assert.AreEqual(6, vehicles.Length);
@@ -34,9 +34,10 @@ namespace BusinessCore.Tests
         public void there_are_four_started_engines()
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
-                .getAll()
+                .get()
                 .Select(vehicle => vehicle.Engine)
                 .Where(engine => engine.IsStarted == true);
+
             Assert.AreEqual(4, engines.Count());
         }
 
@@ -45,7 +46,7 @@ namespace BusinessCore.Tests
         {
             double pressure = 0.0;
             pressure = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.White)
                 .Select(vehicle => vehicle.Wheels)
                 .Average(wheel => wheel.Average(w => w.Pressure));
@@ -58,7 +59,7 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             horsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Engine.HorsePower >= 100)
                 .Select(v => v.Engine.HorsePower)
                 .Min(horse => horse);
@@ -71,7 +72,7 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             horsePower = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(condition1 => condition1.Color == CarColor.Red)
                 .Where(condition2 => condition2.Engine.IsStarted == false)
                 .Where(condition3 => condition3.Engine.HorsePower <= 666)
@@ -85,7 +86,7 @@ namespace BusinessCore.Tests
         public void from_the_two_white_cars_with_opened_doors_get_serial_enrollment_and_horsePower()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(condition1 => condition1.Color == CarColor.White)
                 .Where(Condition2 => Condition2.Doors.Any(door => door.IsOpen))
                 .select(selection => 
@@ -107,7 +108,7 @@ namespace BusinessCore.Tests
         public void get_enrollment_serial_and_average_horse_power_grouping_by_enrollment_serial_ordering_by_serial_and_average_horse_power()
         {
             var vehicles = this.vehicleStorage
-                .getAll()
+                .get()
                 .GroupBy(group => group.Enrollment.Serial)
                 .Select(groupvehicle => 
                 new
@@ -118,7 +119,6 @@ namespace BusinessCore.Tests
                 )
                 .OrderBy(order1 => order1.Serial)
                 .ThenBy(order2 => order2.AverageHorsePower)
-                
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -141,7 +141,7 @@ namespace BusinessCore.Tests
         public void get_horsePower_of_green_vehicles_or_get_12354645_as_default()
         {
             var horsePowers = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Color == CarColor.Green)
                 .Select(vehicle => vehicle.Engine.HorsePower)
                 .DefaultIfEmpty(12354645)

@@ -43,10 +43,10 @@ namespace BusinessCore.Tests
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
             //IEnrollment querriedEnrollment = this.vehicleStorage
-                /*.getAll()
-                .Where(condition => condition.Wheels.Count() == 2)
-                .Select(vehicle => vehicle.Enrollment)
-                //.First().Enrollment;
+            /*.get()
+            .Where(condition => condition.Wheels.Count() == 2)
+            .Select(vehicle => vehicle.Enrollment)
+            //.First().Enrollment;
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
             Assert.AreEqual(1, querriedEnrollment.Number);*/
@@ -57,7 +57,7 @@ namespace BusinessCore.Tests
         public void Find_vehicle_enrollment_with_one_wheel_with_more_pressure_than_the_others()
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
             IEnrollment[] querriedEnrollment = this.vehicleStorage
-                .getAll()
+                .get()
                 .Select(vehicle => vehicle.Enrollment)
                 /**/
                 .ToArray();

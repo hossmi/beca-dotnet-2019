@@ -24,13 +24,9 @@ namespace BusinessCore.Tests
         {
             /*int count = 0;
             var vehicles = this.vehicleStorage
-            .getAll()
+            .get()
             .Where(condition1 => condition1.Color == CarColor.Black)
             .Count(vehicle => vehicle.Doors.Any(door => door.IsOpen));
-            .Select(vehicle => new
-            {
-                count = 
-            })
             //.Count(countdoors => countdoors.vehicle.Doors.Any(door => door.IsOpen));
             Assert.AreEqual(15, count);*/
 

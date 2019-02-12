@@ -36,7 +36,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(vehicle => new 
                 {
@@ -66,7 +66,7 @@ namespace BusinessCore.Tests
         {
             var vehicles = this.vehicleStorage
 
-                .getAll()
+                .get()
                 .Where(condition1 => condition1.Color == CarColor.Red)
                 .Where(condition2 => condition2.Doors.Any(door => door.IsOpen))
                 .Select( vehicle =>

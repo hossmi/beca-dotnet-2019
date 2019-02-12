@@ -51,7 +51,7 @@ namespace BusinessCore.Tests
         {
             drop(this.connectionString, this.destructionScript);
             create(this.connectionString, this.creationScript);
-            fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
+            fullfillWithSampleData(this.connectionString, this.fakeStorage.get());
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace BusinessCore.Tests
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             IVehicle[] vehicles = databaseVehicleStorage
-                .getAll()
+                .get()
                 .ToArray();
 
             Assert.AreEqual(10, vehicles.Length);
@@ -79,11 +79,11 @@ namespace BusinessCore.Tests
 
             databaseVehicleStorage.clear();
 
-            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.getAll();
+            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
             databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
-            vehicles = databaseVehicleStorage.getAll();
+            vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
         }
 
@@ -93,7 +93,7 @@ namespace BusinessCore.Tests
             IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             databaseVehicleStorage.clear();
-            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.getAll();
+            IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
             IVehicle firstVehicle = new Vehicle
@@ -115,7 +115,7 @@ namespace BusinessCore.Tests
             databaseVehicleStorage.set(firstVehicle);
 
             databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
-            IVehicle retrievedVehicle = databaseVehicleStorage.getAll().First();
+            IVehicle retrievedVehicle = databaseVehicleStorage.get().First();
 
             Assert.AreEqual(firstVehicle.Enrollment.Serial , retrievedVehicle.Enrollment.Serial);
             Assert.AreEqual(firstVehicle.Enrollment.Number , retrievedVehicle.Enrollment.Number);

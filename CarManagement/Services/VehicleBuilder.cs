@@ -298,7 +298,7 @@ namespace CarManagement.Services
             return vehicle;
         }
 
-        public VehicleDto convert(IVehicle vehicle)
+        private VehicleDto convert(IVehicle vehicle)
         {
             VehicleDto vehicleDto = new VehicleDto();
             vehicleDto.Color = new CarColor();
@@ -323,7 +323,7 @@ namespace CarManagement.Services
             return vehicleDto;
         }
 
-        public IDoor convert(DoorDto doorDto)
+        private IDoor convert(DoorDto doorDto)
         {
             IDoor door = new Door();
             if (doorDto.IsOpen == true)
@@ -333,33 +333,33 @@ namespace CarManagement.Services
             return door;
         }
 
-        public DoorDto convert(IDoor door)
+        private DoorDto convert(IDoor door)
         {
             DoorDto doorDto = new DoorDto();
             doorDto.IsOpen = door.IsOpen;
             return doorDto;
         }
 
-        public IWheel convert(WheelDto wheelDto)
+        private IWheel convert(WheelDto wheelDto)
         {
             IWheel wheel = new Wheel();
             wheel.Pressure = wheelDto.Pressure;
             return wheel;
         }
 
-        public WheelDto convert(IWheel wheel)
+        private WheelDto convert(IWheel wheel)
         {
             WheelDto wheelDto = new WheelDto();
             wheelDto.Pressure = wheel.Pressure;
             return wheelDto;
         }
 
-        public IEnrollment convert(EnrollmentDto enrollmentDto)
+        private IEnrollment convert(EnrollmentDto enrollmentDto)
         {
             return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
         }
 
-        public EnrollmentDto convert(IEnrollment enrollment)
+        private EnrollmentDto convert(IEnrollment enrollment)
         {
             EnrollmentDto enrollmentDto = new EnrollmentDto();
             enrollmentDto.Number = enrollment.Number;
