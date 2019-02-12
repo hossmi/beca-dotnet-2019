@@ -13,7 +13,7 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-   
+
 
     public class SqlVehicleStorage : IVehicleStorage
     {
@@ -25,7 +25,7 @@ namespace CarManagement.Services
 	                          ,e.serial
 	                          ,e.number
                           FROM [vehicle] v
-                          INNER JOIN enrollment e ON v.enrollmentId = e.id ;";
+                          INNER JOIN enrollment e ON v.enrollmentId = e.id ";
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
@@ -329,13 +329,14 @@ namespace CarManagement.Services
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
-            private CarColor color;
-            private bool colorHasValue;
+            private readonly IDictionary<string, string> filters;
+
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
+                this.filters = new Dictionary<string, string>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -345,34 +346,44 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                this.color = color;
-                this.colorHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
+                this.filters[nameof(whereColorIs)] = " vehicle.color = " + (int)(color) + " ";
+
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                throw new NotImplementedException();
+                this.engineIsStarted = started;
+                this.engineIsStartedHasValue = true;
+                return this; ;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                throw new NotImplementedException();
+                this.enrollment = enrollment;
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new NotImplementedException();
+                this.enrollmentSerial = serial;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new NotImplementedException();
+                this.horsePower = horsePower;
+                this.horsePowerHasValue = true;
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new NotImplementedException();
+                this.horsePowerMin = min;
+                this.horsePowerMax = max;
+                this.horsePowerMinMaxHasValue = true;
+                return this;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -382,9 +393,39 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
+                string query = composeQuery(this.filters.Values);
+                IEnumerable<IVehicle> vehicles = executeQuery(query);
+
+                return vehicles.GetEnumerator();
+            }
+
+            private IEnumerable<IVehicle> executeQuery(string query)
+            {
+
                 throw new NotImplementedException();
             }
 
+            private static string composeQuery(IEnumerable<string> filters)
+            {
+                string query = "";
+                foreach (string filter in filters)
+                {
+                    query += " AND " + filter;
+                }
+
+                if (query != "")
+                {
+                    query=" WHERE "+query.Substring(4);
+                }
+
+                query = SELECT_FROM_VEHICLE + query;
+
+                return query;
+            }
+
+
         }
+
+
     }
 }
