@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 using CarManagement.Models;
+using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
 {
@@ -18,29 +20,48 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get
+            {
+                return this.vehicles.Count;
+            }
+        }
 
         public void clear()
         {
-            throw new System.NotImplementedException();
+            this.vehicles.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         public Vehicle get(IEnrollment enrollment)
         {
-            throw new System.NotImplementedException();
+            return this.vehicles[enrollment];
         }
 
         public void set(Vehicle vehicle)
         {
-            throw new System.NotImplementedException();
+            this.vehicles[vehicle.Enrollment] = vehicle;
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment,Vehicle> vehicles, IDtoConverter dtoConverter)
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
-            //https://docs.microsoft.com/es-es/dotnet/standard/serialization/examples-of-xml-serialization
-            throw new NotImplementedException();
+            VehicleDto[] vehicleArray = new VehicleDto[vehicles.Count];
+
+            int cont = 0;
+
+
+            foreach (Vehicle vehicle in vehicles.Values)
+            {
+                VehicleDto vehicleDto = dtoConverter.convert(vehicle);
+                vehicleArray[cont] = vehicleDto;
+                cont++;
+            }
+
+            XmlSerializer x = new XmlSerializer(typeof(VehicleDto[]));
+            TextWriter writer = new StreamWriter(filePath);
+            x.Serialize(writer, vehicleArray);
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)

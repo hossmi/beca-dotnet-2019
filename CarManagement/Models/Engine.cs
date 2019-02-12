@@ -7,9 +7,10 @@ namespace CarManagement.Models
         private bool isStarted;
         private int horsePower;
 
-        public Engine(int horsePower)
+        public Engine(int horsePower, bool isStarted)
         {
             this.horsePower = horsePower;
+            this.isStarted = isStarted;
         }
 
         public bool IsStarted

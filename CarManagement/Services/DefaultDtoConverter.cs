@@ -8,35 +8,28 @@ namespace CarManagement.Services
     {
         private IEnrollmentProvider enrollmentProvider;
 
+    
+
         public DefaultDtoConverter(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
         }
 
-        private Engine engine;
-        private EngineDto engineDto;
-        
-        private Vehicle vehicle;
-        private VehicleDto vehicleDto;
-
-        private Door door;
-        private DoorDto doorDto;
-
-        private Wheel wheel;
-        private WheelDto wheelDto;
-
-        private IEnrollment enrollment;
-        private EnrollmentDto enrollmentDto;
-    
-
         public Engine convert(EngineDto engineDto)
         {
-            throw new System.NotImplementedException();
+            Engine engine = new Engine(engineDto.HorsePower,engineDto.IsStarted);
+            return engine;
         }
 
         public EngineDto convert(Engine engine)
         {
-            throw new System.NotImplementedException();
+            EngineDto engineDto = new EngineDto
+            {
+                HorsePower = engine.HorsePower,
+                IsStarted = engine.IsStarted
+            };
+
+            return engineDto;
         }
 
         public Vehicle convert(VehicleDto vehicleDto)
