@@ -177,7 +177,7 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                throw new NotImplementedException();
+                this.
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
