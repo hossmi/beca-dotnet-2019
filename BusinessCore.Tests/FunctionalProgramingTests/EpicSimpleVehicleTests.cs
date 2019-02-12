@@ -45,14 +45,16 @@ namespace BusinessCore.Tests
         {
             IEnrollment querriedEnrollment = this.vehicleStorage
                 .get()
-                .Where (vehicle => vehicle.Wheels.Length == 2)
+                .Where(vehicle => vehicle.Wheels.Length == 2)
                 .OrderByDescending(vehicle => vehicle.Engine.HorsePower)
                 .First().Enrollment;
-                
+
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
             Assert.AreEqual(1, querriedEnrollment.Number);
         }
+    }
+}
 
 //        [TestCategory("Functional Programing")]
 //        [TestMethod]

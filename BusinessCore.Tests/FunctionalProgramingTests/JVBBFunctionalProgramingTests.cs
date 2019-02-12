@@ -26,7 +26,7 @@ namespace BusinessCore.Tests
         {
             bool isTrue = false;
             isTrue = this.vehicleStorage
-                .getAll()
+                .get()
                 .All(vehicle => vehicle.Enrollment.Serial == "CSM" && vehicle.Engine.HorsePower == 666);
 
             Assert.IsTrue(isTrue);
@@ -37,7 +37,7 @@ namespace BusinessCore.Tests
         {
             bool isTrue = false;
             isTrue = this.vehicleStorage
-                .getAll()
+                .get()
                 .All(vehicle => vehicle.Enrollment.Serial == "CSM" && 
                     vehicle.Doors.Where(doors => doors.IsOpen == true).Count() != 3);
 
@@ -51,7 +51,7 @@ namespace BusinessCore.Tests
             int open = 0;
             int close = 0;
             var values = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
                 .SelectMany(vehicle => vehicle.Doors)
                 .GroupBy(door => door.IsOpen);

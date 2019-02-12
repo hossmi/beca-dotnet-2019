@@ -172,7 +172,7 @@ namespace BusinessCore.Tests
                     .select(vehicle => vehicle.Engine)                    //2
                     .filter(engine => engine.IsStarted);         //1
 
-                Assert.AreEqual(1, selectedEngines2.Count());
+                Assert.AreEqual(1, selectedEngines.Count());
             }
         }
     }
