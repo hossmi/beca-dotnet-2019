@@ -74,7 +74,6 @@ namespace CarManagement.Services
                     this.pressure = value;
                 }
             }
-
         }
 
         private class Door : IDoor
@@ -225,7 +224,6 @@ namespace CarManagement.Services
         }
         public void setColor(CarColor color)
         {
-
             this.color = color;
             bool t = false;
             foreach (CarColor c in Enum.GetValues(typeof(CarColor)))
@@ -244,6 +242,7 @@ namespace CarManagement.Services
             List<IWheel> wheels = new List<IWheel>();
             List<IDoor> doors = new List<IDoor>();
             Engine engine = new Engine();
+            color = this.color;
             engine.HorsePower = this.hp;
             IEnrollment enrollment = this.enrollmentProvider.getNew();
             for (int i = 0; i < this.wheelCounter; i++)
@@ -256,10 +255,10 @@ namespace CarManagement.Services
                 Door door = new Door();
                 doors.Add(door);
             }
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
+            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, enrollment);
             return vehicle;
         }
-        public IEngine convert(EngineDto engineDto)
+        private IEngine convert(EngineDto engineDto)
         {
             Engine engine = new Engine();
             engine.HorsePower = engineDto.HorsePower;
@@ -267,7 +266,7 @@ namespace CarManagement.Services
             return engine;
         }
 
-        public EngineDto convert(IEngine engine)
+        private EngineDto convert(IEngine engine)
         {
             EngineDto engineDto = new EngineDto();
             engineDto.HorsePower = engine.HorsePower;
@@ -275,7 +274,7 @@ namespace CarManagement.Services
             return engineDto;
         }
 
-        public IVehicle convert(VehicleDto vehicleDto)
+        private IVehicle convert(VehicleDto vehicleDto)
         {
             CarColor color = new CarColor();
             List<IWheel> wheels = new List<IWheel>();
