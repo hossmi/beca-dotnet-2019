@@ -124,63 +124,80 @@ namespace CarManagement.Services
 
         public IEnumerable<IVehicle> getAll()
         {
-            List<IVehicle> vehicles = new List<IVehicle>();
+            
             string getVehiceProperties = "SELECT enrollmentId, serial, number, color, engineHorsePower, engineIsStarted " +
-                "FROM enrollment, vehicle";
+                "FROM enrollment, vehicle WHERE enrollmentid = id ";
+
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
                 connection.Open();
                 SqlCommand command = new SqlCommand(getVehiceProperties, connection);
-                IDataReader reader = command.ExecuteReader();
+                return giveMeValues(command);
+            }
+        }
 
-                while (reader.Read())
-                {
-                    VehicleDto vehicleDto = new VehicleDto();
-                    vehicleDto.Enrollment = new EnrollmentDto();
-                    vehicleDto.Engine = new EngineDto();
-                    List<WheelDto> wheels = new List<WheelDto>();
-                    List<DoorDto> doors = new List<DoorDto>();
+        private List<IVehicle> giveMeValues(SqlCommand command)
+        {
+            IDataReader reader = command.ExecuteReader();
+            List<IVehicle> vehicles = new List<IVehicle>();
 
-                    int enrollmentID = Convert.ToInt32(reader["enrollmentid"]);
-                    vehicleDto.Enrollment.Number = Convert.ToInt32(reader["number"]);
-                    vehicleDto.Enrollment.Serial = Convert.ToString(reader["serial"]);
-                    vehicleDto.Engine.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
-                    vehicleDto.Engine.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
-                    vehicleDto.Color = (CarColor)(Convert.ToInt32(reader["color"]));
+            while (reader.Read())
+            {
 
-                    string getVehicleWheel = $@"SELECT pressure FROM wheel WHERE vehicleId =   {enrollmentID};";
-                    command = new SqlCommand(getVehicleWheel, connection);
-                    IDataReader readerWheel = command.ExecuteReader();
-                    while (readerWheel.Read())
-                    {
-                        WheelDto wheel = new WheelDto();
-                        wheel.Pressure = Convert.ToDouble(readerWheel["pressure"]);
-                        wheels.Add(wheel);
-                    }
+                VehicleDto vehicleDto = new VehicleDto();
+                vehicleDto.Enrollment = new EnrollmentDto();
+                vehicleDto.Engine = new EngineDto();
 
-                    vehicleDto.Wheels = wheels.ToArray();
+                int enrollmentID = Convert.ToInt32(reader["enrollmentid"]);
+                vehicleDto.Enrollment.Number = Convert.ToInt32(reader["number"]);
+                vehicleDto.Enrollment.Serial = Convert.ToString(reader["serial"]);
+                vehicleDto.Engine.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
+                vehicleDto.Engine.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
+                vehicleDto.Color = (CarColor)(Convert.ToInt32(reader["color"]));
 
+                string getVehicleWheel = $@"SELECT pressure FROM wheel WHERE vehicleId =   {enrollmentID};";
+                command = new SqlCommand(getVehicleWheel, command.Connection);
+                vehicleDto.Wheels = giveMeWheels(command);
 
-                    string getVehicleDoor = $@"SELECT isOpen FROM door WHERE vehicleId =   {enrollmentID};"; ;
-                    command = new SqlCommand(getVehicleDoor, connection);
-                    IDataReader readerDoor = command.ExecuteReader();
+                string getVehicleDoor = $@"SELECT isOpen FROM door WHERE vehicleId =   {enrollmentID};"; ;
+                command = new SqlCommand(getVehicleDoor, command.Connection);
+                vehicleDto.Doors = giveMeDoors(command);
 
-                    while (readerDoor.Read())
-                    {
-                        DoorDto door = new DoorDto();
-                        door.IsOpen = Convert.ToBoolean(readerDoor["isOpen"]);
-                        doors.Add(door);
-                    }
-                    vehicleDto.Doors = doors.ToArray();
-                    IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
-                    vehicles.Add(vehicle);
-
-                }
-                connection.Close();
-                return vehicles;
-
+                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+                vehicles.Add(vehicle);
+                
 
             }
+            command.Connection.Close();
+            return vehicles;
+        }
+
+        private DoorDto[] giveMeDoors(SqlCommand command)
+        {
+            IDataReader readerDoor = command.ExecuteReader();
+            List<DoorDto> doors = new List<DoorDto>();
+
+            while (readerDoor.Read())
+            {
+                DoorDto door = new DoorDto();
+                door.IsOpen = Convert.ToBoolean(readerDoor["isOpen"]);
+                doors.Add(door);
+            }
+           return doors.ToArray();
+        }
+
+        private WheelDto[] giveMeWheels(SqlCommand command)
+        {
+            List<WheelDto> wheels = new List<WheelDto>();
+            IDataReader readerWheel = command.ExecuteReader();
+            while (readerWheel.Read())
+            {
+                WheelDto wheel = new WheelDto();
+                wheel.Pressure = Convert.ToDouble(readerWheel["pressure"]);
+                wheels.Add(wheel);
+            }
+
+           return wheels.ToArray();
         }
 
         public void set(IVehicle vehicle)

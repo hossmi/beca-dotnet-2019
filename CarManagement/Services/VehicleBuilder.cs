@@ -23,6 +23,8 @@ namespace CarManagement.Services
 
 
 
+
+
             public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
             {
                 this.numberWheel = 0;
@@ -120,6 +122,7 @@ namespace CarManagement.Services
 
                 public Wheel(double pressure)
                 {
+                    Asserts.isTrue(1 <= pressure && pressure <= 5);
                     this.Pressure = pressure;
                 }
                 public double Pressure
@@ -201,6 +204,7 @@ namespace CarManagement.Services
                     {
                         
                         wheel.Pressure = pression;
+                        
                     }
                 }
             }
@@ -351,7 +355,7 @@ namespace CarManagement.Services
                 {
                     toMemory.open();
                 }
-                toMemory.close();
+                //toMemory.close();
                 return toMemory;
             }
             private  IWheel convert(WheelDto wheelDto)
