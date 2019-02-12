@@ -22,12 +22,13 @@ namespace ToolBox.Services
             using (TConnection connection = new TConnection())
             using (IDbCommand command = connection.CreateCommand())
             {
-
+                
                 if (parameters != null)
                     foreach (var parameter in parameters)
                     command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
+                connection.ConnectionString = this.connectionString;
 
                 connection.Open();
 
@@ -49,6 +50,7 @@ namespace ToolBox.Services
                     command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
+                connection.ConnectionString = this.connectionString;
                 connection.Open();
                 object returned = command.ExecuteScalar();
                 connection.Close();
@@ -67,6 +69,7 @@ namespace ToolBox.Services
                         command.Parameters[parameter.Key] = parameter.Value;
 
                 command.CommandText = query;
+                connection.ConnectionString = this.connectionString;
                 connection.Open();
                 int affectedRows = command.ExecuteNonQuery();
                 connection.Close();
