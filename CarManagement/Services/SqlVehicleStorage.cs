@@ -18,13 +18,13 @@ namespace CarManagement.Services
     public class SqlVehicleStorage : IVehicleStorage
     {
         private const string SELECT_FROM_VEHICLE = @"
-                        SELECT v.[enrollmentId]
-                              ,v.[color]
-                              ,v.[engineHorsePower]
-                              ,v.[engineIsStarted]
+                        SELECT v.enrollmentId
+                              ,v.color
+                              ,v.engineHorsePower]
+                              ,v.engineIsStarted
 	                          ,e.serial
 	                          ,e.number
-                          FROM [vehicle] v
+                          FROM vehicle v
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
 
         private readonly string connectionString;
@@ -330,6 +330,7 @@ namespace CarManagement.Services
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IDictionary<string, string> filters;
+            private readonly string indexWhereHorsePower = "whereHorsePower";
 
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
@@ -347,42 +348,50 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " vehicle.color = " + (int)(color) + " ";
+                this.filters[nameof(whereColorIs)] = " v.color = " + (int)(color) + " ";
 
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.engineIsStarted = started;
-                this.engineIsStartedHasValue = true;
-                return this; ;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
+                this.filters[nameof(whereEngineIsStarted)] = " v.engineIsStarted = " + (started ? 0 : 1) + " ";
+
+                return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                this.enrollment = enrollment;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
+                this.filters[nameof(whereEnrollmentIs)] = " e.serial = " + enrollment.Serial +
+                                                      " AND e.number = " + enrollment.Number + " ";
+
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                this.enrollmentSerial = serial;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
+                this.filters[nameof(whereEnrollmentSerialIs)] = "e.serial = " + serial + " ";
+
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.horsePower = horsePower;
-                this.horsePowerHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
+                this.filters[this.indexWhereHorsePower] = " v.engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
+
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                this.horsePowerMin = min;
-                this.horsePowerMax = max;
-                this.horsePowerMinMaxHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
+                this.filters[this.indexWhereHorsePower] = " v.engineHorsePower >= " + Convert.ToInt32(min)
+                                                    + " AND v.engineHorsePower <= " + Convert.ToInt32(max) + " ";
+
                 return this;
             }
 
@@ -401,6 +410,9 @@ namespace CarManagement.Services
 
             private IEnumerable<IVehicle> executeQuery(string query)
             {
+                //  conectar a la BD y hacer la consulta
+                //  Montar los vehiculos
+                //  transformar la consulta en un IEnumerable<IVehicle>
 
                 throw new NotImplementedException();
             }
@@ -415,17 +427,13 @@ namespace CarManagement.Services
 
                 if (query != "")
                 {
-                    query=" WHERE "+query.Substring(4);
+                    query = " WHERE " + query.Substring(4);
                 }
 
                 query = SELECT_FROM_VEHICLE + query;
 
                 return query;
             }
-
-
         }
-
-
     }
 }
