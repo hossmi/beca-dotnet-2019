@@ -9,6 +9,9 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 using System.Collections;
 using CarManagement.Core;
+using ToolBox.Services;
+using System.Data;
+using System.Data.Common;
 
 namespace CarManagement.Services
 {
@@ -412,8 +415,70 @@ public IEnumerable<IVehicle> get()
             private IEnumerator<IVehicle> enumerate()
             {
                 string selectVehicle = ComposeQuery(this.filters.Values);
-                IEnumerator<IVehicle> vehicles = ExecuteQuery(selectVehicle, this.connectionString);
-                return vehicles;
+                //IEnumerator<IVehicle> vehicles = ExecuteQuery(selectVehicle, this.connectionString);
+                IDictionary<string, object> dictionary = new Dictionary<string, object>();
+
+                foreach (KeyValuePair<string, string> keyValuePair in this.filters)
+                {
+                    dictionary.Add(keyValuePair.Key, keyValuePair.Value);
+                }
+                                               
+                DB<SqlConnection> db = new DB<SqlConnection> (this.connectionString);
+                IEnumerable<IVehicle> vehicles = db.executeQuery(selectVehicle, reader => conversor(reader), dictionary);
+
+                return vehicles.GetEnumerator();
+            }
+
+            private IVehicle conversor(IDataRecord reader)
+            {
+                VehicleDto vehicleDto = new VehicleDto()
+                {
+                    Color = (CarColor)Convert.ToInt32(reader["color"]),
+                    Engine = new EngineDto()
+                    {
+                        HorsePower = Convert.ToInt32(reader["engineHorsePower"]),
+                        IsStarted = Convert.ToBoolean(reader["engineIsStarted"]),
+                    },
+                    Enrollment = new EnrollmentDto()
+                    {
+                        Serial = reader["serial"].ToString(),
+                        Number = Convert.ToInt32(reader["number"]),
+                    },
+                };
+                SqlConnection connection = new SqlConnection(this.connectionString);
+                SqlCommand command = new SqlCommand(SELECT_WHEEL, connection);
+
+                command.Parameters.AddWithValue("@vehicleId", reader["enrollmentId"]);
+                SqlDataReader wheelReader = command.ExecuteReader();
+                List<WheelDto> wheels = new List<WheelDto>();
+
+                while (wheelReader.Read())
+                {
+                    WheelDto wheel = new WheelDto()
+                    {
+                        Pressure = Convert.ToDouble(wheelReader["pressure"]),
+                    };
+                    wheels.Add(wheel);
+                }
+                vehicleDto.Wheels = wheels.ToArray();
+
+                command = new SqlCommand(SELECT_DOOR, connection);
+                command.Parameters.AddWithValue("@vehicleId", reader["enrollmentId"]);
+                SqlDataReader doorReader = command.ExecuteReader();
+                List<DoorDto> doors = new List<DoorDto>();
+
+                while (doorReader.Read())
+                {
+                    DoorDto door = new DoorDto()
+                    {
+                        IsOpen = Convert.ToBoolean(doorReader["isOpen"]),
+                    };
+                    doors.Add(door);
+                }
+                vehicleDto.Doors = doors.ToArray();
+
+                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+                return vehicle;
             }
 
             private static IEnumerator<IVehicle> ExecuteQuery(string selectVehicle, string connectionString)
