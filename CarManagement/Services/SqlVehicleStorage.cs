@@ -235,7 +235,7 @@ namespace CarManagement.Services
 
                 this.arguments.Add("@color", color);
 
-                this.specifiedQuery += AND + COLOR_COND;
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, COLOR_COND });
 
                 return this;
             }
@@ -244,7 +244,7 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@isStarted", started);
 
-                this.specifiedQuery += AND + ENGINE_STARTED_COND;
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, ENGINE_STARTED_COND });
 
                 return this;
             }
@@ -254,7 +254,7 @@ namespace CarManagement.Services
                 this.arguments.Add("@serial", enrollment.Serial);
                 this.arguments.Add("@number", enrollment.Number);
 
-                this.specifiedQuery += AND + ENROLL_COND;
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, ENROLL_COND });
 
                 return this;
             }
@@ -263,7 +263,7 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@serial", serial);
 
-                this.specifiedQuery += AND + ENROLL_SERIAL_COND;
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, ENROLL_SERIAL_COND });
 
                 return this;
             }
@@ -272,8 +272,8 @@ namespace CarManagement.Services
             {
                 this.arguments.Add("@horsePower", horsePower);
 
-                this.specifiedQuery += AND + ENGINE_HORSE_COND;
-
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, ENGINE_HORSE_COND });
+                
                 return this;
             }
 
@@ -282,8 +282,8 @@ namespace CarManagement.Services
                 this.arguments.Add("@horsePower", min);
                 this.arguments.Add("@maxHorsePower", max);
 
-                this.specifiedQuery += AND + ENGINE_MINMAX_HORSE_COND;
-
+                this.specifiedQuery = String.Join(" ", new string[] { this.specifiedQuery, AND, ENGINE_MINMAX_HORSE_COND });
+                
                 return this;
             }
 
