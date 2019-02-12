@@ -106,12 +106,16 @@ namespace CarManagement.Services
 
         public IVehicle import(VehicleDto vehicleDto)
         {
-            throw new NotImplementedException();
+            IVehicle iVehicleDto = convert(vehicleDto, this.enrollmentProvider);
+
+            return iVehicleDto;
         }
 
         public VehicleDto export(IVehicle vehicleDto)
         {
-            throw new NotImplementedException();
+            VehicleDto newVehicleDto = convert(vehicleDto);
+
+            return newVehicleDto;
         }
 
         private static IEngine convert(EngineDto engineDto)
@@ -315,28 +319,32 @@ namespace CarManagement.Services
         private class Wheel : IWheel
         {
             private double pressure;
+
+            public Wheel()
+            {
+                this.pressure = 1;
+            }
             public double Pressure
             {
-                set
-                {
-                    this.pressure = value;
-                }
                 get
                 {
                     return this.pressure;
                 }
-            }
-
-            public Wheel()
-            {
-                this.pressure = 0;
+                set
+                {
+                    Asserts.isTrue(value >=1 && value <= 5);
+                    this.pressure = value;
+                }
             }
 
             public Wheel(double pressure)
             {
+                Asserts.isTrue(pressure >= 1 && pressure <= 5);
                 this.Pressure = pressure;
             }
         }
+ 
+
 
         private class Vehicle : IVehicle
         {
