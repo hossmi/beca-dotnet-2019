@@ -159,37 +159,43 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " AND v.color = " + (int)(color) + " ";
+                this.filters[nameof(whereColorIs)] = " AND color = " + Convert.ToInt32(color) + " ";
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.isStarted = started;
-                this.isStartedHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
+                this.filters[nameof(whereEngineIsStarted)] = " AND isStarted = " + started + " ";
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                this.enrollment = enrollment;
-                this.enrollmentHasValue = true;
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
+                this.filters[nameof(whereEnrollmentIs)] = " AND enrollment = " + enrollment + " ";
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                this.
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
+                this.filters[nameof(whereEnrollmentSerialIs)] = " serial = " + serial + " ";
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerEquals)));
+                this.filters[nameof(whereHorsePowerEquals)] = " engineHorsePower = " + horsePower + " ";
+                return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                throw new NotImplementedException();
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerIsBetween)));
+                this.filters[nameof(whereHorsePowerIsBetween)] = " engineHorsePower  >= " + min + " AND engineHorsePower <= " + max + " ";
+                return this;
             }
 
             public void set(IVehicle vehicle)
