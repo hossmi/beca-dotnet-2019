@@ -23,7 +23,7 @@ namespace CarManagement.Services
 	                          ,e.serial
 	                          ,e.number
                           FROM [vehicle] v
-                          INNER JOIN enrollment e ON v.enrollmentId = e.id ;";
+                          INNER JOIN enrollment e ON v.enrollmentId = e.id ";
 
         private const string SELECT_COUNT = "SELECT count(*) FROM vehicle";
 
@@ -164,109 +164,6 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            throw new NotImplementedException();
-        }
-
-        private class PrvVehicleQuery : IVehicleQuery
-        {
-            private readonly string connectionString;
-            private readonly IVehicleBuilder vehicleBuilder;
-            private CarColor color;
-            private bool colorHasValue;
-
-            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
-            {
-                this.connectionString = connectionString;
-                this.vehicleBuilder = vehicleBuilder;
-            }
-
-            public IEnumerator<IVehicle> GetEnumerator()
-            {
-                return enumerate();
-            }
-
-            public IVehicleQuery whereColorIs(CarColor color)
-            {
-                this.color = color;
-                this.colorHasValue = true;
-                return this;
-            }
-
-            public IVehicleQuery whereEngineIsStarted(bool started)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IVehicleQuery whereEnrollmentSerialIs(string serial)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IVehicleQuery whereHorsePowerEquals(int horsePower)
-            {
-                throw new NotImplementedException();
-            }
-
-            public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
-            {
-                throw new NotImplementedException();
-            }
-
-            //public IEnumerable<IVehicle> getAll()
-            //{
-            //    IList<IVehicle> vehicles = new List<IVehicle>();
-
-            //    using (SqlConnection connection = new SqlConnection(this.connectionString))
-            //    using (SqlCommand command = new SqlCommand())
-            //    {
-            //        connection.Open();
-            //        command.Connection = connection;
-            //        command.CommandText = SELECT_FROM_VEHICLE;
-            //        using (SqlDataReader readerVehicle = command.ExecuteReader())
-            //        {
-            //            while (readerVehicle.Read())
-            //            {
-            //                VehicleDto vehicleDto = new VehicleDto();
-
-            //                int enrollmentId = (int)readerVehicle["enrollmentId"];
-            //                vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
-            //                vehicleDto.Engine = new EngineDto
-            //                {
-            //                    HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
-            //                    IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
-            //                };
-            //                vehicleDto.Enrollment = new EnrollmentDto
-            //                {
-            //                    Serial = readerVehicle["serial"].ToString(),
-            //                    Number = Convert.ToInt16(readerVehicle["number"]),
-            //                };
-
-            //                List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
-            //                List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
-
-            //                vehicleDto.Wheels = wheelDtos.ToArray();
-            //                vehicleDto.Doors = doorDtos.ToArray();
-
-            //                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
-            //                vehicles.Add(vehicle);
-            //            }
-            //        }
-
-
-        //        connection.Close();
-        //    }
-
-        //    return vehicles;
-        //}
-
-
-        public void set(IVehicle vehicle)
-        {
             string query = $@"
                      SELECT id
                      FROM enrollment
@@ -359,13 +256,13 @@ namespace CarManagement.Services
                         foreach (IWheel wheel in vehicle.Wheels)
                         {
                             pressureAux = Convert.ToDouble(reader["pressure"]);
-                            if(pressureAux != wheel.Pressure)
+                            if (pressureAux != wheel.Pressure)
                             {
                                 sentences += $@"INSERT INTO wheel (pressure) 
                                                 VALUES ({wheel.Pressure});";
-                            }                            
+                            }
                         }
-                    }                    
+                    }
                 }
                 command.CommandText = $@"
                                 SELECT *
@@ -399,8 +296,13 @@ namespace CarManagement.Services
             int enrollmentId;
 
             sentences = $@"INSERT INTO enrollment (serial, number) 
-                    VALUES ('{vehicle.Enrollment.Serial}', {vehicle.Enrollment.Number});";
-            executeCommand(connectionString, sentences);
+                    VALUES (@serial, @number);";
+            var parameters = new Dictionary<string, object>
+                {
+                    {"@serial", vehicle.Enrollment.Serial},
+                    {"@number", vehicle.Enrollment.Number},
+                };
+            executeCommand(connectionString, sentences, parameters);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand())
@@ -415,21 +317,38 @@ namespace CarManagement.Services
             }
 
             sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
-                    VALUES ({enrollmentId}, {(int)vehicle.Color}, {vehicle.Engine.HorsePower}, {(vehicle.Engine.IsStarted ? 1 : 0)});";
-            executeCommand(connectionString, sentences);
+                    VALUES (@enrollmentId, @color, @horsePower, @isStarted);";
+            parameters = new Dictionary<string, object>
+                {
+                    {"@enrollmentId", enrollmentId},
+                    {"@color", vehicle.Color},
+                    {"@horsePower", vehicle.Engine.HorsePower},
+                    {"@isStarted", vehicle.Engine.IsStarted},
+                };
+            executeCommand(connectionString, sentences, parameters);
 
             foreach (IWheel wheel in vehicle.Wheels)
             {
                 sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
-                    VALUES ({enrollmentId}, {wheel.Pressure.ToString().Replace(',', '.')});";
-                executeCommand(connectionString, sentences);
+                    VALUES (@enrollmentId, @pressure);";
+                parameters = new Dictionary<string, object>
+                {
+                    {"@enrollmentId", enrollmentId},
+                    {"@pressure", wheel.Pressure},
+                };
+                executeCommand(connectionString, sentences, parameters);
             }
 
             foreach (IDoor door in vehicle.Doors)
             {
                 sentences = $@"INSERT INTO door (vehicleId, isOpen) 
-                    VALUES ({enrollmentId}, {(door.IsOpen ? 1 : 0)});";
-                executeCommand(connectionString, sentences);
+                    VALUES (@enrollmentId, @isOpen);";
+                parameters = new Dictionary<string, object>
+                {
+                    {"@enrollmentId", enrollmentId},
+                    {"@isOpen", door.IsOpen},
+                };
+                executeCommand(connectionString, sentences, parameters);
             }
         }
 
@@ -490,6 +409,75 @@ namespace CarManagement.Services
                 connection.Close();
             }
         }
+
+        private static void executeCommand(string connectionString, string sentencies, IDictionary<string, object> parameters)
+        {
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = new SqlCommand())
+            {
+                command.CommandText = sentencies;
+                command.Connection = connection;
+
+                foreach (var item in parameters)
+                    command.Parameters[item.Key] = item.Value;
+
+                connection.Open();
+                int afectedRows = command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+
+        private class PrvVehicleQuery : IVehicleQuery
+        {
+            private readonly string connectionString;
+            private readonly IVehicleBuilder vehicleBuilder;
+            private CarColor color;
+            private bool colorHasValue;
+
+            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
+            {
+                this.connectionString = connectionString;
+                this.vehicleBuilder = vehicleBuilder;
+            }
+
+            public IEnumerator<IVehicle> GetEnumerator()
+            {
+                return enumerate();
+            }
+
+            public IVehicleQuery whereColorIs(CarColor color)
+            {
+                this.color = color;
+                this.colorHasValue = true;
+                return this;
+            }
+
+            public IVehicleQuery whereEngineIsStarted(bool started)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereEnrollmentSerialIs(string serial)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerEquals(int horsePower)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
+            {
+                throw new NotImplementedException();
+            }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return enumerate();
@@ -497,9 +485,60 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
+                
+
                 throw new NotImplementedException();
             }
 
+            //public IEnumerable<IVehicle> getAll()
+            //{
+            //    IList<IVehicle> vehicles = new List<IVehicle>();
+
+            //    using (SqlConnection connection = new SqlConnection(this.connectionString))
+            //    using (SqlCommand command = new SqlCommand())
+            //    {
+            //        connection.Open();
+            //        command.Connection = connection;
+            //        command.CommandText = SELECT_FROM_VEHICLE;
+            //        using (SqlDataReader readerVehicle = command.ExecuteReader())
+            //        {
+            //            while (readerVehicle.Read())
+            //            {
+            //                VehicleDto vehicleDto = new VehicleDto();
+
+            //                int enrollmentId = (int)readerVehicle["enrollmentId"];
+            //                vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
+            //                vehicleDto.Engine = new EngineDto
+            //                {
+            //                    HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
+            //                    IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
+            //                };
+            //                vehicleDto.Enrollment = new EnrollmentDto
+            //                {
+            //                    Serial = readerVehicle["serial"].ToString(),
+            //                    Number = Convert.ToInt16(readerVehicle["number"]),
+            //                };
+
+            //                List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
+            //                List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
+
+            //                vehicleDto.Wheels = wheelDtos.ToArray();
+            //                vehicleDto.Doors = doorDtos.ToArray();
+
+            //                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+            //                vehicles.Add(vehicle);
+            //            }
+            //        }
+
+
+            //        connection.Close();
+            //    }
+
+            //    return vehicles;
+            //}
+
+
+
         }
-                }
-            }
+    }
+}
