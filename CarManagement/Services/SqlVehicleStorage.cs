@@ -411,9 +411,6 @@ namespace CarManagement.Services
 
             private static IEnumerable<IVehicle> executeQuery(string query, string connectionString, IVehicleBuilder vehicleBuilder)
             {
-                //  conectar a la BD y hacer la consulta
-                //  Montar los vehiculos
-                //  transformar la consulta en un IEnumerable<IVehicle>
                 using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
                     sqlConnection.Open();
