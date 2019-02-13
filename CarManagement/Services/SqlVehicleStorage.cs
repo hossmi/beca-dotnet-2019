@@ -20,7 +20,7 @@ namespace CarManagement.Services
         private const string SELECT_FROM_VEHICLE = @"
                         SELECT v.enrollmentId
                               ,v.color
-                              ,v.engineHorsePower]
+                              ,v.engineHorsePower
                               ,v.engineIsStarted
 	                          ,e.serial
 	                          ,e.number
@@ -28,7 +28,7 @@ namespace CarManagement.Services
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
         private const string SELECT_FROM_DOOR = "";
         private const string SELECT_COUNT_VEHICLE = "SELECT count(*) FROM vehicle ";
-                
+
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
@@ -43,7 +43,7 @@ namespace CarManagement.Services
         {
             get
             {
-                return executeScalarQuery(this.connectionString, SELECT_COUNT_VEHICLE );
+                return executeScalarQuery(this.connectionString, SELECT_COUNT_VEHICLE);
             }
         }
 
@@ -349,7 +349,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " AND v.color = " + (int)(color) + " ";
+                this.filters[nameof(whereColorIs)] = " AND color = " + (int)(color) + " ";
 
                 return this;
             }
@@ -357,7 +357,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
-                this.filters[nameof(whereEngineIsStarted)] = " AND v.engineIsStarted = " + (started ? 0 : 1) + " ";
+                this.filters[nameof(whereEngineIsStarted)] = " AND engineIsStarted = " + (started ? 0 : 1) + " ";
 
                 return this;
             }
@@ -365,8 +365,8 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = " AND e.serial = " + enrollment.Serial +
-                                                          " AND e.number = " + enrollment.Number + " ";
+                this.filters[nameof(whereEnrollmentIs)] = " AND serial = " + enrollment.Serial +
+                                                          " AND number = " + enrollment.Number + " ";
 
                 return this;
             }
@@ -374,7 +374,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
-                this.filters[nameof(whereEnrollmentSerialIs)] = " AND e.serial = " + serial + " ";
+                this.filters[nameof(whereEnrollmentSerialIs)] = " serial = " + serial + " ";
 
                 return this;
             }
@@ -382,7 +382,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
-                this.filters[this.indexWhereHorsePower] = " AND v.engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
+                this.filters[this.indexWhereHorsePower] = " engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
 
                 return this;
             }
@@ -419,35 +419,32 @@ namespace CarManagement.Services
                     sqlConnection.Open();
                     using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                     {
-                        
-
                         using (SqlDataReader reader = sqlCommand.ExecuteReader())
                         {
-
                             while (reader.Read())
                             {
-                                int enrollmentId =  (int) reader["enrollmentId"];
+                                int enrollmentId = (int)reader["enrollmentId"];
+
                                 VehicleDto vehicleDto = new VehicleDto
                                 {
-                                    Color = (CarColor)(int)reader["color"],
+                                    Color = (CarColor)Convert.ToInt32(reader["color"]),
                                     Engine = new EngineDto
                                     {
-                                        HorsePower = (int)reader["engineHorsePower"],
-                                        IsStarted = (bool)reader["engineIsStarted"]
+                                        HorsePower = Convert.ToInt32(reader["engineHorsePower"]),
+                                        IsStarted = Convert.ToBoolean(reader["engineIsStarted"])
                                     },
                                     Enrollment = new EnrollmentDto
                                     {
-                                        Number = (int)reader["number"],
-                                        Serial = (string)reader["serial"]
+                                        Number = Convert.ToInt32(reader["number"]),
+                                        Serial = Convert.ToString(reader["serial"])
                                     }
                                 };
-
                                 vehicleDto.Doors = getDoor(sqlConnection, enrollmentId).ToArray();
-                                //resto de código
+                                vehicleDto.Wheels = getWheel(sqlConnection, enrollmentId).ToArray();
+
                                 yield return vehicleBuilder.import(vehicleDto); ;
                             }
                         }
-                        
                     }
                     sqlConnection.Close();
                 }
@@ -455,7 +452,7 @@ namespace CarManagement.Services
 
             private static IEnumerable<DoorDto> getDoor(SqlConnection sqlConnection, int enrollmentId)
             {
-                string query = "S";//MIRAR
+                string query = "SELECT isOpen FROM wheel WHERRE vehicleId = " + enrollmentId + " ";//MIRAR
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     using (SqlDataReader reader = sqlCommand.ExecuteReader())
@@ -464,7 +461,7 @@ namespace CarManagement.Services
                         {
                             yield return new DoorDto
                             {
-                                 IsOpen = Convert.ToBoolean(reader["isOpen"])                                
+                                IsOpen = Convert.ToBoolean(reader["isOpen"])
                             };
                         }
                     }
@@ -473,16 +470,16 @@ namespace CarManagement.Services
 
             private static IEnumerable<WheelDto> getWheel(SqlConnection sqlConnection, int enrollmentId)
             {
-                string query = "S";//MIRAR
+                string query = "SELECT pressure FROM wheel WHERE vehicleId = " + enrollmentId + " ";
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     using (SqlDataReader reader = sqlCommand.ExecuteReader())
                     {
-                        while (reader.Read())//double Pressure
+                        while (reader.Read())
                         {
                             yield return new WheelDto
                             {
-                                  Pressure = Convert.ToDouble(reader["pressure"])
+                                Pressure = Convert.ToDouble(reader["pressure"])
                             };
                         }
                     }
