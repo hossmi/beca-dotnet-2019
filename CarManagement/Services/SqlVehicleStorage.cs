@@ -349,7 +349,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " AND color = " + (int)(color) + " ";
+                this.filters[nameof(whereColorIs)] = " color = " + (int)(color) + " ";
 
                 return this;
             }
@@ -449,7 +449,7 @@ namespace CarManagement.Services
 
             private static IEnumerable<DoorDto> getDoor(SqlConnection sqlConnection, int enrollmentId)
             {
-                string query = "SELECT isOpen FROM wheel WHERRE vehicleId = " + enrollmentId + " ";//MIRAR
+                string query = "SELECT isOpen FROM door WHERRE vehicleId = " + enrollmentId + " ";//MIRAR
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     using (SqlDataReader reader = sqlCommand.ExecuteReader())
