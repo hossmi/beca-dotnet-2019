@@ -27,6 +27,7 @@ namespace CarManagement.Services
                           FROM vehicle v
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
         private const string SELECT_FROM_DOOR = "";
+        private const string SELECT_COUNT_VEHICLE = "SELECT count(*) FROM vehicle ";
                 
 
         private readonly string connectionString;
@@ -42,7 +43,7 @@ namespace CarManagement.Services
         {
             get
             {
-                return (int)executeScalarQuery(this.connectionString, "SELECT count(*) FROM vehicle");
+                return executeScalarQuery(this.connectionString, SELECT_COUNT_VEHICLE );
             }
         }
 
@@ -307,16 +308,14 @@ namespace CarManagement.Services
             return result;
         }
 
-        private static object executeScalarQuery(string connectionString, string query)
+        private static int executeScalarQuery(string connectionString, string query)
         {
-            object result = null;
+            int result = 0;
 
             SqlConnection connection = new SqlConnection(connectionString);
             connection.Open();
             SqlCommand command = new SqlCommand(query, connection);
-
-            result = command.ExecuteScalar();
-
+            result = (int)command.ExecuteScalar();
             connection.Close();
 
             return result;
