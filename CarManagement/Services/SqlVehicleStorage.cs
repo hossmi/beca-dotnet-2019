@@ -157,21 +157,21 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereColorIs)));
-                this.filters[nameof(whereColorIs)] = " AND color = " + Convert.ToInt32(color) + " ";
+                this.filters[nameof(whereColorIs)] = " color = " + Convert.ToInt32(color) + " ";
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
-                this.filters[nameof(whereEngineIsStarted)] = " AND isStarted = " + started + " ";
+                this.filters[nameof(whereEngineIsStarted)] = " isStarted = " + started + " ";
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = " AND enrollment = " + enrollment + " ";
+                this.filters[nameof(whereEnrollmentIs)] = " enrollment = " + enrollment + " ";
                 return this;
             }
 
@@ -248,14 +248,23 @@ namespace CarManagement.Services
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return enumerate();
+                return enumerate(filters.Values);
             }
 
-            private IEnumerator<IVehicle> enumerate()
+            private IEnumerator<IVehicle> enumerate(IEnumerable<string> filters)
             {
-                
+                string finalQuerry = "";
+                foreach (string filter in filters)
+                {
+                    finalQuerry += " AND " + filter;
+                }
+                if(finalQuerry != "")
+                {
+                    finalQuerry = " WHERE " + finalQuerry.Substring(4);
+                }
+                finalQuerry = BASE_QUERRY + finalQuerry;
                 SqlConnection connection = new SqlConnection(this.connectionString);
-                SqlCommand command = new SqlCommand(querry, connection);
+                SqlCommand command = new SqlCommand(finalQuerry, connection);
                 connection.Open();
                 IDataReader reader = command.ExecuteReader();
                 while (reader.Read())
