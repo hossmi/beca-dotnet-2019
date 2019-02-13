@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using BusinessCore.Tests.Models;
 using BusinessCore.Tests.Services;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ToolBox.Models;
+using ToolBox.Services;
 
 namespace BusinessCore.Tests
 {
@@ -61,7 +66,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void there_are_ten_vehicles_stored_at_database()
         {
-            IVehicleStorage databaseVehicleStorage = 
+            IVehicleStorage databaseVehicleStorage =
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             IVehicle[] vehicles = databaseVehicleStorage
@@ -108,8 +113,8 @@ namespace BusinessCore.Tests
                     HorsePower = 1000,
                 },
                 Color = CarColor.Purple,
-                Doors = new Door[] { new Door{ IsOpen = false }, new Door { IsOpen = true }},
-                Wheels = new Wheel[] { new Wheel { Pressure = 2.3 }, new Wheel { Pressure = 1.2 }},
+                Doors = new Door[] { new Door { IsOpen = false }, new Door { IsOpen = true } },
+                Wheels = new Wheel[] { new Wheel { Pressure = 2.3 }, new Wheel { Pressure = 1.2 } },
             };
 
             databaseVehicleStorage.set(firstVehicle);
@@ -117,8 +122,8 @@ namespace BusinessCore.Tests
             databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
             IVehicle retrievedVehicle = databaseVehicleStorage.get().First();
 
-            Assert.AreEqual(firstVehicle.Enrollment.Serial , retrievedVehicle.Enrollment.Serial);
-            Assert.AreEqual(firstVehicle.Enrollment.Number , retrievedVehicle.Enrollment.Number);
+            Assert.AreEqual(firstVehicle.Enrollment.Serial, retrievedVehicle.Enrollment.Serial);
+            Assert.AreEqual(firstVehicle.Enrollment.Number, retrievedVehicle.Enrollment.Number);
             Assert.AreEqual(firstVehicle.Color, retrievedVehicle.Color);
             Assert.AreEqual(firstVehicle.Engine.HorsePower, retrievedVehicle.Engine.HorsePower);
             Assert.AreEqual(firstVehicle.Doors[0].IsOpen, retrievedVehicle.Doors[0].IsOpen);
@@ -129,17 +134,111 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            IEnumerable<VehicleDto> dtoVehicles = vehicles.Select(exportVehicle);
+            DB<SqlConnection> db = new DB<SqlConnection>(connectionString);
+
+            foreach (VehicleDto vehicle in dtoVehicles)
+            {
+                db.transact(commandBuilder =>
+                {
+                    int affectedRows, enrollmentId;
+
+                    affectedRows = commandBuilder
+                        .setQuery("INSERT enrollment ( serial, number) VALUES (@serial, @number);")
+                        .setParameter("@serial", vehicle.Enrollment.Serial)
+                        .setParameter("@number", vehicle.Enrollment.Number)
+                        .build()
+                        .ExecuteNonQuery();
+
+                    Assert.AreEqual(1, affectedRows);
+
+                    enrollmentId = (int)commandBuilder
+                        .setQuery("SELECT id FROM enrollment WHERE serial = @serial AND number = @number;")
+                        .setParameter("@serial", vehicle.Enrollment.Serial)
+                        .setParameter("@number", vehicle.Enrollment.Number)
+                        .build()
+                        .ExecuteScalar();
+
+                    affectedRows = commandBuilder
+                        .setQuery(@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted)
+                                    VALUES (@enrollmentId, @color, @engineHorsePower, @engineIsStarted);")
+                        .setParameter("@enrollmentId", enrollmentId)
+                        .setParameter("@color", vehicle.Color)
+                        .setParameter("@engineHorsePower", vehicle.Engine.HorsePower)
+                        .setParameter("@engineIsStarted", vehicle.Engine.IsStarted)
+                        .build()
+                        .ExecuteNonQuery();
+
+                    Assert.AreEqual(1, affectedRows);
+
+                    foreach (WheelDto wheel in vehicle.Wheels)
+                    {
+                        affectedRows = commandBuilder
+                            .setQuery(@"INSERT INTO wheel (vehicleId, pressure) VALUES (@vehicleId, @pressure);")
+                            .setParameter("@vehicleId", enrollmentId)
+                            .setParameter("@pressure", wheel.Pressure)
+                            .build()
+                            .ExecuteNonQuery();
+
+                        Assert.AreEqual(1, affectedRows);
+                    }
+
+                    foreach (DoorDto door in vehicle.Doors)
+                    {
+                        affectedRows = commandBuilder
+                            .setQuery(@"INSERT INTO door (vehicleId, isOpen) VALUES (@vehicleId, @isOpen);")
+                            .setParameter("@vehicleId", enrollmentId)
+                            .setParameter("@isOpen", door.IsOpen)
+                            .build()
+                            .ExecuteNonQuery();
+
+                        Assert.AreEqual(1, affectedRows);
+                    }
+
+                    return TransactionAction.Commit;
+                });
+            }
+        }
+
+
+        private static VehicleDto exportVehicle(IVehicle vehicle)
+        {
+            return new VehicleDto
+            {
+                Color = vehicle.Color,
+                Enrollment = new EnrollmentDto
+                {
+                    Serial = vehicle.Enrollment.Serial,
+                    Number = vehicle.Enrollment.Number,
+                },
+                Engine = new EngineDto
+                {
+                    HorsePower = vehicle.Engine.HorsePower,
+                    IsStarted = vehicle.Engine.IsStarted,
+                },
+                Doors = vehicle.Doors.Select(door => new DoorDto
+                {
+                    IsOpen = door.IsOpen,
+                }).ToArray(),
+                Wheels = vehicle.Wheels.Select(w => new WheelDto
+                {
+                    Pressure = w.Pressure
+                }).ToArray(),
+            };
         }
 
         private static void create(string connectionString, string creationScript)
         {
-            throw new NotImplementedException();
+            DB<SqlConnection> db = new DB<SqlConnection>(connectionString);
+            string statements = File.ReadAllText(creationScript);
+            db.write(statements);
         }
 
         private static void drop(string connectionString, string destructionScript)
         {
-            throw new NotImplementedException();
+            DB<SqlConnection> db = new DB<SqlConnection>(connectionString);
+            string statements = File.ReadAllText(destructionScript);
+            db.write(statements);
         }
 
     }
