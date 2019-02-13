@@ -18,6 +18,8 @@ namespace CarManagement.Services
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
+        private const string BASE_QUERRY = "SELECT serial, number, engineHorsePower, engineIsStarted, enrollmentId, color FROM vehicle, enrollment" +
+            "WHERE enrollmentId = vehicleId";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -137,18 +139,14 @@ namespace CarManagement.Services
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
-            private CarColor color;
-            private bool colorHasValue;
-            private bool isStartedHasValue;
-            private bool isStarted;
-            private IEnrollment enrollment;
-            private bool enrollmentHasValue;
-            IDictionary<string, string> filters = null;
+            private readonly IDictionary<string, string> filters;
+            private string indexEngineHorsePower = "whereHorsePower";
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
+                this.filters = new Dictionary<string, string>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -186,15 +184,15 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerEquals)));
-                this.filters[nameof(whereHorsePowerEquals)] = " engineHorsePower = " + horsePower + " ";
+                Asserts.isFalse(this.filters.ContainsKey(indexEngineHorsePower));
+                this.filters[nameof(indexEngineHorsePower)] = " engineHorsePower = " + horsePower + " ";
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                Asserts.isFalse(this.filters.ContainsKey(nameof(whereHorsePowerIsBetween)));
-                this.filters[nameof(whereHorsePowerIsBetween)] = " engineHorsePower  >= " + min + " AND engineHorsePower <= " + max + " ";
+                Asserts.isFalse(this.filters.ContainsKey(nameof(indexEngineHorsePower)));
+                this.filters[nameof(indexEngineHorsePower)] = " engineHorsePower  >= " + min + " AND engineHorsePower <= " + max + " ";
                 return this;
             }
 
@@ -255,7 +253,18 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                throw new NotImplementedException();
+                
+                SqlConnection connection = new SqlConnection(this.connectionString);
+                SqlCommand command = new SqlCommand(querry, connection);
+                connection.Open();
+                IDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+
+                }
+
+               
+
             }
 
         }

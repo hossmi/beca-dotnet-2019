@@ -40,9 +40,9 @@ namespace CarManagement.Services
 
             public void addWheel()
             {
-
+                Asserts.isTrue(this.numberWheel < 4);
                 this.numberWheel++;
-                Asserts.isTrue(this.numberWheel <= 4);
+                
             }
 
             public void removeWheel()
