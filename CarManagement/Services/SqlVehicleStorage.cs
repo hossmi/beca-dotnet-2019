@@ -372,8 +372,11 @@ public IEnumerable<IVehicle> get()
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isFalse(this.filters.ContainsKey(COLOR),"Color value has already been assigned");
-                this.filters[COLOR] = " vehicle.color = @color ";
-                this.parameters["@color"] = (int)color;
+
+                this.filters[COLOR] = $" vehicle.color = {color} ";
+                
+                
+                //this.parameters["@color"] = (int)color;
                 return this;
             }
 
@@ -388,12 +391,12 @@ public IEnumerable<IVehicle> get()
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENROLLMENT), "Enrollment value has already been assigned");
-                this.filters[ENROLLMENT] = $" enrollment.serial = @serial AND enrollment.number = @number ";
+                this.filters[ENROLLMENT] = $" enrollment.serial = '{enrollment.Serial}' AND enrollment.number = {enrollment.Number} ";
 
-                IDataParameter serial = new SqlParameter("serial", enrollment.Serial);
 
-                this.parameters["@serial"] = serial;
-                this.parameters["@number"] = enrollment.Number;
+                //IDataParameter serial = new SqlParameter("serial", enrollment.Serial);
+                //this.parameters["@serial"] = serial;
+                //this.parameters["@number"] = enrollment.Number;
                 return this;
             }
 
@@ -458,9 +461,10 @@ public IEnumerable<IVehicle> get()
                     },
                 };
                 SqlConnection connection = new SqlConnection(this.connectionString);
+                connection.Open();
 
-                vehicleDto.Wheels = SelectWheels(connection,SELECT_WHEEL, enrollmentId).ToArray();
-                vehicleDto.Doors = SelectDoors(connection,SELECT_DOOR,enrollmentId).ToArray();
+                vehicleDto.Wheels = SelectSubTable<WheelDto>(connection, SELECT_WHEEL, enrollmentId, "pressure").ToArray();
+                vehicleDto.Doors = SelectSubTable<DoorDto>(connection, SELECT_DOOR, enrollmentId, "isOpen").ToArray();
 
                 connection.Close();
                 IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
@@ -531,7 +535,9 @@ public IEnumerable<IVehicle> get()
                 return vehicles.GetEnumerator();
             }
 
-            private static IEnumerable<T> SelectSubTable<T>(SqlConnection connection, string query, int id)
+            private static IEnumerable<T> SelectSubTable<T>(SqlConnection connection, string query, int id,string column)
+                where T : class, new()
+              
             {
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@vehicleId", id);
@@ -539,12 +545,34 @@ public IEnumerable<IVehicle> get()
                 List<T> items = new List<T>();
 
                 while (reader.Read())
-                {                    
-                 //   items.Add(item);
+                {
+                    T item = new T();
+                    typeof(T).GetProperties()[0].SetValue(item, reader[column]);
+                    items.Add(item);
                 }
                 return items;
             }
 
+            private static string ComposeQuery(IEnumerable<string> filters)
+            {
+                string conditions = "";
+
+                foreach (string filter in filters)
+                {
+                    conditions = conditions + filter + " AND ";
+                }
+
+                if (conditions != "")
+                {
+                    conditions = " WHERE " + conditions.Substring(0, conditions.Length - 5);
+                }
+
+                conditions = SELECT_VEHICLE_WITH_ENROLLMENT + conditions;
+
+                return conditions;
+            }
+
+            /*
             private static IEnumerable<WheelDto> SelectWheels(SqlConnection connection, string query, int id)
             {
                 SqlCommand command = new SqlCommand(query, connection);
@@ -580,26 +608,7 @@ public IEnumerable<IVehicle> get()
                 }
                 return doors;
             }
-
-            private static string ComposeQuery(IEnumerable<string> filters)
-            {
-                string conditions = "";
-
-                foreach (string filter in filters)
-                {
-                    conditions = conditions + filter + " AND ";
-                }
-
-                if (conditions != "")
-                {
-                    conditions = " WHERE " + conditions.Substring(0, conditions.Length - 5);
-                }
-
-                conditions = SELECT_VEHICLE_WITH_ENROLLMENT + conditions;
-
-                return conditions;
-            }
-
+            */
         }
     }
 }
