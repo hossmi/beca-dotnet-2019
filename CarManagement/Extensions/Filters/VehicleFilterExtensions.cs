@@ -73,9 +73,10 @@ namespace CarManagement.Extensions.Filters
 
         public static IVehicle get(this IVehicleStorage vehicleStorage, IEnrollment enrollment)
         {
-            return vehicleStorage   
+            return vehicleStorage
                 .get()
-                .whereEnrollmentIs(enrollment)
+                .Where(e => e.Enrollment == enrollment)
+                //.whereEnrollmentIs(enrollment)
                 .Single();
         }
 

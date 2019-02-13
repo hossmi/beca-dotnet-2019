@@ -187,7 +187,8 @@ namespace CarManagement.Services
             private int min;
             private int max;
             private List<string> queryPartsVehicle;
-            private string queryVehicle;
+            private string query;
+            private List<string> queryParts;
             private string queryId = "USE CarManagement; " +
                 "SELECT id " +
                 "FROM enrollment ";
@@ -198,6 +199,7 @@ namespace CarManagement.Services
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
                 this.queryPartsVehicle = new List<string>();
+                this.queryParts = new List<string>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -209,6 +211,7 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(color != null);
                 this.queryPartsVehicle.Add("carColor = " + Convert.ToInt32(color) + " ");
+                this.color = color;
                 return this;
             }
 
@@ -216,12 +219,14 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(started != null);
                 this.queryPartsVehicle.Add("isStarted = " + Convert.ToInt16(started) + " ");
+                this.engineIsStarted = started;
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
+                this.queryParts.Add("number = " + enrollment.Number);
                 this.enrollment = enrollment;
                 return this;
             }
@@ -230,6 +235,7 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
+                this.queryParts.Add("serial = " + serial);
                 return this;
             }
 
@@ -237,6 +243,7 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(horsePower != null);
                 this.queryPartsVehicle.Add("horsePower = " + horsePower + " ");
+                this.horsePower = horsePower;
                 return this;
             }
 
@@ -245,6 +252,8 @@ namespace CarManagement.Services
                 Asserts.isTrue(min != null);
                 Asserts.isTrue(max != null);
                 this.queryPartsVehicle.Add("horsePower BETWEEN " + min + " AND " + max + " ");
+                this.max = max;
+                this.min = min;
                 return this;
             }
 
@@ -255,60 +264,57 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                foreach (string partcondition in this.queryPartsVehicle)
-                {
-                    this.queryVehicle += " AND " + partcondition;
-                }
-                this.queryVehicle = this.queryVehicle.Remove(0, 4);
-                this.queryVehicle = " WHERE " + this.queryVehicle;
-                this.queryVehicle = this.queryvehicleHead + this.queryVehicle;
-                this.queryId += "WHERE serial = '" + this.enrollmentSerial + "' AND number = " + this.enrollment.Number;
+                Asserts.isFalse(this.queryParts.Count == 0);
+                queryCreator(this.queryParts);
+                string idQuery = this.queryId + this.query;
 
-                SqlConnection con = new SqlConnection(this.connectionString);
-                con.Open();
-                SqlCommand sentence = new SqlCommand(this.queryId, con);
-                SqlDataReader reader = sentence.ExecuteReader();
+                queryCreator(this.queryPartsVehicle);
+                string mainQuery = this.queryvehicleHead + this.query;
+
                 VehicleDto vehicleDto = new VehicleDto();
-                reader.Read();
                 EnrollmentDto enrollmentDto = new EnrollmentDto();
                 EngineDto engineDto = new EngineDto();
                 List<WheelDto> wheelsDto = new List<WheelDto>();
                 List<DoorDto> doorsDto = new List<DoorDto>();
-                int id = (int)reader["id"];
-                this.queryVehicle = this.queryVehicle + " AND vehicleId = " + id;
+                int id;
+                SqlConnection con = new SqlConnection(this.connectionString);
+                con.Open();
+
+                SqlCommand sentence = new SqlCommand(this.queryId, con);
+                SqlDataReader reader = sentence.ExecuteReader();
+                reader.Read();
+                id = (int)reader["id"];
+                mainQuery = mainQuery + " AND vehicleId = " + (int)reader["id"];
                 enrollmentDto.Serial = this.enrollmentSerial;
                 enrollmentDto.Number = this.enrollment.Number;
 
-                SqlCommand sentence2 = new SqlCommand(this.queryVehicle, con);
+                SqlCommand sentence2 = new SqlCommand(this.query, con);
                 SqlDataReader reader2 = sentence2.ExecuteReader();
                 reader2.Read();
-
                 CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader2["color"].ToString());
                 engineDto.HorsePower = Convert.ToInt32(reader2["engineHorsePower"]);
                 engineDto.IsStarted = Convert.ToBoolean(reader2["engineIsStarted"]);
                 reader2.Close();
-
-                this.queryVehicle = "SELECT pressure FROM wheel WHERE vehicleId =" + id;
-
-                sentence2 = new SqlCommand(this.queryVehicle, con);
-                reader2 = sentence2.ExecuteReader();
-                while (reader2.Read())
+                this.query = "SELECT pressure FROM wheel WHERE vehicleId =" + id;
+                SqlCommand sentence3 = new SqlCommand(this.query, con);
+                SqlDataReader reader3 = sentence3.ExecuteReader();
+                while (reader3.Read())
                 {
                     WheelDto wheelDto = new WheelDto();
                     wheelDto.Pressure = Convert.ToInt32(reader2["pressure"]);
                     wheelsDto.Add(wheelDto);
                 }
-                reader2.Close();
-                this.queryVehicle = "SELECT isOpen FROM door WHERE vehicleId =" + id;
-                sentence2 = new SqlCommand(this.queryVehicle, con);
-                reader2 = sentence2.ExecuteReader();
-                while (reader2.Read())
+                reader3.Close();
+                this.query = "SELECT isOpen FROM door WHERE vehicleId =" + id;
+                SqlCommand sentence4 = new SqlCommand(this.query, con);
+                SqlDataReader reader4 = sentence4.ExecuteReader();
+                while (reader4.Read())
                 {
                     DoorDto doorDto = new DoorDto();
                     doorDto.IsOpen = Convert.ToBoolean(reader2["isOpen"]);
                     doorsDto.Add(doorDto);
                 }
-                reader2.Close();
+                reader4.Close();
                 vehicleDto.Color = color;
                 vehicleDto.Doors = doorsDto.ToArray();
                 vehicleDto.Wheels = wheelsDto.ToArray();
@@ -318,6 +324,22 @@ namespace CarManagement.Services
                 yield return vehicle_get;
             }
 
+            private void queryCreator(List<string> listcondition)
+            {
+                int counter = 0;
+                foreach (string partcondition in listcondition)
+                {
+                    if (counter == 0)
+                    {
+                        this.query += " WHERE " + partcondition;
+                    }
+                    else
+                    {
+                        this.query += " AND " + partcondition;
+                    }
+                    counter++;
+                }
+            }
         }
     }
 }

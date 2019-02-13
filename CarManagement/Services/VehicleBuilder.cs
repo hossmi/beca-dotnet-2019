@@ -9,6 +9,12 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        private IEnrollmentProvider enrollmentProvider;
+        private int doorsCount;
+        private int wheelCounter = 0;
+        private CarColor color;
+        private int hp;
+
         private class Engine : IEngine
         {
             private bool isStart;
@@ -107,8 +113,6 @@ namespace CarManagement.Services
         {
             private List<IWheel> wheels = new List<IWheel>();
             private List<IDoor> doors = new List<IDoor>();
-            private int doorsCount;
-            private int wheelsCount;
             public CarColor Color { set; get; }
             public IEngine Engine { get; set; }
             public IEnrollment Enrollment { get; }
@@ -132,10 +136,6 @@ namespace CarManagement.Services
                 {
                     return this.doors.Count;
                 }
-                set
-                {
-                    this.doorsCount = value;
-                }
             }
 
             public int WheelCount
@@ -144,10 +144,7 @@ namespace CarManagement.Services
                 {
                     return this.wheels.Count;
                 }
-                set
-                {
-                    this.wheelsCount = value;
-                }
+
             }
 
             public IDoor[] Doors
@@ -174,12 +171,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
-        private IEnrollmentProvider enrollmentProvider;
-        private int doorsCount;
-        private int wheelCounter = 0;
-        private CarColor color;
-        private int hp;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
