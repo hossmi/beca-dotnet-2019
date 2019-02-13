@@ -71,58 +71,66 @@ namespace CarManagement.Services
 
         private class PrvVehicleQuery : IVehicleQuery
         {
-            private IEnumerable<IVehicle> vehicles;
+            private IEnumerable<IVehicle> filters;
 
             public PrvVehicleQuery(IEnumerable<IVehicle> vehicles)
             {
-                this.vehicles = vehicles;
+                this.filters = vehicles;
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
             {
-                return this.vehicles.GetEnumerator();
+                return this.filters.GetEnumerator();
             }
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Color == color);
+                this.filters = this.filters.Where(vehicle => vehicle.Color == color);
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.IsStarted == started);
+                this.filters = this.filters.Where(vehicle => vehicle.Engine.IsStarted == started);
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment == enrollment);
+
+                this.filters = this.filters.Where(vehicle => vehicle.Enrollment.Serial == enrollment.Serial 
+                                                          && vehicle.Enrollment.Number == enrollment.Number);
+                return this;
+            }
+                
+            public IVehicleQuery whereEnrollmentSerialIs(string serial)
+            {
+                this.filters = this.filters.Where(vehicle => vehicle.Enrollment.Serial == serial);
+                return this;
+            }
+            public IVehicleQuery whereEnrollmentNumberIs(int number)
+            {
+                this.filters = this.filters.Where(vehicle => vehicle.Enrollment.Number == number);
                 return this;
             }
 
-            public IVehicleQuery whereEnrollmentSerialIs(string serial)
-            {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment.Serial == serial);
-                return this;
-            }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower == horsePower);
+                this.filters = this.filters.Where(vehicle => vehicle.Engine.HorsePower == horsePower);
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Engine.HorsePower >= min && vehicle.Engine.HorsePower <= max);
+                this.filters = this.filters.Where(vehicle => vehicle.Engine.HorsePower >= min && vehicle.Engine.HorsePower <= max);
                 return this;
             }
 
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return this.vehicles.GetEnumerator();
+                return this.filters.GetEnumerator();
             }
         }
     }
