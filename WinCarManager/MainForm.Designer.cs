@@ -50,7 +50,6 @@
             this.vehiclesToolStripMenuItem.Name = "vehiclesToolStripMenuItem";
             this.vehiclesToolStripMenuItem.Size = new System.Drawing.Size(83, 24);
             this.vehiclesToolStripMenuItem.Text = "Vehicles...";
-            this.vehiclesToolStripMenuItem.Click += new System.EventHandler(this.vehiclesToolStripMenuItem_Click);
             // 
             // MainForm
             // 
