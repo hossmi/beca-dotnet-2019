@@ -241,36 +241,93 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            string query, sentences;
+            string querySelect, queryInsert;
 
-            sentences = $@"INSERT INTO enrollment (serial, number) 
-                    VALUES ({vehicle.Enrollment.Serial}, {vehicle.Enrollment.Number});";
-            executeCommand(this.connectionString, sentences);
+            queryInsert = $@"
+                    INSERT 
+                    INTO enrollment (serial, number) 
+                    VALUES ('{vehicle.Enrollment.Serial}', {vehicle.Enrollment.Number});";
 
-            query = $@"
+            executeCommand(this.connectionString, queryInsert);
+
+            querySelect = $@"
                      SELECT id
                      FROM enrollment
                      WHERE serial = '{vehicle.Enrollment.Serial}' 
                      AND number = {vehicle.Enrollment.Number};";
-            int enrollmentId = (int)executeScalarQuery(this.connectionString, query);
+            int enrollmentId = executeScalarQuery(this.connectionString, querySelect);
 
-            sentences = $@"INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
-                    VALUES ({enrollmentId}, {vehicle.Color}, {vehicle.Engine.HorsePower}, {vehicle.Engine.IsStarted});";
-            executeCommand(this.connectionString, sentences);
+            queryInsert = $@"
+                    INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
+                    VALUES ({enrollmentId}, {Convert.ToInt32(vehicle.Color)}, {Convert.ToInt16(vehicle.Engine.HorsePower)}, {(vehicle.Engine.IsStarted ? 0 : 1)}) ";
+            /*var parameter = new Dictionary<string, object>
+                {
+                    {
+                        "@id",enrollmentId
+                    },
+                    {
+                        "@pressure",wheel.Pressure
+                    }
+                };*/
+
+            executeCommand(this.connectionString, queryInsert);
 
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
-                    VALUES ({enrollmentId}, {wheel.Pressure});";
-                executeCommand(this.connectionString, sentences);
+                queryInsert = $@"
+                    INSERT INTO wheel (vehicleId, pressure) 
+                    VALUES (@id, @pressure);";
+                var parameter = new Dictionary<string, object>
+                {
+                    {
+                        "@id",enrollmentId
+                    },
+                    {
+                        "@pressure",wheel.Pressure
+                    }
+                };
+
+                executeCommand(this.connectionString, queryInsert, parameter);
             }
 
             foreach (IDoor door in vehicle.Doors)
             {
-                sentences = $@"INSERT INTO door (vehicleId, isOpen) 
-                    VALUES ({enrollmentId}, {door.IsOpen});";
-                executeCommand(this.connectionString, sentences);
+                queryInsert = $@"
+                    INSERT INTO door (vehicleId, isOpen) 
+                    VALUES (@id, @isOpen);";
+                var parameter = new Dictionary<string, object>
+                {
+                    {
+                        "@id",enrollmentId
+                    },
+                    {
+                        "@isOpen",door.IsOpen
+                    }
+                };
+                executeCommand(this.connectionString, queryInsert, parameter);
             }
+        }
+
+        private void executeCommand(string connectionString, string queryInsert, Dictionary<string, object> parameter)
+        {
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = new SqlCommand())
+            {
+                connection.Open();
+                command.CommandText = queryInsert;
+                command.Connection = connection;
+
+                foreach (var item in parameter)
+                {
+                    IDbDataParameter dbDataParameter = command.CreateParameter();
+                    dbDataParameter.ParameterName = item.Key;
+                    dbDataParameter.Value = item.Value;
+                    command.Parameters.Add(dbDataParameter);
+                }
+                
+                int afectedRows = command.ExecuteNonQuery();
+                connection.Close();
+            };
         }
 
         public IVehicleQuery get()
@@ -361,7 +418,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)));
-                this.filters[nameof(whereEngineIsStarted)] = " AND engineIsStarted = " + (started ? 0 : 1) + " ";
+                this.filters[nameof(whereEngineIsStarted)] = " engineIsStarted = " + (started ? 0 : 1) + " ";
 
                 return this;
             }
@@ -369,8 +426,8 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = " AND serial = " + enrollment.Serial +
-                                                          " AND number = " + enrollment.Number + " ";
+                this.filters[nameof(whereEnrollmentIs)] = " serial = '" + enrollment.Serial +
+                                                          "' AND number = " + enrollment.Number + " ";
 
                 return this;
             }
@@ -378,7 +435,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentSerialIs)));
-                this.filters[nameof(whereEnrollmentSerialIs)] = " serial = " + serial + " ";
+                this.filters[nameof(whereEnrollmentSerialIs)] = " serial = '" + serial + "' ";
 
                 return this;
             }
@@ -386,7 +443,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
-                this.filters[this.indexWhereHorsePower] = " engineHorsePower = " + Convert.ToInt32(horsePower) + " ";
+                this.filters[this.indexWhereHorsePower] = " engineHorsePower = " + horsePower.ToString() + " ";
 
                 return this;
             }
@@ -394,8 +451,8 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexWhereHorsePower));
-                this.filters[this.indexWhereHorsePower] = " AND v.engineHorsePower >= " + Convert.ToInt32(min)
-                                                    + " AND v.engineHorsePower <= " + Convert.ToInt32(max) + " ";
+                this.filters[this.indexWhereHorsePower] = " engineHorsePower >= " + min.ToString()
+                                                    + " AND engineHorsePower <= " + max.ToString() + " ";
 
                 return this;
             }
