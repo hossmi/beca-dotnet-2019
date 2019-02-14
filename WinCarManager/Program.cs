@@ -20,7 +20,8 @@ namespace WinCarManager
             string connectionString = ConfigurationManager.AppSettings["CarManagerConnectionString"];
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
+            IVehicleStorage vehicleStorage = 
+                new SqlVehicleStorage(connectionString, vehicleBuilder, enrollmentProvider);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

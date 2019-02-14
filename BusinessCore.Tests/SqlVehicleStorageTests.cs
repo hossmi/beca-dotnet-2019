@@ -67,7 +67,7 @@ namespace BusinessCore.Tests
         public void there_are_ten_vehicles_stored_at_database()
         {
             IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
 
             IVehicle[] vehicles = databaseVehicleStorage
                 .get()
@@ -79,14 +79,16 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void clear_erases_vehicles_from_DB()
         {
-            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+            IVehicleStorage databaseVehicleStorage = 
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
 
             databaseVehicleStorage.clear();
 
             IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
-            databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+            databaseVehicleStorage = 
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
             vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
         }
@@ -94,7 +96,8 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void save_vehicle_to_DB_and_retrieve_it()
         {
-            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+            IVehicleStorage databaseVehicleStorage = 
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
 
             databaseVehicleStorage.clear();
             IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
@@ -119,7 +122,8 @@ namespace BusinessCore.Tests
 
             databaseVehicleStorage.set(firstVehicle);
 
-            databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
+            databaseVehicleStorage = 
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
             IVehicle retrievedVehicle = databaseVehicleStorage.get().First();
 
             Assert.AreEqual(firstVehicle.Enrollment.Serial, retrievedVehicle.Enrollment.Serial);

@@ -90,11 +90,14 @@ namespace CarManagement.Services
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly DB<SqlConnection> db;
+        private readonly IEnrollmentProvider enrollmentProvider;
 
-        public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
+        public SqlVehicleStorage(
+            string connectionString, IVehicleBuilder vehicleBuilder, IEnrollmentProvider enrollmentProvider)
         {
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
+            this.enrollmentProvider = enrollmentProvider;
             this.db = new DB<SqlConnection>(connectionString);
         }
 
@@ -117,7 +120,7 @@ namespace CarManagement.Services
 
         public IVehicleQuery get()
         {
-            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
+            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
         }
 
         public void set(IVehicle vehicle)
@@ -255,6 +258,38 @@ namespace CarManagement.Services
             }
         }
 
+        private static IEnumerable<IEnrollment> readAndBuildEnrollments(
+            string connectionString, string query, IDictionary<string, object> parameters, IEnrollmentProvider enrollmentProvider)
+        {
+            using (IDbConnection connection = new SqlConnection())
+            {
+                connection.ConnectionString = connectionString;
+                connection.Open();
+
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                using (IDbCommand command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+                    command.setParameters(parameters);
+
+                    using (IDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
+                        {
+                            EnrollmentDto enrollmentDto = buildEnrollmentDto(reader);
+                            IEnrollment  enrollment = enrollmentProvider
+                                .import(enrollmentDto.Serial, enrollmentDto.Number);
+
+                            yield return enrollment;
+                        }
+
+                    transaction.Commit();
+                }
+
+                connection.Close();
+            }
+        }
+
         private static IEnumerator<IVehicle> readAndBuildVehicles(string connectionString, string query, IDictionary<string, object> parameters, IVehicleBuilder vehicleBuilder)
         {
             using (IDbConnection connection = new SqlConnection())
@@ -316,11 +351,16 @@ namespace CarManagement.Services
                     HorsePower = (short)record["engineHorsePower"],
                     IsStarted = Convert.ToBoolean(record["engineIsStarted"]),
                 },
-                Enrollment = new EnrollmentDto
-                {
-                    Serial = record["serial"].ToString(),
-                    Number = (short)record["number"],
-                },
+                Enrollment = buildEnrollmentDto(record),
+            };
+        }
+
+        private static EnrollmentDto buildEnrollmentDto(IDataRecord record)
+        {
+            return new EnrollmentDto
+            {
+                Serial = record["serial"].ToString(),
+                Number = (short)record["number"],
             };
         }
 
@@ -353,8 +393,18 @@ namespace CarManagement.Services
             private const string FILTER_BY_HORSEPOWER = "FILTER_BY_HORSEPOWER";
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
+            private readonly IEnrollmentProvider enrollmentProvider;
             private readonly IDictionary<string, string> conditions;
             private readonly IDictionary<string, object> parameters;
+
+            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder, IEnrollmentProvider enrollmentProvider)
+            {
+                this.connectionString = connectionString;
+                this.vehicleBuilder = vehicleBuilder;
+                this.enrollmentProvider = enrollmentProvider;
+                this.conditions = new Dictionary<string, string>();
+                this.parameters = new Dictionary<string, object>();
+            }
 
             public IEnumerable<IEnrollment> Keys
             {
@@ -362,14 +412,6 @@ namespace CarManagement.Services
                 {
                     return enumerateEnrollments();
                 }
-            }
-
-            public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
-            {
-                this.connectionString = connectionString;
-                this.vehicleBuilder = vehicleBuilder;
-                this.conditions = new Dictionary<string, string>();
-                this.parameters = new Dictionary<string, object>();
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
@@ -458,9 +500,9 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                throw new NotImplementedException();
+                string query = buildQuery(SELECT_ENROLLMENTS, this.conditions.Values);
+                return readAndBuildEnrollments(this.connectionString, query, this.parameters, this.enrollmentProvider);
             }
-
         }
     }
 }
