@@ -7,20 +7,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CarManagement.Core.Services;
 
 namespace WinCarManager
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        private readonly IVehicleStorage vehicleStorage;
+
+        public MainForm(IVehicleStorage vehicleStorage)
         {
+            this.vehicleStorage = vehicleStorage;
             InitializeComponent();
             new vehicleDisplayerWin();
-        }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }
