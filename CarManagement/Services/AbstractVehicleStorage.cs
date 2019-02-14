@@ -122,7 +122,8 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.serialHasValue && this.enrollmentHasValue);
-                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment == enrollment);
+                this.vehicles = this.vehicles.Where(vehicle => vehicle.Enrollment.Serial == enrollment.Serial 
+                                                    && vehicle.Enrollment.Number == enrollment.Number);
                 this.enrollmentHasValue = true;
                 return this;
             }

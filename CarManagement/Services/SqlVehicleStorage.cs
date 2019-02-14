@@ -177,6 +177,8 @@ namespace CarManagement.Services
                      WHERE serial = '{vehicle.Enrollment.Serial}'
                      AND number = {vehicle.Enrollment.Number};";
 
+            int enrollmentId = 0;
+
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             using (SqlCommand command = new SqlCommand())
             {
@@ -188,41 +190,32 @@ namespace CarManagement.Services
                 {
                     if (reader.Read())
                     {
-                        string sentences = updateVehicle(vehicle, connection, query);
-                        executeCommand(this.connectionString, sentences);
-                    }
-                    else
-                    {
-                        insertNewVehicle(vehicle, this.connectionString, query);
+                        enrollmentId = (int)reader["id"];
                     }
                 }
+                if (enrollmentId > 0)
+                {
+                    updateVehicle(vehicle, this.connectionString, query, enrollmentId);
+                }
+                else
+                {
+                    insertNewVehicle(vehicle, this.connectionString, query);
+                }
+
                 connection.Close();
             }
-
-
-            //Asserts.isFalse(exist);
-
-            //if (exist)
-            //{
-            //    updateVehicle(vehicle, this.connectionString, query);
-            //}
-            //else
-            //{
-            //    insertNewVehicle(vehicle, this.connectionString, query);
-            //}
         }
 
-        private static string updateVehicle(IVehicle vehicle, SqlConnection connection, string queryEnrollment)
+        private static void updateVehicle(IVehicle vehicle, string connectionString, string queryEnrollment, int enrollmentId)
         {
             string sentences = "";
-            int enrollmentId;
 
+            using(SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand())
             {
+                connection.Open();
                 command.CommandText = queryEnrollment;
                 command.Connection = connection;
-
-                enrollmentId = (int)command.ExecuteScalar();
 
                 command.CommandText = $@"
                                 SELECT *
@@ -238,80 +231,61 @@ namespace CarManagement.Services
                         bool startedAux = Convert.ToBoolean(reader["engineIsStarted"]);
                         if (colorAux != vehicle.Color)
                         {
-                            sentences += $@"INSERT INTO vehicle (color) 
-                                    VALUES ({(int)vehicle.Color});";
+                            sentences = $@"UPDATE vehicle
+                                        SET color = @color
+                                        FROM vehicle
+                                        WHERE enrollmentId = @id;";
+                            var parameters = new Dictionary<string, object>
+                            {
+                                {"@id", enrollmentId},
+                                {"@color", vehicle.Color},
+                            };
+                            executeCommand(connectionString, sentences, parameters);
                         }
                         if (horsePowerAux != vehicle.Engine.HorsePower)
                         {
-                            sentences += $@"INSERT INTO vehicle (engineHorsePower) 
-                                    VALUES ({vehicle.Engine.HorsePower});";
+                            sentences = $@"UPDATE vehicle
+                                        SET engineHorsePower = @horsePower
+                                        FROM vehicle
+                                        WHERE enrollmentId = @id;";
+                            var parameters = new Dictionary<string, object>
+                            {
+                                {"@id", enrollmentId},
+                                {"@horsePower", vehicle.Engine.HorsePower},
+                            };
+                            executeCommand(connectionString, sentences, parameters);
                         }
                         if (startedAux != vehicle.Engine.IsStarted)
                         {
-                            sentences += $@"INSERT INTO vehicle (engineIsStarted) 
-                                    VALUES ({(vehicle.Engine.IsStarted ? 1 : 0)});";
+                            sentences = $@"UPDATE vehicle
+                                        SET engineIsStarted = @started
+                                        WHERE enrollmentId = @id;";
+                            var parameters = new Dictionary<string, object>
+                            {
+                                {"@id", enrollmentId},
+                                {"@started", vehicle.Engine.IsStarted},
+                            };
+                            executeCommand(connectionString, sentences, parameters);
                         }
                     }
                 }
+
                 command.CommandText = $@"
                                 SELECT *
-                                FROM wheel
+                                FROM wheel, door
                                 WHERE vehicleId = {enrollmentId};";
 
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    sentences += $@"DELETE wheel
+                sentences = $@"DELETE wheel
                                 WHERE vehicleId = {enrollmentId}";
-                    double pressureAux;
-                    foreach (IWheel wheel in vehicle.Wheels)
-                    {
-                        if (reader.Read())
-                        {
-                            pressureAux = Convert.ToDouble(reader["pressure"]);
-                            if (pressureAux != wheel.Pressure)
-                            {
-                                sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
-                                            VALUES (@enrollmentId, @pressure);";
-                                var parameters = new Dictionary<string, object>
-                                {
-                                    {"@enrollmentId", enrollmentId},
-                                    {"@pressure", wheel.Pressure},
-                                };
-                            }
-                        }
-                    }
-                }
-                command.CommandText = $@"
-                                SELECT *
-                                FROM door
+                executeCommand(connectionString, sentences);
+                sentences = $@"DELETE door
                                 WHERE vehicleId = {enrollmentId};";
+                executeCommand(connectionString, sentences);
 
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    sentences += $@"DELETE door
-                                WHERE vehicleId = {enrollmentId}";
-                    bool openAux;
-                    foreach (IDoor door in vehicle.Doors)
-                    {
-                        if (reader.Read())
-                        {
-                            openAux = Convert.ToBoolean(reader["isOpen"]);
-                            if (openAux != door.IsOpen)
-                            {
-                                sentences = $@"INSERT INTO door (vehicleId, isOpen) 
-                                            VALUES (@enrollmentId, @isOpen);";
-                                var parameters = new Dictionary<string, object>
-                                {
-                                    {"@enrollmentId", enrollmentId},
-                                    {"@isOpen", door.IsOpen},
-                                };
-                            }
-                        }
-                    }
+                insetWheelsAndDoors(connectionString, sentences, vehicle, enrollmentId);
 
-                }
+                connection.Close();
             }
-            return sentences;
         }
 
         private static void insertNewVehicle(IVehicle vehicle, string connectionString, string query)
@@ -351,27 +325,32 @@ namespace CarManagement.Services
                 };
             executeCommand(connectionString, sentences, parameters);
 
+            insetWheelsAndDoors(connectionString, sentences, vehicle, enrollmentId);
+        }
+
+        private static void insetWheelsAndDoors(string connectionString, string sentences, IVehicle vehicle, int enrollmentId)
+        {
             foreach (IWheel wheel in vehicle.Wheels)
             {
                 sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
-                    VALUES (@enrollmentId, @pressure);";
-                parameters = new Dictionary<string, object>
-                {
-                    {"@enrollmentId", enrollmentId},
-                    {"@pressure", wheel.Pressure},
-                };
+                                            VALUES (@enrollmentId, @pressure);";
+                var parameters = new Dictionary<string, object>
+                                {
+                                    {"@enrollmentId", enrollmentId},
+                                    {"@pressure", wheel.Pressure},
+                                };
                 executeCommand(connectionString, sentences, parameters);
             }
 
             foreach (IDoor door in vehicle.Doors)
             {
                 sentences = $@"INSERT INTO door (vehicleId, isOpen) 
-                    VALUES (@enrollmentId, @isOpen);";
-                parameters = new Dictionary<string, object>
-                {
-                    {"@enrollmentId", enrollmentId},
-                    {"@isOpen", door.IsOpen},
-                };
+                                        VALUES (@enrollmentId, @isOpen);";
+                var parameters = new Dictionary<string, object>
+                            {
+                                {"@enrollmentId", enrollmentId},
+                                {"@isOpen", door.IsOpen},
+                            };
                 executeCommand(connectionString, sentences, parameters);
             }
         }
