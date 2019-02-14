@@ -25,7 +25,8 @@ namespace WinCarManager
 
         private void vehículoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new vehicleDisplayerWin();
+            vehicleDisplayerWin vehicleDisplayerWin = new vehicleDisplayerWin();
+            vehicleDisplayerWin.Show();
         }
     }
 }

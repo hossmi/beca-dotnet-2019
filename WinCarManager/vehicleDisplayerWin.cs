@@ -35,9 +35,8 @@ namespace WinCarManager
             IVehicleQuery queryBuilder = vehicleStorage.get();
             
             string horsePowerString = this.horsePowerEngineView.Text;
-            string isStartedString = this.startedEngineView.Text;
 
-            if (string.IsNullOrEmpty(this.enrollmentView.Text.Trim()))
+            if (string.IsNullOrEmpty(this.enrollmentView.Text.Trim()) != false)
             {
                 string[] enrollmentParam = this.enrollmentView.Text.Split('-');
                 string serial = enrollmentParam[0].Trim();
@@ -53,7 +52,7 @@ namespace WinCarManager
                 }
             }
 
-            if (string.IsNullOrEmpty(this.carColorView.Text.Trim()))
+            if (string.IsNullOrEmpty(this.carColorView.Text.Trim()) != false)
             {
                 if( Enum.TryParse<CarColor>(this.carColorView.Text, out CarColor tryColor) )
                 {
@@ -61,7 +60,7 @@ namespace WinCarManager
                 }
             }
 
-            if (string.IsNullOrEmpty(this.horsePowerEngineView.Text.Trim()))
+            if (string.IsNullOrEmpty(this.horsePowerEngineView.Text) != false)
             {
                 string[] horsePowerParam = this.enrollmentView.Text.Split('-');
                 int horsePower = Convert.ToInt32(horsePowerParam[0].Trim());
@@ -77,22 +76,9 @@ namespace WinCarManager
                 }
             }
 
-            string isEngineStartedRadio = this.startedEngineView
-                .Controls
-                .OfType<RadioButton>()
-                .FirstOrDefault(radio => radio.Checked)
-                .Name;
-
-            switch (isEngineStartedRadio)
+            if(this.startedEngineView.Checked)
             {
-                case "engineIsStartedTrue":
-                    break;
-                case "engineIsStartedFalse":
-                    break;
-                case "engineIsStartedNA":
-                    break;
-                default:
-                    break;
+                queryBuilder.whereEngineIsStarted(true);
             }
 
             //this.vehicles = queryBuilder;
