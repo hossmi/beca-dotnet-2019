@@ -105,18 +105,9 @@ namespace CarManagement.Services
 
                 SqlCommand command = new SqlCommand(querry, conection);
                 int id = Convert.ToInt32(command.ExecuteScalar());
-
-                bool exists = getMeIfVehicleExist(command, id);
-
-                if (exists == true)
-                {
-                    updateDb(command, id, conection, vehicle);
-
-                }
-                else
-                {
-                    insertDb(command, id, conection, vehicle);
-                }
+                                
+                if (getMeIfVehicleExist(command, id)) updateDb(command, id, conection, vehicle);
+                else insertDb(command, id, conection, vehicle);
             }
         }
 
