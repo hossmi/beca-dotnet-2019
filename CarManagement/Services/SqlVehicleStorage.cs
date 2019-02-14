@@ -239,7 +239,7 @@ namespace CarManagement.Services
             return doorsDto;
         }
 
-        public void set2(IVehicle vehicle)
+        public void set(IVehicle vehicle)
         {
             string query, sentences;
 
@@ -273,55 +273,11 @@ namespace CarManagement.Services
             }
         }
 
-        public void setN(IVehicle vehicle)
+        public IVehicleQuery get()
         {
-            //this.vehicleBuilder.export(vehicle);
-            string pushToEnrollmentb = "INSERT INTO enrollment(seria,number) output INSERTED.ID VALUES(@serial,@number)";
-            String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
-            String pushToDoor = "INSERT INTO door(vehicleid,isopen)" + "VALUES(@vehicleid,@isopen)";
-            string pushToVehicle = "INSERT INTO vehicle(color,engineHorsePower,engineIsStarted) VALUES(@color,@engineHorsePower,@engineIsStarted)";
-            using (SqlConnection conection = new SqlConnection(this.connectionString))
-            {
-                //------------------------------------------------------------------------------------------
-                conection.Open();
-                //------------------------------------------------------------------------------------------
-                SqlCommand pusher = new SqlCommand(pushToEnrollmentb, conection);
-                pusher = new SqlCommand(pushToEnrollmentb, conection);
-                pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
-                pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
-                int enrollmentId = (int)pusher.ExecuteScalar();
-                //------------------------------------------------------------------------------------------
-                pusher = new SqlCommand(pushToVehicle, conection);
-                pusher.Parameters.AddWithValue("@enrollmentid", enrollmentId);
-                pusher.Parameters.AddWithValue("@color", vehicle.Color);
-                pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
-                pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
-                pusher.ExecuteNonQuery();
-                //------------------------------------------------------------------------------------------
-
-
-                foreach (IWheel wheels in vehicle.Wheels)
-                {
-                    pusher = new SqlCommand(pushToWheel, conection);
-                    pusher.Parameters.AddWithValue("@pressure", wheels.Pressure);
-                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
-                    pusher.ExecuteNonQuery();
-
-                }
-                //------------------------------------------------------------------------------------------
-                foreach (IDoor doors in vehicle.Doors)
-                {
-                    pusher = new SqlCommand(pushToDoor, conection);
-                    pusher.Parameters.AddWithValue("@isopen", doors.IsOpen);
-                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
-                    pusher.ExecuteNonQuery();
-                }
-                //------------------------------------------------------------------------------------------
-                conection.Close();
-
-                //------------------------------------------------------------------------------------------
-            }
+            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
         }
+
 
 
         private static void executeCommand(string connectionString, string sentencies)
@@ -372,10 +328,7 @@ namespace CarManagement.Services
             return result;
         }
 
-        public IVehicleQuery get()
-        {
-            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
-        }
+        
 
         private class PrvVehicleQuery : IVehicleQuery
         {
