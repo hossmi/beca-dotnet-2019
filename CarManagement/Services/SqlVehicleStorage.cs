@@ -27,7 +27,26 @@ namespace CarManagement.Services
             this.vehicleBuilder = vehicleBuilder;
         }
 
-        public int Count { get; }
+        public int Count
+        {
+            get
+            {
+                using (SqlConnection connection = new SqlConnection(this.connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand("SELECT COUNT(engineHorsePower) FROM vehicle", connection))
+                    {
+
+                        connection.Open();
+                        int numero = Convert.ToInt32(command.ExecuteScalar());
+                        connection.Close();
+                        return numero;
+
+                    }
+                }
+            }
+        }
+
+
 
         public void clear()
         {
@@ -63,7 +82,7 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            
+
             //this.vehicleBuilder.export(vehicle);
             string pushToEnrollmentDb = "INSERT INTO enrollment(serial,number) output INSERTED.ID VALUES(@serial,@number)";
             string pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
@@ -218,7 +237,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = "serial = " + enrollment.Serial + " && number = " + enrollment.Number + " ";
+                this.filters[nameof(whereEnrollmentIs)] = "serial = '" + enrollment.Serial + "' AND number = " + enrollment.Number + " ";
                 return this;
             }
 
@@ -231,14 +250,14 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentNumberIs(string number)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentNumberIs)));
-                this.filters[nameof(whereEnrollmentNumberIs)] = " number = " + number + " ";
+                this.filters[nameof(whereEnrollmentNumberIs)] = " number = " + number.ToString() + " ";
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isFalse(this.filters.ContainsKey(this.indexEngineHorsePower));
-                this.filters[nameof(this.indexEngineHorsePower)] = " engineHorsePower = " + horsePower + " ";
+                this.filters[nameof(this.indexEngineHorsePower)] = " engineHorsePower = " + horsePower.ToString() + " ";
                 return this;
             }
 
@@ -267,14 +286,16 @@ namespace CarManagement.Services
             private string getMeQuerry(IEnumerable<string> filters)
             {
                 string querry = "";
+
+                if (querry != "")
+                {
+                    querry = " WHERE ";
+                }
                 foreach (string filter in filters)
                 {
                     querry += " AND " + filter;
                 }
-                if (querry != "")
-                {
-                    querry = " WHERE " + querry.Substring(5);
-                }
+
                 return querry = BASE_QUERRY + querry;
             }
 
@@ -313,7 +334,7 @@ namespace CarManagement.Services
 
                     }
                 }
-               
+
             }
 
             private static DoorDto[] giveMeDoors(SqlCommand command)
