@@ -22,7 +22,10 @@ namespace WinCarManager
 
         private void VehicleForm_Load(object sender, EventArgs e)
         {
-
+            //firstButton_Click.Text = char.ConvertFromUtf32(0x2B70);
+            //prevButton_Click.Text = char.ConvertFromUtf32(0x2B60);
+            //nextButton_Click.Text = char.ConvertFromUtf32(0x2B62);
+            //lastButton_Click.Text = char.ConvertFromUtf32(0x2B72);
         }
 
         private void firstButton_Click(object sender, EventArgs e)

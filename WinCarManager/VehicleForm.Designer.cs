@@ -144,7 +144,7 @@
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button1.Location = new System.Drawing.Point(210, 448);
+            this.button1.Location = new System.Drawing.Point(194, 527);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(72, 57);
             this.button1.TabIndex = 6;
@@ -155,7 +155,7 @@
             // button2
             // 
             this.button2.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button2.Location = new System.Drawing.Point(325, 448);
+            this.button2.Location = new System.Drawing.Point(347, 527);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(72, 57);
             this.button2.TabIndex = 7;
@@ -166,7 +166,7 @@
             // button3
             // 
             this.button3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button3.Location = new System.Drawing.Point(438, 448);
+            this.button3.Location = new System.Drawing.Point(501, 527);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(72, 57);
             this.button3.TabIndex = 8;
@@ -177,7 +177,7 @@
             // button4
             // 
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button4.Location = new System.Drawing.Point(552, 448);
+            this.button4.Location = new System.Drawing.Point(661, 527);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(72, 57);
             this.button4.TabIndex = 9;
@@ -188,7 +188,7 @@
             // listView1
             // 
             this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.Location = new System.Drawing.Point(527, 36);
+            this.listView1.Location = new System.Drawing.Point(723, 36);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(121, 97);
             this.listView1.TabIndex = 10;
@@ -198,7 +198,7 @@
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(524, 16);
+            this.label5.Location = new System.Drawing.Point(720, 16);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(46, 17);
             this.label5.TabIndex = 11;
@@ -208,7 +208,7 @@
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(524, 197);
+            this.label6.Location = new System.Drawing.Point(720, 197);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(55, 17);
             this.label6.TabIndex = 12;
@@ -217,7 +217,7 @@
             // listView2
             // 
             this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView2.Location = new System.Drawing.Point(527, 217);
+            this.listView2.Location = new System.Drawing.Point(723, 217);
             this.listView2.Name = "listView2";
             this.listView2.Size = new System.Drawing.Size(121, 97);
             this.listView2.TabIndex = 13;
@@ -227,7 +227,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(764, 542);
+            this.ClientSize = new System.Drawing.Size(960, 621);
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);

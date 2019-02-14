@@ -3,7 +3,7 @@ using CarManagement.Core.Services;
 
 namespace CarManagement.Services
 {
-    public class DefaultEnrollmentProvider : IEnrollmentProvider
+    public class DefaultEnrollmentProvider : IEnrollmentProvider*
     {
         private int numbers;
         private readonly string[] letters = { "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z;" };
@@ -30,7 +30,7 @@ namespace CarManagement.Services
 
         {
             string enrollmentLetters = "";
-            if ((this.serial[1] & this.serial[2])<19)
+           if ((this.serial[1] & this.serial[2])<19)
             {
                 this.serial
             }
