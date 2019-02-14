@@ -438,7 +438,7 @@ public IEnumerable<IVehicle> get()
                 }
                                                
                 DB<SqlConnection> db = new DB<SqlConnection> (this.connectionString);
-                IEnumerable<IVehicle> vehicles = db.executeQuery(selectVehicle, reader => conversor(reader), this.parameters);
+                IEnumerable<IVehicle> vehicles = db.select<IVehicle>(selectVehicle, reader => conversor(reader), this.parameters);
 
                 return vehicles.GetEnumerator();
             }
