@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CarManagement.Core.Models;
+﻿using CarManagement.Core.Models;
 using CarManagement.Core.Services;
 
-namespace BusinessCore.Tests
+namespace BusinessCore.Tests.Services
 {
     public class ArrayEnrollmentProvider : IEnrollmentProvider
     {
