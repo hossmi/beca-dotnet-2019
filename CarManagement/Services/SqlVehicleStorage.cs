@@ -349,6 +349,14 @@ namespace CarManagement.Services
             private readonly IDictionary<string, string> conditions;
             private readonly IDictionary<string, object> parameters;
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -439,6 +447,11 @@ namespace CarManagement.Services
             {
                 string query = buildQuery(SELECT_VEHICLES, this.conditions.Values);
                 return readAndBuildVehicles(this.connectionString, query, this.parameters, this.vehicleBuilder);
+            }
+
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
             }
 
         }
