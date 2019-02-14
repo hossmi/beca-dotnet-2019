@@ -46,8 +46,6 @@ namespace CarManagement.Services
             }
         }
 
-
-
         public void clear()
         {
             List<string> clearDbQuerry = new List<string>();
@@ -82,53 +80,125 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
+           
 
-            //this.vehicleBuilder.export(vehicle);
-            string pushToEnrollmentDb = "INSERT INTO enrollment(serial,number) output INSERTED.ID VALUES(@serial,@number)";
-            string pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
-            string pushToDoor = "INSERT INTO door(vehicleid,isopen)" + "VALUES(@vehicleid,@isopen)";
-            string pushToVehicle = "INSERT INTO vehicle(enrollmentId,color,engineHorsePower,engineIsStarted) VALUES(@enrrollmentId,@color,@engineHorsePower,@engineIsStarted)";
+
             using (SqlConnection conection = new SqlConnection(this.connectionString))
             {
                 //------------------------------------------------------------------------------------------
                 conection.Open();
-                //------------------------------------------------------------------------------------------
-                SqlCommand pusher = new SqlCommand(pushToEnrollmentDb, conection);
-                pusher = new SqlCommand(pushToEnrollmentDb, conection);
-                pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
-                pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
-                int enrollmentId = Convert.ToInt32(pusher.ExecuteScalar());
-                //------------------------------------------------------------------------------------------
-                pusher = new SqlCommand(pushToVehicle, conection);
-                pusher.Parameters.AddWithValue("@enrrollmentId", enrollmentId);
-                pusher.Parameters.AddWithValue("@color", Convert.ToInt32(vehicle.Color));
-                pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
-                pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
-                pusher.ExecuteNonQuery();
+                string querry = "SELECT id FROM enrollment " +
+               "WHERE serial = '" + vehicle.Enrollment.Serial + "' AND number = " + vehicle.Enrollment.Number + " ";
+                SqlCommand command = new SqlCommand(querry, conection);
+                int id = Convert.ToInt32(command.ExecuteScalar());
                 //------------------------------------------------------------------------------------------
 
-
-                foreach (IWheel wheels in vehicle.Wheels)
+                bool exists = VehiclegetMeIfVehicleExist(command,id);
+                if (exists == true)
                 {
-                    pusher = new SqlCommand(pushToWheel, conection);
-                    pusher.Parameters.AddWithValue("@pressure", wheels.Pressure);
-                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
-                    pusher.ExecuteNonQuery();
+                    string UpdateWithVehicle = "UPDATE vehicle SET color = @color, engineHorsePower = @HorsePower, engineIsStarted = @isStarted, WHERE enrollmentId = @id ";
+
+                    command = new SqlCommand(UpdateWithVehicle, conection);
+                    command.Parameters.AddWithValue("@color", vehicle.Color);
+                    command.Parameters.AddWithValue("@HorsePower", vehicle.Engine.HorsePower);
+                    command.Parameters.AddWithValue("@IsStarted", vehicle.Engine.IsStarted);
+                    command.ExecuteNonQuery();
+                    //command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    //command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+
+
+
+                    string UpdateWithVehicleEnrollmentId = "UPDATE vehicle" +
+                       "SET enrollmentId = @enrollmentId";
+                    command = new SqlCommand(UpdateWithVehicleEnrollmentId, conection);
+                    command.Parameters.AddWithValue("@enrrollmentId", id);
+                    command.ExecuteNonQuery();
+
+                    string UpdateWithWheels = "UPDATE wheel SET pressure = @pressure, vehicleId = @vehicleid ";
+
+                    foreach (IWheel wheels in vehicle.Wheels)
+                    {
+                        command = new SqlCommand(UpdateWithWheels, conection);
+                        command.Parameters.AddWithValue("@pressure", wheels.Pressure);
+                        command.Parameters.AddWithValue("@vehicleid", id);
+                        command.ExecuteNonQuery();
+
+                    }
+                    string UpdateWithDoors = "UPDATE door SET isOpne = @isOpen, vehicleId = @vehicleid ";
+
+                    foreach (IWheel wheels in vehicle.Wheels)
+                    {
+                        command = new SqlCommand(UpdateWithDoors, conection);
+                        command.Parameters.AddWithValue("@isOpen", wheels.Pressure);
+                        command.Parameters.AddWithValue("@vehicleid", id);
+                        command.ExecuteNonQuery();
+
+                    }
+
 
                 }
-                //------------------------------------------------------------------------------------------
-                foreach (IDoor doors in vehicle.Doors)
+                else
                 {
-                    pusher = new SqlCommand(pushToDoor, conection);
-                    pusher.Parameters.AddWithValue("@isopen", doors.IsOpen);
-                    pusher.Parameters.AddWithValue("@vehicleid", enrollmentId);
-                    pusher.ExecuteNonQuery();
+                    string pushToEnrollmentDb = "INSERT INTO enrollment(serial,number) " +
+                                                "output INSERTED.ID VALUES(@serial,@number)";
+
+                    string pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + 
+                                         "VALUES(@vehicleid,@pressure)";
+
+                    string pushToDoor = "INSERT INTO door(vehicleid,isopen)" + 
+                                        "VALUES(@vehicleid,@isopen)";
+
+                    string pushToVehicle = "INSERT INTO vehicle(enrollmentId,color,engineHorsePower,engineIsStarted) " +
+                                           "VALUES(@enrrollmentId,@color,@engineHorsePower,@engineIsStarted)";
+                    //------------------------------------------------------------------------------------------
+                    command = new SqlCommand(pushToEnrollmentDb, conection);
+                    command = new SqlCommand(pushToEnrollmentDb, conection);
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    int enrollmentId = Convert.ToInt32(command.ExecuteScalar());
+
+                    command = new SqlCommand(pushToVehicle, conection);
+                    command.Parameters.AddWithValue("@enrrollmentId", enrollmentId);
+                    command.Parameters.AddWithValue("@color", vehicle.Color);
+                    command.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                    command.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                    command.ExecuteNonQuery();
+                    //------------------------------------------------------------------------------------------
+
+
+                    foreach (IWheel wheels in vehicle.Wheels)
+                    {
+                        command = new SqlCommand(pushToWheel, conection);
+                        command.Parameters.AddWithValue("@pressure", wheels.Pressure);
+                        command.Parameters.AddWithValue("@vehicleid", enrollmentId);
+                        command.ExecuteNonQuery();
+
+                    }
+                    //------------------------------------------------------------------------------------------
+                    foreach (IDoor doors in vehicle.Doors)
+                    {
+                        command = new SqlCommand(pushToDoor, conection);
+                        command.Parameters.AddWithValue("@isopen", doors.IsOpen);
+                        command.Parameters.AddWithValue("@vehicleid", enrollmentId);
+                        command.ExecuteNonQuery();
+                    }
                 }
                 //------------------------------------------------------------------------------------------
                 conection.Close();
 
                 //------------------------------------------------------------------------------------------
             }
+        }
+
+        private bool VehiclegetMeIfVehicleExist(SqlCommand command, int enrollmentid)
+        {
+            string querry = "SELECT COUNT(enrollmentId) FROM vehicle WHERE enrollmentId = @id";
+           
+            command = new SqlCommand(querry, command.Connection);
+            command.Parameters.AddWithValue("id", enrollmentid);
+            int count = Convert.ToInt32(command.ExecuteScalar());
+            if (count == 0) return false;
+            else return true;
         }
 
         public IVehicle get(IEnrollment enrollment)
