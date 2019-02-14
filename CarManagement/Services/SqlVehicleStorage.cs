@@ -88,82 +88,6 @@ namespace CarManagement.Services
             }
         }
 
-        //public IVehicle get(IEnrollment enrollment)
-        //{
-        //    bool exist = false;
-
-        //    using (SqlConnection connection = new SqlConnection(this.connectionString))
-        //    using (SqlCommand command = new SqlCommand())
-        //    {
-        //        string selectEnrollment = $@"
-        //                SELECT count(*)
-        //                FROM enrollment                        
-        //                WHERE serial = {enrollment.Serial} 
-        //                AND number = {enrollment.Number};";
-        //        connection.Open();
-        //        command.Connection = connection;
-        //        command.CommandText = selectEnrollment;
-
-        //        int filas = (int)command.ExecuteScalar();
-        //        exist = filas > 0;
-        //    }
-
-        //    Asserts.isTrue(exist);
-
-        //    IVehicle vehicle = null;
-
-        //    string query = $@"
-        //                SELECT v.enrollmentId
-        //                    , v.color
-        //                    , v.engineHorsePower
-        //                    , v.engineIsStarted
-        //                    , e.serial
-        //                    , e.number
-        //                FROM vehicle v
-        //                INNER JOIN enrollment e ON v.enrollmentId = e.id
-        //                WHERE serial = {enrollment.Serial} 
-        //                AND number = {enrollment.Number};";
-
-        //    using (SqlConnection connection = new SqlConnection(this.connectionString))
-        //    using (SqlCommand command = new SqlCommand())
-        //    {
-        //        connection.Open();
-        //        command.Connection = connection;
-        //        command.CommandText = query;
-        //        using (SqlDataReader readerVehicle = command.ExecuteReader())
-        //        {
-        //            if (readerVehicle.Read())
-        //            {
-        //                VehicleDto vehicleDto = new VehicleDto();
-
-        //                int enrollmentId = (int)readerVehicle["enrollmentId"];
-        //                vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
-        //                vehicleDto.Engine = new EngineDto
-        //                {
-        //                    HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
-        //                    IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
-        //                };
-        //                vehicleDto.Enrollment = new EnrollmentDto
-        //                {
-        //                    Serial = readerVehicle["serial"].ToString(),
-        //                    Number = Convert.ToInt16(readerVehicle["number"]),
-        //                };
-
-        //                List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
-        //                List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
-
-        //                vehicleDto.Wheels = wheelDtos.ToArray();
-        //                vehicleDto.Doors = doorDtos.ToArray();
-
-        //                vehicle = this.vehicleBuilder.import(vehicleDto);
-
-        //            }
-        //        }
-        //        connection.Close();
-        //        return vehicle;
-        //    }
-        //}
-
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
@@ -442,6 +366,14 @@ namespace CarManagement.Services
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IDictionary<string, string> filters;
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -578,54 +510,10 @@ namespace CarManagement.Services
                 return query;
             }
 
-            //public IEnumerable<IVehicle> getAll()
-            //{
-            //    IList<IVehicle> vehicles = new List<IVehicle>();
-
-            //    using (SqlConnection connection = new SqlConnection(this.connectionString))
-            //    using (SqlCommand command = new SqlCommand())
-            //    {
-            //        connection.Open();
-            //        command.Connection = connection;
-            //        command.CommandText = SELECT_FROM_VEHICLE;
-            //        using (SqlDataReader readerVehicle = command.ExecuteReader())
-            //        {
-            //            while (readerVehicle.Read())
-            //            {
-            //                VehicleDto vehicleDto = new VehicleDto();
-
-            //                int enrollmentId = (int)readerVehicle["enrollmentId"];
-            //                vehicleDto.Color = (CarColor)Convert.ToInt32(readerVehicle["color"]);
-            //                vehicleDto.Engine = new EngineDto
-            //                {
-            //                    HorsePower = Convert.ToInt16(readerVehicle["engineHorsePower"]),
-            //                    IsStarted = Convert.ToBoolean(readerVehicle["engineIsStarted"]),
-            //                };
-            //                vehicleDto.Enrollment = new EnrollmentDto
-            //                {
-            //                    Serial = readerVehicle["serial"].ToString(),
-            //                    Number = Convert.ToInt16(readerVehicle["number"]),
-            //                };
-
-            //                List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
-            //                List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
-
-            //                vehicleDto.Wheels = wheelDtos.ToArray();
-            //                vehicleDto.Doors = doorDtos.ToArray();
-
-            //                IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
-            //                vehicles.Add(vehicle);
-            //            }
-            //        }
-
-
-            //        connection.Close();
-            //    }
-
-            //    return vehicles;
-            //}
-
-
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
+            }
 
         }
     }

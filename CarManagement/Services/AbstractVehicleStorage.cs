@@ -98,6 +98,15 @@ namespace CarManagement.Services
                 this.enrollmentHasValue = false;
             }
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return this.vehicles
+                        .Select(v => v.Enrollment);
+                }
+            }
+
             public IEnumerator<IVehicle> GetEnumerator()
             {
                 return this.vehicles.GetEnumerator();
