@@ -233,6 +233,14 @@ namespace CarManagement.Services
 
             private string specifiedQuery = SELECT_STANDART;
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -388,6 +396,11 @@ namespace CarManagement.Services
                 }
 
                 return items.ToArray();
+            }
+
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
             }
 
         }
