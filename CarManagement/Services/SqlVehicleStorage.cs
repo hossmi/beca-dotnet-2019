@@ -193,8 +193,8 @@ namespace CarManagement.Services
             private string queryId = "USE CarManagement; " +
                 "SELECT * " +
                 "FROM enrollment ";
-            private string queryvehicleHead = "SELECT * FROM vehicle ";
-            private int counter;
+            private string queryvehicleHead = "USE CarManagement; " +
+                "SELECT * FROM vehicle ";
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -212,7 +212,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isTrue(color != null);
-                this.queryPartsVehicle.Add("carColor = " + Convert.ToInt32(color) + " ");
+                this.queryPartsVehicle.Add("carColor = @COLOR");
                 this.color = color;
                 return this;
             }
@@ -220,7 +220,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isTrue(started != null);
-                this.queryPartsVehicle.Add("isStarted = " + Convert.ToInt16(started) + " ");
+                this.queryPartsVehicle.Add("isStarted = @STARTED");
                 this.engineIsStarted = started;
                 return this;
             }
@@ -228,7 +228,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                this.queryParts.Add("number = " + enrollment.Number);
+                this.queryPartsVehicle.Add("number = @NUMBER");
                 this.enrollment = enrollment;
                 return this;
             }
@@ -237,14 +237,14 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
-                this.queryParts.Add("serial = " + serial);
+                this.queryParts.Add("serial = @SERIAL");
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isTrue(horsePower != null);
-                this.queryPartsVehicle.Add("horsePower = " + horsePower + " ");
+                this.queryPartsVehicle.Add("horsePower = @HORSEPOWER");
                 this.horsePower = horsePower;
                 return this;
             }
@@ -253,7 +253,7 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(min != null);
                 Asserts.isTrue(max != null);
-                this.queryPartsVehicle.Add("horsePower BETWEEN " + min + " AND " + max + " ");
+                this.queryPartsVehicle.Add("horsePower BETWEEN @MIN AND @MAX");
                 this.max = max;
                 this.min = min;
                 return this;
@@ -277,40 +277,42 @@ namespace CarManagement.Services
                 EngineDto engineDto = new EngineDto();
                 List<WheelDto> wheelsDto = new List<WheelDto>();
                 List<DoorDto> doorsDto = new List<DoorDto>();
-                SqlConnection con = new SqlConnection(this.connectionString);
-                con.Open();
-                SqlCommand sentence = new SqlCommand(this.queryId, con);
+                if (this.queryParts.Count == 0)
+                {
+                    mainQuery = mainQuery + " WHERE ";
+                }
+                SqlCommand sentence = genericSentence(this.queryId, this.connectionString);
                 SqlDataReader reader = sentence.ExecuteReader();
                 while (reader.Read())
                 {
-                    string primeQuery;
-                    sentence.Parameters.Add("@ID", SqlDbType.Int);
                     sentence.Parameters["@ID"].Value = (int)reader["id"];
-                    if (this.queryParts.Count == 0)
-                    {
-                        primeQuery = mainQuery + " WHERE ";
-                        this.counter++;
-                    }
-                    else
-                    {
-                        primeQuery = mainQuery + " AND ";
-                        this.counter++;
-                    }
-                    primeQuery = primeQuery + " enrollmentId = @ID";
+                    mainQuery = mainQuery + " enrollmentId = @ID";
                     enrollmentDto.Serial = reader["serial"].ToString();
                     enrollmentDto.Number = Convert.ToInt32(reader["number"]);
 
-                    SqlCommand sentence2 = new SqlCommand(mainQuery, con);
+                    if (this.queryParts.Count != 0)
+                    {
+                        sentence.Parameters["@COLOR"].Value = this.color;
+                        sentence.Parameters["@STARTED"].Value = this.engineIsStarted;
+                        sentence.Parameters["@HORSEPOWER"].Value = this.horsePower;
+                    }
+                    SqlCommand sentence2 = genericSentence(mainQuery, this.connectionString);
+                    sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"];
+                    if (this.queryParts.Count != 0)
+                    {
+                        sentence2.Parameters["@STARTED"].Value = sentence.Parameters["@STARTED"];
+                        sentence2.Parameters["@HORSEPOWER"].Value = sentence.Parameters["@HORSEPOWER"];
+                    }
+
                     SqlDataReader reader2 = sentence2.ExecuteReader();
                     reader2.Read();
-                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
-                    sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
                     CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader2["color"].ToString());
                     engineDto.HorsePower = Convert.ToInt32(reader2["engineHorsePower"]);
                     engineDto.IsStarted = Convert.ToBoolean(reader2["engineIsStarted"]);
                     reader2.Close();
-                    this.query = "SELECT pressure FROM wheel WHERE vehicleId = @ID";
-                    sentence2 = new SqlCommand(this.query, con);
+                    this.query = "USE CarManagement;" +
+                        "SELECT pressure FROM wheel WHERE vehicleId = @ID";
+                    sentence2 = genericSentence(this.query, this.connectionString);
                     sentence2.Parameters.Add("@ID", SqlDbType.Int);
                     sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
                     reader2 = sentence2.ExecuteReader();
@@ -323,8 +325,9 @@ namespace CarManagement.Services
                         wheelsDto.Add(wheelDto);
                     }
                     reader2.Close();
-                    this.query = "SELECT isOpen FROM door WHERE vehicleId = @ID";
-                    sentence2 = new SqlCommand(this.query, con);
+                    this.query = "USE CarManagement; " +
+                        "SELECT isOpen FROM door WHERE vehicleId = @ID";
+                    sentence2 = genericSentence(this.query, this.connectionString);
                     sentence2.Parameters.Add("@ID", SqlDbType.Int);
                     sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
                     reader2 = sentence2.ExecuteReader();
@@ -346,6 +349,24 @@ namespace CarManagement.Services
                 reader.Close();
             }
 
+            private SqlCommand genericSentence(string query, string con)
+            {
+                SqlCommand sentence = new SqlCommand(query, connection(con));
+                sentence.Parameters.Add("@SERIAL", SqlDbType.VarChar);
+                sentence.Parameters.Add("@ID", SqlDbType.Int);
+                sentence.Parameters.Add("@NUMBER", SqlDbType.Int);
+                sentence.Parameters.Add("@COLOR", SqlDbType.Int);
+                sentence.Parameters.Add("@STARTED", SqlDbType.Int);
+                sentence.Parameters.Add("@HORSEPOWER", SqlDbType.Int);
+                return sentence;
+            }
+
+            private SqlConnection connection(string connection)
+            {
+                SqlConnection con = new SqlConnection(connection);
+                con.Open();
+                return con;
+            }
             private void queryCreator(List<string> listcondition)
             {
                 int counter = 0;
