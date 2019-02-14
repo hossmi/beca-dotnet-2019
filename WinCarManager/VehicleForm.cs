@@ -10,16 +10,16 @@ using System.Windows.Forms;
 
 namespace WinCarManager
 {
-    public partial class Form1 : Form
+    public partial class VehicleForm : Form
     {
-        public Form1()
+        public VehicleForm()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void VehicleForm_Load(object sender, EventArgs e)
         {
-            MessageBox.Show("Uno que llega");
+
         }
     }
 }
