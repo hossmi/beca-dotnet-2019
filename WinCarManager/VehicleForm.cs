@@ -42,6 +42,8 @@ namespace WinCarManager
             this.ButtonPrev.Text = char.ConvertFromUtf32(0x2B60);
             this.ButtonNext.Text = char.ConvertFromUtf32(0x2B62);
             this.ButtonLast.Text = char.ConvertFromUtf32(0x2B72);
+
+                       
         }
 
         private void loadVehicle(IVehicle vehicle)
@@ -108,5 +110,14 @@ namespace WinCarManager
         {
 
         }
+
+        private void ListDoors_MouseClick(object sender, MouseEventArgs e)
+        {
+            string open = "";
+        
+        }
+
+        
+
     }
 }
