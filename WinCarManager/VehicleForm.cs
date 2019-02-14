@@ -16,19 +16,15 @@ namespace WinCarManager
 {
     public partial class VehicleForm : Form
     {
-        private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
-        private List<IVehicle> vehicles;
-        private readonly string connectionString;
-        private readonly IVehicleBuilder vehicleBuilder;
-        private readonly IEnrollmentProvider enrollmentProvider;
+        private readonly List<IVehicle> vehicles;
         private int position = 0;
 
-        public VehicleForm()
+        public VehicleForm(IVehicleStorage vehicleStorage)
         {
+            this.vehicles = vehicleStorage.get().ToList();
             InitializeComponent();
-            this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
-            this.enrollmentProvider = new DefaultEnrollmentProvider();
-            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
+            if (this.vehicles.Count > 0)
+                loadVehicle(this.vehicles[0]);
         }
 
         private void ButtonFirst_Click(object sender, EventArgs e)
@@ -46,20 +42,6 @@ namespace WinCarManager
             this.ButtonPrev.Text = char.ConvertFromUtf32(0x2B60);
             this.ButtonNext.Text = char.ConvertFromUtf32(0x2B62);
             this.ButtonLast.Text = char.ConvertFromUtf32(0x2B72);
-
-            loadVehicles();
-
-        }
-
-        private void loadVehicles()
-        {
-            IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
-
-            this.vehicles = databaseVehicleStorage.get().ToList();
-
-            if (this.vehicles.Count>0)
-                loadVehicle(this.vehicles[0]);
         }
 
         private void loadVehicle(IVehicle vehicle)
@@ -120,6 +102,11 @@ namespace WinCarManager
                     this.position = this.vehicles.Count - 1;
                 loadVehicle(this.vehicles[this.position]);
             }
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+
         }
     }
 }

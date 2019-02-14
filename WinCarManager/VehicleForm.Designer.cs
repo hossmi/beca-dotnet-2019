@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.EnrollmentSerial = new System.Windows.Forms.TextBox();
             this.EnrollmentNumber = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,6 +50,7 @@
             this.LabelPosition = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +58,7 @@
             // 
             this.EnrollmentSerial.Location = new System.Drawing.Point(97, 6);
             this.EnrollmentSerial.Name = "EnrollmentSerial";
+            this.EnrollmentSerial.ReadOnly = true;
             this.EnrollmentSerial.Size = new System.Drawing.Size(48, 22);
             this.EnrollmentSerial.TabIndex = 0;
             // 
@@ -63,6 +66,7 @@
             // 
             this.EnrollmentNumber.Location = new System.Drawing.Point(151, 6);
             this.EnrollmentNumber.Name = "EnrollmentNumber";
+            this.EnrollmentNumber.ReadOnly = true;
             this.EnrollmentNumber.Size = new System.Drawing.Size(100, 22);
             this.EnrollmentNumber.TabIndex = 1;
             // 
@@ -110,6 +114,7 @@
             // 
             this.EngineIsStarted.Location = new System.Drawing.Point(105, 43);
             this.EngineIsStarted.Name = "EngineIsStarted";
+            this.EngineIsStarted.ReadOnly = true;
             this.EngineIsStarted.Size = new System.Drawing.Size(100, 22);
             this.EngineIsStarted.TabIndex = 6;
             // 
@@ -117,6 +122,7 @@
             // 
             this.EngineHorsePower.Location = new System.Drawing.Point(105, 15);
             this.EngineHorsePower.Name = "EngineHorsePower";
+            this.EngineHorsePower.ReadOnly = true;
             this.EngineHorsePower.Size = new System.Drawing.Size(100, 22);
             this.EngineHorsePower.TabIndex = 5;
             // 
@@ -124,6 +130,7 @@
             // 
             this.Color.Location = new System.Drawing.Point(97, 34);
             this.Color.Name = "Color";
+            this.Color.ReadOnly = true;
             this.Color.Size = new System.Drawing.Size(100, 22);
             this.Color.TabIndex = 4;
             // 
@@ -138,6 +145,7 @@
             // 
             // ButtonFirst
             // 
+            this.ButtonFirst.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonFirst.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonFirst.Location = new System.Drawing.Point(293, 265);
             this.ButtonFirst.Name = "ButtonFirst";
@@ -148,6 +156,7 @@
             // 
             // ButtonPrev
             // 
+            this.ButtonPrev.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonPrev.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonPrev.Location = new System.Drawing.Point(349, 265);
             this.ButtonPrev.Name = "ButtonPrev";
@@ -158,6 +167,7 @@
             // 
             // ButtonNext
             // 
+            this.ButtonNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonNext.Location = new System.Drawing.Point(405, 265);
             this.ButtonNext.Name = "ButtonNext";
@@ -168,6 +178,7 @@
             // 
             // ButtonLast
             // 
+            this.ButtonLast.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonLast.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonLast.Location = new System.Drawing.Point(461, 265);
             this.ButtonLast.Name = "ButtonLast";
@@ -178,6 +189,7 @@
             // 
             // ListDoors
             // 
+            this.ListDoors.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.ListDoors.GridLines = true;
             this.ListDoors.Location = new System.Drawing.Point(282, 37);
             this.ListDoors.Name = "ListDoors";
@@ -188,6 +200,7 @@
             // 
             // ListWheels
             // 
+            this.ListWheels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ListWheels.Location = new System.Drawing.Point(538, 37);
             this.ListWheels.Name = "ListWheels";
             this.ListWheels.Size = new System.Drawing.Size(250, 200);
@@ -197,6 +210,7 @@
             // 
             // label5
             // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(325, 245);
             this.label5.Name = "label5";
@@ -206,6 +220,7 @@
             // 
             // LabelPosition
             // 
+            this.LabelPosition.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.LabelPosition.AutoSize = true;
             this.LabelPosition.Location = new System.Drawing.Point(444, 245);
             this.LabelPosition.Name = "LabelPosition";
@@ -214,6 +229,7 @@
             // 
             // label6
             // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(279, 17);
             this.label6.Name = "label6";
@@ -223,6 +239,7 @@
             // 
             // label7
             // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(535, 17);
             this.label7.Name = "label7";
@@ -230,10 +247,16 @@
             this.label7.TabIndex = 15;
             this.label7.Text = "Wheels";
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            // 
             // VehicleForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(800, 321);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -252,7 +275,6 @@
             this.Controls.Add(this.EnrollmentNumber);
             this.Controls.Add(this.EnrollmentSerial);
             this.Name = "VehicleForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Vehicles";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.VehicleForm_Load);
@@ -286,5 +308,6 @@
         private System.Windows.Forms.Label LabelPosition;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     }
 }

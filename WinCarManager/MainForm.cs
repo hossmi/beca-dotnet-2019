@@ -7,25 +7,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CarManagement.Core.Services;
 
 namespace WinCarManager
 {
     public partial class MainForm : Form
     {
-        private VehicleForm ShowVehicles;
+        private readonly IVehicleStorage vehicleStorage;
+        private VehicleForm vehicleForm;
 
-        public MainForm()
+        public MainForm(IVehicleStorage vehicleStorage)
         {
+            this.vehicleStorage = vehicleStorage;
             InitializeComponent();
         }
 
         private void vehiclesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.ShowVehicles == null || this.ShowVehicles.IsDisposed)
+            if (this.vehicleForm == null || this.vehicleForm.IsDisposed)
             {
-                this.ShowVehicles = new VehicleForm();
-                this.ShowVehicles.MdiParent = this;
-                this.ShowVehicles.Show();
+                this.vehicleForm = new VehicleForm(this.vehicleStorage);
+                this.vehicleForm.MdiParent = this;
+                this.vehicleForm.Show();
+
             }
         }
     }
