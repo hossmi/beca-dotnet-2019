@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CarManagement.Core.Models;
+using CarManagement.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,7 +14,8 @@ namespace WinCarManager
 {
     public partial class VehicleForm : Form
     {
-        public VehicleForm()
+        private readonly List<IVehicle> vehicles;
+        public VehicleForm(IVehicleStorage vehicleStorage)
         {
             InitializeComponent();
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,11 @@ namespace WinCarManager
 {
     public partial class Vehiculos : Form
     {
-        public Vehiculos()
+        private readonly IVehicleStorage vehicleStorage;
+        public Vehiculos(IVehicleStorage vehicleStorage)
         {
             InitializeComponent();
+            this.vehicleStorage = vehicleStorage;
         }
 
 
@@ -25,7 +28,7 @@ namespace WinCarManager
 
         private void vehiculosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            VehicleForm newMDIChild = new VehicleForm();
+            VehicleForm newMDIChild = new VehicleForm(this.vehicleStorage);
             newMDIChild.MdiParent = this;
             newMDIChild.Show();
         }
