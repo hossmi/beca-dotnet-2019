@@ -203,7 +203,7 @@ namespace CarManagement.Services
             {
                 command.Connection = connection;
                 command.CommandText = $@"SELECT * FROM wheel
-                                        WHERE vehicleId = {vehicleId};";
+                                        WHERE vehicleId = {vehicleId}";
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -224,8 +224,8 @@ namespace CarManagement.Services
             using (SqlCommand command = new SqlCommand())
             {
                 command.Connection = connection;
-                command.CommandText = $@"SELECT * FROM door
-                                        WHERE vehicleId = {vehicleId};";
+                command.CommandText = $@"SELECT  FROM door
+                                        WHERE vehicleId = {vehicleId}";
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -453,7 +453,7 @@ namespace CarManagement.Services
 
             private static IEnumerable<DoorDto> getDoor(SqlConnection sqlConnection, int enrollmentId)
             {
-                string query = "SELECT isOpen FROM door WHERRE vehicleId = " + enrollmentId + " ";//MIRAR
+                string query = "SELECT isOpen FROM door WHERE vehicleId = " + enrollmentId + " ";//MIRAR
                 using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                 {
                     using (SqlDataReader reader = sqlCommand.ExecuteReader())
