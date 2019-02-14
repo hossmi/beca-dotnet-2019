@@ -17,6 +17,7 @@ namespace CarManagement.Services
 
     public class SqlVehicleStorage : IVehicleStorage
     {
+        #region "SQL"
         private const string SELECT_FROM_VEHICLE = @"
                         SELECT v.enrollmentId
                               ,v.color
@@ -28,8 +29,7 @@ namespace CarManagement.Services
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
         private const string SELECT_FROM_DOOR = "";
         private const string SELECT_COUNT_VEHICLE = "SELECT count(*) FROM vehicle ";
-
-
+        #endregion 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
 
