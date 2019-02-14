@@ -25,7 +25,7 @@ namespace WinCarManager
             InitializeComponent();
         }
 
-        private void vehiculosToolStripMenuItem_Click(object sender, EventArgs e)
+        private void mainFormToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.vehicleForm == null || this.vehicleForm.IsDisposed)
             {

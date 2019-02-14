@@ -22,10 +22,10 @@ namespace WinCarManager
 
         private void VehicleForm_Load(object sender, EventArgs e)
         {
-            //firstButton_Click.Text = char.ConvertFromUtf32(0x2B70);
-            //prevButton_Click.Text = char.ConvertFromUtf32(0x2B60);
-            //nextButton_Click.Text = char.ConvertFromUtf32(0x2B62);
-            //lastButton_Click.Text = char.ConvertFromUtf32(0x2B72);
+            this.firstButton.Text = char.ConvertFromUtf32(0x2B70);
+            this.prevButton.Text = char.ConvertFromUtf32(0x2B60);
+            this.nextButton.Text = char.ConvertFromUtf32(0x2B62);
+            this.lastButton.Text = char.ConvertFromUtf32(0x2B72);
         }
 
         private void firstButton_Click(object sender, EventArgs e)
@@ -44,6 +44,31 @@ namespace WinCarManager
         }
 
         private void lastButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void add_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void modify_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cancel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void delete_Click(object sender, EventArgs e)
         {
 
         }
