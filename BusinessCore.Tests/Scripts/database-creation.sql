@@ -28,7 +28,7 @@ CREATE TABLE [vehicle]
 CREATE TABLE [wheel]
 (
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[pressure] [real] NULL,
+	[pressure] [float] NULL,
 	[vehicleId] [int] NOT NULL,	
 	CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED ([id] ASC),
 	CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId])REFERENCES [vehicle] ([enrollmentId])
