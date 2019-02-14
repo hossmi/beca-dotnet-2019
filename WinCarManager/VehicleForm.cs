@@ -56,20 +56,25 @@ namespace WinCarManager
             this.EngineHorsePower.Text = vehicle.Engine.HorsePower.ToString();
             this.EngineIsStarted.Text = vehicle.Engine.IsStarted.ToString();
 
-            this.ListWheels.Items.Clear();
-            this.ListDoors.Items.Clear();
+            //this.ListWheels.Items.Clear();
+            //this.ListDoors.Items.Clear();
+
+            this.dataGridView1.Rows.Clear();
+            this.dataGridView2.Rows.Clear();
             
             int i = 1;
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                this.ListWheels.Items.Add("Wheel "+i.ToString()+ " Pressure: " + wheel.Pressure.ToString());
+                this.dataGridView2.Rows.Add(i, wheel.Pressure.ToString());
+                //this.ListWheels.Items.Add("Wheel "+i.ToString()+ " Pressure: " + wheel.Pressure.ToString());
                 i++;
             }
 
             i = 1;
             foreach (IDoor door in vehicle.Doors)
             {
-                this.ListDoors.Items.Add("Door "+i.ToString()+": " + door.IsOpen.ToString());
+                this.dataGridView1.Rows.Add(i,door.IsOpen.ToString());             
+                //this.ListDoors.Items.Add("Door "+i.ToString()+": " + door.IsOpen.ToString());
                 i++;
             }
             this.LabelPosition.Text = (this.position + 1).ToString();
@@ -111,13 +116,34 @@ namespace WinCarManager
 
         }
 
-        private void ListDoors_MouseClick(object sender, MouseEventArgs e)
+        private void ButtonAdd_Click(object sender, EventArgs e)
         {
-            string open = "";
-        
+            this.ButtonOK.Visible = true;
+            this.ButtonCancel.Visible = true;
+
+            this.ButtonAdd.Visible = false;
+            this.ButtonModify.Visible = false;
+            this.ButtonFirst.Visible = false;
+            this.ButtonPrev.Visible = false;
+            this.ButtonNext.Visible = false;
+            this.ButtonLast.Visible = false;
+
+            this.EnrollmentSerial.ReadOnly = false;
+            this.EnrollmentSerial.Clear();
+            this.EnrollmentNumber.ReadOnly = false;
+            this.EnrollmentNumber.Clear();
+
+            this.EngineHorsePower.ReadOnly = false;
+            this.EngineHorsePower.Clear();
+            this.EngineIsStarted.ReadOnly = false;
+            this.EngineIsStarted.Clear();
+
+            this.dataGridView1.ReadOnly = false;
+            this.dataGridView1.Rows.Clear();
+
+            this.dataGridView2.ReadOnly = false;
+            this.dataGridView2.Rows.Clear();
+
         }
-
-        
-
     }
 }

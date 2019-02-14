@@ -14,11 +14,13 @@ namespace WinCarManager
     public partial class MainForm : Form
     {
         private readonly IVehicleStorage vehicleStorage;
+        private readonly IEnrollmentProvider enrollmentProvider;
         private VehicleForm vehicleForm;
 
-        public MainForm(IVehicleStorage vehicleStorage)
+        public MainForm(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
             this.vehicleStorage = vehicleStorage;
+            this.enrollmentProvider = enrollmentProvider;
             InitializeComponent();
         }
 
