@@ -135,11 +135,18 @@ namespace CarManagement.Services
                         {
                             while (sqlDoorReader.Read())
                             {
-                                sqlOperation = new SqlCommand(UPDATE_DOOR_SKEL, sqlDbConnection);
-                                sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
-                                sqlOperation.Parameters.AddWithValue("@id", (int)sqlDoorReader["id"]);
-                                sqlOperation.Parameters.AddWithValue("@isOpen", vehicle.Doors[i].IsOpen);
-                                sqlOperation.ExecuteNonQuery();
+                                if(vehicle.Doors.Count() > i)
+                                {
+                                    sqlOperation = new SqlCommand(UPDATE_DOOR_SKEL, sqlDbConnection);
+                                    sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
+                                    sqlOperation.Parameters.AddWithValue("@id", (int)sqlDoorReader["id"]);
+                                    sqlOperation.Parameters.AddWithValue("@isOpen", vehicle.Doors[i].IsOpen);
+                                    sqlOperation.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException();
+                                }
                                 i++;
                             }
                         }
@@ -151,11 +158,18 @@ namespace CarManagement.Services
                         {
                             while (sqlWheelReader.Read())
                             {
-                                sqlOperation = new SqlCommand(UPDATE_WHEEL_SKEL, sqlDbConnection);
-                                sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
-                                sqlOperation.Parameters.AddWithValue("@id", (int)sqlWheelReader["id"]);
-                                sqlOperation.Parameters.AddWithValue("@pressure", vehicle.Wheels[i].Pressure);
-                                sqlOperation.ExecuteNonQuery();
+                                if (vehicle.Doors.Count() > i)
+                                {
+                                    sqlOperation = new SqlCommand(UPDATE_WHEEL_SKEL, sqlDbConnection);
+                                    sqlOperation.Parameters.AddWithValue("@vehicleId", (int)sqlReader["id"]);
+                                    sqlOperation.Parameters.AddWithValue("@id", (int)sqlWheelReader["id"]);
+                                    sqlOperation.Parameters.AddWithValue("@pressure", vehicle.Wheels[i].Pressure);
+                                    sqlOperation.ExecuteNonQuery();
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException();
+                                }
                                 i++;
                             }
                         }

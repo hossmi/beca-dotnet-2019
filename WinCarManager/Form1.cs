@@ -17,9 +17,9 @@ namespace WinCarManager
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
-            MessageBox.Show("Uno que llega");
+
         }
     }
 }
