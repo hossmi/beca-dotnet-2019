@@ -44,8 +44,9 @@ namespace BusinessCore.Tests
         {
             IEnrollment querriedEnrollment = this.vehicleStorage
                 .getAll()
-                .First().Enrollment
-                /**/;
+                .Where(vehicle => vehicle.Wheels.Count() == 2)
+                .OrderByDescending(vehicle => vehicle.Engine.HorsePower)
+                .First().Enrollment;
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
             Assert.AreEqual(1, querriedEnrollment.Number);
@@ -57,8 +58,15 @@ namespace BusinessCore.Tests
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
             IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .getAll()
+                .Where(vehicle => vehicle.Wheels.Count() > 1)
+                .Where(vehicle => vehicle.Wheels //NiIdea
+                    .OrderByDescending(wheel => wheel.Pressure)
+                        .ElementAt(0).Pressure >
+                            vehicle.Wheels
+                                .OrderByDescending(wheel => wheel.Pressure)
+                                    .ElementAt(1).Pressure
+                )
                 .Select(vehicle => vehicle.Enrollment)
-                /**/
                 .ToArray();
             try
             {
