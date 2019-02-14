@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ToolBox.Extensions.DbCommands;
+using ToolBox.Models;
 
 namespace ToolBox.Services
 {
@@ -17,64 +17,146 @@ namespace ToolBox.Services
             this.connectionString = connectionString;
         }
 
-        public IEnumerable<T> executeQuery<T>(string query, Func<IDataRecord, T> buildDelegate, IDictionary<string, object> parameters = null)
+        public IEnumerable<T> select<T>(string query, Func<IDataRecord, T> buildDelegate, IEnumerable<KeyValuePair<string, object>> parameters = null)
         {
+            parameters = parameters ?? Enumerable.Empty<KeyValuePair<string, object>>();
+
             using (TConnection connection = new TConnection())
-            using (IDbCommand command = connection.CreateCommand())
             {
-                
-                if (parameters != null)
-                    foreach (var parameter in parameters)
-                    command.Parameters[parameter.Key] = parameter.Value;
-
-                command.CommandText = query;
                 connection.ConnectionString = this.connectionString;
-
                 connection.Open();
 
-                using (IDataReader reader = command.ExecuteReader())
-                    while (reader.Read())
-                        yield return buildDelegate(reader);
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                using (IDbCommand command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+                    command.setParameters(parameters);
+
+                    using (IDataReader reader = command.ExecuteReader())
+                        while (reader.Read())
+                            yield return buildDelegate(reader);
+
+                    transaction.Commit();
+                }
 
                 connection.Close();
             }
         }
 
-        public T executeScalar<T>(string query, Func<object, T> buildDelegate, IDictionary<string, object> parameters = null)
+        public object selectValue(string query, IEnumerable<KeyValuePair<string, object>> parameters = null)
         {
-            using (TConnection connection = new TConnection())
-            using (IDbCommand command = connection.CreateCommand())
-            {
-                if (parameters != null)
-                    foreach (var parameter in parameters)
-                    command.Parameters[parameter.Key] = parameter.Value;
+            object result;
 
-                command.CommandText = query;
+            parameters = parameters ?? Enumerable.Empty<KeyValuePair<string, object>>();
+
+            using (TConnection connection = new TConnection())
+            {
                 connection.ConnectionString = this.connectionString;
                 connection.Open();
-                object returned = command.ExecuteScalar();
-                connection.Close();
 
-                return buildDelegate(returned);
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                using (IDbCommand command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+                    command.setParameters(parameters);
+
+                    result = command.ExecuteScalar();
+                    transaction.Commit();
+                }
+
+                connection.Close();
+            }
+
+            return result;
+        }
+
+        public int write(string query, IEnumerable<KeyValuePair<string, object>> parameters = null)
+        {
+            int affectedRows;
+
+            parameters = parameters ?? Enumerable.Empty<KeyValuePair<string, object>>();
+
+            using (TConnection connection = new TConnection())
+            {
+                connection.ConnectionString = this.connectionString;
+                connection.Open();
+
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                using (IDbCommand command = connection.CreateCommand())
+                {
+                    command.Transaction = transaction;
+                    command.CommandText = query;
+                    command.setParameters(parameters);
+
+                    affectedRows = command.ExecuteNonQuery();
+                    transaction.Commit();
+                }
+
+                connection.Close();
+            }
+
+            return affectedRows;
+        }
+
+        public void transact(Func<ICommandBuilder, TransactionAction> statementBlockDelegate)
+        {
+            using (TConnection connection = new TConnection())
+            {
+                connection.ConnectionString = this.connectionString;
+                connection.Open();
+
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                {
+                    ICommandBuilder commandBuilder = new PrvCommandBuilder(transaction);
+
+                    TransactionAction action = statementBlockDelegate(commandBuilder);
+
+                    if (action == TransactionAction.Commit)
+                        transaction.Commit();
+                    else
+                        transaction.Rollback();
+                }
+
+                connection.Close();
             }
         }
 
-        public int execute(string query, IDictionary<string, object> parameters = null)
+        private class PrvCommandBuilder : ICommandBuilder
         {
-            using (TConnection connection = new TConnection())
-            using (IDbCommand command = connection.CreateCommand())
+            private readonly IDbTransaction transaction;
+            private readonly IDictionary<string, object> parameters;
+            private string query;
+
+            public PrvCommandBuilder(IDbTransaction transaction)
             {
-                if(parameters != null)
-                    foreach (var parameter in parameters)
-                        command.Parameters[parameter.Key] = parameter.Value;
+                this.transaction = transaction;
+                this.parameters = new Dictionary<string, object>();
+            }
 
-                command.CommandText = query;
-                connection.ConnectionString = this.connectionString;
-                connection.Open();
-                int affectedRows = command.ExecuteNonQuery();
-                connection.Close();
+            public IDbCommand build()
+            {
+                IDbCommand command = this.transaction.Connection.CreateCommand();
+                command.Transaction = this.transaction;
+                command.CommandText = this.query;
+                command.setParameters(this.parameters);
 
-                return affectedRows;
+                return command;
+            }
+
+            public ICommandBuilder setParameter(string name, object value)
+            {
+                Asserts.stringIsFilled(name);
+                this.parameters[name] = value;
+                return this;
+            }
+
+            public ICommandBuilder setQuery(string query)
+            {
+                Asserts.stringIsFilled(query);
+                this.query = query;
+                return this;
             }
         }
     }
