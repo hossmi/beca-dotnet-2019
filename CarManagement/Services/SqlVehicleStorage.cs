@@ -373,17 +373,18 @@ public IEnumerable<IVehicle> get()
             {
                 Asserts.isFalse(this.filters.ContainsKey(COLOR),"Color value has already been assigned");
 
-                this.filters[COLOR] = $" vehicle.color = {color} ";
-                
-                
-                //this.parameters["@color"] = (int)color;
+                this.filters[COLOR] = " vehicle.color = @color ";
+
+                this.parameters.Add("@color", Convert.ToInt32(color));
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)), "EngineIsStarted value has already been assigned");
-                this.filters[nameof(whereEngineIsStarted)] = $" vehicle.engineIsStarted = {Convert.ToInt32(started)} ";
+                this.filters[nameof(whereEngineIsStarted)] = " vehicle.engineIsStarted = @isStarted ";
+
+                this.parameters.Add("@isStarted",  Convert.ToInt32(started));
 
                 return this;
             }
@@ -391,33 +392,38 @@ public IEnumerable<IVehicle> get()
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENROLLMENT), "Enrollment value has already been assigned");
-                this.filters[ENROLLMENT] = $" enrollment.serial = '{enrollment.Serial}' AND enrollment.number = {enrollment.Number} ";
+                this.filters[ENROLLMENT] = " enrollment.serial = @serial AND enrollment.number = @number ";
 
 
                 //IDataParameter serial = new SqlParameter("serial", enrollment.Serial);
-                //this.parameters["@serial"] = serial;
-                //this.parameters["@number"] = enrollment.Number;
+                this.parameters.Add("@serial", enrollment.Serial);
+                this.parameters.Add("@number", enrollment.Number);
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENROLLMENT), "Enrollment serial value has already been assigned");
-                this.filters[ENROLLMENT] = $" enrollment.serial = '{serial}' ";
+                this.filters[ENROLLMENT] = " enrollment.serial = @serial ";
+
+                this.parameters.Add("@serial", serial);
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENGINE_POWER), "Engine HorsePower value has already been assigned");
-                this.filters[ENGINE_POWER] = $" vehicle.engineHorsePower = {horsePower} ";
+                this.filters[ENGINE_POWER] = " vehicle.engineHorsePower = @horsepower ";
+                this.parameters.Add("@horsepower",horsePower);
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENGINE_POWER), "Engine HorsePower Min and Max values have already been assigned");
-                this.filters[ENGINE_POWER] = $" vehicle.engineHorsePower >= {min} AND vehicle.engineHorsePower <= {max} ";
+                this.filters[ENGINE_POWER] = " vehicle.engineHorsePower >= @min AND vehicle.engineHorsePower <= @max ";
+                this.parameters.Add("@min", min);
+                this.parameters.Add("@max", max);
                 return this;
             }
 
