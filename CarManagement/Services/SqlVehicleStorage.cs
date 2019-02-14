@@ -77,6 +77,13 @@ namespace CarManagement.Services
             INNER JOIN	enrollment e ON v.enrollmentId = e.id
             ";
 
+        private const string SELECT_ENROLLMENTS = @"
+            SELECT		v.enrollmentId AS vehicleId
+                        , e.serial, e.number
+            FROM		vehicle v
+            INNER JOIN	enrollment e ON v.enrollmentId = e.id
+            ";
+
         private static readonly string SELECT_WHEELS = @"SELECT vehicleId, pressure FROM wheel WHERE vehicleId = @vehicleId";
         private static readonly string SELECT_DOORS = @"SELECT vehicleId, isOpen FROM door WHERE vehicleId = @vehicleId";
 
@@ -269,8 +276,8 @@ namespace CarManagement.Services
                             int vehicleId = (int)reader["vehicleId"];
 
                             VehicleDto vehicleDto = buildVehicleDto(reader);
-                            vehicleDto.Wheels = build(transaction, SELECT_WHEELS, vehicleId, buildWheel).ToArray();
-                            vehicleDto.Doors = build(transaction, SELECT_DOORS, vehicleId, buildDoor).ToArray();
+                            vehicleDto.Wheels = build(transaction, SELECT_WHEELS, vehicleId, buildWheelDto).ToArray();
+                            vehicleDto.Doors = build(transaction, SELECT_DOORS, vehicleId, buildDoorDto).ToArray();
 
                             IVehicle vehicle = vehicleBuilder.import(vehicleDto);
                             yield return vehicle;
@@ -283,7 +290,7 @@ namespace CarManagement.Services
             }
         }
 
-        private static WheelDto buildWheel(IDataRecord record)
+        private static WheelDto buildWheelDto(IDataRecord record)
         {
             return new WheelDto
             {
@@ -291,7 +298,7 @@ namespace CarManagement.Services
             };
         }
 
-        private static DoorDto buildDoor(IDataRecord record)
+        private static DoorDto buildDoorDto(IDataRecord record)
         {
             return new DoorDto
             {
@@ -299,20 +306,20 @@ namespace CarManagement.Services
             };
         }
 
-        private static VehicleDto buildVehicleDto(IDataReader reader)
+        private static VehicleDto buildVehicleDto(IDataRecord record)
         {
             return new VehicleDto
             {
-                Color = (CarColor)(short)reader["color"],
+                Color = (CarColor)(short)record["color"],
                 Engine = new EngineDto
                 {
-                    HorsePower = (short)reader["engineHorsePower"],
-                    IsStarted = Convert.ToBoolean(reader["engineIsStarted"]),
+                    HorsePower = (short)record["engineHorsePower"],
+                    IsStarted = Convert.ToBoolean(record["engineIsStarted"]),
                 },
                 Enrollment = new EnrollmentDto
                 {
-                    Serial = reader["serial"].ToString(),
-                    Number = (short)reader["number"],
+                    Serial = record["serial"].ToString(),
+                    Number = (short)record["number"],
                 },
             };
         }
