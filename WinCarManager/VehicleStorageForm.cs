@@ -7,19 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CarManagement.Core.Services;
 
 namespace WinCarManager
 {
-    public partial class MainForm : Form
+    public partial class VehicleStorageForm : Form
     {
-        private readonly IVehicleStorage vehicleStorage;
-
-        public MainForm(IVehicleStorage vehicleStorage)
+        public VehicleStorageForm()
         {
-            this.vehicleStorage = vehicleStorage;
             InitializeComponent();
         }
-        
     }
 }
