@@ -41,9 +41,16 @@ namespace CarManagement.Services
             get
             {
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
-                using (SqlCommand command = new SqlCommand(SELECT_COUNT, connection))
+                using (SqlCommand command = new SqlCommand())
                 {
-                    return (int)command.ExecuteScalar();
+                    connection.Open();
+                    command.CommandText = SELECT_COUNT;
+                    command.Connection = connection;
+
+                    int count = (int)command.ExecuteScalar();
+
+                    connection.Close();
+                    return count;
                 }
             }
         }
@@ -170,8 +177,6 @@ namespace CarManagement.Services
                      WHERE serial = '{vehicle.Enrollment.Serial}'
                      AND number = {vehicle.Enrollment.Number};";
 
-            bool exist = false;
-
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             using (SqlCommand command = new SqlCommand())
             {
@@ -183,32 +188,37 @@ namespace CarManagement.Services
                 {
                     if (reader.Read())
                     {
-                        exist = true;
+                        string sentences = updateVehicle(vehicle, connection, query);
+                        executeCommand(this.connectionString, sentences);
+                    }
+                    else
+                    {
+                        insertNewVehicle(vehicle, this.connectionString, query);
                     }
                 }
                 connection.Close();
             }
-            Asserts.isFalse(exist);
 
-            if (exist)
-            {
-                updateVehicle(vehicle, this.connectionString, query);
-            }
-            else
-            {
-                insertNewVehicle(vehicle, this.connectionString, query);
-            }
+
+            //Asserts.isFalse(exist);
+
+            //if (exist)
+            //{
+            //    updateVehicle(vehicle, this.connectionString, query);
+            //}
+            //else
+            //{
+            //    insertNewVehicle(vehicle, this.connectionString, query);
+            //}
         }
 
-        private static void updateVehicle(IVehicle vehicle, string connectionString, string queryEnrollment)
+        private static string updateVehicle(IVehicle vehicle, SqlConnection connection, string queryEnrollment)
         {
             string sentences = "";
             int enrollmentId;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand())
             {
-                connection.Open();
                 command.CommandText = queryEnrollment;
                 command.Connection = connection;
 
@@ -224,7 +234,7 @@ namespace CarManagement.Services
                     if (reader.Read())
                     {
                         CarColor colorAux = (CarColor)Convert.ToInt32(reader["color"]);
-                        int horsePowerAux = (int)reader["engineHorsePower"];
+                        int horsePowerAux = (short)reader["engineHorsePower"];
                         bool startedAux = Convert.ToBoolean(reader["engineIsStarted"]);
                         if (colorAux != vehicle.Color)
                         {
@@ -250,16 +260,23 @@ namespace CarManagement.Services
 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+                    sentences += $@"DELETE wheel
+                                WHERE vehicleId = {enrollmentId}";
+                    double pressureAux;
+                    foreach (IWheel wheel in vehicle.Wheels)
                     {
-                        double pressureAux;
-                        foreach (IWheel wheel in vehicle.Wheels)
+                        if (reader.Read())
                         {
                             pressureAux = Convert.ToDouble(reader["pressure"]);
                             if (pressureAux != wheel.Pressure)
                             {
-                                sentences += $@"INSERT INTO wheel (pressure) 
-                                                VALUES ({wheel.Pressure});";
+                                sentences = $@"INSERT INTO wheel (vehicleId, pressure) 
+                                            VALUES (@enrollmentId, @pressure);";
+                                var parameters = new Dictionary<string, object>
+                                {
+                                    {"@enrollmentId", enrollmentId},
+                                    {"@pressure", wheel.Pressure},
+                                };
                             }
                         }
                     }
@@ -271,23 +288,30 @@ namespace CarManagement.Services
 
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-                    while (reader.Read())
+                    sentences += $@"DELETE door
+                                WHERE vehicleId = {enrollmentId}";
+                    bool openAux;
+                    foreach (IDoor door in vehicle.Doors)
                     {
-                        bool openAux;
-                        foreach (IDoor door in vehicle.Doors)
+                        if (reader.Read())
                         {
                             openAux = Convert.ToBoolean(reader["isOpen"]);
                             if (openAux != door.IsOpen)
                             {
-                                sentences += $@"INSERT INTO door (isOpen) 
-                                                VALUES ({(door.IsOpen ? 1 : 0)});";
+                                sentences = $@"INSERT INTO door (vehicleId, isOpen) 
+                                            VALUES (@enrollmentId, @isOpen);";
+                                var parameters = new Dictionary<string, object>
+                                {
+                                    {"@enrollmentId", enrollmentId},
+                                    {"@isOpen", door.IsOpen},
+                                };
                             }
                         }
                     }
+
                 }
-                connection.Close();
             }
-            executeCommand(connectionString, sentences);
+            return sentences;
         }
 
         private static void insertNewVehicle(IVehicle vehicle, string connectionString, string query)
@@ -415,13 +439,18 @@ namespace CarManagement.Services
             using (IDbConnection connection = new SqlConnection(connectionString))
             using (IDbCommand command = new SqlCommand())
             {
+                connection.Open();
                 command.CommandText = sentencies;
                 command.Connection = connection;
 
                 foreach (var item in parameters)
-                    command.Parameters[item.Key] = item.Value;
+                {
+                    IDbDataParameter dbDataParameter = command.CreateParameter();
+                    dbDataParameter.ParameterName = item.Key;
+                    dbDataParameter.Value = item.Value;
+                    command.Parameters.Add(dbDataParameter);
+                }
 
-                connection.Open();
                 int afectedRows = command.ExecuteNonQuery();
                 connection.Close();
             }
@@ -433,8 +462,6 @@ namespace CarManagement.Services
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IDictionary<string, string> filters;
-            private CarColor color;
-            private bool colorHasValue;
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
@@ -511,34 +538,47 @@ namespace CarManagement.Services
 
             private static IEnumerable<IVehicle> executeQuery(string query, string connectionString, IVehicleBuilder vehicleBuilder)
             {
+                int enrollmentId = 0;
+
                 using (SqlConnection connection = new SqlConnection(connectionString))
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand())
                 {
+                    connection.Open();
+                    command.CommandText = query;
+                    command.Connection = connection;
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            int enrollmentId = (int)reader["id"];
+                            enrollmentId = (int)reader["enrollmentId"];
+
                             VehicleDto vehicleDto = new VehicleDto
                             {
                                 Color = (CarColor)Convert.ToInt32(reader["color"]),
                                 Engine = new EngineDto
                                 {
-                                    HorsePower = (int)reader["engineHorsePower"],
+                                    HorsePower = (short)reader["engineHorsePower"],
                                     IsStarted = Convert.ToBoolean(reader["engineIsStarted"]),
                                 },
                                 Enrollment = new EnrollmentDto
                                 {
-                                    Number = (int)reader["number"],
+                                    Number = (short)reader["number"],
                                     Serial = reader["serial"].ToString(),
                                 },
                             };
+                            List<WheelDto> wheelDtos = readWheels(connection, enrollmentId);
+                            List<DoorDto> doorDtos = readDoors(connection, enrollmentId);
+
+                            vehicleDto.Wheels = wheelDtos.ToArray();
+                            vehicleDto.Doors = doorDtos.ToArray();
+
+                            IVehicle vehicle = vehicleBuilder.import(vehicleDto);
+
+                            yield return vehicle;
                         }
                     }
-
-
-
-                    yield return vehicleBuilder.import(new VehicleDto());
+                    connection.Close();
                 }
             }
 
