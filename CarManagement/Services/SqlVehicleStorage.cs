@@ -356,6 +356,14 @@ public IEnumerable<IVehicle> get()
             private readonly IDictionary<string, string> filters;
             private readonly IDictionary<string, object> parameters;
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -615,6 +623,11 @@ public IEnumerable<IVehicle> get()
                 return doors;
             }
             */
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
+            }
+
         }
     }
 }
