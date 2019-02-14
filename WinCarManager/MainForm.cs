@@ -19,6 +19,10 @@ namespace WinCarManager
         {
             this.vehicleStorage = vehicleStorage;
             InitializeComponent();
+        }
+
+        private void vehículoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             new vehicleDisplayerWin();
         }
     }

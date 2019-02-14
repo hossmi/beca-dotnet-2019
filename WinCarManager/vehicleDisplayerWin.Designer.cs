@@ -33,7 +33,6 @@
             this.vehículoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -45,27 +44,37 @@
             this.goToPreviousButt = new System.Windows.Forms.Button();
             this.goToNextButt = new System.Windows.Forms.Button();
             this.goToLastButt = new System.Windows.Forms.Button();
-            this.horsePowerEngineView = new System.Windows.Forms.ListView();
-            this.startedEngineView = new System.Windows.Forms.ListView();
-            this.carColorView = new System.Windows.Forms.ListView();
-            this.enrollmentView = new System.Windows.Forms.ListView();
             this.pictureBoxCar = new System.Windows.Forms.PictureBox();
             this.searchCarButt = new System.Windows.Forms.Button();
             this.updateCarButt = new System.Windows.Forms.Button();
             this.addCarButt = new System.Windows.Forms.Button();
             this.exitSearchButt = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.startedEngineView = new System.Windows.Forms.Panel();
+            this.engineIsStartedNA = new System.Windows.Forms.RadioButton();
+            this.engineIsStartedFalse = new System.Windows.Forms.RadioButton();
+            this.engineIsStartedTrue = new System.Windows.Forms.RadioButton();
+            this.horsePowerEngineView = new System.Windows.Forms.TextBox();
             this.doorPropGroup = new System.Windows.Forms.GroupBox();
+            this.doorOpenedView = new System.Windows.Forms.Panel();
+            this.notDefinedOpened = new System.Windows.Forms.RadioButton();
+            this.doorIsOpenTrue = new System.Windows.Forms.RadioButton();
+            this.doorIsOpenFalse = new System.Windows.Forms.RadioButton();
             this.label3 = new System.Windows.Forms.Label();
-            this.doorOpenedView = new System.Windows.Forms.ListView();
             this.wheelPropGroup = new System.Windows.Forms.GroupBox();
+            this.wheelPressureView = new System.Windows.Forms.TextBox();
             this.wheelPressure = new System.Windows.Forms.Label();
-            this.wheelPressureView = new System.Windows.Forms.ListView();
+            this.carColorView = new System.Windows.Forms.TextBox();
+            this.enrollmentView = new System.Windows.Forms.TextBox();
+            this.undoChangesButt = new System.Windows.Forms.Button();
+            this.undoAllchangesButt = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCar)).BeginInit();
             this.groupBox1.SuspendLayout();
+            this.startedEngineView.SuspendLayout();
             this.doorPropGroup.SuspendLayout();
+            this.doorOpenedView.SuspendLayout();
             this.wheelPropGroup.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -110,15 +119,6 @@
             this.label2.Size = new System.Drawing.Size(41, 17);
             this.label2.TabIndex = 4;
             this.label2.Text = "Color";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 28);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(54, 17);
-            this.label5.TabIndex = 7;
-            this.label5.Text = "Started";
             // 
             // label6
             // 
@@ -224,38 +224,6 @@
             this.goToLastButt.UseVisualStyleBackColor = true;
             this.goToLastButt.Click += new System.EventHandler(this.goToLastButt_Click);
             // 
-            // horsePowerEngineView
-            // 
-            this.horsePowerEngineView.Location = new System.Drawing.Point(115, 51);
-            this.horsePowerEngineView.Name = "horsePowerEngineView";
-            this.horsePowerEngineView.Size = new System.Drawing.Size(165, 20);
-            this.horsePowerEngineView.TabIndex = 23;
-            this.horsePowerEngineView.UseCompatibleStateImageBehavior = false;
-            // 
-            // startedEngineView
-            // 
-            this.startedEngineView.Location = new System.Drawing.Point(115, 21);
-            this.startedEngineView.Name = "startedEngineView";
-            this.startedEngineView.Size = new System.Drawing.Size(165, 20);
-            this.startedEngineView.TabIndex = 24;
-            this.startedEngineView.UseCompatibleStateImageBehavior = false;
-            // 
-            // carColorView
-            // 
-            this.carColorView.Location = new System.Drawing.Point(289, 54);
-            this.carColorView.Name = "carColorView";
-            this.carColorView.Size = new System.Drawing.Size(165, 20);
-            this.carColorView.TabIndex = 25;
-            this.carColorView.UseCompatibleStateImageBehavior = false;
-            // 
-            // enrollmentView
-            // 
-            this.enrollmentView.Location = new System.Drawing.Point(289, 28);
-            this.enrollmentView.Name = "enrollmentView";
-            this.enrollmentView.Size = new System.Drawing.Size(165, 20);
-            this.enrollmentView.TabIndex = 26;
-            this.enrollmentView.UseCompatibleStateImageBehavior = false;
-            // 
             // pictureBoxCar
             // 
             this.pictureBoxCar.Location = new System.Drawing.Point(468, 35);
@@ -276,17 +244,17 @@
             // 
             // updateCarButt
             // 
-            this.updateCarButt.Location = new System.Drawing.Point(842, 278);
+            this.updateCarButt.Location = new System.Drawing.Point(842, 287);
             this.updateCarButt.Name = "updateCarButt";
             this.updateCarButt.Size = new System.Drawing.Size(200, 35);
             this.updateCarButt.TabIndex = 29;
-            this.updateCarButt.Text = "Update";
+            this.updateCarButt.Text = "Apply changes";
             this.updateCarButt.UseVisualStyleBackColor = true;
             this.updateCarButt.Click += new System.EventHandler(this.updateCarButt_Click);
             // 
             // addCarButt
             // 
-            this.addCarButt.Location = new System.Drawing.Point(842, 319);
+            this.addCarButt.Location = new System.Drawing.Point(842, 409);
             this.addCarButt.Name = "addCarButt";
             this.addCarButt.Size = new System.Drawing.Size(200, 35);
             this.addCarButt.TabIndex = 30;
@@ -308,8 +276,8 @@
             // 
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.startedEngineView);
-            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.horsePowerEngineView);
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Location = new System.Drawing.Point(174, 78);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(286, 77);
@@ -317,16 +285,118 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Engine";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 25);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(54, 17);
+            this.label5.TabIndex = 39;
+            this.label5.Text = "Started";
+            // 
+            // startedEngineView
+            // 
+            this.startedEngineView.Controls.Add(this.engineIsStartedNA);
+            this.startedEngineView.Controls.Add(this.engineIsStartedFalse);
+            this.startedEngineView.Controls.Add(this.engineIsStartedTrue);
+            this.startedEngineView.Location = new System.Drawing.Point(113, 21);
+            this.startedEngineView.Name = "startedEngineView";
+            this.startedEngineView.Size = new System.Drawing.Size(173, 23);
+            this.startedEngineView.TabIndex = 38;
+            // 
+            // engineIsStartedNA
+            // 
+            this.engineIsStartedNA.AutoSize = true;
+            this.engineIsStartedNA.Location = new System.Drawing.Point(111, 2);
+            this.engineIsStartedNA.Name = "engineIsStartedNA";
+            this.engineIsStartedNA.Size = new System.Drawing.Size(52, 21);
+            this.engineIsStartedNA.TabIndex = 40;
+            this.engineIsStartedNA.TabStop = true;
+            this.engineIsStartedNA.Text = "N/A";
+            this.engineIsStartedNA.UseVisualStyleBackColor = true;
+            // 
+            // engineIsStartedFalse
+            // 
+            this.engineIsStartedFalse.AutoSize = true;
+            this.engineIsStartedFalse.Location = new System.Drawing.Point(57, 2);
+            this.engineIsStartedFalse.Name = "engineIsStartedFalse";
+            this.engineIsStartedFalse.Size = new System.Drawing.Size(48, 21);
+            this.engineIsStartedFalse.TabIndex = 39;
+            this.engineIsStartedFalse.TabStop = true;
+            this.engineIsStartedFalse.Text = "Off";
+            this.engineIsStartedFalse.UseVisualStyleBackColor = true;
+            // 
+            // engineIsStartedTrue
+            // 
+            this.engineIsStartedTrue.AutoSize = true;
+            this.engineIsStartedTrue.Location = new System.Drawing.Point(3, 2);
+            this.engineIsStartedTrue.Name = "engineIsStartedTrue";
+            this.engineIsStartedTrue.Size = new System.Drawing.Size(48, 21);
+            this.engineIsStartedTrue.TabIndex = 38;
+            this.engineIsStartedTrue.TabStop = true;
+            this.engineIsStartedTrue.Text = "On";
+            this.engineIsStartedTrue.UseVisualStyleBackColor = true;
+            // 
+            // horsePowerEngineView
+            // 
+            this.horsePowerEngineView.Location = new System.Drawing.Point(113, 51);
+            this.horsePowerEngineView.Name = "horsePowerEngineView";
+            this.horsePowerEngineView.Size = new System.Drawing.Size(173, 22);
+            this.horsePowerEngineView.TabIndex = 37;
+            // 
             // doorPropGroup
             // 
-            this.doorPropGroup.Controls.Add(this.label3);
             this.doorPropGroup.Controls.Add(this.doorOpenedView);
+            this.doorPropGroup.Controls.Add(this.label3);
             this.doorPropGroup.Location = new System.Drawing.Point(289, 187);
             this.doorPropGroup.Name = "doorPropGroup";
             this.doorPropGroup.Size = new System.Drawing.Size(171, 135);
             this.doorPropGroup.TabIndex = 33;
             this.doorPropGroup.TabStop = false;
             this.doorPropGroup.Text = "Door";
+            // 
+            // doorOpenedView
+            // 
+            this.doorOpenedView.Controls.Add(this.notDefinedOpened);
+            this.doorOpenedView.Controls.Add(this.doorIsOpenTrue);
+            this.doorOpenedView.Controls.Add(this.doorIsOpenFalse);
+            this.doorOpenedView.Location = new System.Drawing.Point(0, 40);
+            this.doorOpenedView.Name = "doorOpenedView";
+            this.doorOpenedView.Size = new System.Drawing.Size(171, 23);
+            this.doorOpenedView.TabIndex = 39;
+            // 
+            // notDefinedOpened
+            // 
+            this.notDefinedOpened.AutoSize = true;
+            this.notDefinedOpened.Location = new System.Drawing.Point(115, 3);
+            this.notDefinedOpened.Name = "notDefinedOpened";
+            this.notDefinedOpened.Size = new System.Drawing.Size(52, 21);
+            this.notDefinedOpened.TabIndex = 41;
+            this.notDefinedOpened.TabStop = true;
+            this.notDefinedOpened.Text = "N/A";
+            this.notDefinedOpened.UseVisualStyleBackColor = true;
+            // 
+            // doorIsOpenTrue
+            // 
+            this.doorIsOpenTrue.AutoSize = true;
+            this.doorIsOpenTrue.Location = new System.Drawing.Point(3, 2);
+            this.doorIsOpenTrue.Name = "doorIsOpenTrue";
+            this.doorIsOpenTrue.Size = new System.Drawing.Size(53, 21);
+            this.doorIsOpenTrue.TabIndex = 39;
+            this.doorIsOpenTrue.TabStop = true;
+            this.doorIsOpenTrue.Text = "Yes";
+            this.doorIsOpenTrue.UseVisualStyleBackColor = true;
+            // 
+            // doorIsOpenFalse
+            // 
+            this.doorIsOpenFalse.AutoSize = true;
+            this.doorIsOpenFalse.Location = new System.Drawing.Point(62, 3);
+            this.doorIsOpenFalse.Name = "doorIsOpenFalse";
+            this.doorIsOpenFalse.Size = new System.Drawing.Size(47, 21);
+            this.doorIsOpenFalse.TabIndex = 38;
+            this.doorIsOpenFalse.TabStop = true;
+            this.doorIsOpenFalse.Text = "No";
+            this.doorIsOpenFalse.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -337,24 +407,23 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "Opened";
             // 
-            // doorOpenedView
-            // 
-            this.doorOpenedView.Location = new System.Drawing.Point(6, 40);
-            this.doorOpenedView.Name = "doorOpenedView";
-            this.doorOpenedView.Size = new System.Drawing.Size(79, 20);
-            this.doorOpenedView.TabIndex = 24;
-            this.doorOpenedView.UseCompatibleStateImageBehavior = false;
-            // 
             // wheelPropGroup
             // 
-            this.wheelPropGroup.Controls.Add(this.wheelPressure);
             this.wheelPropGroup.Controls.Add(this.wheelPressureView);
+            this.wheelPropGroup.Controls.Add(this.wheelPressure);
             this.wheelPropGroup.Location = new System.Drawing.Point(584, 187);
             this.wheelPropGroup.Name = "wheelPropGroup";
             this.wheelPropGroup.Size = new System.Drawing.Size(171, 135);
             this.wheelPropGroup.TabIndex = 34;
             this.wheelPropGroup.TabStop = false;
             this.wheelPropGroup.Text = "Wheel";
+            // 
+            // wheelPressureView
+            // 
+            this.wheelPressureView.Location = new System.Drawing.Point(6, 40);
+            this.wheelPressureView.Name = "wheelPressureView";
+            this.wheelPressureView.Size = new System.Drawing.Size(159, 22);
+            this.wheelPressureView.TabIndex = 39;
             // 
             // wheelPressure
             // 
@@ -365,19 +434,49 @@
             this.wheelPressure.TabIndex = 7;
             this.wheelPressure.Text = "Pressure";
             // 
-            // wheelPressureView
+            // carColorView
             // 
-            this.wheelPressureView.Location = new System.Drawing.Point(6, 40);
-            this.wheelPressureView.Name = "wheelPressureView";
-            this.wheelPressureView.Size = new System.Drawing.Size(79, 20);
-            this.wheelPressureView.TabIndex = 24;
-            this.wheelPressureView.UseCompatibleStateImageBehavior = false;
+            this.carColorView.Location = new System.Drawing.Point(289, 51);
+            this.carColorView.Name = "carColorView";
+            this.carColorView.Size = new System.Drawing.Size(173, 22);
+            this.carColorView.TabIndex = 35;
+            // 
+            // enrollmentView
+            // 
+            this.enrollmentView.Location = new System.Drawing.Point(289, 28);
+            this.enrollmentView.Name = "enrollmentView";
+            this.enrollmentView.Size = new System.Drawing.Size(173, 22);
+            this.enrollmentView.TabIndex = 36;
+            // 
+            // undoChangesButt
+            // 
+            this.undoChangesButt.Location = new System.Drawing.Point(842, 328);
+            this.undoChangesButt.Name = "undoChangesButt";
+            this.undoChangesButt.Size = new System.Drawing.Size(200, 35);
+            this.undoChangesButt.TabIndex = 37;
+            this.undoChangesButt.Text = "Undo changes";
+            this.undoChangesButt.UseVisualStyleBackColor = true;
+            this.undoChangesButt.Click += new System.EventHandler(this.undoChangesButt_Click);
+            // 
+            // undoAllchangesButt
+            // 
+            this.undoAllchangesButt.Location = new System.Drawing.Point(842, 369);
+            this.undoAllchangesButt.Name = "undoAllchangesButt";
+            this.undoAllchangesButt.Size = new System.Drawing.Size(200, 35);
+            this.undoAllchangesButt.TabIndex = 38;
+            this.undoAllchangesButt.Text = "Undo All changes";
+            this.undoAllchangesButt.UseVisualStyleBackColor = true;
+            this.undoAllchangesButt.Click += new System.EventHandler(this.undoAllchangesButt_Click);
             // 
             // vehicleDisplayerWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1054, 554);
+            this.Controls.Add(this.undoAllchangesButt);
+            this.Controls.Add(this.undoChangesButt);
+            this.Controls.Add(this.enrollmentView);
+            this.Controls.Add(this.carColorView);
             this.Controls.Add(this.wheelPropGroup);
             this.Controls.Add(this.doorPropGroup);
             this.Controls.Add(this.groupBox1);
@@ -386,8 +485,6 @@
             this.Controls.Add(this.updateCarButt);
             this.Controls.Add(this.searchCarButt);
             this.Controls.Add(this.pictureBoxCar);
-            this.Controls.Add(this.enrollmentView);
-            this.Controls.Add(this.carColorView);
             this.Controls.Add(this.goToLastButt);
             this.Controls.Add(this.goToNextButt);
             this.Controls.Add(this.goToPreviousButt);
@@ -408,8 +505,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCar)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.startedEngineView.ResumeLayout(false);
+            this.startedEngineView.PerformLayout();
             this.doorPropGroup.ResumeLayout(false);
             this.doorPropGroup.PerformLayout();
+            this.doorOpenedView.ResumeLayout(false);
+            this.doorOpenedView.PerformLayout();
             this.wheelPropGroup.ResumeLayout(false);
             this.wheelPropGroup.PerformLayout();
             this.ResumeLayout(false);
@@ -424,7 +525,6 @@
         private System.Windows.Forms.ToolStripMenuItem vehículoToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label7;
@@ -436,22 +536,30 @@
         private System.Windows.Forms.Button goToPreviousButt;
         private System.Windows.Forms.Button goToNextButt;
         private System.Windows.Forms.Button goToLastButt;
-        private System.Windows.Forms.ListView horsePowerEngineView;
-        private System.Windows.Forms.ListView startedEngineView;
-        private System.Windows.Forms.ListView carColorView;
-        private System.Windows.Forms.ListView enrollmentView;
         private System.Windows.Forms.PictureBox pictureBoxCar;
         private System.Windows.Forms.Button searchCarButt;
         private System.Windows.Forms.Button updateCarButt;
         private System.Windows.Forms.Button addCarButt;
         private System.Windows.Forms.Button exitSearchButt;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox doorPropGroup;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListView doorOpenedView;
         private System.Windows.Forms.GroupBox wheelPropGroup;
         private System.Windows.Forms.Label wheelPressure;
-        private System.Windows.Forms.ListView wheelPressureView;
+        private System.Windows.Forms.TextBox horsePowerEngineView;
+        private System.Windows.Forms.TextBox carColorView;
+        private System.Windows.Forms.TextBox enrollmentView;
+        private System.Windows.Forms.TextBox wheelPressureView;
+        private System.Windows.Forms.Button undoChangesButt;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Panel startedEngineView;
+        private System.Windows.Forms.RadioButton engineIsStartedFalse;
+        private System.Windows.Forms.RadioButton engineIsStartedTrue;
+        private System.Windows.Forms.Panel doorOpenedView;
+        private System.Windows.Forms.RadioButton doorIsOpenTrue;
+        private System.Windows.Forms.RadioButton doorIsOpenFalse;
+        private System.Windows.Forms.Button undoAllchangesButt;
+        private System.Windows.Forms.RadioButton engineIsStartedNA;
+        private System.Windows.Forms.RadioButton notDefinedOpened;
     }
 }

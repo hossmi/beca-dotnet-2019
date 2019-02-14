@@ -1,4 +1,5 @@
 ﻿using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using CarManagement.Services;
 using System;
@@ -32,13 +33,82 @@ namespace WinCarManager
             SqlVehicleStorage vehicleStorage = new SqlVehicleStorage(this.connectionString, vehicleBuilder);
 
             IVehicleQuery queryBuilder = vehicleStorage.get();
+            
+            string horsePowerString = this.horsePowerEngineView.Text;
+            string isStartedString = this.startedEngineView.Text;
 
+            if (string.IsNullOrEmpty(this.enrollmentView.Text.Trim()))
+            {
+                string[] enrollmentParam = this.enrollmentView.Text.Split('-');
+                string serial = enrollmentParam[0].Trim();
+                if (enrollmentParam.Length > 1)
+                {
+                    int number = Convert.ToInt32( enrollmentParam[1].Trim() );
 
+                    queryBuilder = queryBuilder.whereEnrollmentIs(enrollmentProvider.import( serial, number ));
+                }
+                else
+                {
+                    queryBuilder = queryBuilder.whereEnrollmentSerialIs(serial);
+                }
+            }
+
+            if (string.IsNullOrEmpty(this.carColorView.Text.Trim()))
+            {
+                if( Enum.TryParse<CarColor>(this.carColorView.Text, out CarColor tryColor) )
+                {
+                    queryBuilder = queryBuilder.whereColorIs(tryColor);
+                }
+            }
+
+            if (string.IsNullOrEmpty(this.horsePowerEngineView.Text.Trim()))
+            {
+                string[] horsePowerParam = this.enrollmentView.Text.Split('-');
+                int horsePower = Convert.ToInt32(horsePowerParam[0].Trim());
+                if (horsePowerParam.Length > 1)
+                {
+                    int horsePowerMax = Convert.ToInt32(horsePowerParam[1].Trim());
+
+                    queryBuilder.whereHorsePowerIsBetween(horsePower, horsePowerMax);
+                }
+                else
+                {
+                    queryBuilder.whereHorsePowerEquals(horsePower);
+                }
+            }
+
+            string isEngineStartedRadio = this.startedEngineView
+                .Controls
+                .OfType<RadioButton>()
+                .FirstOrDefault(radio => radio.Checked)
+                .Name;
+
+            switch (isEngineStartedRadio)
+            {
+                case "engineIsStartedTrue":
+                    break;
+                case "engineIsStartedFalse":
+                    break;
+                case "engineIsStartedNA":
+                    break;
+                default:
+                    break;
+            }
 
             //this.vehicles = queryBuilder;
         }
 
         private void exitSearchButt_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void undoChangesButt_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void undoAllchangesButt_Click(object sender, EventArgs e)
         {
 
         }
@@ -89,6 +159,16 @@ namespace WinCarManager
         }
 
         private void wheelListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private static void fullDisplayVehicle(IVehicle vehicle)
+        {
+
+        }
+
+        private static void fullDisplayVehicleCollection(IVehicle[] vechicles)
         {
 
         }
