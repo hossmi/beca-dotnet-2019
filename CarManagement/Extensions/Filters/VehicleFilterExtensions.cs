@@ -75,8 +75,7 @@ namespace CarManagement.Extensions.Filters
         {
             return vehicleStorage
                 .get()
-                .Where(e => e.Enrollment == enrollment)
-                //.whereEnrollmentIs(enrollment)
+                .whereEnrollmentIs(enrollment)
                 .Single();
         }
 

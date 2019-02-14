@@ -57,6 +57,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void create_and_drop_works()
         {
+            recreate();
         }
 
         [TestMethod]

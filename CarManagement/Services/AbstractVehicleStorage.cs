@@ -11,6 +11,7 @@ namespace CarManagement.Services
     {
         private readonly IDictionary<IEnrollment, IVehicle> vehicles;
         private bool disposed;
+        
 
         public AbstractVehicleStorage(IDictionary<IEnrollment, IVehicle> initialVehicles)
         {
@@ -61,6 +62,7 @@ namespace CarManagement.Services
 
         private class PrvVehicleQuery : IVehicleQuery
         {
+            bool v = false;
             private IEnumerable<IVehicle> vehicles;
 
             public PrvVehicleQuery(IEnumerable<IVehicle> vehicles)
@@ -104,14 +106,18 @@ namespace CarManagement.Services
             {
                 this.vehicles = this.vehicles
                     .Where(vehicle => vehicle.Engine.HorsePower == horsePower);
+                this.v = true;
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                this.vehicles = this.vehicles
-                    .Where(vehicle => vehicle.Engine.HorsePower >= min)
-                    .Where(vehicle => vehicle.Engine.HorsePower <= max);
+                if (this.v == false)
+                {
+                    this.vehicles = this.vehicles
+                        .Where(vehicle => vehicle.Engine.HorsePower >= min)
+                        .Where(vehicle => vehicle.Engine.HorsePower <= max);
+                }
                 return this;
             }
 
