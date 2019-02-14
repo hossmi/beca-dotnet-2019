@@ -11,12 +11,12 @@ using System.Windows.Forms;
 
 namespace WinCarManager
 {
-    public partial class Vehiculos : Form
+    public partial class MainForm : Form
     {
         private VehicleForm vehicleForm;
 
         private readonly IVehicleStorage vehicleStorage;
-        public Vehiculos(IVehicleStorage vehicleStorage)
+        public MainForm(IVehicleStorage vehicleStorage)
         {
             InitializeComponent();
             this.vehicleStorage = vehicleStorage;

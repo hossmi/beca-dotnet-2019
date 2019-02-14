@@ -24,7 +24,7 @@ namespace WinCarManager
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Vehiculos(vehicleStorage));
+            Application.Run(new MainForm(vehicleStorage));
         }
     }
 }

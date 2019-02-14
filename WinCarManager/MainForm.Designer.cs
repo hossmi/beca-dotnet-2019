@@ -1,6 +1,6 @@
 ﻿namespace WinCarManager
 {
-    partial class Vehiculos
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
