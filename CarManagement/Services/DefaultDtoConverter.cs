@@ -1,5 +1,8 @@
-﻿using CarManagement.Models;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+using CarManagement.Models;
 using CarManagement.Models.DTOs;
 
 namespace CarManagement.Services
@@ -34,8 +37,13 @@ namespace CarManagement.Services
 
         public Vehicle convert(VehicleDto vehicleDto)
         {
-            Wheel wheel = convert(vehicleDto.Wheels[0]);
-            foreach (Wheel wheels in )
+            Wheel[] wheelsArray = new Wheel[];
+
+            int contWheels = 0;
+            int contDoors = 0;
+
+            Wheel wheels = convert(vehicleDto.Wheels[contWheels]);
+            foreach (Wheel wheel in  )
             {
                
             }

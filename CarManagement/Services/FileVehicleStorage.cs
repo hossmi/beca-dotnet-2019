@@ -66,7 +66,21 @@ namespace CarManagement.Services
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)
         {
-            throw new NotImplementedException();
+            IDictionary<IEnrollment, Vehicle> vehicles = new Dictionary<IEnrollment, Vehicle>();
+
+            if (File.Exists(fileFullPath))
+            {
+                XmlSerializer ser = new XmlSerializer(typeof(Vehicle[]));
+                TextReader reader = new StreamReader(fileFullPath);
+                Vehicle[] vehicleArray = (Vehicle[])ser.Deserialize(reader);
+                reader.Close();
+
+                foreach (Vehicle v in vehicleArray)
+                {
+                    vehicles.Add(v.Enrollment, v);
+                }
+            }
+            return vehicles;
         }
     }
 }
