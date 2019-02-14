@@ -18,8 +18,8 @@ namespace CarManagement.Services
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private const string BASE_QUERRY = "SELECT serial, number, engineHorsePower, engineIsStarted, enrollmentId, color FROM vehicle, enrollment" +
-            "WHERE enrollmentId = vehicleId";
+        private const string BASE_QUERRY = "SELECT serial, number, engineHorsePower, engineIsStarted, enrollmentid, color FROM vehicle, enrollment " +
+            "WHERE enrollmentid = id ";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -63,25 +63,26 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
+            
             //this.vehicleBuilder.export(vehicle);
-            string pushToEnrollmentb = "INSERT INTO enrollment(seria,number) output INSERTED.ID VALUES(@serial,@number)";
-            String pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
-            String pushToDoor = "INSERT INTO door(vehicleid,isopen)" + "VALUES(@vehicleid,@isopen)";
-            string pushToVehicle = "INSERT INTO vehicle(color,engineHorsePower,engineIsStarted) VALUES(@color,@engineHorsePower,@engineIsStarted)";
+            string pushToEnrollmentDb = "INSERT INTO enrollment(serial,number) output INSERTED.ID VALUES(@serial,@number)";
+            string pushToWheel = "INSERT INTO wheel(vehicleid,pressure)" + "VALUES(@vehicleid,@pressure)";
+            string pushToDoor = "INSERT INTO door(vehicleid,isopen)" + "VALUES(@vehicleid,@isopen)";
+            string pushToVehicle = "INSERT INTO vehicle(enrollmentId,color,engineHorsePower,engineIsStarted) VALUES(@enrrollmentId,@color,@engineHorsePower,@engineIsStarted)";
             using (SqlConnection conection = new SqlConnection(this.connectionString))
             {
                 //------------------------------------------------------------------------------------------
                 conection.Open();
                 //------------------------------------------------------------------------------------------
-                SqlCommand pusher = new SqlCommand(pushToEnrollmentb, conection);
-                pusher = new SqlCommand(pushToEnrollmentb, conection);
+                SqlCommand pusher = new SqlCommand(pushToEnrollmentDb, conection);
+                pusher = new SqlCommand(pushToEnrollmentDb, conection);
                 pusher.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
                 pusher.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
-                int enrollmentId = (int)pusher.ExecuteScalar();
+                int enrollmentId = Convert.ToInt32(pusher.ExecuteScalar());
                 //------------------------------------------------------------------------------------------
                 pusher = new SqlCommand(pushToVehicle, conection);
-                pusher.Parameters.AddWithValue("@enrollmentid", enrollmentId);
-                pusher.Parameters.AddWithValue("@color", vehicle.Color);
+                pusher.Parameters.AddWithValue("@enrrollmentId", enrollmentId);
+                pusher.Parameters.AddWithValue("@color", Convert.ToInt32(vehicle.Color));
                 pusher.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
                 pusher.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
                 pusher.ExecuteNonQuery();
@@ -217,7 +218,7 @@ namespace CarManagement.Services
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentIs)));
-                this.filters[nameof(whereEnrollmentIs)] = " enrollment = " + enrollment + " ";
+                this.filters[nameof(whereEnrollmentIs)] = "serial = " + enrollment.Serial + " && number = " + enrollment.Number + " ";
                 return this;
             }
 
@@ -227,22 +228,27 @@ namespace CarManagement.Services
                 this.filters[nameof(whereEnrollmentSerialIs)] = " serial = " + serial + " ";
                 return this;
             }
+            public IVehicleQuery whereEnrollmentNumberIs(string number)
+            {
+                Asserts.isFalse(this.filters.ContainsKey(nameof(whereEnrollmentNumberIs)));
+                this.filters[nameof(whereEnrollmentNumberIs)] = " number = " + number + " ";
+                return this;
+            }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                Asserts.isFalse(this.filters.ContainsKey(indexEngineHorsePower));
-                this.filters[nameof(indexEngineHorsePower)] = " engineHorsePower = " + horsePower + " ";
+                Asserts.isFalse(this.filters.ContainsKey(this.indexEngineHorsePower));
+                this.filters[nameof(this.indexEngineHorsePower)] = " engineHorsePower = " + horsePower + " ";
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                Asserts.isFalse(this.filters.ContainsKey(nameof(indexEngineHorsePower)));
-                this.filters[nameof(indexEngineHorsePower)] = " engineHorsePower  >= " + min + " AND engineHorsePower <= " + max + " ";
+                Asserts.isFalse(this.filters.ContainsKey(nameof(this.indexEngineHorsePower)));
+                this.filters[nameof(this.indexEngineHorsePower)] = " engineHorsePower  >= " + min + " AND engineHorsePower <= " + max + " ";
                 return this;
             }
 
-         
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return enumerate();
@@ -250,12 +256,12 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                using (SqlConnection connection = new SqlConnection(this.connectionString))
-                {
-                    connection.Open();
-                    SqlCommand command = new SqlCommand(getMeQuerry(filters.Values), connection);
-                    return giveMeValues(command);
-                }
+                SqlConnection connection = new SqlConnection(this.connectionString);
+                connection.Open();
+                SqlCommand command = new SqlCommand(getMeQuerry(this.filters.Values), connection);
+                IEnumerator<IVehicle> vehicle = giveMeValues(command);
+                connection.Close();
+                return vehicle;
             }
 
             private string getMeQuerry(IEnumerable<string> filters)
@@ -267,13 +273,15 @@ namespace CarManagement.Services
                 }
                 if (querry != "")
                 {
-                    querry = " WHERE " + querry.Substring(4);
+                    querry = " WHERE " + querry.Substring(5);
                 }
                 return querry = BASE_QUERRY + querry;
             }
 
             private IEnumerator<IVehicle> giveMeValues(SqlCommand command)
             {
+
+                command.Connection.Open();
                 using (IDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -305,7 +313,7 @@ namespace CarManagement.Services
 
                     }
                 }
-                command.Connection.Close();
+               
             }
 
             private static DoorDto[] giveMeDoors(SqlCommand command)

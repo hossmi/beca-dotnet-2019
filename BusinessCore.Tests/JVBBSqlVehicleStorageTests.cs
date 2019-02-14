@@ -128,7 +128,6 @@ namespace BusinessCore.Tests
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
             IEnrollment enrollment = this.enrollmentProvider.import("ZZZ", 2100);
             IVehicle vehicle = databaseVehicleStorage.get(enrollment);
-
             Assert.IsNotNull(vehicle);
         }
 
