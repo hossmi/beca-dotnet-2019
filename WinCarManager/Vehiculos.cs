@@ -13,6 +13,8 @@ namespace WinCarManager
 {
     public partial class Vehiculos : Form
     {
+        private VehicleForm vehicleForm;
+
         private readonly IVehicleStorage vehicleStorage;
         public Vehiculos(IVehicleStorage vehicleStorage)
         {
@@ -28,9 +30,12 @@ namespace WinCarManager
 
         private void vehiculosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            VehicleForm newMDIChild = new VehicleForm(this.vehicleStorage);
-            newMDIChild.MdiParent = this;
-            newMDIChild.Show();
+            if (this.vehicleForm == null || this.vehicleForm.IsDisposed)
+            {
+                this.vehicleForm = new VehicleForm(this.vehicleStorage);
+                this.vehicleForm.MdiParent = this;
+                this.vehicleForm.Show();
+            }
         }
     }
 }

@@ -25,7 +25,22 @@ namespace WinCarManager
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void firstButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void prevButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nextButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lastButton_Click(object sender, EventArgs e)
         {
 
         }
