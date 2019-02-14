@@ -33,7 +33,6 @@
             this.vehículoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -59,8 +58,11 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -106,19 +108,10 @@
             this.label2.Text = "Color";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(171, 83);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(52, 17);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Engine";
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(229, 99);
+            this.label5.Location = new System.Drawing.Point(6, 28);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(54, 17);
             this.label5.TabIndex = 7;
@@ -127,7 +120,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(229, 122);
+            this.label6.Location = new System.Drawing.Point(6, 54);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(85, 17);
             this.label6.TabIndex = 8;
@@ -261,17 +254,17 @@
             // 
             // listView6
             // 
-            this.listView6.Location = new System.Drawing.Point(320, 122);
+            this.listView6.Location = new System.Drawing.Point(115, 51);
             this.listView6.Name = "listView6";
-            this.listView6.Size = new System.Drawing.Size(65, 20);
+            this.listView6.Size = new System.Drawing.Size(79, 20);
             this.listView6.TabIndex = 23;
             this.listView6.UseCompatibleStateImageBehavior = false;
             // 
             // listView7
             // 
-            this.listView7.Location = new System.Drawing.Point(320, 99);
+            this.listView7.Location = new System.Drawing.Point(115, 21);
             this.listView7.Name = "listView7";
-            this.listView7.Size = new System.Drawing.Size(65, 20);
+            this.listView7.Size = new System.Drawing.Size(79, 20);
             this.listView7.TabIndex = 24;
             this.listView7.UseCompatibleStateImageBehavior = false;
             this.listView7.SelectedIndexChanged += new System.EventHandler(this.listView7_SelectedIndexChanged);
@@ -336,11 +329,25 @@
             this.button9.Text = "Exit";
             this.button9.UseVisualStyleBackColor = true;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.listView7);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.listView6);
+            this.groupBox1.Location = new System.Drawing.Point(174, 78);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(200, 77);
+            this.groupBox1.TabIndex = 32;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Engine";
+            // 
             // vehicleDisplayerWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1054, 554);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
@@ -348,8 +355,6 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.listView9);
             this.Controls.Add(this.listView8);
-            this.Controls.Add(this.listView7);
-            this.Controls.Add(this.listView6);
             this.Controls.Add(this.listView5);
             this.Controls.Add(this.listView4);
             this.Controls.Add(this.button5);
@@ -364,9 +369,6 @@
             this.Controls.Add(this.listView2);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
@@ -375,6 +377,8 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -387,7 +391,6 @@
         private System.Windows.Forms.ToolStripMenuItem vehículoToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label4;
@@ -413,5 +416,7 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button9;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
