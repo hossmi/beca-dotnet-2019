@@ -12,7 +12,17 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.import(string serial, int number)
         {
-            throw new System.NotImplementedException();
+            return new PrvEnrollment()
+            {
+                Serial = serial,
+                Number = number,
+            };
+        }
+
+        private class PrvEnrollment : IEnrollment
+        {
+            public string Serial { get; set; }
+            public int Number { get; set; }
         }
     }
 }

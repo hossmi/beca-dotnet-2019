@@ -72,6 +72,7 @@ namespace CarManagement.Services
 
         private const string SELECT_VEHICLES = @"
             SELECT		v.enrollmentId AS vehicleId, v.color, v.engineHorsePower, v.engineIsStarted
+                        , e.serial, e.number
             FROM		vehicle v
             INNER JOIN	enrollment e ON v.enrollmentId = e.id
             ";
@@ -286,7 +287,7 @@ namespace CarManagement.Services
         {
             return new WheelDto
             {
-                Pressure = (float)record["pressure"],
+                Pressure = (double)record["pressure"],
             };
         }
 
@@ -302,7 +303,7 @@ namespace CarManagement.Services
         {
             return new VehicleDto
             {
-                Color = (CarColor)(int)reader["color"],
+                Color = (CarColor)(short)reader["color"],
                 Engine = new EngineDto
                 {
                     HorsePower = (short)reader["engineHorsePower"],
