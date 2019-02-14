@@ -120,8 +120,9 @@ namespace CarManagement.Services
             }
         }
 
-        private void insertDb(SqlCommand command, int id, SqlConnection conection, IVehicle vehicle)
+        private static void insertDb(SqlCommand command, int id, SqlConnection conection, IVehicle vehicle)
         {
+            #region -----------------------SQL QUERRYS-----------------------------
             const string pushToEnrollmentDb = "INSERT INTO enrollment" +
                                                       "(" +
                                                           "serial," +
@@ -173,7 +174,8 @@ namespace CarManagement.Services
                                           "@isOpen" +
                                       ")";
 
-                      
+            #endregion
+
             command = new SqlCommand(pushToEnrollmentDb, conection);
             command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
             command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
@@ -204,8 +206,9 @@ namespace CarManagement.Services
             conection.Close();
         }
         
-        private void updateDb(SqlCommand command, int id,SqlConnection conection, IVehicle vehicle)
+        private static void updateDb(SqlCommand command, int id,SqlConnection conection, IVehicle vehicle)
         {
+            #region -------------------------- SQL QUERRYS -----------------------------------------
             const string updateWithVehicle = "UPDATE " +
                                                 "vehicle " +
                                              "SET " +
@@ -238,6 +241,8 @@ namespace CarManagement.Services
                                                 "isOpen = @isOpen " +
                                            "WHERE " +
                                                 "vehicleId = @vehicleId ";
+
+            #endregion
 
             command = new SqlCommand(updateWithVehicle, conection);
             command.Parameters.AddWithValue("@color", vehicle.Color);
@@ -272,7 +277,7 @@ namespace CarManagement.Services
             conection.Close();
         }
 
-        private bool getMeIfVehicleExist(SqlCommand command, int id)
+        private static bool getMeIfVehicleExist(SqlCommand command, int id)
         {
             string querry = "SELECT COUNT" +
                             "(" +
@@ -438,7 +443,7 @@ namespace CarManagement.Services
                 return vehicle;
             }
 
-            private string getMeQuerry(IEnumerable<string> filters)
+            private static string getMeQuerry(IEnumerable<string> filters)
             {
                 string querry = "";
 
