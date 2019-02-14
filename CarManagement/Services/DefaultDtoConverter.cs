@@ -37,13 +37,14 @@ namespace CarManagement.Services
 
         public Vehicle convert(VehicleDto vehicleDto)
         {
-            Wheel[] wheelsArray = new Wheel[];
-
             int contWheels = 0;
             int contDoors = 0;
 
+            Wheel[] wheelsArray = new Wheel[contWheels];
+
             Wheel wheels = convert(vehicleDto.Wheels[contWheels]);
-            foreach (Wheel wheel in  )
+
+            foreach (Wheel wheel in  wheels)
             {
                
             }
