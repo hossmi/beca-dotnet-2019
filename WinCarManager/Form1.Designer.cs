@@ -32,7 +32,7 @@
             this.almacénToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.vehículoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.listView3 = new System.Windows.Forms.ListView();
+            this.storagesView = new System.Windows.Forms.ListView();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +65,7 @@
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 51.43824F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48.56176F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 310F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 311F));
             this.tableLayoutPanel1.Location = new System.Drawing.Point(164, 31);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
@@ -76,24 +76,24 @@
             this.tableLayoutPanel1.TabIndex = 2;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
-            // listView3
+            // storagesView
             // 
-            this.listView3.Location = new System.Drawing.Point(0, 31);
-            this.listView3.Name = "listView3";
-            this.listView3.Size = new System.Drawing.Size(158, 522);
-            this.listView3.TabIndex = 14;
-            this.listView3.UseCompatibleStateImageBehavior = false;
+            this.storagesView.Location = new System.Drawing.Point(0, 31);
+            this.storagesView.Name = "storagesView";
+            this.storagesView.Size = new System.Drawing.Size(158, 522);
+            this.storagesView.TabIndex = 14;
+            this.storagesView.UseCompatibleStateImageBehavior = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1067, 554);
-            this.Controls.Add(this.listView3);
+            this.Controls.Add(this.storagesView);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.menuStrip1.ResumeLayout(false);
@@ -109,7 +109,7 @@
         private System.Windows.Forms.ToolStripMenuItem almacénToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vehículoToolStripMenuItem;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.ListView listView3;
+        private System.Windows.Forms.ListView storagesView;
     }
 }
 

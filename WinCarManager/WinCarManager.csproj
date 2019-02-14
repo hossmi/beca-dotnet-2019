@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -87,6 +88,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">
+      <Project>{39975372-AA61-4A08-82A4-60479C44F079}</Project>
+      <Name>CarManagement.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CarManagement\CarManagement.csproj">
+      <Project>{6542EE62-2A8A-4BAF-869F-4427B0416032}</Project>
+      <Name>CarManagement</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

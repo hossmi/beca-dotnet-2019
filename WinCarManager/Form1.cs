@@ -15,6 +15,7 @@ namespace WinCarManager
         public Form1()
         {
             InitializeComponent();
+            new vehicleDisplayerWin();
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)

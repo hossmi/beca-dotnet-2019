@@ -244,59 +244,76 @@ namespace CarManagement.Services
                 return enumerate();
             }
 
-            public IVehicleQuery whereColorIs(CarColor color)
+            public IVehicleQuery whereColorIs(CarColor? color)
             {
+                if (color != null)
+                {
+                    this.arguments.Add("@color", color);
 
-                this.arguments.Add("@color", color);
-
-                this.specifiedQuery += AND + COLOR_COND;
+                    this.specifiedQuery += AND + COLOR_COND;
+                }
 
                 return this;
             }
 
-            public IVehicleQuery whereEngineIsStarted(bool started)
+            public IVehicleQuery whereEngineIsStarted(bool? started)
             {
-                this.arguments.Add("@isStarted", started);
+                if (started != null)
+                {
+                    this.arguments.Add("@isStarted", started);
 
-                this.specifiedQuery += AND + ENGINE_STARTED_COND;
+                    this.specifiedQuery += AND + ENGINE_STARTED_COND;
+                }
 
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
-                this.arguments.Add("@serial", enrollment.Serial);
-                this.arguments.Add("@number", enrollment.Number);
+                if (enrollment != null)
+                {
+                    this.arguments.Add("@serial", enrollment.Serial);
+                    this.arguments.Add("@number", enrollment.Number);
 
-                this.specifiedQuery += AND + ENROLL_COND;
+                    this.specifiedQuery += AND + ENROLL_COND;
+                }
 
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
-                this.arguments.Add("@serial", serial);
+                if (serial != null)
+                {
+                    this.arguments.Add("@serial", serial);
 
-                this.specifiedQuery += AND + ENROLL_SERIAL_COND;
-
-                return this;
-            }
-
-            public IVehicleQuery whereHorsePowerEquals(int horsePower)
-            {
-                this.arguments.Add("@horsePower", horsePower);
-
-                this.specifiedQuery += AND + ENGINE_HORSE_COND;
+                    this.specifiedQuery += AND + ENROLL_SERIAL_COND;
+                }
 
                 return this;
             }
 
-            public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
+            public IVehicleQuery whereHorsePowerEquals(int? horsePower)
             {
-                this.arguments.Add("@horsePower", min);
-                this.arguments.Add("@maxHorsePower", max);
+                if (horsePower != null)
+                {
+                    this.arguments.Add("@horsePower", horsePower);
 
-                this.specifiedQuery += AND + ENGINE_MINMAX_HORSE_COND;
+                    this.specifiedQuery += AND + ENGINE_HORSE_COND;
+                }
+
+                return this;
+            }
+
+            public IVehicleQuery whereHorsePowerIsBetween(int? min, int? max)
+            {
+                if (min != null && max != null)
+                {
+                    this.arguments.Add("@horsePower", min);
+                    this.arguments.Add("@maxHorsePower", max);
+
+                    this.specifiedQuery += AND + ENGINE_MINMAX_HORSE_COND;
+                }
 
                 return this;
             }
