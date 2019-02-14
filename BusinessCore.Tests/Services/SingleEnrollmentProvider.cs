@@ -5,22 +5,25 @@ namespace BusinessCore.Tests.Services
 {
     public class SingleEnrollmentProvider : IEnrollmentProvider
     {
+        //public IEnrollment getNew();
+        //public IEnrollment import(string serial, int number);
         private class Enrollment : IEnrollment
         {
+            private string serial;
+            private int number;
 
             public Enrollment(string serial, int number)
             {
-                this.Serial = serial;
-                this.Number = number;
+
             }
 
             public string Serial { get; }
             public int Number { get; }
+        }
 
-            public override string ToString()
-            {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
-            }
+        public override string ToString()
+        {
+            return $"{this.Serial}-{this.Number.ToString("0000")}";
         }
 
         public SingleEnrollmentProvider()
