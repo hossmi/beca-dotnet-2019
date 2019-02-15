@@ -19,7 +19,7 @@ namespace CarManagement.Services
     {
         #region "SQL"
         private const string SELECT_FROM_VEHICLE = @"
-                        SELECT v.enrollmentId
+                          SELECT v.enrollmentId
                               ,v.color
                               ,v.engineHorsePower
                               ,v.engineIsStarted
@@ -122,37 +122,58 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            string querySelect, queryInsert;
+            int enrollmentId = 0;
+            string countEnrollmentId = @" SELECT count(*) FROM enrollment WHERE serial = @serial AND number = @number ";
+            var parameterEnrollmentId = new Dictionary<string, object>
+                {
+                    {
+                        "@serial", vehicle.Enrollment.Serial
+                    },
+                    {
+                        "@number", vehicle.Enrollment.Number
+                    }
+                };
 
-            queryInsert = $@"
-                    INSERT 
-                    INTO enrollment (serial, number) 
-                    VALUES ('{vehicle.Enrollment.Serial}', {vehicle.Enrollment.Number});";
-
-            if (existeEnrollment(vehicle))
+            if (existEnrollmentId(this.connectionString, countEnrollmentId, parameterEnrollmentId))
             {
-                deleteVehicle();
-                deleteDoors();
-                deleteWheels();
-                //insertarVehicle(vehicle);
-            }
-            else
-            {
-                executeCommand(this.connectionString, queryInsert);
-            }
-            
+                string selectEnrollmentId = @"SELECT id FROM enrollment WHERE serial = @serial AND number = @number ";
+                var parameterEnrollment = new Dictionary<string, object>
+                {
+                    { "@serial",vehicle.Enrollment.Serial },
+                    { "@number",vehicle.Enrollment.Number }
+                };
+                enrollmentId = getEnrollmentId(this.connectionString,selectEnrollmentId,parameterEnrollment);
+                
 
-            querySelect = $@"
-                     SELECT id
-                     FROM enrollment
-                     WHERE serial = '{vehicle.Enrollment.Serial}' 
-                     AND number = {vehicle.Enrollment.Number};";
-            int enrollmentId = executeScalarQuery(this.connectionString, querySelect);
+                string queryDeleteDoorWithEnrollmentId = @"DELETE * FROM door WHERE vehicleId = @id ";
+                var parameterDeleteDoorWithEnrollmentId = new Dictionary<string, object>
+                {
+                    { "@id", enrollmentId }
+                };
+                executeCommand(this.connectionString, queryDeleteDoorWithEnrollmentId, parameterDeleteDoorWithEnrollmentId);
 
-            queryInsert = $@"
+
+                string queryDeleteWheelWithEnrollmentId = @"DELETE * FROM wheel vehicleId = @id ";
+                var parameterDeleteWheelWhithEnrollmentId = new Dictionary<string, object>
+                {
+                    { "@id",enrollmentId }
+                };
+                executeCommand(this.connectionString, queryDeleteWheelWithEnrollmentId, parameterDeleteWheelWhithEnrollmentId);
+
+
+                string queryDeleteVehiclesWithEnrollmentId = @"DELETE * FROM vehicle WHERE enrollmentId = @id ";
+                var parameterDeleteVehiclesWithEnrollmentId = new Dictionary<string, object>
+                {
+                    { "@id", enrollmentId }
+                };
+                executeCommand(this.connectionString, queryDeleteVehiclesWithEnrollmentId, parameterDeleteVehiclesWithEnrollmentId);
+            }
+
+            //tengo que meter enrollment y saber su id
+
+            string queryInsertVehicle = $@"
                     INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
-                    VALUES (@id, @color, @horsePower, @isStarted);";
-
+                    VALUES (@id, @color, @horsePower, @isStarted) ";
             var parameterVehicle = new Dictionary<string, object>
                 {
                     {
@@ -169,11 +190,11 @@ namespace CarManagement.Services
                     }
                 };
 
-            executeCommand(this.connectionString, queryInsert, parameterVehicle);
+            executeCommand(this.connectionString, queryInsertEnrollment, parameterVehicle);
 
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                queryInsert = $@"
+                queryInsertEnrollment = $@"
                     INSERT INTO wheel (vehicleId, pressure) 
                     VALUES (@id, @pressure);";
                 var parameterWheel = new Dictionary<string, object>
@@ -186,12 +207,12 @@ namespace CarManagement.Services
                     }
                 };
 
-                executeCommand(this.connectionString, queryInsert, parameterWheel);
+                executeCommand(this.connectionString, queryInsertEnrollment, parameterWheel);
             }
 
             foreach (IDoor door in vehicle.Doors)
             {
-                queryInsert = $@"
+                queryInsertEnrollment = $@"
                     INSERT INTO door (vehicleId, isOpen) 
                     VALUES (@id, @isOpen);";
                 var parameterDoor = new Dictionary<string, object>
@@ -203,32 +224,69 @@ namespace CarManagement.Services
                         "@isOpen",door.IsOpen
                     }
                 };
-                executeCommand(this.connectionString, queryInsert, parameterDoor);
+                executeCommand(this.connectionString, queryInsertEnrollment, parameterDoor);
             }
         }
 
-        private bool existeEnrollment(IVehicle vehicle)
+        private int getEnrollmentId(string connectionString, string queryInsert, Dictionary<string, object> parameter)
         {
-            string querySelectEnrollment = $@"
-                    SELECT count(*) 
-                    FROM enrollment 
-                    WHERE serial = {vehicle.Enrollment.Serial} AND number = {vehicle.Enrollment.Number}";
-            var parameterDoor = new Dictionary<string, object>
+            int enrollmentId = 0;
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = new SqlCommand())
+            {
+                connection.Open();
+                command.CommandText = queryInsert;
+                command.Connection = connection;
+
+                foreach (var item in parameter)
                 {
-                    {
-                        "@id",enrollmentId
-                    },
-                    {
-                        "@isOpen",door.IsOpen
-                    }
-                };
-            executeCommand(this.connectionString, querySelectEnrollment, parameterDoor);
+                    IDbDataParameter dbDataParameter = command.CreateParameter();
+                    dbDataParameter.ParameterName = item.Key;
+                    dbDataParameter.Value = item.Value;
+                    command.Parameters.Add(dbDataParameter);
+                }
+
+                enrollmentId = (int)command.ExecuteScalar();
+                connection.Close();
+            };
+            return enrollmentId;
+        }
+
+        private bool existEnrollmentId(string connectionString, string queryInsert, Dictionary<string, object> parameter)
+        {
+            bool existEnrollment = false;
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand())
+            {
+                connection.Open();
+                command.CommandText = queryInsert;
+                command.Connection = connection;
+
+                foreach (var item in parameter)
+                {
+                    IDbDataParameter dbDataParameter = command.CreateParameter();
+                    dbDataParameter.ParameterName = item.Key;
+                    dbDataParameter.Value = item.Value;
+                    command.Parameters.Add(dbDataParameter);
+                }
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    existEnrollment = true;
+                }
+
+                connection.Close();
+            };
+            return existEnrollment;
+        }
 
 
-
-            bool existe = false;
-
-            return existe;
+       
+        public IVehicleQuery get()
+        {
+            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
         }
 
         private void executeCommand(string connectionString, string queryInsert, Dictionary<string, object> parameter)
@@ -253,11 +311,6 @@ namespace CarManagement.Services
             };
         }
 
-        public IVehicleQuery get()
-        {
-            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
-        }
-        
         private static void executeCommand(string connectionString, string sentencies)
         {
             using (IDbConnection connection = new SqlConnection(connectionString))
@@ -305,8 +358,6 @@ namespace CarManagement.Services
 
             return result;
         }
-
-
 
         private class PrvVehicleQuery : IVehicleQuery
         {
