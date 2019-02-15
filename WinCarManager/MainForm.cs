@@ -22,6 +22,10 @@ namespace WinCarManager
             this.enrollmentProvider = enrollmentProvider;
             InitializeComponent();
         }
-        
+
+        private void vehiclesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Run(new VehicleStorageForm());
+        }
     }
 }
