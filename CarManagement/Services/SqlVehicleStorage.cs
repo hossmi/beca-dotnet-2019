@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using ToolBox;
 
 namespace CarManagement.Services
 {
@@ -27,14 +29,22 @@ namespace CarManagement.Services
         public int Count {
             get
             {
-                SqlConnection con = conOpen();
-                String query;
-                query = "SELECT count(*) AS 'Count' FROM vehicle";
-                SqlCommand sentence = new SqlCommand(query, con);
-                SqlDataReader reader = sentence.ExecuteReader();
-                reader.Read();
-                int count = Convert.ToInt32(reader["Count"]);
-                return count;
+                using (IDbConnection con = conOpen())
+                {
+                    //SqlConnection con = conOpen();
+                    //String query;
+                    //query = "SELECT count(*) AS 'Count' FROM vehicle";
+                    using (IDbCommand sentence = con.CreateCommand())
+                    {
+                        sentence.CommandText = "SELECT count(*) AS 'Count' FROM vehicle";
+                        IDataReader reader = sentence.ExecuteReader();
+                        reader.Read();
+                        int count = Convert.ToInt32(reader["Count"]);
+                        return count;
+                    }
+
+                }
+
             }
         }
 
@@ -47,7 +57,7 @@ namespace CarManagement.Services
                 "DELETE FROM wheel;" + 
                 "DELETE FROM vehicle;" + 
                 "DELETE FROM enrollment;";
-            SqlCommand sentence = new SqlCommand(query, con);
+            IDbCommand sentence = con.CreateCommand();
             sentence.ExecuteNonQuery();
         }
 
@@ -60,7 +70,7 @@ namespace CarManagement.Services
 
         private SqlConnection conOpen()
         {
-            SqlConnection con = new SqlConnection(this.connectionString);
+            IDbConnection con = new SqlConnection(this.connectionString);
             con.Open();
             return con;
         }
@@ -372,7 +382,7 @@ namespace CarManagement.Services
             private SqlCommand genericSentence(string query, string con)
             {
                 SqlCommand sentence = new SqlCommand(query, connection(con));
-                //sentence.setParameters()
+                sentence.CreateParameter();
                 foreach (var item in this.queryParameters.Keys)
                 {
                     object var;
