@@ -19,6 +19,12 @@ namespace WinCarManager
         private Button buttonLatest;
         private Button buttonPrevious;
         private Button buttonNext;
+        private TextBox textEnrollment;
+        private TextBox textColor;
+        private TextBox texHorsePower;
+        private TextBox texStarted;
+        //private TextBox textDoors;
+        //private TextBox textWheels;
 
         public VehicleStorageForm(IVehicleStorage vehicleStorage)
         {
@@ -55,6 +61,10 @@ namespace WinCarManager
             this.buttonNext = new System.Windows.Forms.Button();
             this.buttonPrevious = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.texHorsePower = new System.Windows.Forms.TextBox();
+            this.texStarted = new System.Windows.Forms.TextBox();
+            this.textColor = new System.Windows.Forms.TextBox();
+            this.textEnrollment = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // buttonAdd
@@ -130,6 +140,34 @@ namespace WinCarManager
             this.buttonSave.TabIndex = 8;
             this.buttonSave.Text = "Save";
             // 
+            // texHorsePower
+            // 
+            this.texHorsePower.Location = new System.Drawing.Point(570, 182);
+            this.texHorsePower.Name = "texHorsePower";
+            this.texHorsePower.Size = new System.Drawing.Size(100, 22);
+            this.texHorsePower.TabIndex = 9;
+            // 
+            // texStarted
+            // 
+            this.texStarted.Location = new System.Drawing.Point(318, 182);
+            this.texStarted.Name = "texStarted";
+            this.texStarted.Size = new System.Drawing.Size(100, 22);
+            this.texStarted.TabIndex = 10;
+            // 
+            // textColor
+            // 
+            this.textColor.Location = new System.Drawing.Point(34, 182);
+            this.textColor.Name = "textColor";
+            this.textColor.Size = new System.Drawing.Size(100, 22);
+            this.textColor.TabIndex = 11;
+            // 
+            // textEnrollment
+            // 
+            this.textEnrollment.Location = new System.Drawing.Point(196, 99);
+            this.textEnrollment.Name = "textEnrollment";
+            this.textEnrollment.Size = new System.Drawing.Size(100, 22);
+            this.textEnrollment.TabIndex = 12;
+            // 
             // VehicleStorageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -144,9 +182,14 @@ namespace WinCarManager
             this.Controls.Add(this.buttonNext);
             this.Controls.Add(this.buttonPrevious);
             this.Controls.Add(this.buttonSave);
+            this.Controls.Add(this.texHorsePower);
+            this.Controls.Add(this.texStarted);
+            this.Controls.Add(this.textColor);
+            this.Controls.Add(this.textEnrollment);
             this.Name = "VehicleStorageForm";
             this.Text = "VehicleStorageForm";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
