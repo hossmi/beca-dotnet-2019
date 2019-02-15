@@ -344,7 +344,7 @@ namespace CarManagement.Services
                 Asserts.isTrue(wheels.Count > 0 && wheels.Count <= 4);
                 this.wheels = wheels;
 
-
+                this.Color = carColor;
                 this.Engine = engine;
                 this.Enrollment = enrollment;
             }
