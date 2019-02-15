@@ -13,13 +13,11 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private readonly IEnrollmentProvider enrollmentProvider;
 
-        public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder, IEnrollmentProvider enrollmentProvider)
+        public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
-            this.enrollmentProvider = enrollmentProvider;
         }
 
         public int Count { get; }
@@ -48,7 +46,6 @@ namespace CarManagement.Services
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
-            private readonly IEnrollmentProvider enrollmentProvider;
             private CarColor color;
             private bool colorHasValue;
 
@@ -64,7 +61,6 @@ namespace CarManagement.Services
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
-                this.enrollmentProvider = enrollmentProvider;
             }
 
             public IEnumerator<IVehicle> GetEnumerator()
