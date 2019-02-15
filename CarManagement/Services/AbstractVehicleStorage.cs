@@ -6,7 +6,7 @@ namespace CarManagement.Services
 {
     public abstract class AbstractVehicleStorage : IVehicleStorage
     {
-        private readonly IDictionary<IEnrollment, Vehicle> vehicles;
+        protected readonly IDictionary<IEnrollment, Vehicle> vehicles;
 
         public AbstractVehicleStorage(IDictionary<IEnrollment, Vehicle> initialVehicles)
         {

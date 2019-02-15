@@ -36,12 +36,14 @@ namespace CarManagement.Builders
 
         public void removeWheel()
         {
-            throw new NotImplementedException();
+            this.numWheels--;
         }
 
         public void setDoors(int doorsCount)
         {
+            Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
             this.numDoors = doorsCount;
+            
         }
 
         public void setEngine(int horsePorwer)

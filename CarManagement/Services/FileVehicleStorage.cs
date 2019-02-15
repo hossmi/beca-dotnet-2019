@@ -19,7 +19,7 @@ namespace CarManagement.Services
             this.dtoConverter = dtoConverter;
         }
 
-        public int Count
+        public new int Count
         {
             get
             {
@@ -27,30 +27,33 @@ namespace CarManagement.Services
             }
         }
 
-        public void clear()
+        public new void clear()
         {
             this.vehicles.Clear();
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        public Vehicle get(IEnrollment enrollment)
+        public new Vehicle get(IEnrollment enrollment)
         {
             return this.vehicles[enrollment];
         }
 
-        public void set(Vehicle vehicle)
+        public new void set(Vehicle vehicle)
         {
             this.vehicles[vehicle.Enrollment] = vehicle;
             writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
-        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         protected override void save(IEnumerable<Vehicle> vehicles)
+        {
+
+        }
+
+        private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
             VehicleDto[] vehicleArray = new VehicleDto[vehicles.Count];
 
             int cont = 0;
-
 
             foreach (Vehicle vehicle in vehicles.Values)
             {
