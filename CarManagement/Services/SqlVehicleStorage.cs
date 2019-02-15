@@ -592,12 +592,10 @@ public IEnumerable<IVehicle> get()
 
             private IEnrollment conversorEnrollment(IDataRecord reader)
             {
-                int id = (int)reader["id"];
-                int number = (int)reader["enrollmentNumber"];
-                string serial = reader["enrollmentSerial"].ToString();
-                IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+                int number = Convert.ToInt32(reader["number"]);
+                string serial = reader["serial"].ToString();
 
-                return enrollmentProvider.import(serial, number);
+                return this.vehicleBuilder.import(serial, number);
             }
         }
     }

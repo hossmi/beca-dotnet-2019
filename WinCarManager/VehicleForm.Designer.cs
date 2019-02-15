@@ -53,11 +53,14 @@
             this.ButtonCancel = new System.Windows.Forms.Button();
             this.ButtonOK = new System.Windows.Forms.Button();
             this.DoorGridView = new System.Windows.Forms.DataGridView();
-            this.WheelGridView = new System.Windows.Forms.DataGridView();
-            this.Color = new System.Windows.Forms.ComboBox();
             this.IsOpen = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.WheelGridView = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Color = new System.Windows.Forms.ComboBox();
             this.EnrollmentsGridView = new System.Windows.Forms.DataGridView();
+            this.EnrollmentColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.SerialColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumberColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DoorGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.WheelGridView)).BeginInit();
@@ -239,7 +242,7 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 32);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // ButtonAdd
             // 
@@ -306,6 +309,12 @@
             this.DoorGridView.Size = new System.Drawing.Size(250, 150);
             this.DoorGridView.TabIndex = 20;
             // 
+            // IsOpen
+            // 
+            this.IsOpen.HeaderText = "IsOpen";
+            this.IsOpen.Name = "IsOpen";
+            this.IsOpen.ReadOnly = true;
+            // 
             // WheelGridView
             // 
             this.WheelGridView.AllowUserToAddRows = false;
@@ -327,6 +336,12 @@
             this.WheelGridView.Size = new System.Drawing.Size(250, 150);
             this.WheelGridView.TabIndex = 21;
             // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.HeaderText = "Pressure";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            // 
             // Color
             // 
             this.Color.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -338,26 +353,48 @@
             this.Color.Size = new System.Drawing.Size(121, 24);
             this.Color.TabIndex = 22;
             // 
-            // IsOpen
-            // 
-            this.IsOpen.HeaderText = "IsOpen";
-            this.IsOpen.Name = "IsOpen";
-            this.IsOpen.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.HeaderText = "Pressure";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            this.dataGridViewTextBoxColumn2.ReadOnly = true;
-            // 
             // EnrollmentsGridView
             // 
+            this.EnrollmentsGridView.AllowUserToAddRows = false;
+            this.EnrollmentsGridView.AllowUserToDeleteRows = false;
+            this.EnrollmentsGridView.AllowUserToResizeColumns = false;
+            this.EnrollmentsGridView.AllowUserToResizeRows = false;
+            this.EnrollmentsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.EnrollmentsGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.EnrollmentsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.EnrollmentsGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.EnrollmentColumn,
+            this.SerialColumn,
+            this.NumberColumn});
             this.EnrollmentsGridView.Location = new System.Drawing.Point(12, 12);
+            this.EnrollmentsGridView.MultiSelect = false;
             this.EnrollmentsGridView.Name = "EnrollmentsGridView";
             this.EnrollmentsGridView.RowTemplate.Height = 24;
+            this.EnrollmentsGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.EnrollmentsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.EnrollmentsGridView.Size = new System.Drawing.Size(156, 340);
             this.EnrollmentsGridView.TabIndex = 23;
+            this.EnrollmentsGridView.SelectionChanged += new System.EventHandler(this.EnrollmentsGridView_SelectionChanged);
+            // 
+            // EnrollmentColumn
+            // 
+            this.EnrollmentColumn.HeaderText = "Enrollment";
+            this.EnrollmentColumn.Name = "EnrollmentColumn";
+            this.EnrollmentColumn.ReadOnly = true;
+            // 
+            // SerialColumn
+            // 
+            this.SerialColumn.HeaderText = "Serial";
+            this.SerialColumn.Name = "SerialColumn";
+            this.SerialColumn.ReadOnly = true;
+            this.SerialColumn.Visible = false;
+            // 
+            // NumberColumn
+            // 
+            this.NumberColumn.HeaderText = "Number";
+            this.NumberColumn.Name = "NumberColumn";
+            this.NumberColumn.ReadOnly = true;
+            this.NumberColumn.Visible = false;
             // 
             // VehicleForm
             // 
@@ -429,5 +466,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn IsOpen;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridView EnrollmentsGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn EnrollmentColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn SerialColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumberColumn;
     }
 }

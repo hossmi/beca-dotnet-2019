@@ -30,7 +30,7 @@ namespace CarManagement.Services
             }
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             IEnrollment e2 = new Enrollment(serial, number);
 

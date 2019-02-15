@@ -3,7 +3,7 @@ using CarManagement.Core.Models.DTOs;
 
 namespace CarManagement.Core.Services
 {
-    public interface IVehicleBuilder
+    public interface IVehicleBuilder : IEnrollmentImporter
     {
         void addWheel();
         void removeWheel();

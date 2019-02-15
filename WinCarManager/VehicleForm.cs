@@ -25,15 +25,10 @@ namespace WinCarManager
 
         public VehicleForm(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
-            this.vehicles = vehicleStorage.get().ToList();
-            //this.enrollments = vehicleStorage..ToList();
-
             this.vehicleStorage = vehicleStorage;
             this.enrollmentProvider = enrollmentProvider;
             InitializeComponent();
             this.Color.DataSource = Enum.GetValues(typeof(CarColor));
-            if (this.vehicles.Count > 0)
-                loadVehicle(this.vehicles[0]);
         }
 
         private void VehicleForm_Load(object sender, EventArgs e)
@@ -42,6 +37,22 @@ namespace WinCarManager
             this.ButtonPrev.Text = char.ConvertFromUtf32(0x2B60);
             this.ButtonNext.Text = char.ConvertFromUtf32(0x2B62);
             this.ButtonLast.Text = char.ConvertFromUtf32(0x2B72);
+
+            RefreshEnrollments();
+        }
+
+        private void RefreshEnrollments()
+        {
+            this.EnrollmentsGridView.Rows.Clear();
+            this.enrollments = this.vehicleStorage.get().Keys.ToList();
+            int i = 1;
+            foreach (IEnrollment enrollment in this.enrollments)
+            {
+                this.EnrollmentsGridView.Rows.Add(enrollment.ToString(), enrollment.Serial, enrollment.Number);
+                this.EnrollmentsGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                i++;
+            }
+            this.EnrollmentsGridView.Rows[this.position].Selected = true;
         }
 
         private void loadVehicle(IVehicle vehicle)
@@ -77,42 +88,42 @@ namespace WinCarManager
 
         private void ButtonFirst_Click(object sender, EventArgs e)
         {
-            if (this.vehicles.Count > 0)
+            if (this.EnrollmentsGridView.Rows.Count > 0)
             {
                 this.position = 0;
-                loadVehicle(this.vehicles[this.position]);
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
             }
         }
 
         private void ButtonLast_Click(object sender, EventArgs e)
         {
-            if (this.vehicles.Count > 0)
+            if (this.EnrollmentsGridView.Rows.Count > 0)
             {
-                this.position = this.vehicles.Count-1;
-                loadVehicle(this.vehicles[this.position]);
+                this.position = this.EnrollmentsGridView.Rows.Count-1;
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
             }
             
         }
 
         private void ButtonPrev_Click(object sender, EventArgs e)
         {
-            if (this.vehicles.Count > 0)
+            if (this.EnrollmentsGridView.Rows.Count > 0)
             {
                 this.position = this.position -1;
                 if (this.position < 0)
                     this.position = 0;
-                loadVehicle(this.vehicles[this.position]);
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
             }
         }
 
         private void ButtonNext_Click(object sender, EventArgs e)
         {
-            if (this.vehicles.Count > 0)
+            if (this.EnrollmentsGridView.Rows.Count > 0)
             {
                 this.position = this.position + 1;
-                if (this.position > this.vehicles.Count-1 )
-                    this.position = this.vehicles.Count - 1;
-                loadVehicle(this.vehicles[this.position]);
+                if (this.position > this.EnrollmentsGridView.Rows.Count-1 )
+                    this.position = this.EnrollmentsGridView.Rows.Count - 1;
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
             }
         }
 
@@ -194,7 +205,7 @@ namespace WinCarManager
             this.WheelGridView.ReadOnly = true;
             this.WheelGridView.AllowUserToAddRows = false;
 
-            loadVehicle(this.vehicles[this.position]);
+            LoadVehicle();
         }
 
         private void ButtonOK_Click(object sender, EventArgs e)
@@ -244,7 +255,7 @@ namespace WinCarManager
             foreach (DataGridViewRow row in this.WheelGridView.Rows)
             {
                 WheelDto wheelDto = new WheelDto();
-                wheelDto.Pressure = Convert.ToDouble(row.Cells[1].Value);
+                wheelDto.Pressure = Convert.ToDouble(row.Cells[0].Value);
                 if (wheelDto.Pressure > 1.0)
                     wheelsDto.Add(wheelDto);
             }
@@ -260,7 +271,27 @@ namespace WinCarManager
 
             IVehicle vehicle = builder.import(vehicleDto);
             this.vehicleStorage.set(vehicle);
-            this.vehicles = this.vehicleStorage.get().ToList();
+
+            RefreshEnrollments();
+        }
+
+        private void EnrollmentsGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            this.position = this.EnrollmentsGridView.SelectedRows[0].Index;
+            LoadVehicle();
+        }
+
+        private void LoadVehicle()
+        {
+            if (this.EnrollmentsGridView.SelectedRows.Count > 0)
+            {
+                string serial = this.EnrollmentsGridView.SelectedCells[1].Value.ToString();
+                int number = Convert.ToInt32(this.EnrollmentsGridView.SelectedCells[2].Value);
+                IVehicleBuilder builder = new VehicleBuilder(this.enrollmentProvider);
+                IVehicle vehicle = this.vehicleStorage.get().whereEnrollmentIs(builder.import(serial, number)).Single();
+
+                loadVehicle(vehicle);
+            }
         }
     }
 }
