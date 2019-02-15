@@ -69,7 +69,7 @@ namespace CarManagement.Services
                 return enrollment;
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             Enrollment enrollment = new Enrollment(serial, number);
             return enrollment;

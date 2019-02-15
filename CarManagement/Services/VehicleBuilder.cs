@@ -356,5 +356,10 @@ namespace CarManagement.Services
             enrollmentDto.Serial = enrollment.Serial;
             return enrollmentDto;
         }
+
+        public IEnrollment import(string serial, int number)
+        {
+            return this.enrollmentProvider.import(serial, number);
+        }
     }
 }

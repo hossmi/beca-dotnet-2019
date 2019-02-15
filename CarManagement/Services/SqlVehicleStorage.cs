@@ -211,6 +211,14 @@ namespace CarManagement.Services
                     FROM door 
                     WHERE vehicleId = @ID";
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -408,6 +416,11 @@ namespace CarManagement.Services
 
                 return query;
             }
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
+            }
+
         }
     }
 }
