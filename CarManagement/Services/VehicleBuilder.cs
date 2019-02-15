@@ -143,7 +143,7 @@ namespace CarManagement.Services
 
             private class Vehicle : IVehicle
             {
-                private CarColor color;
+              
                 private IReadOnlyList<IWheel> wheels;
                 private IEnrollment enrollment;
                 private IReadOnlyList<IDoor> doors;
@@ -152,7 +152,7 @@ namespace CarManagement.Services
 
                 public Vehicle(CarColor color, List<IWheel> wheels, IEnrollment enrollment, List<IDoor> doors, IEngine engine)
                 {
-                    this.color = color;
+                    this.Color = color;
                     this.wheels = wheels;
                     this.enrollment = enrollment;
                     this.doors = doors;
@@ -325,6 +325,11 @@ namespace CarManagement.Services
                 IEngine toEngine = convert(vehicleDto.Engine);
                 IEnrollment toEnrollment = convert(vehicleDto.Enrollment);
                 List<IWheel> listWheels = new List<IWheel>();
+                /*List<IWheel> listWheels = vehicleDTO
+                    .WHeels
+                    .Select(convert)
+                    .ToList();
+                */
                 List<IDoor> listDoor = new List<IDoor>();
                 
              
@@ -373,10 +378,6 @@ namespace CarManagement.Services
                 if (engineDto.IsStarted == true)
                 {
                     toMemory.start();
-                }
-                else
-                {
-                    
                 }
 
                 return toMemory;

@@ -18,18 +18,68 @@ namespace CarManagement.Services
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private const string BASE_QUERRY = "SELECT " +
-                                                "serial, " +
-                                                "number, " +
-                                                "engineHorsePower, " +
-                                                "engineIsStarted, " +
-                                                "enrollmentId, " +
-                                                "color " +
-                                           "FROM " +
-                                                "vehicle, " +
-                                                "enrollment " +
-                                           "WHERE " +
-                                                "enrollmentId = id ";
+
+        #region --------------------------SQL REGION---------------------------------------
+        private const string PUSH_TO_ENROLLMENTDB = @"
+             INSERT INTO enrollment(serial, number) 
+             output INSERTED.ID VALUES(@serial,@number) ";
+
+        private const string PUSH_TO_VEHICLE = @"
+             INSERT INTO vehicle(enrollmentId,color,engineHorsePower,engineIsStarted)
+             VALUES(@enrrollmentId,@color,@engineHorsePower,@engineIsStarted) ";
+
+        private const string PUSH_TO_WHEEL = @"
+             INSERT INTO wheel(vehicleId,pressure)
+             VALUES(@vehicleId,@pressure) ";
+
+        private const string PUSH_TO_DOOR = @"
+             INSERT INTO door(vehicleId,isOpen)
+             VALUES(@vehicleId,@isOpen) ";
+
+        private const string UPDATE_WITH_VEHICLE = @"
+             UPDATE vehicle
+             SET color = @color,engineHorsePower = @engineHorsePower, engineIsStarted = @engineIsStarted 
+             WHERE enrollmentId = @enrollmentId ";
+
+        private const string UPDATE_WITH_ENROLLMENT = @"
+             UPDATE enrollment 
+             SET serial = @serial, number = @number
+             WHERE id = @id ";
+
+
+        private const string UPDATE_WITH_WHEELS = @"
+             UPDATE wheel 
+             SET pressure = @pressure 
+             WHERE vehicleId = @vehicleId ";
+
+
+        private const string UPDATE_WITH_DOORS = @"
+             UPDATE door 
+             SET isOpen = @isOpen 
+             WHERE vehicleId = @vehicleId ";
+
+        private const string SELECT_ID_FROM_ENROLLMENT = @"
+             SELECT id 
+             FROM enrollment
+             WHERE serial = @serial
+             AND number = @number ";
+
+        private const string BASE_QUERRY = @"
+            SELECT e.serial, 
+                   e.number, 
+                   v.engineHorsePower, 
+                   v.engineIsStarted, 
+                   v.enrollmentId, 
+                   v.color 
+            FROM vehicle v
+            INNER JOIN enrollment e ON v.enrollmentId = e.id 
+            WHERE enrollmentId = id ";
+
+        private const string SELECT_COUNT_VEHICLES = @"
+             SELECT COUNT(engineHorsePower) 
+             FROM vehicle";
+
+        #endregion
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -42,43 +92,37 @@ namespace CarManagement.Services
             get
             {
                 using (SqlConnection connection = new SqlConnection(this.connectionString))
+                using (SqlCommand command = new SqlCommand(SELECT_COUNT_VEHICLES, connection))
                 {
-                    using (SqlCommand command = new SqlCommand("SELECT COUNT(engineHorsePower) FROM vehicle", connection))
-                    {
 
-                        connection.Open();
-                        int numero = Convert.ToInt32(command.ExecuteScalar());
-                        connection.Close();
-                        return numero;
+                    connection.Open();
+                    int numero = Convert.ToInt32(command.ExecuteScalar());
+                    connection.Close();
+                    return numero;
 
-                    }
                 }
+
             }
         }
 
         public void clear()
         {
-            List<string> clearDbQuerry = new List<string>();
-            clearDbQuerry.Add("DELETE FROM door");
-            clearDbQuerry.Add("DELETE FROM wheel");
-            clearDbQuerry.Add("DELETE FROM vehicle");
-            clearDbQuerry.Add("DELETE FROM enrollment");
-            //------------------------------------------------------------------------------------------
+            List<string> clearDbQuery = new List<string>();
+            clearDbQuery.Add("DELETE FROM door");
+            clearDbQuery.Add("DELETE FROM wheel");
+            clearDbQuery.Add("DELETE FROM vehicle");
+            clearDbQuery.Add("DELETE FROM enrollment");
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
-                //------------------------------------------------------------------------------------------
                 connection.Open();
-                //------------------------------------------------------------------------------------------
-                for (int i = 0; i < clearDbQuerry.Count; i++)
+                for (int i = 0; i < clearDbQuery.Count; i++)
                 {
 
-                    SqlCommand command = new SqlCommand(clearDbQuerry[i], connection);
+                    SqlCommand command = new SqlCommand(clearDbQuery[i], connection);
                     command.ExecuteNonQuery();
 
                 }
-                //------------------------------------------------------------------------------------------
                 connection.Close();
-                //------------------------------------------------------------------------------------------
             }
 
         }
@@ -90,89 +134,38 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-                       
-            using (SqlConnection conection = new SqlConnection(this.connectionString))
-            {
-                conection.Open();
-                string querry = "SELECT " +
-                                    "id " +
-                                "FROM " +
-                                    "enrollment " +
-                                "WHERE " +
-                                    "serial = '" + vehicle.Enrollment.Serial + "' " +
-                                "AND " +
-                                    "number = " + vehicle.Enrollment.Number + " ";
 
-                SqlCommand command = new SqlCommand(querry, conection);
-                int id = Convert.ToInt32(command.ExecuteScalar());
-                                
-                if (getMeIfVehicleExist(command, id)) updateDb(command, id, conection, vehicle);
-                else insertDb(command, id, conection, vehicle);
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            {
+                int id;
+
+                connection.Open();
+
+                using (SqlCommand command = new SqlCommand(SELECT_ID_FROM_ENROLLMENT, connection))
+                {
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    id = Convert.ToInt32(command.ExecuteScalar());
+                }
+
+
+                if (vehicleExist(connection, id))
+                    updateDb(id, connection, vehicle);
+                else
+                    insertDb(id, connection, vehicle);
             }
+
         }
 
-        private static void insertDb(SqlCommand command, int id, SqlConnection conection, IVehicle vehicle)
+        private static void insertDb(int id, SqlConnection connection, IVehicle vehicle)
         {
-            #region -----------------------SQL QUERRYS-----------------------------
-            const string pushToEnrollmentDb = "INSERT INTO enrollment" +
-                                                      "(" +
-                                                          "serial," +
-                                                          "number" +
-                                                      ") " +
-                                                      "output INSERTED.ID VALUES" +
-                                                      "(" +
-                                                          "@serial," +
-                                                          "@number" +
-                                                      ")";
 
-            const string pushToVehicle = "INSERT INTO " +
-                                        "vehicle" +
-                                        "(" +
-                                            "enrollmentId," +
-                                            "color," +
-                                            "engineHorsePower," +
-                                            "engineIsStarted" +
-                                        ") " +
-                                        "VALUES" +
-                                        "(" +
-                                            "@enrrollmentId," +
-                                            "@color," +
-                                            "@engineHorsePower," +
-                                            "@engineIsStarted" +
-                                        ")";
-
-            const string pushToWheel = "INSERT INTO " +
-                                       "wheel" +
-                                       "(" +
-                                            "vehicleId," +
-                                            "pressure" +
-                                       ")" +
-                                       "VALUES" +
-                                       "(" +
-                                           "@vehicleId," +
-                                           "@pressure" +
-                                       ")";
-
-            const string pushToDoor = "INSERT INTO " +
-                                      "door" +
-                                      "(" +
-                                          "vehicleId," +
-                                          "isOpen" +
-                                      ")" +
-                                      "VALUES" +
-                                      "(" +
-                                          "@vehicleId," +
-                                          "@isOpen" +
-                                      ")";
-
-            #endregion
-
-            command = new SqlCommand(pushToEnrollmentDb, conection);
+            SqlCommand command = new SqlCommand(PUSH_TO_ENROLLMENTDB, connection);
             command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
             command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
             int enrollmentId = Convert.ToInt32(command.ExecuteScalar());
 
-            command = new SqlCommand(pushToVehicle, conection);
+            command = new SqlCommand(PUSH_TO_VEHICLE, connection);
             command.Parameters.AddWithValue("@enrrollmentId", enrollmentId);
             command.Parameters.AddWithValue("@color", vehicle.Color);
             command.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
@@ -181,7 +174,7 @@ namespace CarManagement.Services
 
             foreach (IWheel wheels in vehicle.Wheels)
             {
-                command = new SqlCommand(pushToWheel, conection);
+                command = new SqlCommand(PUSH_TO_WHEEL, connection);
                 command.Parameters.AddWithValue("@pressure", wheels.Pressure);
                 command.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 command.ExecuteNonQuery();
@@ -189,60 +182,25 @@ namespace CarManagement.Services
             }
             foreach (IDoor doors in vehicle.Doors)
             {
-                command = new SqlCommand(pushToDoor, conection);
+                command = new SqlCommand(PUSH_TO_DOOR, connection);
                 command.Parameters.AddWithValue("@isOpen", doors.IsOpen);
                 command.Parameters.AddWithValue("@vehicleId", enrollmentId);
                 command.ExecuteNonQuery();
             }
-            conection.Close();
+            connection.Close();
         }
-        
-        private static void updateDb(SqlCommand command, int id,SqlConnection conection, IVehicle vehicle)
+
+        private static void updateDb(int id, SqlConnection conection, IVehicle vehicle)
         {
-            #region -------------------------- SQL QUERRYS -----------------------------------------
-            const string updateWithVehicle = "UPDATE " +
-                                                "vehicle " +
-                                             "SET " +
-                                                 "color = @color, " +
-                                                 "engineHorsePower = @engineHorsePower, " +
-                                                 "engineIsStarted = @engineIsStarted " +
-                                             "WHERE " +
-                                                 "enrollmentId = @enrollmentId ";
 
-            const string updateWithEnrollment = "UPDATE" +
-                                                    "enrollment" +
-                                                "SET" +
-                                                    "serial = @serial," +
-                                                    "number = @number" +
-                                                "WHERE" +
-                                                    "id = @id";
-
-
-            const string updateWithWheels = "UPDATE " +
-                                                "wheel " +
-                                            "SET " +
-                                                "pressure = @pressure" +
-                                            "WHERE " +
-                                                "vehicleId = @vehicleId ";
-
-
-            const string updateWithDoors = "UPDATE " +
-                                                "door " +
-                                           "SET " +
-                                                "isOpen = @isOpen " +
-                                           "WHERE " +
-                                                "vehicleId = @vehicleId ";
-
-            #endregion
-
-            command = new SqlCommand(updateWithVehicle, conection);
+            SqlCommand command = new SqlCommand(UPDATE_WITH_VEHICLE, conection);
             command.Parameters.AddWithValue("@color", vehicle.Color);
             command.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
             command.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
             command.Parameters.AddWithValue("@enrollmentId", id);
             command.ExecuteNonQuery();
 
-            command = new SqlCommand(updateWithEnrollment, conection);
+            command = new SqlCommand(UPDATE_WITH_ENROLLMENT, conection);
             command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
             command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
             command.Parameters.AddWithValue("@id", id);
@@ -250,7 +208,7 @@ namespace CarManagement.Services
 
             foreach (IWheel wheels in vehicle.Wheels)
             {
-                command = new SqlCommand(updateWithWheels, conection);
+                command = new SqlCommand(UPDATE_WITH_WHEELS, conection);
                 command.Parameters.AddWithValue("@pressure", wheels.Pressure);
                 command.Parameters.AddWithValue("@vehicleId", id);
                 command.ExecuteNonQuery();
@@ -259,7 +217,7 @@ namespace CarManagement.Services
 
             foreach (IDoor doors in vehicle.Doors)
             {
-                command = new SqlCommand(updateWithDoors, conection);
+                command = new SqlCommand(UPDATE_WITH_DOORS, conection);
                 command.Parameters.AddWithValue("@isOpen", doors.IsOpen);
                 command.Parameters.AddWithValue("@vehicleId", id);
                 command.ExecuteNonQuery();
@@ -268,9 +226,9 @@ namespace CarManagement.Services
             conection.Close();
         }
 
-        private static bool getMeIfVehicleExist(SqlCommand command, int id)
+        private static bool vehicleExist(SqlConnection connection, int id)
         {
-            string querry = "SELECT COUNT" +
+            string query = "SELECT COUNT" +
                             "(" +
                                 "enrollmentId" +
                             ") " +
@@ -279,11 +237,13 @@ namespace CarManagement.Services
                             "WHERE " +
                                 "enrollmentId = @id";
 
-            command = new SqlCommand(querry, command.Connection);
-            command.Parameters.AddWithValue("@id", id);
-            int count = Convert.ToInt32(command.ExecuteScalar());
-            if (count == 0) return false;
-            else return true;
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@id", id);
+                int count = Convert.ToInt32(command.ExecuteScalar());
+
+                return count > 0;
+            }
         }
 
         public IVehicle get(IEnrollment enrollment)
