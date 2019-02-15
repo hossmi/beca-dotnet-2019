@@ -456,9 +456,30 @@ namespace CarManagement.Services
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 string query = composeQuery(this.filters.Values, SELECT_FROM_ENROLLMENT);
-                IEnumerable<IVehicle> vehicles = executeQuery(query, this.connectionString, this.vehicleBuilder);
+                IEnumerable<IEnrollment> enrollments = executeQueryEnrollment(query, this.connectionString, this.vehicleBuilder);
 
-                throw new NotImplementedException();
+                return enrollments;
+            }
+
+            private IEnumerable<IEnrollment> executeQueryEnrollment(string query, string connectionString, IVehicleBuilder vehicleBuilder)
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlCommand command = new SqlCommand())
+                {
+                    connection.Open();
+                    command.CommandText = query;
+                    command.Connection = connection;
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            IEnrollment enrollment = vehicleBuilder.import(reader["serial"].ToString(), (int)reader["number"]);
+                            yield return enrollment;
+                        }
+                    }
+                    connection.Close();
+                }
             }
 
             private static IEnumerable<IVehicle> executeQuery(string query, string connectionString, IVehicleBuilder vehicleBuilder)

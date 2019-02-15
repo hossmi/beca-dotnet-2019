@@ -19,7 +19,7 @@ namespace WinCarManager
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Hi!");
+            
         }
     }    
 }
