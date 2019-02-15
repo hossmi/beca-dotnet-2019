@@ -4,11 +4,30 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private bool isStarted;
+        private int horsePower;
+
+        public Engine()
+        {
+
+        }
+
+        public Engine(int horsePower)
+        {
+            this.horsePower = horsePower;
+        }
+
+        public Engine(int horsePower, bool isStarted)
+        {
+            this.horsePower = horsePower;
+            this.isStarted = isStarted;
+        }
+
         public bool IsStarted
         {
             get
             {
-                throw new NotImplementedException();
+                return this.isStarted;
             }
         }
 
@@ -16,18 +35,24 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.horsePower;
             }
         }
 
         public void start()
         {
-            throw new NotImplementedException();
+            if(this.isStarted == false)
+            {
+                this.isStarted = true;
+            }
         }
 
         public void stop()
         {
-            throw new NotImplementedException();
+            if (this.isStarted == true)
+            {
+                this.isStarted = false;
+            }
         }
     }
 }
