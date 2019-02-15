@@ -13,7 +13,7 @@ namespace CarManagement.Services
         
         private int numberWheel;
         private int numberDoor;
-        private int engine;
+        private int horsePower;
         private CarColor color;
         private readonly IEnrollmentProvider enrollmentProvider;
 
@@ -21,7 +21,7 @@ namespace CarManagement.Services
         {
             this.numberWheel = 0;
             this.numberDoor = 0;
-            this.engine = 0;
+            this.horsePower = 0;
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
         }
@@ -40,13 +40,17 @@ namespace CarManagement.Services
         {
             Asserts.isTrue(this.numberWheel > 0);
             //Generamos puertas
-            List<Door> doors = createList<Door>(this.numberDoor);
-
+            List<IDoor> doors = createList<Door>(this.numberDoor)
+                .Cast<IDoor>()
+                .ToList();
             //Generamos motor
-            Engine engine = new Engine(this.engine);
+            IEngine engine = new Engine(this.horsePower, false);
 
             //Generamos ruedas
-            List<Wheel> wheels = createList<Wheel>(this.numberWheel);
+            List<IWheel> wheels = createList<Wheel>(this.numberWheel)
+                .Cast<IWheel>()
+                .ToList();
+
 
             //Generamos matricula
             IEnrollment enrollment = enrollmentProvider.getNew();
@@ -67,15 +71,23 @@ namespace CarManagement.Services
         public void setEngine(int horsePower)
         {
             Asserts.isTrue(horsePower > 0);
-            this.engine = horsePower;
+            this.horsePower = horsePower;
         }
         public IVehicle import(VehicleDto vehicleDto)
         {
             CarColor color = vehicleDto.Color;            
-            List<Wheel> listWheels = createList<Wheel>(vehicleDto.Wheels.Length);
-            List<Door> listDoors = createList<Door>(vehicleDto.Doors.Length);
+            List<IWheel> listWheels = vehicleDto
+                .Wheels
+                .Select(convert)
+                .ToList();
+
+            List<IDoor> listDoors = vehicleDto
+                .Doors
+                .Select(convert)
+                .ToList();
+
             IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            Engine engine = new Engine(vehicleDto.Engine.HorsePower);
+            IEngine engine = new Engine(vehicleDto.Engine.HorsePower, vehicleDto.Engine.IsStarted);
 
             return new Vehicle(color, listWheels, enrollment, listDoors, engine);
         }
@@ -84,14 +96,12 @@ namespace CarManagement.Services
             return convert(vehicle);
         }
 
-        private List<T> createList<T>(int numberItem) where T : class, new()
+        private IEnumerable<T> createList<T>(int numberItem) where T : class, new()
         {
-            List<T> listItems = new List<T>();
             for (int x = 0; x < numberItem; x++)
             {
-                listItems.Add(new T());
+                yield return new T();
             }
-            return listItems;
         }
         
 
@@ -186,7 +196,12 @@ namespace CarManagement.Services
         private IVehicle convert(VehicleDto vehicleDto)
         {
             IEnrollment enrollment = convert(vehicleDto.Enrollment);
-            return new Vehicle(vehicleDto, enrollment);
+            return new Vehicle( vehicleDto.Color
+                ,vehicleDto.Wheels.Select(convert).ToList()
+                ,convert(vehicleDto.Enrollment)
+                ,vehicleDto.Doors.Select(convert).ToList()
+                ,convert(vehicleDto.Engine)
+                );
         }
         
         
@@ -222,27 +237,18 @@ namespace CarManagement.Services
         }
         private class Vehicle : IVehicle
         {
-            private CarColor color;
-            private IReadOnlyList<Wheel> wheels;
+            private IReadOnlyList<IWheel> wheels;
             private readonly IEnrollment enrollment;
-            private IReadOnlyList<Door> doors;
-            private readonly Engine engine;
+            private IReadOnlyList<IDoor> doors;
+            private readonly IEngine engine;
 
-            public Vehicle(CarColor color, List<Wheel> wheels, IEnrollment enrollment, List<Door> doors, Engine engine)
+            public Vehicle(CarColor color, List<IWheel> wheels, IEnrollment enrollment, List<IDoor> doors, IEngine engine)
             {
-                this.color = color;
+                this.Color = color;
                 this.wheels = wheels;
                 this.enrollment = enrollment;
                 this.doors = doors;
                 this.engine = engine;
-            }
-            public Vehicle(VehicleDto vehicleDto, IEnrollment enrollment)
-            {
-                this.Color = vehicleDto.Color;
-                this.enrollment = enrollment;
-                this.doors = vehicleDto.Doors.OfType<Door>().ToList();
-                this.wheels = vehicleDto.Wheels.OfType<Wheel>().ToList();
-                this.engine = new Engine(vehicleDto.Engine.HorsePower, vehicleDto.Engine.IsStarted);
             }
 
             public IEngine Engine
@@ -295,12 +301,6 @@ namespace CarManagement.Services
             private int horsePower;
             private bool isStarted;
 
-            public Engine(int horsePower)
-            {
-                Asserts.isTrue(horsePower > 0);
-                this.horsePower = horsePower;
-                this.isStarted = false;
-            }
 
             public Engine(int horsePower, bool isIstarted)
             {

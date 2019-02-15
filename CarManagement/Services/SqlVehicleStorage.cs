@@ -10,6 +10,7 @@ using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using ToolBox.Extensions.DbCommands;
 
 namespace CarManagement.Services
 {
@@ -20,15 +21,17 @@ namespace CarManagement.Services
         #region "SQL"
         private const string SELECT_FROM_VEHICLE = @"
                           SELECT v.enrollmentId
-                              ,v.color
-                              ,v.engineHorsePower
-                              ,v.engineIsStarted
-	                          ,e.serial
-	                          ,e.number
+                                ,v.color
+                                ,v.engineHorsePower
+                                ,v.engineIsStarted
+	                            ,e.serial
+	                            ,e.number
                           FROM vehicle v
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
-        private const string SELECT_FROM_DOOR = "";
+        private const string DELETE_ALL_TABLES = "DELETE FROM door  DELETE FROM wheel  DELETE FROM vehicle  DELETE FROM enrollment";
         private const string SELECT_COUNT_VEHICLE = "SELECT count(*) FROM vehicle ";
+        private const string COUNT_ENROLLMENT_ID = @" SELECT count(*) FROM enrollment WHERE serial = @serial AND number = @number ";
+        private const string SELECT_ENROLLMENT_ID = @"SELECT id FROM enrollment WHERE serial = @serial AND number = @number ";
         #endregion 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
@@ -49,24 +52,11 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            string sentenceClearEnrollment = "DELETE FROM enrollment";
-            string sentenceClearVehicle = "DELETE FROM vehicle";
-            string sentenceClearWherl = "DELETE FROM wheel";
-            string sentenceClearDoor = "DELETE FROM door";
-            List<String> deleteTables = new List<String>();
-            deleteTables.Add(sentenceClearDoor);
-            deleteTables.Add(sentenceClearWherl);
-            deleteTables.Add(sentenceClearVehicle);
-            deleteTables.Add(sentenceClearEnrollment);
-
             using (SqlConnection connection = new SqlConnection(this.connectionString))
             {
                 connection.Open();
-                foreach (String sentenceDeleteTable in deleteTables)
-                {
-                    SqlCommand deleteComand = new SqlCommand(sentenceDeleteTable, connection);
-                    deleteComand.ExecuteNonQuery();
-                }
+                SqlCommand deleteComand = new SqlCommand(DELETE_ALL_TABLES, connection);
+                deleteComand.ExecuteNonQuery();
                 connection.Close();
             }
         }
@@ -123,7 +113,6 @@ namespace CarManagement.Services
         public void set(IVehicle vehicle)
         {
             int enrollmentId = 0;
-            string countEnrollmentId = @" SELECT count(*) FROM enrollment WHERE serial = @serial AND number = @number ";
             var parameterEnrollmentId = new Dictionary<string, object>
                 {
                     {
@@ -134,42 +123,32 @@ namespace CarManagement.Services
                     }
                 };
 
-            if (existEnrollmentId(this.connectionString, countEnrollmentId, parameterEnrollmentId))
+            if (tryGetEnrollmentId(this.connectionString, vehicle.Enrollment,out enrollmentId))
             {
-                string selectEnrollmentId = @"SELECT id FROM enrollment WHERE serial = @serial AND number = @number ";
+
+                string deleteTablesWithEnrollmentId = @"DELETE FROM door WHERE vehicleId = @id 
+                                                        DELETE FROM wheel WHERE vehicleId = @id 
+                                                        DELETE FROM vehicle WHERE enrollmentId = @id ";
+                var parameterDeleteTablesWithEnrollmentId = new Dictionary<string, object>
+                {
+                    { "@id", enrollmentId }
+                };
+                executeCommand(this.connectionString, deleteTablesWithEnrollmentId, parameterDeleteTablesWithEnrollmentId);
+            }
+            else
+            {
+                string queryInsertEnrollment = @"INSERT INTO enrollment (serial, number) 
+                                                 VALUES (@serial, @number) ";
                 var parameterEnrollment = new Dictionary<string, object>
                 {
                     { "@serial",vehicle.Enrollment.Serial },
                     { "@number",vehicle.Enrollment.Number }
                 };
-                enrollmentId = getEnrollmentId(this.connectionString,selectEnrollmentId,parameterEnrollment);
-                
+                executeCommand(this.connectionString, queryInsertEnrollment, parameterEnrollment);
 
-                string queryDeleteDoorWithEnrollmentId = @"DELETE * FROM door WHERE vehicleId = @id ";
-                var parameterDeleteDoorWithEnrollmentId = new Dictionary<string, object>
-                {
-                    { "@id", enrollmentId }
-                };
-                executeCommand(this.connectionString, queryDeleteDoorWithEnrollmentId, parameterDeleteDoorWithEnrollmentId);
-
-
-                string queryDeleteWheelWithEnrollmentId = @"DELETE * FROM wheel vehicleId = @id ";
-                var parameterDeleteWheelWhithEnrollmentId = new Dictionary<string, object>
-                {
-                    { "@id",enrollmentId }
-                };
-                executeCommand(this.connectionString, queryDeleteWheelWithEnrollmentId, parameterDeleteWheelWhithEnrollmentId);
-
-
-                string queryDeleteVehiclesWithEnrollmentId = @"DELETE * FROM vehicle WHERE enrollmentId = @id ";
-                var parameterDeleteVehiclesWithEnrollmentId = new Dictionary<string, object>
-                {
-                    { "@id", enrollmentId }
-                };
-                executeCommand(this.connectionString, queryDeleteVehiclesWithEnrollmentId, parameterDeleteVehiclesWithEnrollmentId);
+                Asserts.isTrue(tryGetEnrollmentId(this.connectionString, vehicle.Enrollment, out enrollmentId));
             }
 
-            //tengo que meter enrollment y saber su id
 
             string queryInsertVehicle = $@"
                     INSERT INTO vehicle (enrollmentId, color, engineHorsePower, engineIsStarted) 
@@ -189,12 +168,12 @@ namespace CarManagement.Services
                         "@isStarted", vehicle.Engine.IsStarted
                     }
                 };
+            executeCommand(this.connectionString, queryInsertVehicle, parameterVehicle);
 
-            executeCommand(this.connectionString, queryInsertEnrollment, parameterVehicle);
 
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                queryInsertEnrollment = $@"
+                string queryInsertWheel = $@"
                     INSERT INTO wheel (vehicleId, pressure) 
                     VALUES (@id, @pressure);";
                 var parameterWheel = new Dictionary<string, object>
@@ -206,13 +185,12 @@ namespace CarManagement.Services
                         "@pressure",wheel.Pressure
                     }
                 };
-
-                executeCommand(this.connectionString, queryInsertEnrollment, parameterWheel);
+                executeCommand(this.connectionString, queryInsertWheel, parameterWheel);
             }
 
             foreach (IDoor door in vehicle.Doors)
             {
-                queryInsertEnrollment = $@"
+                string queryInsertDoor = $@"
                     INSERT INTO door (vehicleId, isOpen) 
                     VALUES (@id, @isOpen);";
                 var parameterDoor = new Dictionary<string, object>
@@ -224,66 +202,42 @@ namespace CarManagement.Services
                         "@isOpen",door.IsOpen
                     }
                 };
-                executeCommand(this.connectionString, queryInsertEnrollment, parameterDoor);
+                executeCommand(this.connectionString, queryInsertDoor, parameterDoor);
             }
         }
 
-        private int getEnrollmentId(string connectionString, string queryInsert, Dictionary<string, object> parameter)
+        private bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
         {
-            int enrollmentId = 0;
+            bool existEnrollment;
+
             using (IDbConnection connection = new SqlConnection(connectionString))
-            using (IDbCommand command = new SqlCommand())
+            using (IDbCommand command = connection.CreateCommand())
             {
                 connection.Open();
-                command.CommandText = queryInsert;
+                command.CommandText = SELECT_ENROLLMENT_ID;
                 command.Connection = connection;
+                command.setParameter("@serial",enrollment.Serial);
+                command.setParameter("@number", enrollment.Number);
 
-                foreach (var item in parameter)
+                using (IDataReader reader = command.ExecuteReader())
                 {
-                    IDbDataParameter dbDataParameter = command.CreateParameter();
-                    dbDataParameter.ParameterName = item.Key;
-                    dbDataParameter.Value = item.Value;
-                    command.Parameters.Add(dbDataParameter);
+                    if (reader.Read())
+                    {
+                        enrollmentId = (int) reader["id"];
+                        existEnrollment = true;
+                    }
+                    else
+                    {
+                        enrollmentId = 0;
+                        existEnrollment = false;
+                    }
                 }
-
-                enrollmentId = (int)command.ExecuteScalar();
                 connection.Close();
-            };
-            return enrollmentId;
-        }
+            }
 
-        private bool existEnrollmentId(string connectionString, string queryInsert, Dictionary<string, object> parameter)
-        {
-            bool existEnrollment = false;
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand())
-            {
-                connection.Open();
-                command.CommandText = queryInsert;
-                command.Connection = connection;
-
-                foreach (var item in parameter)
-                {
-                    IDbDataParameter dbDataParameter = command.CreateParameter();
-                    dbDataParameter.ParameterName = item.Key;
-                    dbDataParameter.Value = item.Value;
-                    command.Parameters.Add(dbDataParameter);
-                }
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    existEnrollment = true;
-                }
-
-                connection.Close();
-            };
             return existEnrollment;
         }
 
-
-       
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
@@ -297,53 +251,11 @@ namespace CarManagement.Services
                 connection.Open();
                 command.CommandText = queryInsert;
                 command.Connection = connection;
-
-                foreach (var item in parameter)
-                {
-                    IDbDataParameter dbDataParameter = command.CreateParameter();
-                    dbDataParameter.ParameterName = item.Key;
-                    dbDataParameter.Value = item.Value;
-                    command.Parameters.Add(dbDataParameter);
-                }
+                command.setParameters(parameter);
 
                 int afectedRows = command.ExecuteNonQuery();
                 connection.Close();
             };
-        }
-
-        private static void executeCommand(string connectionString, string sentencies)
-        {
-            using (IDbConnection connection = new SqlConnection(connectionString))
-            using (IDbCommand command = new SqlCommand())
-            {
-                command.CommandText = sentencies;
-                command.Connection = connection;
-
-                connection.Open();
-                int afectedRows = command.ExecuteNonQuery();
-                connection.Close();
-            }
-        }
-
-        private static object executeReaderQuery(string connectionString, string query, string atributo)
-        {
-            object[] result = null;
-            int i = 0;
-
-            SqlConnection connection = new SqlConnection(connectionString);
-            connection.Open();
-            SqlCommand command = new SqlCommand(query, connection);
-            SqlDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                result[i] = reader[atributo];
-                i++;
-            }
-
-            connection.Close();
-
-            return result;
         }
 
         private static int executeScalarQuery(string connectionString, string query)
