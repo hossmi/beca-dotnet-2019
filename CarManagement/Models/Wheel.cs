@@ -7,6 +7,10 @@ namespace CarManagement.Models
 
         private double pressure;
 
+        public Wheel()
+        {
+        }
+
         public Wheel(double pressure)
         {
             this.pressure = pressure;

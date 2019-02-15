@@ -11,6 +11,12 @@ namespace CarManagement.Models
         {
 
         }
+
+        public Engine(int horsePower)
+        {
+            this.horsePower = horsePower;
+        }
+
         public Engine(int horsePower, bool isStarted)
         {
             this.horsePower = horsePower;

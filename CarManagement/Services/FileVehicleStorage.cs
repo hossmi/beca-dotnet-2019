@@ -62,6 +62,7 @@ namespace CarManagement.Services
             XmlSerializer x = new XmlSerializer(typeof(VehicleDto[]));
             TextWriter writer = new StreamWriter(filePath);
             x.Serialize(writer, vehicleArray);
+            writer.Close();
         }
 
         private static IDictionary<IEnrollment, Vehicle> readFromFile(string fileFullPath, IDtoConverter dtoConverter)

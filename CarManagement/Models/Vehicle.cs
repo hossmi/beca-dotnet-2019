@@ -24,6 +24,14 @@ namespace CarManagement.Models
             this.enrollment = enrollment;
         }
 
+        public Vehicle(Engine engine, List<Door> doors, List<Wheel> wheels, CarColor color, IEnrollment enrollment)
+        {
+            this.engine = engine;
+            this.doors = doors;
+            this.wheels = wheels;
+            this.color = color;
+            this.enrollment = enrollment;
+        }
 
         public int DoorsCount
         {
