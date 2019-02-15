@@ -63,7 +63,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void there_are_ten_vehicles_stored_at_database()
         {
-            IVehicleStorage databaseVehicleStorage = 
+            IVehicleStorage databaseVehicleStorage =
                 new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             IVehicle[] vehicles = databaseVehicleStorage

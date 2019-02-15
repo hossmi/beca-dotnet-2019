@@ -35,7 +35,7 @@ namespace BusinessCore.Tests.Services
             return this.DefaultEnrollment;
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             return new Enrollment(serial, number);
         }

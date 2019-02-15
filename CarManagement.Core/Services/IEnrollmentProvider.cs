@@ -2,9 +2,8 @@
 
 namespace CarManagement.Core.Services
 {
-    public interface IEnrollmentProvider
+    public interface IEnrollmentProvider : IEnrollmentImporter
     {
         IEnrollment getNew();
-        IEnrollment import(string serial, int number);
     }
 }
