@@ -28,7 +28,7 @@ namespace WinCarManager
         {
             if (this.vehicleForm == null || this.vehicleForm.IsDisposed)
             {
-                this.vehicleForm = new VehicleForm(this.vehicleStorage);
+                this.vehicleForm = new VehicleForm(this.vehicleStorage, this.enrollmentProvider);
                 this.vehicleForm.MdiParent = this;
                 this.vehicleForm.Show();
 

@@ -33,11 +33,10 @@
             this.EnrollmentNumber = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.EngineIsStarted = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.EngineIsStarted = new System.Windows.Forms.TextBox();
             this.EngineHorsePower = new System.Windows.Forms.TextBox();
-            this.Color = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.ButtonFirst = new System.Windows.Forms.Button();
             this.ButtonPrev = new System.Windows.Forms.Button();
@@ -53,20 +52,22 @@
             this.ButtonModify = new System.Windows.Forms.Button();
             this.ButtonCancel = new System.Windows.Forms.Button();
             this.ButtonOK = new System.Windows.Forms.Button();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.Door = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DoorGridView = new System.Windows.Forms.DataGridView();
+            this.WheelGridView = new System.Windows.Forms.DataGridView();
+            this.Color = new System.Windows.Forms.ComboBox();
             this.IsOpen = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EnrollmentsGridView = new System.Windows.Forms.DataGridView();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DoorGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WheelGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EnrollmentsGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // EnrollmentSerial
             // 
-            this.EnrollmentSerial.Location = new System.Drawing.Point(97, 6);
+            this.EnrollmentSerial.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.EnrollmentSerial.Location = new System.Drawing.Point(334, 12);
             this.EnrollmentSerial.Name = "EnrollmentSerial";
             this.EnrollmentSerial.ReadOnly = true;
             this.EnrollmentSerial.Size = new System.Drawing.Size(48, 22);
@@ -74,16 +75,18 @@
             // 
             // EnrollmentNumber
             // 
-            this.EnrollmentNumber.Location = new System.Drawing.Point(151, 6);
+            this.EnrollmentNumber.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.EnrollmentNumber.Location = new System.Drawing.Point(388, 12);
             this.EnrollmentNumber.Name = "EnrollmentNumber";
             this.EnrollmentNumber.ReadOnly = true;
-            this.EnrollmentNumber.Size = new System.Drawing.Size(100, 22);
+            this.EnrollmentNumber.Size = new System.Drawing.Size(67, 22);
             this.EnrollmentNumber.TabIndex = 1;
             // 
             // label1
             // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(249, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(79, 17);
             this.label1.TabIndex = 2;
@@ -91,16 +94,27 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.groupBox1.Controls.Add(this.EngineIsStarted);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.EngineIsStarted);
             this.groupBox1.Controls.Add(this.EngineHorsePower);
-            this.groupBox1.Location = new System.Drawing.Point(12, 108);
+            this.groupBox1.Location = new System.Drawing.Point(252, 89);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(216, 78);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Engine";
+            // 
+            // EngineIsStarted
+            // 
+            this.EngineIsStarted.AutoSize = true;
+            this.EngineIsStarted.Enabled = false;
+            this.EngineIsStarted.Location = new System.Drawing.Point(105, 47);
+            this.EngineIsStarted.Name = "EngineIsStarted";
+            this.EngineIsStarted.Size = new System.Drawing.Size(18, 17);
+            this.EngineIsStarted.TabIndex = 23;
+            this.EngineIsStarted.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -120,14 +134,6 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Horse Power:";
             // 
-            // EngineIsStarted
-            // 
-            this.EngineIsStarted.Location = new System.Drawing.Point(105, 43);
-            this.EngineIsStarted.Name = "EngineIsStarted";
-            this.EngineIsStarted.ReadOnly = true;
-            this.EngineIsStarted.Size = new System.Drawing.Size(100, 22);
-            this.EngineIsStarted.TabIndex = 6;
-            // 
             // EngineHorsePower
             // 
             this.EngineHorsePower.Location = new System.Drawing.Point(105, 15);
@@ -136,18 +142,11 @@
             this.EngineHorsePower.Size = new System.Drawing.Size(100, 22);
             this.EngineHorsePower.TabIndex = 5;
             // 
-            // Color
-            // 
-            this.Color.Location = new System.Drawing.Point(97, 34);
-            this.Color.Name = "Color";
-            this.Color.ReadOnly = true;
-            this.Color.Size = new System.Drawing.Size(100, 22);
-            this.Color.TabIndex = 4;
-            // 
             // label2
             // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(46, 37);
+            this.label2.Location = new System.Drawing.Point(283, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 17);
             this.label2.TabIndex = 5;
@@ -157,7 +156,7 @@
             // 
             this.ButtonFirst.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonFirst.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonFirst.Location = new System.Drawing.Point(293, 266);
+            this.ButtonFirst.Location = new System.Drawing.Point(293, 361);
             this.ButtonFirst.Name = "ButtonFirst";
             this.ButtonFirst.Size = new System.Drawing.Size(50, 50);
             this.ButtonFirst.TabIndex = 6;
@@ -168,7 +167,7 @@
             // 
             this.ButtonPrev.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonPrev.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonPrev.Location = new System.Drawing.Point(349, 266);
+            this.ButtonPrev.Location = new System.Drawing.Point(349, 361);
             this.ButtonPrev.Name = "ButtonPrev";
             this.ButtonPrev.Size = new System.Drawing.Size(50, 50);
             this.ButtonPrev.TabIndex = 7;
@@ -179,7 +178,7 @@
             // 
             this.ButtonNext.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonNext.Location = new System.Drawing.Point(405, 266);
+            this.ButtonNext.Location = new System.Drawing.Point(405, 361);
             this.ButtonNext.Name = "ButtonNext";
             this.ButtonNext.Size = new System.Drawing.Size(50, 50);
             this.ButtonNext.TabIndex = 8;
@@ -190,7 +189,7 @@
             // 
             this.ButtonLast.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.ButtonLast.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ButtonLast.Location = new System.Drawing.Point(461, 266);
+            this.ButtonLast.Location = new System.Drawing.Point(461, 361);
             this.ButtonLast.Name = "ButtonLast";
             this.ButtonLast.Size = new System.Drawing.Size(50, 50);
             this.ButtonLast.TabIndex = 9;
@@ -201,7 +200,7 @@
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(325, 246);
+            this.label5.Location = new System.Drawing.Point(325, 341);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(113, 17);
             this.label5.TabIndex = 12;
@@ -211,7 +210,7 @@
             // 
             this.LabelPosition.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.LabelPosition.AutoSize = true;
-            this.LabelPosition.Location = new System.Drawing.Point(444, 246);
+            this.LabelPosition.Location = new System.Drawing.Point(444, 341);
             this.LabelPosition.Name = "LabelPosition";
             this.LabelPosition.Size = new System.Drawing.Size(0, 17);
             this.LabelPosition.TabIndex = 13;
@@ -220,7 +219,7 @@
             // 
             this.label6.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(279, 17);
+            this.label6.Location = new System.Drawing.Point(535, 182);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(46, 17);
             this.label6.TabIndex = 14;
@@ -230,7 +229,7 @@
             // 
             this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(535, 17);
+            this.label7.Location = new System.Drawing.Point(535, 9);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(55, 17);
             this.label7.TabIndex = 15;
@@ -240,12 +239,12 @@
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(211, 32);
             // 
             // ButtonAdd
             // 
-            this.ButtonAdd.Location = new System.Drawing.Point(15, 266);
+            this.ButtonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ButtonAdd.Location = new System.Drawing.Point(12, 361);
             this.ButtonAdd.Name = "ButtonAdd";
             this.ButtonAdd.Size = new System.Drawing.Size(75, 50);
             this.ButtonAdd.TabIndex = 16;
@@ -255,57 +254,89 @@
             // 
             // ButtonModify
             // 
-            this.ButtonModify.Location = new System.Drawing.Point(96, 266);
+            this.ButtonModify.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ButtonModify.Location = new System.Drawing.Point(93, 361);
             this.ButtonModify.Name = "ButtonModify";
             this.ButtonModify.Size = new System.Drawing.Size(75, 50);
             this.ButtonModify.TabIndex = 17;
             this.ButtonModify.Text = "Modify";
             this.ButtonModify.UseVisualStyleBackColor = true;
+            this.ButtonModify.Click += new System.EventHandler(this.ButtonModify_Click);
             // 
             // ButtonCancel
             // 
-            this.ButtonCancel.Location = new System.Drawing.Point(632, 266);
+            this.ButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonCancel.Location = new System.Drawing.Point(632, 361);
             this.ButtonCancel.Name = "ButtonCancel";
             this.ButtonCancel.Size = new System.Drawing.Size(75, 50);
             this.ButtonCancel.TabIndex = 19;
             this.ButtonCancel.Text = "Cancel";
             this.ButtonCancel.UseVisualStyleBackColor = true;
+            this.ButtonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // ButtonOK
             // 
-            this.ButtonOK.Location = new System.Drawing.Point(713, 266);
+            this.ButtonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonOK.Location = new System.Drawing.Point(713, 361);
             this.ButtonOK.Name = "ButtonOK";
             this.ButtonOK.Size = new System.Drawing.Size(75, 50);
             this.ButtonOK.TabIndex = 18;
             this.ButtonOK.Text = "OK";
             this.ButtonOK.UseVisualStyleBackColor = true;
+            this.ButtonOK.Click += new System.EventHandler(this.ButtonOK_Click);
             // 
-            // dataGridView1
+            // DoorGridView
             // 
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Door,
+            this.DoorGridView.AllowUserToAddRows = false;
+            this.DoorGridView.AllowUserToResizeColumns = false;
+            this.DoorGridView.AllowUserToResizeRows = false;
+            this.DoorGridView.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.DoorGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.DoorGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.DoorGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DoorGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOpen});
-            this.dataGridView1.Location = new System.Drawing.Point(282, 37);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(250, 200);
-            this.dataGridView1.TabIndex = 20;
+            this.DoorGridView.Location = new System.Drawing.Point(538, 202);
+            this.DoorGridView.MultiSelect = false;
+            this.DoorGridView.Name = "DoorGridView";
+            this.DoorGridView.ReadOnly = true;
+            this.DoorGridView.RowTemplate.Height = 24;
+            this.DoorGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.DoorGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DoorGridView.Size = new System.Drawing.Size(250, 150);
+            this.DoorGridView.TabIndex = 20;
             // 
-            // Door
+            // WheelGridView
             // 
-            this.Door.HeaderText = "Door #";
-            this.Door.Name = "Door";
-            this.Door.ReadOnly = true;
+            this.WheelGridView.AllowUserToAddRows = false;
+            this.WheelGridView.AllowUserToResizeColumns = false;
+            this.WheelGridView.AllowUserToResizeRows = false;
+            this.WheelGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.WheelGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.WheelGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
+            this.WheelGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.WheelGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dataGridViewTextBoxColumn2});
+            this.WheelGridView.Location = new System.Drawing.Point(538, 29);
+            this.WheelGridView.MultiSelect = false;
+            this.WheelGridView.Name = "WheelGridView";
+            this.WheelGridView.ReadOnly = true;
+            this.WheelGridView.RowTemplate.Height = 24;
+            this.WheelGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.WheelGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.WheelGridView.Size = new System.Drawing.Size(250, 150);
+            this.WheelGridView.TabIndex = 21;
+            // 
+            // Color
+            // 
+            this.Color.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.Color.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Color.Enabled = false;
+            this.Color.FormattingEnabled = true;
+            this.Color.Location = new System.Drawing.Point(334, 40);
+            this.Color.Name = "Color";
+            this.Color.Size = new System.Drawing.Size(121, 24);
+            this.Color.TabIndex = 22;
             // 
             // IsOpen
             // 
@@ -313,45 +344,29 @@
             this.IsOpen.Name = "IsOpen";
             this.IsOpen.ReadOnly = true;
             // 
-            // dataGridView2
-            // 
-            this.dataGridView2.AllowUserToResizeColumns = false;
-            this.dataGridView2.AllowUserToResizeRows = false;
-            this.dataGridView2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dataGridViewTextBoxColumn1,
-            this.dataGridViewTextBoxColumn2});
-            this.dataGridView2.Location = new System.Drawing.Point(538, 37);
-            this.dataGridView2.MultiSelect = false;
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.ReadOnly = true;
-            this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView2.Size = new System.Drawing.Size(250, 200);
-            this.dataGridView2.TabIndex = 21;
-            // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Wheel #";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
             // dataGridViewTextBoxColumn2
             // 
             this.dataGridViewTextBoxColumn2.HeaderText = "Pressure";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             this.dataGridViewTextBoxColumn2.ReadOnly = true;
             // 
+            // EnrollmentsGridView
+            // 
+            this.EnrollmentsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.EnrollmentsGridView.Location = new System.Drawing.Point(12, 12);
+            this.EnrollmentsGridView.Name = "EnrollmentsGridView";
+            this.EnrollmentsGridView.RowTemplate.Height = 24;
+            this.EnrollmentsGridView.Size = new System.Drawing.Size(156, 340);
+            this.EnrollmentsGridView.TabIndex = 23;
+            // 
             // VehicleForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(800, 322);
-            this.Controls.Add(this.dataGridView2);
-            this.Controls.Add(this.dataGridView1);
+            this.ClientSize = new System.Drawing.Size(800, 417);
+            this.Controls.Add(this.EnrollmentsGridView);
+            this.Controls.Add(this.Color);
+            this.Controls.Add(this.WheelGridView);
+            this.Controls.Add(this.DoorGridView);
             this.Controls.Add(this.ButtonCancel);
             this.Controls.Add(this.ButtonOK);
             this.Controls.Add(this.ButtonModify);
@@ -365,7 +380,6 @@
             this.Controls.Add(this.ButtonPrev);
             this.Controls.Add(this.ButtonFirst);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.Color);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.EnrollmentNumber);
@@ -376,8 +390,9 @@
             this.Load += new System.EventHandler(this.VehicleForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DoorGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.WheelGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EnrollmentsGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -391,9 +406,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox EngineIsStarted;
         private System.Windows.Forms.TextBox EngineHorsePower;
-        private System.Windows.Forms.TextBox Color;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button ButtonFirst;
         private System.Windows.Forms.Button ButtonPrev;
@@ -409,11 +422,12 @@
         private System.Windows.Forms.Button ButtonModify;
         private System.Windows.Forms.Button ButtonCancel;
         private System.Windows.Forms.Button ButtonOK;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Door;
+        private System.Windows.Forms.DataGridView DoorGridView;
+        private System.Windows.Forms.DataGridView WheelGridView;
+        private System.Windows.Forms.ComboBox Color;
+        private System.Windows.Forms.CheckBox EngineIsStarted;
         private System.Windows.Forms.DataGridViewTextBoxColumn IsOpen;
-        private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+        private System.Windows.Forms.DataGridView EnrollmentsGridView;
     }
 }
