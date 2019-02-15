@@ -25,7 +25,8 @@ namespace WinCarManager
 
         private void vehiclesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Run(new VehicleStorageForm());
+            VehicleStorageForm vehicleStorageForm = new VehicleStorageForm();
+            vehicleStorageForm.Show();
         }
     }
 }

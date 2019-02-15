@@ -10,7 +10,15 @@ namespace WinCarManager
         /// </summary>
         private System.ComponentModel.IContainer components = null;
         private readonly IVehicleStorage vehicleStorage;
-        private Button button;
+        private Button buttonAdd;
+        private Button buttonModify;
+        private Button buttonCancel;
+        private Button buttonSave;
+        private Button buttonDelete;
+        private Button buttonFirst;
+        private Button buttonLatest;
+        private Button buttonPrevious;
+        private Button buttonNext;
 
         public VehicleStorageForm(IVehicleStorage vehicleStorage)
         {
@@ -38,24 +46,104 @@ namespace WinCarManager
         /// </summary>
         private void InitializeComponent()
         {
-            this.button = new System.Windows.Forms.Button();
+            this.buttonAdd = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.buttonDelete = new System.Windows.Forms.Button();
+            this.buttonFirst = new System.Windows.Forms.Button();
+            this.buttonLatest = new System.Windows.Forms.Button();
+            this.buttonModify = new System.Windows.Forms.Button();
+            this.buttonNext = new System.Windows.Forms.Button();
+            this.buttonPrevious = new System.Windows.Forms.Button();
+            this.buttonSave = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button
+            // buttonAdd
             // 
-            this.button.Location = new System.Drawing.Point(251, 321);
-            this.button.Name = "button";
-            this.button.Size = new System.Drawing.Size(203, 88);
-            this.button.TabIndex = 0;
-            this.button.Text = "Hola";
-            this.button.Click += new System.EventHandler(this.button_Click);
+            this.buttonAdd.Location = new System.Drawing.Point(23, 388);
+            this.buttonAdd.Name = "buttonAdd";
+            this.buttonAdd.Size = new System.Drawing.Size(75, 50);
+            this.buttonAdd.TabIndex = 0;
+            this.buttonAdd.Text = "Add";
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Location = new System.Drawing.Point(367, 388);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(75, 50);
+            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.Text = "Cancel";
+            // 
+            // buttonDelete
+            // 
+            this.buttonDelete.Location = new System.Drawing.Point(515, 388);
+            this.buttonDelete.Name = "buttonDelete";
+            this.buttonDelete.Size = new System.Drawing.Size(75, 50);
+            this.buttonDelete.TabIndex = 2;
+            this.buttonDelete.Text = "Delete";
+            // 
+            // buttonFirst
+            // 
+            this.buttonFirst.Location = new System.Drawing.Point(171, 388);
+            this.buttonFirst.Name = "buttonFirst";
+            this.buttonFirst.Size = new System.Drawing.Size(50, 50);
+            this.buttonFirst.TabIndex = 3;
+            this.buttonFirst.Text = "|<-";
+            // 
+            // buttonLatest
+            // 
+            this.buttonLatest.Location = new System.Drawing.Point(318, 388);
+            this.buttonLatest.Name = "buttonLatest";
+            this.buttonLatest.Size = new System.Drawing.Size(50, 50);
+            this.buttonLatest.TabIndex = 4;
+            this.buttonLatest.Text = "->|";
+            // 
+            // buttonModify
+            // 
+            this.buttonModify.Location = new System.Drawing.Point(97, 388);
+            this.buttonModify.Name = "buttonModify";
+            this.buttonModify.Size = new System.Drawing.Size(75, 50);
+            this.buttonModify.TabIndex = 5;
+            this.buttonModify.Text = "Modify";
+            // 
+            // buttonNext
+            // 
+            this.buttonNext.Location = new System.Drawing.Point(269, 388);
+            this.buttonNext.Name = "buttonNext";
+            this.buttonNext.Size = new System.Drawing.Size(50, 50);
+            this.buttonNext.TabIndex = 6;
+            this.buttonNext.Text = "->";
+            // 
+            // buttonPrevious
+            // 
+            this.buttonPrevious.Location = new System.Drawing.Point(220, 388);
+            this.buttonPrevious.Name = "buttonPrevious";
+            this.buttonPrevious.Size = new System.Drawing.Size(50, 50);
+            this.buttonPrevious.TabIndex = 7;
+            this.buttonPrevious.Text = "<-";
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.Location = new System.Drawing.Point(441, 388);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.Size = new System.Drawing.Size(75, 50);
+            this.buttonSave.TabIndex = 8;
+            this.buttonSave.Text = "Save";
             // 
             // VehicleStorageForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.button);
+            this.Controls.Add(this.buttonAdd);
+            this.Controls.Add(this.buttonCancel);
+            this.Controls.Add(this.buttonDelete);
+            this.Controls.Add(this.buttonFirst);
+            this.Controls.Add(this.buttonLatest);
+            this.Controls.Add(this.buttonModify);
+            this.Controls.Add(this.buttonNext);
+            this.Controls.Add(this.buttonPrevious);
+            this.Controls.Add(this.buttonSave);
             this.Name = "VehicleStorageForm";
             this.Text = "VehicleStorageForm";
             this.ResumeLayout(false);

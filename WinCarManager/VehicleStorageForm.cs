@@ -12,18 +12,14 @@ namespace WinCarManager
 {
     public partial class VehicleStorageForm : Form
     {
-        
-
         public VehicleStorageForm()
         {
             InitializeComponent();
         }
 
-        private void button_Click(object sender, EventArgs e)
+        private void buttonAdd_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Hi!");
         }
-    }
-
-    
+    }    
 }
