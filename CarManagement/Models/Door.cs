@@ -10,6 +10,12 @@ namespace CarManagement.Models
         {
             this.isOpen = false;
         }
+
+        public Door(bool isOpen)
+        {
+            this.isOpen = isOpen;
+        }
+
         public bool IsOpen
         {
             get
