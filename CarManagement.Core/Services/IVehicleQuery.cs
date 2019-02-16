@@ -5,6 +5,7 @@ namespace CarManagement.Core.Services
 {
     public interface IVehicleQuery : IEnumerable<IVehicle>
     {
+        IEnumerable<IEnrollment> Keys { get; }
         IVehicleQuery whereEnrollmentSerialIs(string serial);
         IVehicleQuery whereEnrollmentIs(IEnrollment enrollment);
         IVehicleQuery whereColorIs(CarColor color);

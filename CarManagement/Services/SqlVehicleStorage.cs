@@ -49,6 +49,14 @@ namespace CarManagement.Services
             private CarColor color;
             private bool colorHasValue;
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -98,6 +106,11 @@ namespace CarManagement.Services
             }
 
             private IEnumerator<IVehicle> enumerate()
+            {
+                throw new NotImplementedException();
+            }
+
+            private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 throw new NotImplementedException();
             }
