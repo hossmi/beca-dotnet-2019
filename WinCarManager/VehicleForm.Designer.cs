@@ -73,7 +73,7 @@
             this.EnrollmentSerial.Location = new System.Drawing.Point(334, 12);
             this.EnrollmentSerial.Name = "EnrollmentSerial";
             this.EnrollmentSerial.ReadOnly = true;
-            this.EnrollmentSerial.Size = new System.Drawing.Size(48, 22);
+            this.EnrollmentSerial.Size = new System.Drawing.Size(48, 20);
             this.EnrollmentSerial.TabIndex = 0;
             // 
             // EnrollmentNumber
@@ -82,7 +82,7 @@
             this.EnrollmentNumber.Location = new System.Drawing.Point(388, 12);
             this.EnrollmentNumber.Name = "EnrollmentNumber";
             this.EnrollmentNumber.ReadOnly = true;
-            this.EnrollmentNumber.Size = new System.Drawing.Size(67, 22);
+            this.EnrollmentNumber.Size = new System.Drawing.Size(67, 20);
             this.EnrollmentNumber.TabIndex = 1;
             // 
             // label1
@@ -91,7 +91,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(249, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 17);
+            this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Enrollment:";
             // 
@@ -115,7 +115,7 @@
             this.EngineIsStarted.Enabled = false;
             this.EngineIsStarted.Location = new System.Drawing.Point(105, 47);
             this.EngineIsStarted.Name = "EngineIsStarted";
-            this.EngineIsStarted.Size = new System.Drawing.Size(18, 17);
+            this.EngineIsStarted.Size = new System.Drawing.Size(15, 14);
             this.EngineIsStarted.TabIndex = 23;
             this.EngineIsStarted.UseVisualStyleBackColor = true;
             // 
@@ -124,7 +124,7 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(27, 46);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(72, 17);
+            this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 7;
             this.label4.Text = "Is Started:";
             // 
@@ -133,7 +133,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(6, 18);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(93, 17);
+            this.label3.Size = new System.Drawing.Size(71, 13);
             this.label3.TabIndex = 6;
             this.label3.Text = "Horse Power:";
             // 
@@ -142,7 +142,7 @@
             this.EngineHorsePower.Location = new System.Drawing.Point(105, 15);
             this.EngineHorsePower.Name = "EngineHorsePower";
             this.EngineHorsePower.ReadOnly = true;
-            this.EngineHorsePower.Size = new System.Drawing.Size(100, 22);
+            this.EngineHorsePower.Size = new System.Drawing.Size(100, 20);
             this.EngineHorsePower.TabIndex = 5;
             // 
             // label2
@@ -151,7 +151,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(283, 43);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 17);
+            this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Color:";
             // 
@@ -205,7 +205,7 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(325, 341);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(113, 17);
+            this.label5.Size = new System.Drawing.Size(84, 13);
             this.label5.TabIndex = 12;
             this.label5.Text = "Current Position:";
             // 
@@ -215,7 +215,7 @@
             this.LabelPosition.AutoSize = true;
             this.LabelPosition.Location = new System.Drawing.Point(444, 341);
             this.LabelPosition.Name = "LabelPosition";
-            this.LabelPosition.Size = new System.Drawing.Size(0, 17);
+            this.LabelPosition.Size = new System.Drawing.Size(0, 13);
             this.LabelPosition.TabIndex = 13;
             // 
             // label6
@@ -224,7 +224,7 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(535, 182);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(46, 17);
+            this.label6.Size = new System.Drawing.Size(35, 13);
             this.label6.TabIndex = 14;
             this.label6.Text = "Doors";
             // 
@@ -234,7 +234,7 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(535, 9);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(55, 17);
+            this.label7.Size = new System.Drawing.Size(43, 13);
             this.label7.TabIndex = 15;
             this.label7.Text = "Wheels";
             // 
@@ -350,7 +350,7 @@
             this.Color.FormattingEnabled = true;
             this.Color.Location = new System.Drawing.Point(334, 40);
             this.Color.Name = "Color";
-            this.Color.Size = new System.Drawing.Size(121, 24);
+            this.Color.Size = new System.Drawing.Size(121, 21);
             this.Color.TabIndex = 22;
             // 
             // EnrollmentsGridView
