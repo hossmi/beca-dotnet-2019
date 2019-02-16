@@ -429,11 +429,12 @@ namespace CarManagement.Services
                 List<WheelDto> wheelsDto = new List<WheelDto>();
                 List<DoorDto> doorsDto = new List<DoorDto>();
 
-                using (SqlConnection con = new SqlConnection(this.connectionString))
+                using (IDbConnection con = new SqlConnection(this.connectionString))
                 {
                     con.Open();
-                    using (SqlCommand sentence = new SqlCommand(SELECT_VEHICLE_HEAD, con))
+                    using (IDbCommand sentence = con.CreateCommand())
                     {
+                        sentence.CommandText = SELECT_VEHICLE_HEAD;
                         foreach (var item in this.queryParameters.Keys)
                         {
                             object type;
@@ -452,24 +453,30 @@ namespace CarManagement.Services
                             parameter.Value = data;
                             sentence.Parameters.Add(parameter);
                         }
-                        using (SqlDataReader reader = sentence.ExecuteReader())
+
+                        using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                sentence.Parameters.Add("@ID", SqlDbType.Int);
-                                sentence.Parameters["@ID"].Value = (int)reader["id"];
+                                IDbDataParameter parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@ID";
+                                parameter.Value = (int)reader["id"];
+                                sentence.Parameters.Add(parameter);
                                 int id = (int)reader["id"];
                                 enrollmentDto.Serial = reader["serial"].ToString();
                                 enrollmentDto.Number = Convert.ToInt32(reader["number"]);
                                 CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader["color"].ToString());
                                 engineDto.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
                                 engineDto.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
-                                using (SqlCommand sentence2 = new SqlCommand(SELECT_WHEELS, con))
+                                using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
-                                    sentence2.Parameters["@ID"].Value = id;
+                                    sentence2.CommandText = SELECT_WHEELS;
+                                    parameter = sentence2.CreateParameter();
+                                    parameter.ParameterName = "@ID";
+                                    parameter.Value = id;
+                                    sentence2.Parameters.Add(parameter);
 
-                                    using (SqlDataReader reader2 = sentence2.ExecuteReader())
+                                    using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
                                         while (reader2.Read())
                                         {
@@ -479,11 +486,15 @@ namespace CarManagement.Services
                                         }
                                     }
                                 }
-                                using (SqlCommand sentence2 = new SqlCommand(SELECT_DOORS, con))
+                                using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
-                                    sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
-                                    using (SqlDataReader reader2 = sentence2.ExecuteReader())
+                                    sentence2.CommandText = SELECT_DOORS;
+                                    parameter = sentence2.CreateParameter();
+                                    parameter.ParameterName = "@ID";
+                                    parameter.Value = (int)reader["id"];
+                                    sentence2.Parameters.Add(parameter);
+
+                                    using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
                                         while (reader2.Read())
                                         {
