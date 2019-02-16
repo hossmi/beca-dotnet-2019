@@ -67,7 +67,7 @@ namespace BusinessCore.Tests
         public void there_are_ten_vehicles_stored_at_database()
         {
             IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             IVehicle[] vehicles = databaseVehicleStorage
                 .get()
@@ -79,16 +79,14 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void clear_erases_vehicles_from_DB()
         {
-            IVehicleStorage databaseVehicleStorage = 
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             databaseVehicleStorage.clear();
 
             IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
 
-            databaseVehicleStorage = 
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
             vehicles = databaseVehicleStorage.get();
             Assert.AreEqual(0, vehicles.Count());
         }
@@ -96,8 +94,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void save_vehicle_to_DB_and_retrieve_it()
         {
-            IVehicleStorage databaseVehicleStorage = 
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             databaseVehicleStorage.clear();
             IEnumerable<IVehicle> vehicles = databaseVehicleStorage.get();
@@ -116,18 +113,17 @@ namespace BusinessCore.Tests
                     HorsePower = 1000,
                 },
                 Color = CarColor.Purple,
-                Doors = new Door[] { new Door { IsOpen = false }, new Door { IsOpen = true } },
-                Wheels = new Wheel[] { new Wheel { Pressure = 2.3 }, new Wheel { Pressure = 1.2 } },
+                Doors = new Door[] { new Door{ IsOpen = false }, new Door { IsOpen = true }},
+                Wheels = new Wheel[] { new Wheel { Pressure = 2.3 }, new Wheel { Pressure = 1.2 }},
             };
 
             databaseVehicleStorage.set(firstVehicle);
 
-            databaseVehicleStorage = 
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
             IVehicle retrievedVehicle = databaseVehicleStorage.get().First();
 
-            Assert.AreEqual(firstVehicle.Enrollment.Serial, retrievedVehicle.Enrollment.Serial);
-            Assert.AreEqual(firstVehicle.Enrollment.Number, retrievedVehicle.Enrollment.Number);
+            Assert.AreEqual(firstVehicle.Enrollment.Serial , retrievedVehicle.Enrollment.Serial);
+            Assert.AreEqual(firstVehicle.Enrollment.Number , retrievedVehicle.Enrollment.Number);
             Assert.AreEqual(firstVehicle.Color, retrievedVehicle.Color);
             Assert.AreEqual(firstVehicle.Engine.HorsePower, retrievedVehicle.Engine.HorsePower);
             Assert.AreEqual(firstVehicle.Doors[0].IsOpen, retrievedVehicle.Doors[0].IsOpen);

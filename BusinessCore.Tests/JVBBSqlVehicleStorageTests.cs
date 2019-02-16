@@ -67,8 +67,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void insert_a_new_vehicle_and_update_it()
         {
-            IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             this.vehicleBuilder.addWheel();
             this.vehicleBuilder.addWheel();
@@ -114,8 +113,7 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void there_are_ten_vehicles_stored_at_database_using_Count()
         {
-            IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+            IVehicleStorage databaseVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
 
             Assert.AreEqual(10, databaseVehicleStorage.Count);
         }
@@ -124,7 +122,7 @@ namespace BusinessCore.Tests
         public void there_exists_a_vehicle_with_ZZZ_serial_and_2010_number_as_enrollment()
         {
             IVehicleStorage databaseVehicleStorage =
-                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder, this.enrollmentProvider);
+                new SqlVehicleStorage(this.connectionString, this.vehicleBuilder);
             IEnrollment enrollment = this.enrollmentProvider.import("ZZZ", 2100);
             IVehicle vehicle = databaseVehicleStorage.get(enrollment);
 
