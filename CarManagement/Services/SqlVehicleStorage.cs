@@ -63,6 +63,10 @@ namespace CarManagement.Services
              FROM enrollment
              WHERE serial = @serial
              AND number = @number ";
+        private const string DELETE_WHEELS_AND_DOORS = @"
+              DELETE 
+              FROM wheel, door  
+              WHERE vehicleId = @id ";
 
         private const string BASE_QUERRY = @"
             SELECT e.serial, 
@@ -206,9 +210,13 @@ namespace CarManagement.Services
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
 
+            command = new SqlCommand(DELETE_WHEELS_AND_DOORS, conection);
+            command.Parameters.AddWithValue("@id", id);
+            command.ExecuteNonQuery();
+
             foreach (IWheel wheels in vehicle.Wheels)
             {
-                command = new SqlCommand(UPDATE_WITH_WHEELS, conection);
+                command = new SqlCommand(PUSH_TO_WHEEL, conection);
                 command.Parameters.AddWithValue("@pressure", wheels.Pressure);
                 command.Parameters.AddWithValue("@vehicleId", id);
                 command.ExecuteNonQuery();
@@ -217,7 +225,7 @@ namespace CarManagement.Services
 
             foreach (IDoor doors in vehicle.Doors)
             {
-                command = new SqlCommand(UPDATE_WITH_DOORS, conection);
+                command = new SqlCommand(PUSH_TO_DOOR, conection);
                 command.Parameters.AddWithValue("@isOpen", doors.IsOpen);
                 command.Parameters.AddWithValue("@vehicleId", id);
                 command.ExecuteNonQuery();
