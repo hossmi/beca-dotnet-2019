@@ -31,9 +31,6 @@ namespace CarManagement.Services
             {
                 using (IDbConnection con = conOpen())
                 {
-                    //SqlConnection con = conOpen();
-                    //String query;
-                    //query = "SELECT count(*) AS 'Count' FROM vehicle";
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = "SELECT count(*) AS 'Count' FROM vehicle";
@@ -50,27 +47,32 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            SqlConnection con = conOpen();
-            String query;
-            query = "USE Carmanagement;" +
-                "DELETE FROM door;" +
-                "DELETE FROM wheel;" + 
-                "DELETE FROM vehicle;" + 
-                "DELETE FROM enrollment;";
-            IDbCommand sentence = con.CreateCommand();
-            sentence.ExecuteNonQuery();
+            using (IDbConnection con = conOpen())
+            {
+                using (IDbCommand sentence = con.CreateCommand())
+                {
+                    sentence.CommandText = "USE Carmanagement;" +
+                        "DELETE FROM door;" +
+                        "DELETE FROM wheel;" +
+                        "DELETE FROM vehicle;" +
+                        "DELETE FROM enrollment;";
+                    sentence.ExecuteNonQuery();
+                }
+
+            }
+
         }
 
         public void Dispose()
         {
-            SqlConnection con;
-            con = new SqlConnection(this.connectionString);
-            con.Dispose();
+            IDbConnection con = conOpen();
+                con.Dispose();
         }
 
-        private SqlConnection conOpen()
+        private IDbConnection conOpen()
         {
             IDbConnection con = new SqlConnection(this.connectionString);
+            //IDbConnection con = new SqlConnection(this.connectionString);
             con.Open();
             return con;
         }
@@ -81,108 +83,209 @@ namespace CarManagement.Services
 
         public void set(IVehicle vehicle)
         {
-            string serial = vehicle.Enrollment.Serial.ToString();
-            int number = vehicle.Enrollment.Number;
-            SqlConnection con;
-            con = new SqlConnection(this.connectionString);
-            con.Open();
-            string query;
-            query = "USE CarManagement;" +
-                "SELECT count(*) AS 'count' FROM enrollment " +
-                "WHERE serial = '" + serial + "' AND number = " + number;
-            SqlCommand sentence = new SqlCommand(query, con);
-            SqlDataReader reader = sentence.ExecuteReader();
-            reader.Read();
-            int count = Convert.ToInt32(reader["count"]);
-            if (count > 0)
+            using (IDbConnection con = new SqlConnection(this.connectionString))
             {
-                query = "SELECT id " +
-                    "FROM [enrollment]" +
-                    "WHERE (serial = '" + serial + "' AND number = " + number + ")";
-                sentence = new SqlCommand(query, con);
-                reader = sentence.ExecuteReader();
-                reader.Read();
-                int ressult = (int)reader["id"];
-                reader.Close();
-
-                int color_int = (int)vehicle.Color;
-                int engineIsStarted = vehicle.Engine.IsStarted ? 1 : 0;
-
-                int engineHorsePower = vehicle.Engine.HorsePower;
-                query = "UPDATE vehicle" +
-                    "SET enrollmentId = " + ressult + ", color = " + color_int + ", engineHorsePower = " + engineHorsePower + ", engineIsStarted = " + engineIsStarted;
-                sentence = new SqlCommand(query, con);
-                sentence.ExecuteNonQuery();
-
-                IWheel[] wheels = vehicle.Wheels;
-                foreach (IWheel wheel in wheels)
+                con.Open();
+                using (IDbCommand sentence = con.CreateCommand())
                 {
-                    double pressure = wheel.Pressure;
-                    query = "UPDATE wheel" +
-                        "SET pressure = " + pressure;
-                    sentence = new SqlCommand(query, con);
-                    sentence.ExecuteNonQuery();
+                    IDbDataParameter parameter = sentence.CreateParameter();
+                    parameter.ParameterName = "@serial";
+                    parameter.Value = vehicle.Enrollment.Serial;
+                    sentence.Parameters.Add(parameter);
+                    parameter = sentence.CreateParameter();
+                    parameter.ParameterName = "@number";
+                    parameter.Value = vehicle.Enrollment.Number;
+                    sentence.Parameters.Add(parameter);
+                    sentence.CommandText = @"USE CarManagement; 
+                    SELECT id FROM enrollment 
+                    WHERE serial = @serial AND number = @number";
+                    if (sentence.ExecuteNonQuery() > 0)
+                    {
+                        using (IDataReader reader = sentence.ExecuteReader())
+                        {
+                            reader.Read();
+                            parameter = sentence.CreateParameter();
+                            parameter.ParameterName = "@id";
+                            parameter.Value = (int)reader["id"];
+                            sentence.Parameters.Add(parameter);
+                            reader.Close();
+                            sentence.CommandText = @"SELECT * FROM vehicle
+                            WHERE enrollmentId = @id";
+                            int query = sentence.ExecuteNonQuery();
+                            using (IDataReader reader2 = sentence.ExecuteReader())
+                            {
+                                reader2.Read();
+                                parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@color";
+                                parameter.Value = (int)vehicle.Color;
+                                sentence.Parameters.Add(parameter);
+
+                                parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@engineIsStarted";
+                                parameter.Value = vehicle.Engine.IsStarted ? 1 : 0;
+                                sentence.Parameters.Add(parameter);
+
+                                parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@engineHorsePower";
+                                parameter.Value = vehicle.Engine.HorsePower;
+                                sentence.Parameters.Add(parameter);
+                                reader.Close();
+
+                                if (query > 0)
+                                {
+                                    sentence.CommandText = @"UPDATE vehicle
+                                    SET color = @color, 
+                                        engineHorsePower = @engineHorsePower, 
+                                        engineIsStarted = @engineIsStarted
+                                        WHERE enrollmentId = @id";
+                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    sentence.CommandText = @"DELETE FROM wheel
+                                    WHERE enrollmentId = @id";
+                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    IWheel[] wheels = vehicle.Wheels;
+                                    foreach (IWheel wheel in wheels)
+                                    {
+                                        if (sentence.Parameters.Contains("@pressure"))
+                                        {
+                                            sentence.Parameters.Remove("@pressure");
+                                        }
+                                        parameter = sentence.CreateParameter();
+                                        parameter.ParameterName = "@pressure";
+                                        parameter.Value = wheel.Pressure;
+                                        sentence.Parameters.Add(parameter);
+                                        sentence.CommandText = @"INSERT INTO wheel(enrollmentId, pressure)
+                                        VALUES (@id, @pressure)";
+                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    }
+                                    sentence.CommandText = @"DELETE FROM door
+                                    WHERE enrollmentId = @id";
+                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    IDoor[] doors = vehicle.Doors;
+                                    foreach (IDoor door in doors)
+                                    {
+                                        if (sentence.Parameters.Contains("@isOpen"))
+                                        {
+                                            sentence.Parameters.Remove("@isOpen");
+                                        }
+                                        parameter = sentence.CreateParameter();
+                                        parameter.ParameterName = "@isOpen";
+                                        parameter.Value = door.IsOpen;
+                                        sentence.Parameters.Add(parameter);
+                                        sentence.CommandText = @"INSERT INTO door(enrollmentId, isOpen)
+                                        VALUES (@id, @isOpen)";
+                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    }
+                                }
+                                else
+                                {
+                                    sentence.CommandText = @"INSERT INTO vehicle(enrollmwntId, 
+                                    color, engineHorsePower, engineIsStarted)
+                                    VALUES (@id, @color, @engineHorsePower, @engineIsStarted)";
+
+                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    IWheel[] wheels = vehicle.Wheels;
+                                    foreach (IWheel wheel in wheels)
+                                    {
+                                        if (sentence.Parameters.Contains("@pressure"))
+                                        {
+                                            sentence.Parameters.Remove("@pressure");
+                                        }
+                                        parameter = sentence.CreateParameter();
+                                        parameter.ParameterName = "@pressure";
+                                        parameter.Value = wheel.Pressure;
+                                        sentence.Parameters.Add(parameter);
+                                        sentence.CommandText = @"INSERT INTO wheel(enrollmentId, pressure)
+                                        VALUES (@id, @pressure)";
+                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    }
+                                    IDoor[] doors = vehicle.Doors;
+                                    foreach (IDoor door in doors)
+                                    {
+                                        if (sentence.Parameters.Contains("@isOpen"))
+                                        {
+                                            sentence.Parameters.Remove("@isOpen");
+                                        }
+                                        parameter = sentence.CreateParameter();
+                                        parameter.ParameterName = "@isOpen";
+                                        parameter.Value = door.IsOpen;
+                                        sentence.Parameters.Add(parameter);
+                                        sentence.CommandText = @"INSERT INTO door(enrollmentId, isOpen)
+                                        VALUES (@id, @isOpen)";
+                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sentence.CommandText = @"USE CarManagement;
+                        INSERT INTO enrollment(serial, number)
+                        VALUES (@serial, @number)";
+                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                        sentence.CommandText = @"SELECT * FROM enrollment
+                        WHERE serial = @serial AND number = @number";
+                        using (IDataReader reader = sentence.ExecuteReader())
+                        {
+                            reader.Read();
+                            parameter = sentence.CreateParameter();
+                            parameter.ParameterName = "@id";
+                            parameter.Value = (int)reader["id"];
+                            sentence.Parameters.Add(parameter);
+                            reader.Close();
+
+                            parameter = sentence.CreateParameter();
+                            parameter.ParameterName = "@color";
+                            parameter.Value = (int)vehicle.Color;
+                            sentence.Parameters.Add(parameter);
+
+                            parameter = sentence.CreateParameter();
+                            parameter.ParameterName = "@engineHorsePower";
+                            parameter.Value = vehicle.Engine.HorsePower;
+                            sentence.Parameters.Add(parameter);
+
+                            parameter = sentence.CreateParameter();
+                            parameter.ParameterName = "@engineIsStarted";
+                            parameter.Value = Convert.ToInt16(vehicle.Engine.IsStarted);
+                            sentence.Parameters.Add(parameter);
+
+                            sentence.CommandText = @"INSERT INTO vehicle(enrollmentId, 
+                            color, engineHorsePower, engineIsStarted)
+                            VALUES (@id, @color, @engineHorsePower, @engineIsStarted)";
+                            sentence.ExecuteNonQuery();
+                            IWheel[] wheels = vehicle.Wheels;
+                            foreach (IWheel wheel in wheels)
+                            {
+                                if (sentence.Parameters.Contains(parameter))
+                                {
+                                    sentence.Parameters.Remove(parameter);
+                                }
+                                parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@pressure";
+                                parameter.Value = wheel.Pressure;
+                                sentence.Parameters.Add(parameter);
+                                sentence.CommandText = @"INSERT INTO wheel(vehicleId, pressure)
+                                        VALUES (@id, @pressure)";
+                                Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                            }
+                            IDoor[] doors = vehicle.Doors;
+                            foreach (IDoor door in doors)
+                            {
+                                if (sentence.Parameters.Contains(parameter))
+                                {
+                                    sentence.Parameters.Remove(parameter);
+                                }
+                                parameter = sentence.CreateParameter();
+                                parameter.ParameterName = "@isOpen";
+                                parameter.Value = door.IsOpen;
+                                sentence.Parameters.Add(parameter);
+                                sentence.CommandText = @"INSERT INTO door(vehicleId, isOpen)
+                                        VALUES (@id, @isOpen)";
+                                Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                            }
+                        }
+                    }
                 }
-
-                IDoor[] doors = vehicle.Doors;
-                foreach (IDoor door in doors)
-                {
-                    string isOpen = (door.IsOpen ? 1 : 0).ToString();
-                    query = "UPDATE door" +
-                        "SET vehicleId = " + ressult + ", isOpen = '" + isOpen + "'";
-                    sentence = new SqlCommand(query, con);
-                    sentence.ExecuteNonQuery();
-
-                }
-                con.Close();
-            }
-            else
-            {
-                query = "USE [CarManagement]" +
-                "INSERT INTO [enrollment] (serial, number) " +
-                "VALUES ('" + serial + "', " + number + ")";
-                sentence = new SqlCommand(query, con);
-                sentence.ExecuteNonQuery();
-
-                query = "SELECT id " +
-                    "FROM [enrollment]" +
-                    "WHERE (serial = '" + serial + "' AND number = " + number + ")";
-                sentence = new SqlCommand(query, con);
-                reader = sentence.ExecuteReader();
-                reader.Read();
-                int ressult = (int)reader["id"];
-                reader.Close();
-
-                int color_int = (int)vehicle.Color;
-                int engineIsStarted = vehicle.Engine.IsStarted ? 1 : 0;
-
-                int engineHorsePower = vehicle.Engine.HorsePower;
-                query = "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
-                    "VALUES (" + ressult + ", " + color_int + ", " + engineHorsePower + ", " + engineIsStarted + ")";
-                sentence = new SqlCommand(query, con);
-                sentence.ExecuteNonQuery();
-
-                IWheel[] wheels = vehicle.Wheels;
-                foreach (IWheel wheel in wheels)
-                {
-                    string pressure = wheel.Pressure.ToString().Replace(",", ".");
-                    query = "INSERT INTO wheel (vehicleId, pressure) " +
-                        "VALUES (" + ressult + ", " + pressure + ")";
-                    sentence = new SqlCommand(query, con);
-                    sentence.ExecuteNonQuery();
-                }
-
-                IDoor[] doors = vehicle.Doors;
-                foreach (IDoor door in doors)
-                {
-                    string isOpen = (door.IsOpen ? 1 : 0).ToString();
-                    query = "INSERT INTO door (vehicleId, isOpen) " +
-                        "VALUES (" + ressult + ", " + isOpen + ")";
-                    sentence = new SqlCommand(query, con);
-                    sentence.ExecuteNonQuery();
-
-                }
-                con.Close();
             }
         }
 
@@ -325,87 +428,83 @@ namespace CarManagement.Services
                 EngineDto engineDto = new EngineDto();
                 List<WheelDto> wheelsDto = new List<WheelDto>();
                 List<DoorDto> doorsDto = new List<DoorDto>();
-                SqlCommand sentence = genericSentence(query, this.connectionString);
-                SqlDataReader reader = sentence.ExecuteReader();
 
-                while (reader.Read())
+                using (SqlConnection con = new SqlConnection(this.connectionString))
                 {
-                    sentence.Parameters.Add("@ID", SqlDbType.Int);
-                    sentence.Parameters["@ID"].Value = (int)reader["id"];
-                    int id = (int)reader["id"];
-                    enrollmentDto.Serial = reader["serial"].ToString();
-                    enrollmentDto.Number = Convert.ToInt32(reader["number"]);
-                    CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader["color"].ToString());
-                    engineDto.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
-                    engineDto.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
-
-                    SqlCommand sentence2 = genericSentence(SELECT_WHEELS, this.connectionString);
-                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
-                    sentence2.Parameters["@ID"].Value = id;
-                    SqlDataReader reader2 = sentence2.ExecuteReader();
-
-                    while (reader2.Read())
+                    con.Open();
+                    using (SqlCommand sentence = new SqlCommand(SELECT_VEHICLE_HEAD, con))
                     {
-                        WheelDto wheelDto = new WheelDto();
-                        wheelDto.Pressure = Convert.ToDouble(reader2["pressure"]);
-                        wheelsDto.Add(wheelDto);
+                        foreach (var item in this.queryParameters.Keys)
+                        {
+                            object type;
+                            string data = this.queryParameters.ContainsKey(nameof(item)).ToString();
+                            string dataType = this.Type.ContainsKey(nameof(item)).ToString();
+                            if (dataType == "int")
+                            {
+                                type = SqlDbType.Int;
+                            }
+                            else
+                            {
+                                type = SqlDbType.VarChar;
+                            }
+                            IDbDataParameter parameter = sentence.CreateParameter();
+                            parameter.ParameterName = $"{item}";
+                            parameter.Value = data;
+                            sentence.Parameters.Add(parameter);
+                        }
+                        using (SqlDataReader reader = sentence.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                sentence.Parameters.Add("@ID", SqlDbType.Int);
+                                sentence.Parameters["@ID"].Value = (int)reader["id"];
+                                int id = (int)reader["id"];
+                                enrollmentDto.Serial = reader["serial"].ToString();
+                                enrollmentDto.Number = Convert.ToInt32(reader["number"]);
+                                CarColor color = (CarColor)Enum.Parse(typeof(CarColor), reader["color"].ToString());
+                                engineDto.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
+                                engineDto.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
+                                using (SqlCommand sentence2 = new SqlCommand(SELECT_WHEELS, con))
+                                {
+                                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
+                                    sentence2.Parameters["@ID"].Value = id;
+
+                                    using (SqlDataReader reader2 = sentence2.ExecuteReader())
+                                    {
+                                        while (reader2.Read())
+                                        {
+                                            WheelDto wheelDto = new WheelDto();
+                                            wheelDto.Pressure = Convert.ToDouble(reader2["pressure"]);
+                                            wheelsDto.Add(wheelDto);
+                                        }
+                                    }
+                                }
+                                using (SqlCommand sentence2 = new SqlCommand(SELECT_DOORS, con))
+                                {
+                                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
+                                    sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
+                                    using (SqlDataReader reader2 = sentence2.ExecuteReader())
+                                    {
+                                        while (reader2.Read())
+                                        {
+                                            DoorDto doorDto = new DoorDto();
+                                            doorDto.IsOpen = Convert.ToBoolean(reader2["isOpen"]);
+                                            doorsDto.Add(doorDto);
+                                        }
+                                    }
+                                }
+                                vehicleDto.Color = color;
+                                vehicleDto.Doors = doorsDto.ToArray();
+                                vehicleDto.Wheels = wheelsDto.ToArray();
+                                vehicleDto.Engine = engineDto;
+                                vehicleDto.Enrollment = enrollmentDto;
+                                IVehicle vehicle_get = this.vehicleBuilder.import(vehicleDto);
+
+                                yield return vehicle_get;
+                            }
+                        }
                     }
-
-                    reader2.Close();
-
-                    sentence2 = genericSentence(SELECT_DOORS, this.connectionString);
-                    sentence2.Parameters.Add("@ID", SqlDbType.Int);
-                    sentence2.Parameters["@ID"].Value = sentence.Parameters["@ID"].Value;
-                    reader2 = sentence2.ExecuteReader();
-
-                    while (reader2.Read())
-                    {
-                        DoorDto doorDto = new DoorDto();
-                        doorDto.IsOpen = Convert.ToBoolean(reader2["isOpen"]);
-                        doorsDto.Add(doorDto);
-                    }
-
-                    reader2.Close();
-
-                    vehicleDto.Color = color;
-                    vehicleDto.Doors = doorsDto.ToArray();
-                    vehicleDto.Wheels = wheelsDto.ToArray();
-                    vehicleDto.Engine = engineDto;
-                    vehicleDto.Enrollment = enrollmentDto;
-                    IVehicle vehicle_get = this.vehicleBuilder.import(vehicleDto);
-
-                    yield return vehicle_get;
                 }
-                reader.Close();
-            }
-
-            private SqlCommand genericSentence(string query, string con)
-            {
-                SqlCommand sentence = new SqlCommand(query, connection(con));
-                sentence.CreateParameter();
-                foreach (var item in this.queryParameters.Keys)
-                {
-                    object var;
-                    string data = this.queryParameters.ContainsKey(nameof(item)).ToString();
-                    string dataType = this.Type.ContainsKey(nameof(item)).ToString();
-                    if(dataType == "int")
-                    {
-                        var = SqlDbType.Int;
-                    }
-                    else 
-                    {
-                        var = SqlDbType.VarChar;
-                    }
-                    sentence.Parameters.AddWithValue($"{data}", var);
-                }
-                return sentence;
-            }
-
-            private SqlConnection connection(string connection)
-            {
-                SqlConnection con = new SqlConnection(connection);
-                con.Open();
-                return con;
             }
             private static string createQuery(string query, IDictionary<string, string> conditionParts)
             {
