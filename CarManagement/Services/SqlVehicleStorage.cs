@@ -29,7 +29,7 @@ namespace CarManagement.Services
         public int Count {
             get
             {
-                using (IDbConnection con = conOpen())
+                using (IDbConnection con = new SqlConnection(this.connectionString))
                 {
                     using (IDbCommand sentence = con.CreateCommand())
                     {
@@ -48,7 +48,7 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            using (IDbConnection con = conOpen())
+            using (IDbConnection con = new SqlConnection(this.connectionString))
             {
                 using (IDbCommand sentence = con.CreateCommand())
                 {
@@ -66,17 +66,12 @@ namespace CarManagement.Services
 
         public void Dispose()
         {
-            IDbConnection con = conOpen();
-                con.Dispose();
+            using (IDbConnection con = new SqlConnection(this.connectionString))
+            {
+                con.Close();
+            }    
         }
 
-        private IDbConnection conOpen()
-        {
-            IDbConnection con = new SqlConnection(this.connectionString);
-            //IDbConnection con = new SqlConnection(this.connectionString);
-            con.Open();
-            return con;
-        }
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
