@@ -39,7 +39,7 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .get()
-                .Where(vehicle => vehicle.Doors.Count(door => door.IsOpen) >1)
+                .Where(vehicle => vehicle.Doors.Any(door => door.IsOpen))
                 .Where(vehicle => vehicle.Engine.IsStarted == true)
                 .Select(vehicle => vehicle.Engine);
 

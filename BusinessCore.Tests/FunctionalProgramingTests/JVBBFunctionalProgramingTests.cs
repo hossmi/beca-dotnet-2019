@@ -25,18 +25,12 @@ namespace BusinessCore.Tests
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
             bool isTrue = false;
-            this.vehicleStorage
+            isTrue = this.vehicleStorage
                 .get()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
-                .Where(vehicle => vehicle.Engine.HorsePower == 666)
-                .Select(vehicle =>
-                    new
-                        {
-                            serial = vehicle.Enrollment.Serial,
-                            HorsePower = vehicle.Engine.HorsePower
-                        }
-                    );
-            isTrue = true;
+                .Select(vehicle => vehicle)
+                .Min(vehicle => vehicle.Engine.HorsePower == 666);
+
             Assert.IsTrue(isTrue);
         }
 
@@ -44,8 +38,10 @@ namespace BusinessCore.Tests
         public void all_vehicles_with_enrollment_serial_CSM_have_their_third_door_open()
         {
             bool isTrue = false;
-
-
+            isTrue = this.vehicleStorage
+                .get()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .All(vehicle => vehicle.Doors[2].IsOpen == true);
 
             Assert.IsTrue(isTrue);
 
@@ -56,8 +52,18 @@ namespace BusinessCore.Tests
         {
             int open = 0;
             int close = 0;
+            open = this.vehicleStorage
+                .get()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors.Where(door => door.IsOpen == true))
+                .Count();
+            close = this.vehicleStorage
+                .get()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .SelectMany(vehicle => vehicle.Doors.Where(door => door.IsOpen == false))
+                .Count();
 
-            Assert.AreEqual(open,9);
+            Assert.AreEqual(open, 9);
             Assert.AreEqual(close, 7);
 
 
