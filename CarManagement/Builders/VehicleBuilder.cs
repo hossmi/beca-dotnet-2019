@@ -35,7 +35,10 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            this.wheel++;
+            if (this.wheel<4)
+            {
+                this.wheel++;
+            }
         }
 
         public void setDoors(int doorsCount)
