@@ -51,7 +51,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     sentence.CommandText = @"USE Carmanagement;
-                        SELECT id FROM vehicle";
+                        SELECT enrollmentId FROM vehicle";
                     IDataReader reader = sentence.ExecuteReader();
                     while (reader.Read())
                     {
