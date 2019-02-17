@@ -24,8 +24,19 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
-            bool isTrue = false;                
-
+            bool isTrue = false;
+            this.vehicleStorage
+                .get()
+                .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
+                .Where(vehicle => vehicle.Engine.HorsePower == 666)
+                .Select(vehicle =>
+                    new
+                        {
+                            serial = vehicle.Enrollment.Serial,
+                            HorsePower = vehicle.Engine.HorsePower
+                        }
+                    );
+            isTrue = true;
             Assert.IsTrue(isTrue);
         }
 

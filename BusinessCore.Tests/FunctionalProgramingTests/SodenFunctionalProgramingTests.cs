@@ -26,7 +26,9 @@ namespace BusinessCore.Tests
         {
             IVehicle[] vehicles = this.vehicleStorage
                 .get()
-                /**/
+                .Where(vehicle => vehicle.Color == CarColor.Black)
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
+                .Where(vehicle => vehicle.Engine.HorsePower > 100)
                 .ToArray();
 
             Assert.AreEqual(3, vehicles.Length);
@@ -37,7 +39,8 @@ namespace BusinessCore.Tests
         {
             IEnumerable<IEngine> engines = this.vehicleStorage
                 .get()
-                /**/
+                .Where(vehicle => vehicle.Doors.Count(door => door.IsOpen) >1)
+                .Where(vehicle => vehicle.Engine.IsStarted == true)
                 .Select(vehicle => vehicle.Engine);
 
             Assert.AreEqual(2, engines.Count());
@@ -48,7 +51,9 @@ namespace BusinessCore.Tests
         {
             double pressure = this.vehicleStorage
                .get()
-               /**/
+               .Where(vehicle => vehicle.Color == CarColor.Black)
+               .Where(vehicle => vehicle.Enrollment.Number > 100)
+               .Select(vehicle => vehicle.Wheels.Length)
                .Count();
 
             Assert.AreEqual(6, pressure);
