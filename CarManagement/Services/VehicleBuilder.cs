@@ -95,7 +95,6 @@ namespace CarManagement.Services
         {
             return convert(vehicle);
         }
-
         private IEnumerable<T> createList<T>(int numberItem) where T : class, new()
         {
             for (int x = 0; x < numberItem; x++)
@@ -104,8 +103,6 @@ namespace CarManagement.Services
             }
         }
         
-
-
 
         private EnrollmentDto convert(IEnrollment enrollment)
         {
@@ -236,6 +233,7 @@ namespace CarManagement.Services
                 this.Pressure = pressure;
             }
         }
+
         private class Vehicle : IVehicle
         {
             private IReadOnlyList<IWheel> wheels;
@@ -297,6 +295,7 @@ namespace CarManagement.Services
                 }
             }
         }
+
         private class Engine: IEngine
         {
             private int horsePower;
@@ -382,6 +381,11 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.openDoor);
                 this.openDoor = false;
             }
+        }
+
+        public IEnrollment import(string serial, int number)
+        {
+            return this.enrollmentProvider.import(serial, number);
         }
     }
 }
