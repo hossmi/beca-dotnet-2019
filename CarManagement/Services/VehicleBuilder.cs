@@ -210,23 +210,22 @@ namespace CarManagement.Services
         {
             private readonly double presureMin = 1;
             private readonly double presureMax = 5;
-            private double pressure;
             public double Pressure
             {
                 set
                 {
                     Asserts.isTrue(value >= presureMin && value <= presureMax);
-                    this.pressure = value;
+                    this.Pressure = value;
                 }
                 get
                 {
-                    return this.pressure;
+                    return this.Pressure;
                 }
             }
 
             public Wheel()
             {
-                this.pressure = 1;
+                this.Pressure = 1;
             }
 
             public Wheel(double pressure)
