@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using CarManagement.Models;
 
@@ -21,12 +22,16 @@ namespace CarManagement.Builders
             this.wheel = 0;
             this.door = 0;
             this.engineHorsePower = 0;
-            this.color = CarColor.Red;
+            this.color = new CarColor();
             this.enrollment = enrollment;
         }
-
-
-        CarColor carColor = new CarColor();
+        public VehicleBuilder()
+        {
+            this.wheel = 0;
+            this.door = 0;
+            this.engineHorsePower = 0;
+            this.color = new CarColor();
+        }
 
         public void addWheel()
         {
@@ -52,14 +57,14 @@ namespace CarManagement.Builders
 
         public void setColor(CarColor color)
         {
-            this.carColor = color;
+            this.color = color;
         }
 
         public Vehicle build()
         {
             Engine engine = new Engine(this.engineHorsePower);
 
-            CarColor color = new CarColor();
+            CarColor color = this.color;
 
             List<Door> doors = new List<Door>();
             for (int i = 0; i < this.door; i++)

@@ -4,7 +4,8 @@ namespace CarManagement.Models
 {
     public class Wheel
     {
-
+        private double pressureMax = 6;
+        private double pressureMin = 5;
         private double presurre;
         public Wheel()
         {
@@ -20,7 +21,10 @@ namespace CarManagement.Models
             }
             set
             {
-                this.presurre = value;
+                if (value >= this.pressureMin && value <= this.pressureMax)
+                {
+                    this.presurre = value;
+                }
             }
         }
     }

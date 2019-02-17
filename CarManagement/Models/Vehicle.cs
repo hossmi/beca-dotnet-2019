@@ -6,20 +6,21 @@ namespace CarManagement.Models
     public class Vehicle
     {
         private Engine engine;
-        private CarColor color;
         private List<Door> doors;
         private List<Wheel> wheels;
+        private Enrollment enrollment;
 
 
         public Vehicle(List<Wheel> wheels,List<Door> doors, Engine engine, CarColor color)
         {
             this.doors = doors;
             this.engine = engine;
-            this.color = color;
+            this.Color = color;
             this.wheels = wheels;
+            this.enrollment = new Enrollment("BBB",666);
         }
 
-       
+        public CarColor Color { get; }
 
         public int DoorsCount
         {
@@ -49,7 +50,7 @@ namespace CarManagement.Models
         {
             get
             {
-                throw new NotImplementedException();
+                return this.enrollment.ToString();
             }
             //set
             //{
