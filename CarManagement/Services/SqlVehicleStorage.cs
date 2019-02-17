@@ -34,10 +34,8 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = @"USE CarManagement
-                        SELECT count(*) AS 'Count' FROM vehicle";
-                        IDataReader reader = sentence.ExecuteReader();
-                        reader.Read();
-                        int count = Convert.ToInt32(reader["Count"]);
+                        SELECT count(id) AS 'Count' FROM vehicle";
+                        int count = (int)sentence.ExecuteScalar();
                         return count;
                     }
 
@@ -52,12 +50,22 @@ namespace CarManagement.Services
             {
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    sentence.CommandText = "USE Carmanagement;" +
-                        "DELETE FROM door;" +
-                        "DELETE FROM wheel;" +
-                        "DELETE FROM vehicle;" +
-                        "DELETE FROM enrollment;";
-                    sentence.ExecuteNonQuery();
+                    sentence.CommandText = @"USE Carmanagement;
+                        SELECT id FROM vehicle";
+                    IDataReader reader = sentence.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        IDataParameter parameter = sentence.CreateParameter();
+                        parameter.ParameterName = "@id";
+                        parameter.Value = reader["id"];
+                        sentence.CommandText = @"USE Carmanagement;
+                        DELETE FROM door WHERE enrollmentId = @id;
+                        DELETE FROM wheel WHERE enrollmentId = @id;
+                        DELETE FROM vehicle WHERE enrollmentId = @id;
+                        DELETE FROM enrollment WHERE id = @id;";
+                        sentence.ExecuteNonQuery();
+                        sentence.Parameters.Remove(parameter);
+                    }
                 }
 
             }
