@@ -54,6 +54,7 @@
     <Compile Include="Models\IVehicle.cs" />
     <Compile Include="Models\IWheel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IEnrollmentImporter.cs" />
     <Compile Include="Services\IEnrollmentProvider.cs" />
     <Compile Include="Services\IVehicleBuilder.cs" />
     <Compile Include="Services\IVehicleQuery.cs" />

@@ -32,7 +32,7 @@ namespace CarManagement.Services
             throw new System.NotImplementedException();
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             throw new System.NotImplementedException();
         }
