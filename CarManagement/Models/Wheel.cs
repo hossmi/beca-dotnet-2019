@@ -5,7 +5,7 @@ namespace CarManagement.Models
     public class Wheel
     {
         private double pressureMax = 6;
-        private double pressureMin = 5;
+        private double pressureMin = 0;
         private double presurre;
         public Wheel()
         {

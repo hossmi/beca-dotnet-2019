@@ -47,9 +47,13 @@ namespace CarManagement.Builders
 
         public void setDoors(int doorsCount)
         {
-            if (doorsCount >= minDoorsCount && doorsCount >= maxDoorsCount)
+            if (doorsCount >= minDoorsCount && doorsCount <= maxDoorsCount)
             {
                 this.door = doorsCount;
+            }
+            else
+            {
+                throw new Exception("Doors");
             }
             
         }
@@ -69,6 +73,11 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
+            if (this.wheel<=0)
+            {
+                throw new Exception();
+            }
+
             Engine engine = new Engine(this.engineHorsePower);
 
             CarColor color = this.color;

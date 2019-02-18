@@ -8,18 +8,33 @@ namespace CarManagement.Models
 {
     public class Enrollment
     {
+        private readonly string serial;
+        private readonly int number;
+
         public Enrollment(String serial, int number)
         {
-            this.Serial = serial;
-            this.Number = number;
+            this.serial = serial;
+            this.number = number;
         }
 
-        public string Serial { get; }
-        public int Number { get; }
-
-        public  override string ToString()
+        public string Serial
         {
-            return this.Serial+"-"+this.Number.ToString();
+            get
+            {
+                return this.serial;
+            }
+        }
+        public int Number
+        {
+            get
+            {
+                return this.number;
+            }
+        }
+
+        public override string ToString()
+        {
+            return this.Serial + "-" + this.Number.ToString();
         }
     }
 }
