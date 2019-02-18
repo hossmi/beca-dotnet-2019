@@ -22,6 +22,8 @@ namespace WinCarManager
         IVehicleStorage vehicleStorage;
         IEnrollmentProvider enrollmentProvider;
         private int position = 0;
+        private bool refreshing;
+        private bool refreshed;
 
         public VehicleForm(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
@@ -39,51 +41,6 @@ namespace WinCarManager
             this.ButtonLast.Text = char.ConvertFromUtf32(0x2B72);
 
             RefreshEnrollments();
-        }
-
-        private void RefreshEnrollments()
-        {
-            this.EnrollmentsGridView.Rows.Clear();
-            this.enrollments = this.vehicleStorage.get().Keys.ToList();
-            int i = 1;
-            foreach (IEnrollment enrollment in this.enrollments)
-            {
-                this.EnrollmentsGridView.Rows.Add(enrollment.ToString(), enrollment.Serial, enrollment.Number);
-                this.EnrollmentsGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
-                i++;
-            }
-            this.EnrollmentsGridView.Rows[this.position].Selected = true;
-        }
-
-        private void loadVehicle(IVehicle vehicle)
-        {
-            this.EnrollmentSerial.Text = vehicle.Enrollment.Serial;
-            this.EnrollmentNumber.Text = vehicle.Enrollment.Number.ToString();
-
-            this.Color.SelectedItem  = (CarColor)vehicle.Color;
-
-            this.EngineHorsePower.Text = vehicle.Engine.HorsePower.ToString();
-            this.EngineIsStarted.Checked = vehicle.Engine.IsStarted;
-
-            this.DoorGridView.Rows.Clear();
-            this.WheelGridView.Rows.Clear();
-            
-            int i = 1;
-            foreach (IWheel wheel in vehicle.Wheels)
-            {
-                this.WheelGridView.Rows.Add(wheel.Pressure.ToString());
-                this.WheelGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
-                i++;
-            }
-
-            i = 1;
-            foreach (IDoor door in vehicle.Doors)
-            {
-                this.DoorGridView.Rows.Add(door.IsOpen.ToString());             
-                this.DoorGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
-                i++;
-            }
-            this.LabelPosition.Text = (this.position + 1).ToString();
         }
 
         private void ButtonFirst_Click(object sender, EventArgs e)
@@ -233,6 +190,70 @@ namespace WinCarManager
             this.WheelGridView.AllowUserToAddRows = false;
         }
 
+        private void EnrollmentsGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.EnrollmentsGridView.SelectedRows.Count > 0 && refreshing == false)
+            {
+                this.position = this.EnrollmentsGridView.SelectedRows[0].Index;
+                LoadVehicle();
+            }
+
+            if (refreshing && this.EnrollmentsGridView.Rows.Count > this.position)
+            {
+                this.refreshing = false;
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
+                
+            }
+        }
+
+        private void RefreshEnrollments()
+        {
+            this.refreshing = true;
+            this.EnrollmentsGridView.Rows.Clear();
+            this.enrollments = this.vehicleStorage.get().Keys.ToList();
+            int i = 1;
+            foreach (IEnrollment enrollment in this.enrollments)
+            {
+                this.refreshing = true;
+                this.EnrollmentsGridView.Rows.Add(enrollment.ToString(), enrollment.Serial, enrollment.Number);
+                this.EnrollmentsGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                i++;
+            }
+            this.EnrollmentsGridView.Rows[this.position].Selected = true;
+            this.refreshing = false;
+        }
+
+        private void loadVehicle(IVehicle vehicle)
+        {
+            this.EnrollmentSerial.Text = vehicle.Enrollment.Serial;
+            this.EnrollmentNumber.Text = vehicle.Enrollment.Number.ToString();
+
+            this.Color.SelectedItem  = (CarColor)vehicle.Color;
+
+            this.EngineHorsePower.Text = vehicle.Engine.HorsePower.ToString();
+            this.EngineIsStarted.Checked = vehicle.Engine.IsStarted;
+
+            this.DoorGridView.Rows.Clear();
+            this.WheelGridView.Rows.Clear();
+            
+            int i = 1;
+            foreach (IWheel wheel in vehicle.Wheels)
+            {
+                this.WheelGridView.Rows.Add(wheel.Pressure.ToString());
+                this.WheelGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                i++;
+            }
+
+            i = 1;
+            foreach (IDoor door in vehicle.Doors)
+            {
+                this.DoorGridView.Rows.Add(door.IsOpen.ToString());             
+                this.DoorGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                i++;
+            }
+            this.LabelPosition.Text = (this.position + 1).ToString();
+        }
+
         private void SetVehicle()
         {
             IVehicleBuilder builder = new VehicleBuilder(this.enrollmentProvider);
@@ -273,12 +294,6 @@ namespace WinCarManager
             this.vehicleStorage.set(vehicle);
 
             RefreshEnrollments();
-        }
-
-        private void EnrollmentsGridView_SelectionChanged(object sender, EventArgs e)
-        {
-            this.position = this.EnrollmentsGridView.SelectedRows[0].Index;
-            LoadVehicle();
         }
 
         private void LoadVehicle()
