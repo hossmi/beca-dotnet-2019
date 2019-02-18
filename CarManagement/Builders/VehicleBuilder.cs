@@ -96,7 +96,7 @@ namespace CarManagement.Builders
                 wheels.Add(w);
             }
 
-            return new Vehicle(wheels, doors, engine, color);
+            return new Vehicle(wheels, doors, engine, color,enrollment);
         }
     }
 }
