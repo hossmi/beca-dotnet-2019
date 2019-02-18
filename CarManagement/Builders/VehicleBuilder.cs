@@ -39,6 +39,10 @@ namespace CarManagement.Builders
             {
                 this.wheel++;
             }
+            else
+            {
+                throw new Exception("Builder max wheel!");
+            }
         }
 
         public void setDoors(int doorsCount)
