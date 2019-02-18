@@ -25,7 +25,7 @@ namespace BusinessCore.Tests
         public void all_vehicles_with_enrollment_serial_CSM_have_666_horsepower()
         {
             bool isTrue = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
                 .Select(vehicle => vehicle.Engine.HorsePower).All(horsePower => horsePower == 666);
               
@@ -36,7 +36,7 @@ namespace BusinessCore.Tests
         public void all_vehicles_with_enrollment_serial_CSM_have_their_third_door_open()
         {
             bool isTrue = this.vehicleStorage
-                .getAll()
+                .get()
                 .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
                 .Select(vehicle => vehicle.Doors)
                 .All(doors => doors.ElementAt(2).IsOpen == true); // 2 por que empieza desde cero
@@ -51,7 +51,7 @@ namespace BusinessCore.Tests
         {
             var returnedValues = this.vehicleStorage
 
-                 .getAll()
+                 .get()
                  .Where(vehicle => vehicle.Enrollment.Serial == "CSM")
                  .SelectMany(vehicle => vehicle.Doors)
                  .GroupBy(door => door.IsOpen);
