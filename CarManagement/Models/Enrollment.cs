@@ -12,28 +12,26 @@ namespace CarManagement.Models
         private int number3;
         private int number2;
         private int number1;
-        private string letters;
+        private const string LETTERS = "BCDFGHJKMNPQRSTUWYZ";
         private int sizeLetters;
 
         public Enrollment(String serial, int number)
         {
-            this.number1 = Convert.ToInt32(Convert.ToChar(serial[0]));
-            this.number2 = Convert.ToInt32(Convert.ToChar(serial[1]));
-            this.number3 = Convert.ToInt32(Convert.ToChar(serial[2]));
+            this.number1 = serial.IndexOf(Convert.ToChar(serial[0]));
+            this.number2 = serial.IndexOf(Convert.ToChar(serial[1]));
+            this.number3 = serial.IndexOf(Convert.ToChar(serial[2]));
             this.Serial = serial;
             this.Number = number;
-            this.letters = "BCDFGHJKMNPQRSTUWYZ";
-            this.sizeLetters = letters.Length-1;
+            this.sizeLetters = LETTERS.Length-1;
         }
         public Enrollment(Enrollment enrollment)
         {
-            this.number1 = Convert.ToInt32(Convert.ToChar(enrollment.Serial[0]));
-            this.number2 = Convert.ToInt32(Convert.ToChar(enrollment.Serial[1]));
-            this.number3 = Convert.ToInt32(Convert.ToChar(enrollment.Serial[2]));
             this.Serial = enrollment.Serial;
             this.Number = enrollment.Number;
-            this.letters = "BCDFGHJKMNPQRSTUWYZ";
-            this.sizeLetters = letters.Length - 1;
+            this.number1 = this.Serial.IndexOf(Convert.ToChar(this.Serial[0]));
+            this.number2 = this.Serial.IndexOf(Convert.ToChar(this.Serial[1]));
+            this.number3 = this.Serial.IndexOf(Convert.ToChar(this.Serial[2]));
+            this.sizeLetters = LETTERS.Length - 1;
         }
 
         public Enrollment()
@@ -41,8 +39,7 @@ namespace CarManagement.Models
             this.number1 = 0;
             this.number2 = 0;
             this.number3 = 0;
-            this.letters = "BCDFGHJKMNPQRSTUWYZ";
-            this.sizeLetters = letters.Length - 1;
+            this.sizeLetters = LETTERS.Length - 1;
         }
 
         public string Serial { get; }
@@ -89,7 +86,7 @@ namespace CarManagement.Models
                     }
                 }
             }
-            string lettersEnrollment = this.letters[number1].ToString() + this.letters[number2].ToString() + this.letters[number3].ToString();
+            string lettersEnrollment = LETTERS[number1].ToString() + LETTERS[number2].ToString() + LETTERS[number3].ToString();
             return new Enrollment(lettersEnrollment, number4);
         }
     }
