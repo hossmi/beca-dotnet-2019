@@ -31,6 +31,7 @@ namespace CarManagement.Models
             this.number1 = this.Serial.IndexOf(Convert.ToChar(this.Serial[0]));
             this.number2 = this.Serial.IndexOf(Convert.ToChar(this.Serial[1]));
             this.number3 = this.Serial.IndexOf(Convert.ToChar(this.Serial[2]));
+            this.number4 = 0;
             this.sizeLetters = LETTERS.Length - 1;
         }
 
@@ -39,6 +40,7 @@ namespace CarManagement.Models
             this.number1 = 0;
             this.number2 = 0;
             this.number3 = 0;
+            this.number4 = 0;
             this.sizeLetters = LETTERS.Length - 1;
         }
 
@@ -87,6 +89,7 @@ namespace CarManagement.Models
                 }
             }
             string lettersEnrollment = LETTERS[number1].ToString() + LETTERS[number2].ToString() + LETTERS[number3].ToString();
+
             return new Enrollment(lettersEnrollment, number4);
         }
     }
