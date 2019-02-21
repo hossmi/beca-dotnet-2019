@@ -17,13 +17,21 @@ namespace CarManagement.Models
 
         public Enrollment(String serial, int number)
         {
-            this.number1 = serial.IndexOf(Convert.ToChar(serial[0]));
-            this.number2 = serial.IndexOf(Convert.ToChar(serial[1]));
-            this.number3 = serial.IndexOf(Convert.ToChar(serial[2]));
+            
+
+            convertSerrialToIntegers(serial);
             this.Serial = serial;
             this.Number = number;
             this.sizeLetters = LETTERS.Length-1;
         }
+
+        private void convertSerrialToIntegers(string serial)
+        {
+            this.number1 = LETTERS.IndexOf(Convert.ToChar(serial[0]));
+            this.number2 = LETTERS.IndexOf(Convert.ToChar(serial[1]));
+            this.number3 = LETTERS.IndexOf(Convert.ToChar(serial[2]));
+        }
+
         public Enrollment(Enrollment enrollment)
         {
             this.Serial = enrollment.Serial;
