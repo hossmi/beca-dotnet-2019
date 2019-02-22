@@ -382,7 +382,6 @@ namespace CarManagement.Services
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 this.queryParameters.Add("@engineIsStarted", started);
-                //this.queryParts.Add("engineIsStarted", " engineIsStarted = " + Convert.ToUInt16(started));
                 this.queryParts.Add("@engineIsStarted", " engineIsStarted = @engineIsStarted");
                 this.Type.Add("@engineIsStarted", "int");
                 this.engineIsStarted = started;
@@ -393,11 +392,11 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(enrollment != null);
                 this.queryParameters.Add("@number", enrollment.Number);
-                //this.queryParts.Add("number", "number = " + enrollment.Number);
-                //this.queryParts.Add("serial", "serial = " + enrollment.Serial);
+                this.queryParameters.Add("@serial", enrollment.Serial);
                 this.queryParts.Add("@number", "number = @number");
                 this.queryParts.Add("@serial", "serial = @serial");
-                this.Type.Add("@engineIsStarted", "int");
+                this.Type.Add("@serial", "string");
+                this.Type.Add("@number", "int");
                 this.enrollment = enrollment;
                 return this;
             }
@@ -407,7 +406,6 @@ namespace CarManagement.Services
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
                 this.queryParameters.Add("@serial", serial);
-                //this.queryParts.Add("serial", "serial = " + serial);
                 this.queryParts.Add("@serial", "serial = @serial");
                 this.Type.Add("@serial", "string");
                 return this;
@@ -416,7 +414,6 @@ namespace CarManagement.Services
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 this.queryParameters.Add("@engineHorsePower", horsePower);
-                //this.queryParts.Add("engineHorsePower", "engineHorsePower = " + horsePower);
                 this.queryParts.Add("@engineHorsePower", "engineHorsePower = @engineHorsePower");
                 this.horsePower = horsePower;
                 this.Type.Add("@engineHorsePower", "int");
@@ -429,7 +426,6 @@ namespace CarManagement.Services
                 Asserts.isTrue(max > 0);
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
-                //this.queryParts.Add("engineHorsePower", "engineHorsePower BETWEEN " + min + " AND " + max);
                 this.queryParts.Add("@engineHorsePower", "engineHorsePower BETWEEN @min AND @max");
                 this.Type.Add("@min", "int");
                 this.Type.Add("@max", "int");
@@ -458,19 +454,24 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = SELECT_VEHICLE_HEAD;
+                        sentence.CommandText = query;
                         foreach (var item in this.queryParameters.Keys)
                         {
-                            object type;
-                            string data = this.queryParameters.ContainsKey(nameof(item)).ToString();
-                            string dataType = this.Type.ContainsKey(nameof(item)).ToString();
+                            object data;
+                            string dataType;
+                            this.Type
+                                .TryGetValue(item, out dataType);
                             if (dataType == "int")
                             {
-                                type = SqlDbType.Int;
+                                this.queryParameters
+                                    .TryGetValue(item, out data);
+                                data = Convert.ToInt32(data);
                             }
                             else
                             {
-                                type = SqlDbType.VarChar;
+                                this.queryParameters
+                                    .TryGetValue(item, out data);
+                                data = Convert.ToString(data);
                             }
                             IDbDataParameter parameter = sentence.CreateParameter();
                             parameter.ParameterName = $"{item}";
@@ -478,7 +479,7 @@ namespace CarManagement.Services
                             sentence.Parameters.Add(parameter);
                         }
 
-                        using (IDataReader reader = sentence.ExecuteReader())
+                    using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
                             {
@@ -544,12 +545,11 @@ namespace CarManagement.Services
             private static string createQuery(string query, IDictionary<string, string> conditionParts)
             {
                 int counter = 0;
-
                 foreach (string conditionPart in conditionParts.Values)
                 {
                     if (counter == 0)
                     {
-                        query = " WHERE " + conditionPart;
+                        query += " WHERE " + conditionPart;
                     }
                     else
                     {
@@ -557,7 +557,6 @@ namespace CarManagement.Services
                     }
                     counter++;
                 }
-
                 return query;
             }
             private IEnumerable<IEnrollment> enumerateEnrollments()
