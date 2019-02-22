@@ -22,10 +22,12 @@ namespace BusinessCore.Tests
         private const string DESTRUCTION_SCRIPT_FILE_KEY = "DestructionScriptFile";
         private const string SCRIPTS_FOLDER_KEY = "scriptsFolder";
 
-        private const string INSERT_ENROLLMENT = "INSERT INTO [enrollment] (serial,number) " +
+        private const string INSERT_ENROLLMENT = "USE CarManagement;" +
+            "INSERT INTO [enrollment] (serial,number) " +
             "OUTPUT INSERTED.ID " +
             "VALUES (@serial, @number)";
-        private const string INSERT_VEHICLE = "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
+        private const string INSERT_VEHICLE = "USE CarManagement;" +
+            "INSERT INTO [vehicle] (enrollmentId, color, engineHorsePower, engineIsStarted) " +
             "VALUES (@enrollmentKEY, @color, @horsepower, @started)";
         private const string INSERT_WHEEL = "INSERT INTO [wheel] (pressure,vehicleId) " +
             "VALUES (@pressure, @enrollmentKEY)";
