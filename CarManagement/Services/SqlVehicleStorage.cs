@@ -323,6 +323,7 @@ namespace CarManagement.Services
             private IDictionary<string, object> queryParameters;
             private IDictionary<string, string> queryParts;
             private IDictionary<string, string> Type;
+            private readonly IEnrollmentProvider enrollmentProvider;
             private const string SELECT_VEHICLE_HEAD = @"
                 USE CarManagement; 
                 SELECT e.serial, 
@@ -343,6 +344,8 @@ namespace CarManagement.Services
                     SELECT isOpen 
                     FROM door 
                     WHERE vehicleId = @ID";
+            private const string SELECT_ENROLLMENT = @"SELECT *
+                    FROM enrollment";
 
             public IEnumerable<IEnrollment> Keys
             {
@@ -558,7 +561,26 @@ namespace CarManagement.Services
             }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                throw new NotImplementedException();
+                EnrollmentDto enrollmentDto = new EnrollmentDto();
+                using (IDbConnection con = new SqlConnection(this.connectionString))
+                {
+                    con.Open();
+                    using (IDbCommand sentence = con.CreateCommand())
+                    {
+                        sentence.CommandText = SELECT_ENROLLMENT;
+                        using (IDataReader reader = sentence.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                enrollmentDto.Number = (int)reader["number"];
+                                enrollmentDto.Serial = reader["serial"].ToString();
+                                yield return this.enrollmentProvider.import(reader["serial"].ToString(), (int)reader["number"]);
+
+                            }
+                        }
+                    }
+                }
+                
             }
 
         }
