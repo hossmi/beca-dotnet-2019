@@ -24,18 +24,24 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
+            horsePower = 
             this.vehicleStorage
                 .get()
-                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3))
-                .Min(vehicle => vehicle.Engine.HorsePower == 85)
-                //.Where(vehicle => vehicle.Engine.HorsePower == 85)
-                /*.Select(vehicle =>
-                        new
-                        {
-                            horsePower = vehicle.Engine.HorsePower,
-                            pressure = vehicle.Wheels.Select(wheel => wheel.Pressure)
-                        }
-                    )*/;
+                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3.0))
+                .Min(vehicle => vehicle.Engine.HorsePower);
+            /*pressure = this.vehicleStorage
+                .get()
+                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3.0))
+                .Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure))*/
+                //.Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure));
+            //.Where(vehicle => vehicle.Engine.HorsePower >= 85)*/
+            /*.Select(vehicle =>
+                    new
+                    {
+                        horsePower = vehicle.Engine.HorsePower,
+                        pressure = vehicle.Wheels.Select(wheel => wheel.Pressure)
+                    }
+                );*/
 
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
@@ -49,10 +55,10 @@ namespace BusinessCore.Tests
                 .get()
                 .GroupBy(vehicle => vehicle.Enrollment.Serial)
                 .Select(vehicle => new 
-                {
-                    WheelsCount = vehicle.Select(wheel => wheel.Wheels.Length),
-                    Pressure = vehicle.Select(pressure => pressure.Wheels.Select(wp => wp.Pressure))
-                })
+                            {
+                                WheelsCount = vehicle.Sum(wheel => wheel.Wheels.Length),
+                                Pressure = vehicle.SelectMany(pressure => pressure.Wheels).Average(wp => wp.Pressure)
+                            })
                 .OrderBy(order => order.WheelsCount)
                 .ThenBy(then => then.Pressure)
                 .ToArray();
