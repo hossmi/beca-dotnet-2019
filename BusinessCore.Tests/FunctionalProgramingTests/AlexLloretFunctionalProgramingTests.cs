@@ -24,24 +24,16 @@ namespace BusinessCore.Tests
         {
             int horsePower = 0;
             double pressure = 0;
-            horsePower = 
+            horsePower =
             this.vehicleStorage
                 .get()
-                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3.0))
+                .Where(vehicle => vehicle.Wheels.Any(wheel => wheel.Pressure == 3.0))
                 .Min(vehicle => vehicle.Engine.HorsePower);
-            /*pressure = this.vehicleStorage
+            pressure =
+            this.vehicleStorage
                 .get()
-                .Where(vehicle => vehicle.Wheels.All(wheel => wheel.Pressure == 3.0))
-                .Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure))*/
-                //.Select(vehicle => vehicle.Wheels.Select(wheel => wheel.Pressure));
-            //.Where(vehicle => vehicle.Engine.HorsePower >= 85)*/
-            /*.Select(vehicle =>
-                    new
-                    {
-                        horsePower = vehicle.Engine.HorsePower,
-                        pressure = vehicle.Wheels.Select(wheel => wheel.Pressure)
-                    }
-                );*/
+                .Where(vehicle => vehicle.Wheels.Any(wheel => wheel.Pressure == 3.0))
+                .Average(vehicle => vehicle.Wheels.Average(wheel => wheel.Pressure));
 
             Assert.AreEqual(3.0, pressure);
             Assert.AreEqual(85, horsePower);
