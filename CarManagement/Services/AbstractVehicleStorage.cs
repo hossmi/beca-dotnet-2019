@@ -99,9 +99,11 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
+                EnrollmentEqualityComparer enrollmentEqualityComparer = new EnrollmentEqualityComparer();
                 this.vehicles = this.vehicles
-                    .Where(vehicle => vehicle.Enrollment == enrollment);
+                    .Where(vehicle => enrollmentEqualityComparer.Equals(vehicle.Enrollment, enrollment));
                 return this;
+
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
