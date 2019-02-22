@@ -31,10 +31,11 @@ namespace CarManagement.Services
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
                 {
+                    con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = @"USE CarManagement
-                        SELECT count(id) AS 'Count' FROM vehicle";
+                        SELECT count(enrollmentId) AS 'Count' FROM vehicle";
                         int count = (int)sentence.ExecuteScalar();
                         return count;
                     }
@@ -575,7 +576,6 @@ namespace CarManagement.Services
                                 enrollmentDto.Number = (int)reader["number"];
                                 enrollmentDto.Serial = reader["serial"].ToString();
                                 yield return this.enrollmentProvider.import(reader["serial"].ToString(), (int)reader["number"]);
-
                             }
                         }
                     }
