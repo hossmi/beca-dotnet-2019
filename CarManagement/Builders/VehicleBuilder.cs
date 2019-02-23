@@ -17,6 +17,7 @@ namespace CarManagement.Builders
         private CarColor color;
         private Enrollment enrollment;
 
+
         public VehicleBuilder(Enrollment enrollment)
         {
             this.wheel = 0;
@@ -25,6 +26,7 @@ namespace CarManagement.Builders
             this.color = new CarColor();
             this.enrollment = enrollment;
         }
+
         public VehicleBuilder()
         {
             this.wheel = 0;
@@ -35,7 +37,7 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            if (this.wheel<4)
+            if (this.wheel < 4)
             {
                 this.wheel++;
             }
@@ -55,7 +57,7 @@ namespace CarManagement.Builders
             {
                 throw new Exception("Doors");
             }
-            
+
         }
 
         public void setEngine(int horsePorwer)
@@ -73,7 +75,7 @@ namespace CarManagement.Builders
 
         public Vehicle build()
         {
-            if (this.wheel<=0)
+            if (this.wheel <= 0)
             {
                 throw new Exception();
             }
@@ -82,21 +84,22 @@ namespace CarManagement.Builders
 
             CarColor color = this.color;
 
-            List<Door> doors = new List<Door>();
-            for (int i = 0; i < this.door; i++)
-            {
-                Door d = new Door();
-                doors.Add(d);
-            }
+            List<Door> doors = crateList<Door>(this.door);
 
-            List<Wheel> wheels = new List<Wheel>();
-            for (int i = 0; i < this.wheel; i++)
-            {
-                Wheel w = new Wheel();
-                wheels.Add(w);
-            }
+            List<Wheel> wheels = crateList<Wheel>(this.wheel);
 
             return new Vehicle(wheels, doors, engine, color, enrollment);
+        }
+
+        private static List<T> crateList<T>(int door) where T : new()
+        {
+            List<T> list = new List<T>();
+            for (int i = 0; i < door; i++)
+            {
+                T item = new T();
+                list.Add(item);
+            }
+            return list;
         }
     }
 }
