@@ -4,8 +4,8 @@ namespace CarManagement.Core.Models
 {
     public interface IEngine
     {
-        int HorsePower { get; }
-        bool IsStarted { get; }
+        int HorsePower { get; set; }
+        bool IsStarted { get; set; }
 
         void start();
         void stop();

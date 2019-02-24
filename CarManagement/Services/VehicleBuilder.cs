@@ -9,20 +9,210 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
+        //campos
         private IEnrollmentProvider enrollmentProvider;
         private int doorsCount;
-        private int wheelCounter = 0;
+        private int wheelCounter;
         private CarColor color;
         private int hp;
         private IEngine engine;
+        private VehicleDto vehicleDto;
+        private IVehicle vehicle;
+        private bool t;
+        private List<IWheel> wheels;
+        private List<IDoor> doors;
+        private IEnrollment enrollment;
+        private IWheel wheel;
+        private IDoor door;
+        private EngineDto engineDto;
+        private DoorDto doorDto;
+        private WheelDto wheelDto;
+        private EnrollmentDto enrollmentDto;
 
+        //constructor
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+            this.engine = new Engine();
+            this.wheelCounter = 0;
+            this.vehicleDto = new VehicleDto();
+            this.t = false;
+            this.color = new CarColor();
+            this.wheels = new List<IWheel>();
+            this.doors = new List<IDoor>();
+            this.engineDto = new EngineDto();
+        }
+
+        //metodos
+        //publicos
+        public void addWheel()
+        {
+            Asserts.isTrue(this.wheelCounter < 4);
+            this.wheelCounter++;
+        }
+        public void removeWheel()
+        {
+            this.wheelCounter--;
+            Asserts.isTrue(this.wheelCounter >= 0);
+        }
+        public void setDoors(int doorsCount)
+        {
+            Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
+            this.doorsCount = doorsCount;
+        }
+        public void setEngine(int horsePorwer)
+        {
+            Asserts.isTrue(horsePorwer > 0);
+            this.hp = horsePorwer;
+        }
+        public VehicleDto export(IVehicle vehicle)
+        {
+            this.vehicleDto = convert(vehicle);
+            return this.vehicleDto;
+        }
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            this.vehicle = convert(vehicleDto);
+            return this.vehicle;
+        }
+        public void setColor(CarColor color)
+        {
+            this.color = color;
+            foreach (CarColor c in Enum.GetValues(typeof(CarColor)))
+            {
+                if (color == c)
+                {
+                    this.t = true;
+                }
+            }
+            Asserts.isTrue(this.t == true);
+        }
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.wheelCounter > 0);
+            Engine engine = new Engine();
+            engine.setEngine(this.hp);
+            this.enrollment = this.enrollmentProvider.getNew();
+            for (int i = 0; i < this.wheelCounter; i++)
+            {
+                this.wheel = new Wheel();
+                this.wheels.Add(this.wheel);
+            }
+            for (int i = 0; i < this.doorsCount; i++)
+            {
+                this.door = new Door();
+                this.doors.Add(this.door);
+            }
+            Vehicle vehicle = new Vehicle(this.wheels, this.doors, engine, this.color, this.enrollment);
+            return vehicle;
+        }
+        public IEnrollment import(string serial, int number)
+        {
+            return this.enrollmentProvider.import(serial, number);
+        }
+
+        //privados
+        private IEngine convert(EngineDto engineDto)
+        {
+            Engine engine = new Engine();
+            engine.setEngine(engineDto.HorsePower);
+            engine.IsStarted = engineDto.IsStarted;
+            return engine;
+        }
+        private EngineDto convert(IEngine engine)
+        {
+            this.engineDto.HorsePower = engine.HorsePower;
+            this.engineDto.IsStarted = engine.IsStarted;
+            return this.engineDto;
+        }
+        private IVehicle convert(VehicleDto vehicleDto)
+        {
+            this.enrollment = this.enrollmentProvider.getNew();
+
+            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+            {
+                this.wheels.Add(convert(vehicleDto.Wheels[i]));
+            }
+            for (int i = 0; i < vehicleDto.Doors.Length; i++)
+            {
+                this.doors.Add(convert(vehicleDto.Doors[i]));
+            }
+            this.engine = convert(vehicleDto.Engine);
+            this.color = vehicleDto.Color;
+            this.enrollment = convert(vehicleDto.Enrollment);
+            this.vehicle = new Vehicle(this.wheels, this.doors, this.engine, this.color, this.enrollment);
+            return this.vehicle;
+        }
+        private VehicleDto convert(IVehicle vehicle)
+        {
+            this.vehicleDto.Color = new CarColor();
+            this.vehicleDto.Doors = new DoorDto[vehicle.Doors.Length];
+            this.vehicleDto.Wheels = new WheelDto[vehicle.Wheels.Length];
+            this.vehicleDto.Enrollment = new EnrollmentDto();
+            this.vehicleDto.Engine = new EngineDto();
+
+            for (int i = 0; i < vehicle.Wheels.Length; i++)
+            {
+                this.vehicleDto.Wheels[i] = convert(vehicle.Wheels[i]);
+            }
+
+            for (int i = 0; i < vehicle.Doors.Length; i++)
+            {
+                this.vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
+            }
+
+            this.vehicleDto.Color = vehicle.Color;
+            this.vehicleDto.Enrollment = convert(vehicle.Enrollment);
+            this.vehicleDto.Engine = convert(vehicle.Engine);
+            return this.vehicleDto;
+        }
+        private IDoor convert(DoorDto doorDto)
+        {
+            this.door = new Door();
+            if (doorDto.IsOpen == true)
+            {
+                this.door.open();
+            }
+            return this.door;
+        }
+        private DoorDto convert(IDoor door)
+        {
+            this.doorDto = new DoorDto();
+            this.doorDto.IsOpen = door.IsOpen;
+            return this.doorDto;
+        }
+        private IWheel convert(WheelDto wheelDto)
+        {
+            this.wheel = new Wheel();
+            this.wheel.Pressure = wheelDto.Pressure;
+            return this.wheel;
+        }
+        private WheelDto convert(IWheel wheel)
+        {
+            this.wheelDto = new WheelDto();
+            this.wheelDto.Pressure = wheel.Pressure;
+            return this.wheelDto;
+        }
+        private IEnrollment convert(EnrollmentDto enrollmentDto)
+        {
+            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+        }
+        private EnrollmentDto convert(IEnrollment enrollment)
+        {
+            this.enrollmentDto = new EnrollmentDto();
+            this.enrollmentDto.Number = enrollment.Number;
+            this.enrollmentDto.Serial = enrollment.Serial;
+            return this.enrollmentDto;
+        }
+
+        //subclases
         private class Engine : IEngine
         {
             private bool isStart;
             private int horsepower;
             public Engine()
             {
-                setEngine(1);
+                this.horsepower = 1;
             }
 
             public int HorsePower
@@ -30,6 +220,10 @@ namespace CarManagement.Services
                 get
                 {
                     return this.horsepower;
+                }
+                set
+                {
+                    this.horsepower = value;
                 }
             }
             public bool IsStarted
@@ -61,7 +255,6 @@ namespace CarManagement.Services
                 this.horsepower = horsePorwer;
             }
         }
-
         private class Wheel : IWheel
         {
             private double pressure;
@@ -83,7 +276,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
         private class Door : IDoor
         {
             private bool isOpen;
@@ -110,7 +302,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
         private class Vehicle : IVehicle
         {
             private List<IWheel> wheels = new List<IWheel>();
@@ -172,197 +363,6 @@ namespace CarManagement.Services
                     wheel.Pressure = pression;
                 }
             }
-        }
-
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
-        {
-            this.enrollmentProvider = enrollmentProvider;
-            this.engine = new Engine();
-        }
-
-        public void addWheel()
-        {
-            Asserts.isTrue(this.wheelCounter < 4);
-            this.wheelCounter++;
-        }
-        public void removeWheel()
-        {
-            this.wheelCounter--;
-            Asserts.isTrue(this.wheelCounter >= 0);
-        }
-
-        public void setDoors(int doorsCount)
-        {
-            Asserts.isTrue(doorsCount >= 0 && doorsCount <= 6);
-            this.doorsCount = doorsCount;
-        }
-
-        public void setEngine(int horsePorwer)
-        {
-            Asserts.isTrue(horsePorwer > 0);
-            this.hp = horsePorwer;
-        }
-
-        public VehicleDto export(IVehicle vehicle)
-        {
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto = convert(vehicle);
-            return vehicleDto;
-        }
-
-        public IVehicle import(VehicleDto vehicleDto)
-        {
-            IVehicle vehicle = new Vehicle();
-            vehicle = convert(vehicleDto);
-            return vehicle;
-        }
-        public void setColor(CarColor color)
-        {
-            this.color = color;
-            bool t = false;
-            foreach (CarColor c in Enum.GetValues(typeof(CarColor)))
-            {
-                if (color == c)
-                {
-                    t = true;
-                }
-            }
-            Asserts.isTrue(t == true);
-        }
-        public IVehicle build()
-        {
-            Asserts.isTrue(this.wheelCounter > 0);
-            CarColor color = new CarColor();
-            List<IWheel> wheels = new List<IWheel>();
-            List<IDoor> doors = new List<IDoor>();
-            Engine engine = new Engine();
-            color = this.color;
-            engine.setEngine(this.hp);
-            IEnrollment enrollment = this.enrollmentProvider.getNew();
-            for (int i = 0; i < this.wheelCounter; i++)
-            {
-                Wheel wheel = new Wheel();
-                wheels.Add(wheel);
-            }
-            for (int i = 0; i < this.doorsCount; i++)
-            {
-                Door door = new Door();
-                doors.Add(door);
-            }
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, this.color, enrollment);
-            return vehicle;
-        }
-        private IEngine convert(EngineDto engineDto)
-        {
-            Engine engine = new Engine();
-            engine.setEngine(engineDto.HorsePower);
-            engine.IsStarted = engineDto.IsStarted;
-            return engine;
-        }
-
-        private EngineDto convert(IEngine engine)
-        {
-            EngineDto engineDto = new EngineDto();
-            engineDto.HorsePower = engine.HorsePower;
-            engineDto.IsStarted = engine.IsStarted;
-            return engineDto;
-        }
-
-        private IVehicle convert(VehicleDto vehicleDto)
-        {
-            CarColor color = new CarColor();
-            List<IWheel> wheels = new List<IWheel>();
-            List<IDoor> doors = new List<IDoor>();
-            IEngine engine = new Engine();
-            IEnrollment enrollment = this.enrollmentProvider.getNew();
-
-            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
-            {
-                wheels.Add(convert(vehicleDto.Wheels[i]));
-            }
-            for (int i = 0; i < vehicleDto.Doors.Length; i++)
-            {
-                doors.Add(convert(vehicleDto.Doors[i]));
-            }
-            engine = convert(vehicleDto.Engine);
-            color = vehicleDto.Color;
-            enrollment = convert(vehicleDto.Enrollment);
-            Vehicle vehicle = new Vehicle(wheels, doors, engine, color, enrollment);
-            return vehicle;
-        }
-
-        private VehicleDto convert(IVehicle vehicle)
-        {
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto.Color = new CarColor();
-            vehicleDto.Doors = new DoorDto[vehicle.Doors.Length];
-            vehicleDto.Wheels = new WheelDto[vehicle.Wheels.Length];
-            vehicleDto.Enrollment = new EnrollmentDto();
-            vehicleDto.Engine = new EngineDto();
-
-            for (int i = 0; i < vehicle.Wheels.Length; i++)
-            {
-                vehicleDto.Wheels[i] = convert(vehicle.Wheels[i]);
-            }
-
-            for (int i = 0; i < vehicle.Doors.Length; i++)
-            {
-                vehicleDto.Doors[i] = convert(vehicle.Doors[i]);
-            }
-
-            vehicleDto.Color = vehicle.Color;
-            vehicleDto.Enrollment = convert(vehicle.Enrollment);
-            vehicleDto.Engine = convert(vehicle.Engine);
-            return vehicleDto;
-        }
-
-        private IDoor convert(DoorDto doorDto)
-        {
-            IDoor door = new Door();
-            if (doorDto.IsOpen == true)
-            {
-                door.open();
-            }
-            return door;
-        }
-
-        private DoorDto convert(IDoor door)
-        {
-            DoorDto doorDto = new DoorDto();
-            doorDto.IsOpen = door.IsOpen;
-            return doorDto;
-        }
-
-        private IWheel convert(WheelDto wheelDto)
-        {
-            IWheel wheel = new Wheel();
-            wheel.Pressure = wheelDto.Pressure;
-            return wheel;
-        }
-
-        private WheelDto convert(IWheel wheel)
-        {
-            WheelDto wheelDto = new WheelDto();
-            wheelDto.Pressure = wheel.Pressure;
-            return wheelDto;
-        }
-
-        private IEnrollment convert(EnrollmentDto enrollmentDto)
-        {
-            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        }
-
-        private EnrollmentDto convert(IEnrollment enrollment)
-        {
-            EnrollmentDto enrollmentDto = new EnrollmentDto();
-            enrollmentDto.Number = enrollment.Number;
-            enrollmentDto.Serial = enrollment.Serial;
-            return enrollmentDto;
-        }
-
-        public IEnrollment import(string serial, int number)
-        {
-            return this.enrollmentProvider.import(serial, number);
         }
     }
 }
