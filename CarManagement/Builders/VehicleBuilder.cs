@@ -2,11 +2,19 @@
 using System.Linq;
 using System.Collections.Generic;
 using CarManagement.Models;
+using CarManagement.Services;
 
 namespace CarManagement.Builders
 {
     public class VehicleBuilder
     {
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+        }
+
         public const int maxDoorsCount = 6;
         public const int minDoorsCount = 0;
         public const int minEngineHorsePower = 0;
