@@ -10,7 +10,6 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
-        
         private int numberWheel;
         private int numberDoor;
         private int horsePower;
