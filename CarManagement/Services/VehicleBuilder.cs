@@ -14,6 +14,7 @@ namespace CarManagement.Services
         private int wheelCounter = 0;
         private CarColor color;
         private int hp;
+        private IEngine engine;
 
         private class Engine : IEngine
         {
@@ -21,7 +22,7 @@ namespace CarManagement.Services
             private int horsepower;
             public Engine()
             {
-                this.horsepower = 1;
+                setEngine(1);
             }
 
             public int HorsePower
@@ -29,10 +30,6 @@ namespace CarManagement.Services
                 get
                 {
                     return this.horsepower;
-                }
-                set
-                {
-                    this.horsepower = value;
                 }
             }
             public bool IsStarted
@@ -58,6 +55,11 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.isStart == true);
                 this.isStart = false;
             }
+            public void setEngine(int horsePorwer)
+            {
+                Asserts.isTrue(horsePorwer > 0);
+                this.horsepower = horsePorwer;
+            }
         }
 
         private class Wheel : IWheel
@@ -67,7 +69,7 @@ namespace CarManagement.Services
             {
                 this.pressure = 1;
             }
-            
+
             public double Pressure
             {
                 get
@@ -175,6 +177,7 @@ namespace CarManagement.Services
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
+            this.engine = new Engine();
         }
 
         public void addWheel()
@@ -234,7 +237,7 @@ namespace CarManagement.Services
             List<IDoor> doors = new List<IDoor>();
             Engine engine = new Engine();
             color = this.color;
-            engine.HorsePower = this.hp;
+            engine.setEngine(this.hp);
             IEnrollment enrollment = this.enrollmentProvider.getNew();
             for (int i = 0; i < this.wheelCounter; i++)
             {
@@ -252,7 +255,7 @@ namespace CarManagement.Services
         private IEngine convert(EngineDto engineDto)
         {
             Engine engine = new Engine();
-            engine.HorsePower = engineDto.HorsePower;
+            engine.setEngine(engineDto.HorsePower);
             engine.IsStarted = engineDto.IsStarted;
             return engine;
         }
