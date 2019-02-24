@@ -39,23 +39,19 @@ namespace CarManagement.Services
         public IVehicle build()
         {
             Asserts.isTrue(this.numberWheel > 0);
-            //Generamos puertas
+
             List<IDoor> doors = createList<Door>(this.numberDoor)
                 .Cast<IDoor>()
                 .ToList();
-            //Generamos motor
-            IEngine engine = new Engine(this.horsePower, false);
 
-            //Generamos ruedas
+            IEngine engine = new Engine(this.horsePower, false);
+            
             List<IWheel> wheels = createList<Wheel>(this.numberWheel)
                 .Cast<IWheel>()
                 .ToList();
-
-
-            //Generamos matricula
+            
             IEnrollment enrollment = enrollmentProvider.getNew();
-
-            //Generamos coche
+                        
             return new Vehicle(this.color, wheels, enrollment, doors, engine);
         }
         public void setColor(CarColor color)
@@ -75,7 +71,8 @@ namespace CarManagement.Services
         }
         public IVehicle import(VehicleDto vehicleDto)
         {
-            CarColor color = vehicleDto.Color;            
+            CarColor color = vehicleDto.Color;
+
             List<IWheel> listWheels = vehicleDto
                 .Wheels
                 .Select(convert)
@@ -87,6 +84,7 @@ namespace CarManagement.Services
                 .ToList();
 
             IEnrollment enrollment = convert(vehicleDto.Enrollment);
+
             IEngine engine = new Engine(vehicleDto.Engine.HorsePower, vehicleDto.Engine.IsStarted);
 
             return new Vehicle(color, listWheels, enrollment, listDoors, engine);
@@ -157,42 +155,17 @@ namespace CarManagement.Services
         
         private VehicleDto convert(IVehicle vehicle)
         {
-            CarColor color = vehicle.Color;
-
-            EngineDto engineDto = convert(vehicle.Engine);
-
-            EnrollmentDto enrollmentDto = convert(vehicle.Enrollment);
-
-            WheelDto[] wheelDtos = new WheelDto[vehicle.Wheels.Length];
-            int auxWheel = 0;
-            foreach (IWheel wheen in vehicle.Wheels)
-            {
-                WheelDto wheelDto = convert(wheen);
-                wheelDtos[auxWheel] = wheelDto;
-                auxWheel++;
-            }
-
-            DoorDto[] doorDtos = new DoorDto[vehicle.Doors.Length];
-            int auxDoor = 0;
-            foreach (IDoor door in vehicle.Doors)
-            {
-                DoorDto doorDto = convert(door);
-                doorDtos[auxDoor] = doorDto;
-                auxDoor++;
-            }
-
             return new VehicleDto
             {
-                Color = color,
-                Engine = engineDto,
-                Enrollment = enrollmentDto,
-                Wheels = wheelDtos,
-                Doors = doorDtos
+                Color = vehicle.Color,
+                Engine = convert(vehicle.Engine),
+                Enrollment = convert(vehicle.Enrollment),
+                Wheels = vehicle.Wheels.Select(convert).ToArray(),
+                Doors = vehicle.Doors.Select(convert).ToArray()
             };
         }
         private IVehicle convert(VehicleDto vehicleDto)
         {
-            IEnrollment enrollment = convert(vehicleDto.Enrollment);
             return new Vehicle( vehicleDto.Color
                 ,vehicleDto.Wheels.Select(convert).ToList()
                 ,convert(vehicleDto.Enrollment)
