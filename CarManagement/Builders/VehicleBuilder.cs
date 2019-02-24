@@ -33,6 +33,7 @@ namespace CarManagement.Builders
             this.door = 0;
             this.engineHorsePower = 0;
             this.color = new CarColor();
+            this.enrollment = new Enrollment();
         }
 
         public void addWheel()
@@ -87,6 +88,8 @@ namespace CarManagement.Builders
             List<Door> doors = crateList<Door>(this.door);
 
             List<Wheel> wheels = crateList<Wheel>(this.wheel);
+
+            enrollment = enrollment.getNewEnrollment();
 
             return new Vehicle(wheels, doors, engine, color, enrollment);
         }

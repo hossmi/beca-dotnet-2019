@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CarManagement.Models
 {
@@ -10,7 +6,7 @@ namespace CarManagement.Models
     {
         private int number1;
         private int number2;
-        private int number3;        
+        private int number3;
         private int number4;
         private const string LETTERS = "BCDFGHJKMNPQRSTUWYZ";
         private int sizeLetters;
@@ -19,7 +15,7 @@ namespace CarManagement.Models
         {
             this.Serial = serial;
             this.Number = number;
-            this.sizeLetters = LETTERS.Length-1;
+            this.sizeLetters = LETTERS.Length - 1;
         }
         public Enrollment(Enrollment enrollment)
         {
@@ -35,7 +31,7 @@ namespace CarManagement.Models
         }
 
         public string Serial { get; set; }
-        public int Number{ get; set; }
+        public int Number { get; set; }
         public override string ToString()
         {
             return $"{this.Serial}-{this.Number}";
@@ -43,12 +39,10 @@ namespace CarManagement.Models
 
         public Enrollment getNewEnrollment()
         {
-            return new Enrollment
-            {
-                
-            };
-           
-
+            this.number1 = LETTERS.IndexOf(Convert.ToChar(this.Serial[0]));
+            this.number2 = LETTERS.IndexOf(Convert.ToChar(this.Serial[1]));
+            this.number3 = LETTERS.IndexOf(Convert.ToChar(this.Serial[2]));
+            this.number4 = this.Number;
 
             if (this.number4 <= 9999)
             {
@@ -85,9 +79,19 @@ namespace CarManagement.Models
                     }
                 }
             }
-            string lettersEnrollment = LETTERS[number1].ToString() + LETTERS[number2].ToString() + LETTERS[number3].ToString();
+            this.Serial = LETTERS[number1].ToString() + LETTERS[number2].ToString() + LETTERS[number3].ToString();
+            this.Number = this.number4;
 
-            
+            return new Enrollment(this.Serial, this.Number);
+        }
+
+        public Enrollment getEnrollment()
+        {
+            return new Enrollment()
+            {
+                Serial = this.Serial,
+                Number = this.Number
+            };
         }
     }
 }
