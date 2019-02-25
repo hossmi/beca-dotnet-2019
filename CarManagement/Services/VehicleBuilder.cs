@@ -9,7 +9,6 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
-        //campos
         private IEnrollmentProvider enrollmentProvider;
         private int doorsCount;
         private int wheelCounter;
@@ -29,7 +28,6 @@ namespace CarManagement.Services
         private WheelDto wheelDto;
         private EnrollmentDto enrollmentDto;
 
-        //constructor
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
@@ -43,8 +41,6 @@ namespace CarManagement.Services
             this.engineDto = new EngineDto();
         }
 
-        //metodos
-        //publicos
         public void addWheel()
         {
             Asserts.isTrue(this.wheelCounter < 4);
@@ -111,7 +107,6 @@ namespace CarManagement.Services
             return this.enrollmentProvider.import(serial, number);
         }
 
-        //privados
         private IEngine convert(EngineDto engineDto)
         {
             Engine engine = new Engine();
@@ -205,7 +200,6 @@ namespace CarManagement.Services
             return this.enrollmentDto;
         }
 
-        //subclases
         private class Engine : IEngine
         {
             private bool isStart;
