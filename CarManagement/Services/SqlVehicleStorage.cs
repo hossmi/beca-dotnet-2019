@@ -12,6 +12,7 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using ToolBox;
+using ToolBox.Extensions.DbCommands;
 
 namespace CarManagement.Services
 {
@@ -55,6 +56,8 @@ namespace CarManagement.Services
             WHERE vehicleId = @id";
         const string INSERT_DOOR = @"INSERT INTO door(vehicleId, isOpen)
             VALUES (@id, @isOpen)";
+        const string COUNT_VEHICLE = @"USE CarManagement
+            SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -71,8 +74,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = @"USE CarManagement
-                        SELECT count(enrollmentId) AS 'Count' FROM vehicle";
+                        sentence.CommandText = COUNT_VEHICLE;
                         int count = (int)sentence.ExecuteScalar();
                         return count;
                     }
@@ -324,7 +326,7 @@ namespace CarManagement.Services
             private int id;
             private IDictionary<string, object> queryParameters;
             private IDictionary<string, string> queryParts;
-            private IDictionary<string, string> Type;
+            //private IDictionary<string, string> Type;
             private IEnrollmentProvider enrollmentProvider;
             private IVehicle vehicle_get;
             private IDbDataParameter parameter;
@@ -336,10 +338,9 @@ namespace CarManagement.Services
             private WheelDto wheelDto;
             private DoorDto doorDto;
             private string query;
-            private object data;
-            private string dataType;
+            //private object data;
+            //private string dataType;
             private const string SELECT_VEHICLE_HEAD = @"
-                USE CarManagement; 
                 SELECT e.serial, 
                     e.number, 
                     e.id, 
@@ -349,16 +350,15 @@ namespace CarManagement.Services
                 FROM enrollment e 
                 INNER JOIN vehicle v ON e.id = v.enrollmentId ";
             private const string SELECT_WHEELS = @"
-                    USE CarManagement;
                     SELECT pressure 
                     FROM wheel 
                     WHERE vehicleId = @ID";
             private const string SELECT_DOORS = @"
-                    USE CarManagement; 
                     SELECT isOpen 
                     FROM door 
                     WHERE vehicleId = @ID";
-            private const string SELECT_ENROLLMENT = @"SELECT *
+            private const string SELECT_ENROLLMENT = @"
+                    SELECT *
                     FROM enrollment";
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
@@ -367,12 +367,13 @@ namespace CarManagement.Services
                 this.vehicleBuilder = vehicleBuilder;
                 this.queryParts = new Dictionary<string, string>();
                 this.queryParameters = new Dictionary<string, object>();
-                this.Type = new Dictionary<string, string>();
+                //this.Type = new Dictionary<string, string>();
                 this.vehicleDto = new VehicleDto();
                 this.enrollmentDto = new EnrollmentDto();
                 this.engineDto = new EngineDto();
                 this.wheelsDto = new List<WheelDto>();
                 this.doorsDto = new List<DoorDto>();
+                this.enrollmentProvider = new DefaultEnrollmentProvider();
             }
 
             public IEnumerable<IEnrollment> Keys
@@ -395,7 +396,7 @@ namespace CarManagement.Services
             {
                 this.queryParameters.Add("@engineIsStarted", started);
                 this.queryParts.Add("@engineIsStarted", " engineIsStarted = @engineIsStarted");
-                this.Type.Add("@engineIsStarted", "int");
+                //this.Type.Add("@engineIsStarted", "int");
                 this.engineIsStarted = started;
                 return this;
             }
@@ -406,8 +407,8 @@ namespace CarManagement.Services
                 this.queryParameters.Add("@serial", enrollment.Serial);
                 this.queryParts.Add("@number", "number = @number");
                 this.queryParts.Add("@serial", "serial = @serial");
-                this.Type.Add("@serial", "string");
-                this.Type.Add("@number", "int");
+                //this.Type.Add("@serial", "string");
+                //this.Type.Add("@number", "int");
                 this.enrollment = enrollment;
                 return this;
             }
@@ -417,7 +418,7 @@ namespace CarManagement.Services
                 this.enrollmentSerial = serial;
                 this.queryParameters.Add("@serial", serial);
                 this.queryParts.Add("@serial", "serial = @serial");
-                this.Type.Add("@serial", "string");
+                //this.Type.Add("@serial", "string");
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
@@ -425,7 +426,7 @@ namespace CarManagement.Services
                 this.queryParameters.Add("@engineHorsePower", horsePower);
                 this.queryParts.Add("@engineHorsePower", "engineHorsePower = @engineHorsePower");
                 this.horsePower = horsePower;
-                this.Type.Add("@engineHorsePower", "int");
+                //this.Type.Add("@engineHorsePower", "int");
                 return this;
             }
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
@@ -435,8 +436,8 @@ namespace CarManagement.Services
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 this.queryParts.Add("@engineHorsePower", "engineHorsePower BETWEEN @min AND @max");
-                this.Type.Add("@min", "int");
-                this.Type.Add("@max", "int");
+                //this.Type.Add("@min", "int");
+                //this.Type.Add("@max", "int");
                 this.max = max;
                 this.min = min;
                 return this;
@@ -459,7 +460,8 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = this.query;
-                        foreach (var item in this.queryParameters.Keys)
+                        DBCommandExtensions.setParameters(sentence, this.queryParameters);
+                        /*foreach (var item in this.queryParameters.Keys)
                         {
                             this.Type
                                 .TryGetValue(item, out this.dataType);
@@ -479,7 +481,7 @@ namespace CarManagement.Services
                             this.parameter.ParameterName = $"{item}";
                             this.parameter.Value = this.data;
                             sentence.Parameters.Add(this.parameter);
-                        }
+                        }*/
 
                     using (IDataReader reader = sentence.ExecuteReader())
                         {
