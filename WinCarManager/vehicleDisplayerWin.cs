@@ -17,13 +17,28 @@ namespace WinCarManager
 {
     public partial class VehicleDisplayerWin : Form
     {
-        private string connectionString;
+        private enum ActionPerformed
+        {
+            unchanged,
+            changed,
+            erased,
+            added,
+        }
+        private struct DtoChangeableItem
+        {
+            public ActionPerformed action;
+            public VehicleDto vehicle;
+        }
+
         private IEnumerable<IVehicle> vehicles;
 
+        private string connectionString;
         IEnrollmentProvider enrollmentProvider;
         IVehicleStorage vehicleStorage;
+        IVehicleBuilder vehicleBuilder;
 
-        private String currentEnrollment;
+        private int currentVehicle;
+        List<DtoChangeableItem> modifiableVehicles;
 
         public VehicleDisplayerWin( IEnrollmentProvider enrollmentProvider, IVehicleStorage vehicleStorage)
         {
@@ -32,6 +47,7 @@ namespace WinCarManager
 
             this.enrollmentProvider = enrollmentProvider;
             this.vehicleStorage = vehicleStorage;
+            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
 
             String[] carColorOptionArray = new String[Enum.GetNames(typeof(CarColor)).Length + 1];
             carColorOptionArray[0] = String.Empty;
@@ -91,29 +107,56 @@ namespace WinCarManager
             }
 
             this.vehicles = queryBuilder;
+
+            this.modifiableVehicles = new List<DtoChangeableItem>();
+            foreach (IVehicle vehicle in this.vehicles)
+            {
+                this.modifiableVehicles.Add(new DtoChangeableItem { action = ActionPerformed.unchanged, vehicle = this.vehicleBuilder.export(vehicle), });
+            }
+
             fullDisplayVehicleCollection();
+        }
+
+        private void clearInputButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void exitSearchButt_Click(object sender, EventArgs e)
         {
             this.vehicles = null;
-            this.currentEnrollment = null;
+            this.currentVehicle = -1;
             fullDisplayVehicleCollection();
         }
 
         private void undoChangesButt_Click(object sender, EventArgs e)
         {
-            if (this.currentEnrollment != null)
+            if ( this.currentVehicle != -1)
             {
-                if (this.vehicles.Any(vehicle => vehicle.Enrollment.ToString() == this.currentEnrollment))
+                if (this.currentVehicle < this.vehicleStorage.Count)
                 {
-                    fullDisplayVehicle(this.vehicles.First(vehicle => vehicle.Enrollment.ToString() == this.currentEnrollment));
+                    this.modifiableVehicles[this.currentVehicle]= new DtoChangeableItem
+                    {
+                        action = ActionPerformed.unchanged,
+                        vehicle = this.vehicleBuilder.export(this.vehicles.ElementAtOrDefault(this.currentVehicle)),
+                    };
+                    fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
                 }
+            }
+            else
+            {
+                //
             }
         }
 
         private void undoAllchangesButt_Click(object sender, EventArgs e)
         {
+            this.modifiableVehicles = new List<DtoChangeableItem>();
+            foreach (IVehicle vehicle in this.vehicles)
+            {
+                this.modifiableVehicles.Add(new DtoChangeableItem { action = ActionPerformed.unchanged, vehicle = this.vehicleBuilder.export(vehicle), });
+            }
+
             fullDisplayVehicleCollection();
         }
 
@@ -127,26 +170,69 @@ namespace WinCarManager
 
         }
 
+        private void removeVehicleButt_Click(object sender, EventArgs e)
+        {
+            if (this.currentVehicle != -1)
+            {
+                if (this.currentVehicle < this.vehicleStorage.Count)
+                {
+                    this.modifiableVehicles[this.currentVehicle] = new DtoChangeableItem
+                    {
+                        action = ActionPerformed.erased,
+                        vehicle = this.modifiableVehicles[this.currentVehicle].vehicle,
+                    };
+                }
+                else
+                {
+                    this.modifiableVehicles.RemoveAt(this.currentVehicle);
+                }
+
+                this.fullDisplayVehicleCollection();
+            }
+        }
+
         private void goToFirstButt_Click(object sender, EventArgs e)
         {
-            this.currentEnrollment = this.vehicles.First().Enrollment.ToString();
-            fullDisplayVehicle(this.vehicles.First());
+            if (this.currentVehicle != -1)
+            {
+                this.currentVehicle = 0;
+                this.fullDisplayVehicle(this.vehicleBuilder.export(this.vehicles.First()));
+            }
+            this.fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
         }
 
         private void goToPreviousButt_Click(object sender, EventArgs e)
         {
-
+            if(this.currentVehicle != -1)
+            {
+                if (--this.currentVehicle < 0)
+                {
+                    this.currentVehicle = this.modifiableVehicles.Count - 1;
+                }
+                this.fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
+            }
         }
 
         private void goToNextButt_Click(object sender, EventArgs e)
         {
-
+            if (this.currentVehicle != -1)
+            {
+                if (++this.currentVehicle >= this.modifiableVehicles.Count)
+                {
+                    this.currentVehicle = 0;
+                }
+                this.fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
+            }
         }
 
         private void goToLastButt_Click(object sender, EventArgs e)
         {
-            this.currentEnrollment = this.vehicles.Last().Enrollment.ToString();
-            fullDisplayVehicle(this.vehicles.Last());
+            if (this.currentVehicle != -1)
+            {
+                this.currentVehicle = this.modifiableVehicles.Count -1;
+                this.fullDisplayVehicle(this.modifiableVehicles.Last().vehicle);
+            }
+            this.fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
         }
 
         private void storageTabButt_Click(object sender, EventArgs e)
@@ -171,49 +257,30 @@ namespace WinCarManager
 
         private void carListView_ItemActivate(object sender, EventArgs e)
         {
-            this.currentEnrollment = this.carListView.SelectedItems[0].Text;
-            fullDisplayVehicle(
-                this.vehicles.First
-                (vehicle =>
-                    vehicle.Enrollment.ToString() == this.currentEnrollment
-                )
-            );
+            this.currentVehicle = this.carListView.SelectedIndices[0];
+            fullDisplayVehicle(this.modifiableVehicles[this.currentVehicle].vehicle);
         }
 
         private void doorsView_ItemActivate(object sender, EventArgs e)
         {
-            fullDisplayDoor(
-                this.vehicles.Single
-                (vehicle =>
-                    vehicle.Enrollment.ToString() == this.currentEnrollment
-                )
-                .Doors[this.doorsView.SelectedIndices[0]]
-                
-            );
+            fullDisplayDoor(this.modifiableVehicles[this.currentVehicle].vehicle.Doors[this.doorsView.SelectedIndices[0]]);
         }
 
         private void wheelsView_ItemActivate(object sender, EventArgs e)
         {
-            fullDisplayWheel(
-                this.vehicles.Single
-                (vehicle =>
-                    vehicle.Enrollment.ToString() == this.currentEnrollment
-                )
-                .Wheels[this.wheelsView.SelectedIndices[0]]
-
-            );
+            fullDisplayWheel(this.modifiableVehicles[this.currentVehicle].vehicle.Wheels[this.wheelsView.SelectedIndices[0]]);
         }
 
         private void fullDisplayVehicleCollection()
         {
-            if (this.vehicles != null)
+            if (this.modifiableVehicles != null)
             {
                 this.carListView.Items.Clear();
-                foreach (IVehicle vehicle in this.vehicles)
+                foreach (DtoChangeableItem dtoChangeableItem in this.modifiableVehicles)
                 {
-                    this.carListView.Items.Add(vehicle.Enrollment.ToString());
+                    this.carListView.Items.Add(dtoChangeableItem.vehicle.Enrollment.Serial + dtoChangeableItem.vehicle.Enrollment.Number.ToString());
                 }
-                fullDisplayVehicle(this.vehicles.First());
+                fullDisplayVehicle(this.modifiableVehicles.First().vehicle);
             }
             else
             {
@@ -221,7 +288,7 @@ namespace WinCarManager
             }
         }
 
-        private void fullDisplayVehicle(IVehicle vehicle)
+        private void fullDisplayVehicle(VehicleDto vehicle)
         {
             this.carColorView.Text = vehicle.Color.ToString();
             this.enrollmentView.Text = vehicle.Enrollment.ToString();
@@ -236,14 +303,14 @@ namespace WinCarManager
             }
 
             this.wheelsView.Items.Clear();
-            foreach (IWheel wheel in vehicle.Wheels)
+            foreach (WheelDto wheel in vehicle.Wheels)
             {
                 this.wheelsView.Items.Add("Wh" + wheel.Pressure.ToString());
             }
             fullDisplayWheel(vehicle.Wheels[0]);
 
             this.doorsView.Items.Clear();
-            foreach (IDoor door in vehicle.Doors)
+            foreach (DoorDto door in vehicle.Doors)
             {
                 this.doorsView.Items.Add("Dr" + door.IsOpen.ToString());
             }
@@ -253,15 +320,14 @@ namespace WinCarManager
             }
         }
 
-        private void fullDisplayWheel(IWheel wheel)
+        private void fullDisplayWheel(WheelDto wheel)
         {
             this.wheelPressureView.Text = wheel.Pressure.ToString();
         }
 
-        private void fullDisplayDoor(IDoor door)
+        private void fullDisplayDoor(DoorDto door)
         {
             this.isOpenedDoor.Checked = door.IsOpen;
         }
-
     }
 }

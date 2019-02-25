@@ -64,6 +64,8 @@
             this.wheelsView = new System.Windows.Forms.ListView();
             this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.carColorView = new System.Windows.Forms.ComboBox();
+            this.clearInputButton = new System.Windows.Forms.Button();
+            this.removeVehicleButt = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxCar)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -143,6 +145,8 @@
             // 
             // carListView
             // 
+            this.carListView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.carListView.Location = new System.Drawing.Point(0, 31);
             this.carListView.Name = "carListView";
             this.carListView.Size = new System.Drawing.Size(165, 525);
@@ -153,40 +157,44 @@
             // 
             // goToFirstButt
             // 
+            this.goToFirstButt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.goToFirstButt.Location = new System.Drawing.Point(171, 507);
             this.goToFirstButt.Name = "goToFirstButt";
             this.goToFirstButt.Size = new System.Drawing.Size(200, 35);
-            this.goToFirstButt.TabIndex = 15;
+            this.goToFirstButt.TabIndex = 16;
             this.goToFirstButt.Text = "|| <=";
             this.goToFirstButt.UseVisualStyleBackColor = true;
             this.goToFirstButt.Click += new System.EventHandler(this.goToFirstButt_Click);
             // 
             // goToPreviousButt
             // 
+            this.goToPreviousButt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.goToPreviousButt.Location = new System.Drawing.Point(377, 507);
             this.goToPreviousButt.Name = "goToPreviousButt";
             this.goToPreviousButt.Size = new System.Drawing.Size(200, 35);
-            this.goToPreviousButt.TabIndex = 16;
+            this.goToPreviousButt.TabIndex = 17;
             this.goToPreviousButt.Text = "<=";
             this.goToPreviousButt.UseVisualStyleBackColor = true;
             this.goToPreviousButt.Click += new System.EventHandler(this.goToPreviousButt_Click);
             // 
             // goToNextButt
             // 
+            this.goToNextButt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.goToNextButt.Location = new System.Drawing.Point(636, 507);
             this.goToNextButt.Name = "goToNextButt";
             this.goToNextButt.Size = new System.Drawing.Size(200, 35);
-            this.goToNextButt.TabIndex = 17;
+            this.goToNextButt.TabIndex = 18;
             this.goToNextButt.Text = "=>";
             this.goToNextButt.UseVisualStyleBackColor = true;
             this.goToNextButt.Click += new System.EventHandler(this.goToNextButt_Click);
             // 
             // goToLastButt
             // 
+            this.goToLastButt.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.goToLastButt.Location = new System.Drawing.Point(842, 507);
             this.goToLastButt.Name = "goToLastButt";
             this.goToLastButt.Size = new System.Drawing.Size(200, 35);
-            this.goToLastButt.TabIndex = 18;
+            this.goToLastButt.TabIndex = 19;
             this.goToLastButt.Text = "=> ||";
             this.goToLastButt.UseVisualStyleBackColor = true;
             this.goToLastButt.Click += new System.EventHandler(this.goToLastButt_Click);
@@ -201,6 +209,7 @@
             // 
             // searchCarButt
             // 
+            this.searchCarButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.searchCarButt.Location = new System.Drawing.Point(842, 45);
             this.searchCarButt.Name = "searchCarButt";
             this.searchCarButt.Size = new System.Drawing.Size(200, 35);
@@ -211,30 +220,33 @@
             // 
             // updateCarButt
             // 
+            this.updateCarButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.updateCarButt.Location = new System.Drawing.Point(842, 187);
             this.updateCarButt.Name = "updateCarButt";
             this.updateCarButt.Size = new System.Drawing.Size(200, 35);
-            this.updateCarButt.TabIndex = 11;
+            this.updateCarButt.TabIndex = 12;
             this.updateCarButt.Text = "Apply changes";
             this.updateCarButt.UseVisualStyleBackColor = true;
             this.updateCarButt.Click += new System.EventHandler(this.updateCarButt_Click);
             // 
             // addCarButt
             // 
+            this.addCarButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.addCarButt.Location = new System.Drawing.Point(842, 309);
             this.addCarButt.Name = "addCarButt";
             this.addCarButt.Size = new System.Drawing.Size(200, 35);
-            this.addCarButt.TabIndex = 14;
+            this.addCarButt.TabIndex = 15;
             this.addCarButt.Text = "Add";
             this.addCarButt.UseVisualStyleBackColor = true;
             this.addCarButt.Click += new System.EventHandler(this.addCarButt_Click);
             // 
             // exitSearchButt
             // 
-            this.exitSearchButt.Location = new System.Drawing.Point(842, 86);
+            this.exitSearchButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.exitSearchButt.Location = new System.Drawing.Point(842, 124);
             this.exitSearchButt.Name = "exitSearchButt";
             this.exitSearchButt.Size = new System.Drawing.Size(200, 35);
-            this.exitSearchButt.TabIndex = 10;
+            this.exitSearchButt.TabIndex = 11;
             this.exitSearchButt.Text = "Quit";
             this.exitSearchButt.UseVisualStyleBackColor = true;
             this.exitSearchButt.Click += new System.EventHandler(this.exitSearchButt_Click);
@@ -343,20 +355,22 @@
             // 
             // undoChangesButt
             // 
+            this.undoChangesButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.undoChangesButt.Location = new System.Drawing.Point(842, 227);
             this.undoChangesButt.Name = "undoChangesButt";
             this.undoChangesButt.Size = new System.Drawing.Size(200, 35);
-            this.undoChangesButt.TabIndex = 12;
+            this.undoChangesButt.TabIndex = 13;
             this.undoChangesButt.Text = "Undo changes";
             this.undoChangesButt.UseVisualStyleBackColor = true;
             this.undoChangesButt.Click += new System.EventHandler(this.undoChangesButt_Click);
             // 
             // undoAllchangesButt
             // 
+            this.undoAllchangesButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.undoAllchangesButt.Location = new System.Drawing.Point(842, 268);
             this.undoAllchangesButt.Name = "undoAllchangesButt";
             this.undoAllchangesButt.Size = new System.Drawing.Size(200, 35);
-            this.undoAllchangesButt.TabIndex = 13;
+            this.undoAllchangesButt.TabIndex = 14;
             this.undoAllchangesButt.Text = "Undo All changes";
             this.undoAllchangesButt.UseVisualStyleBackColor = true;
             this.undoAllchangesButt.Click += new System.EventHandler(this.undoAllchangesButt_Click);
@@ -393,11 +407,35 @@
             this.carColorView.Size = new System.Drawing.Size(160, 24);
             this.carColorView.TabIndex = 2;
             // 
+            // clearInputButton
+            // 
+            this.clearInputButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.clearInputButton.Location = new System.Drawing.Point(842, 86);
+            this.clearInputButton.Name = "clearInputButton";
+            this.clearInputButton.Size = new System.Drawing.Size(200, 35);
+            this.clearInputButton.TabIndex = 10;
+            this.clearInputButton.Text = "Clear";
+            this.clearInputButton.UseVisualStyleBackColor = true;
+            this.clearInputButton.Click += new System.EventHandler(this.clearInputButton_Click);
+            // 
+            // removeVehicleButt
+            // 
+            this.removeVehicleButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.removeVehicleButt.Location = new System.Drawing.Point(842, 350);
+            this.removeVehicleButt.Name = "removeVehicleButt";
+            this.removeVehicleButt.Size = new System.Drawing.Size(200, 35);
+            this.removeVehicleButt.TabIndex = 16;
+            this.removeVehicleButt.Text = "Remove";
+            this.removeVehicleButt.UseVisualStyleBackColor = true;
+            this.removeVehicleButt.Click += new System.EventHandler(this.removeVehicleButt_Click);
+            // 
             // VehicleDisplayerWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1054, 554);
+            this.Controls.Add(this.removeVehicleButt);
+            this.Controls.Add(this.clearInputButton);
             this.Controls.Add(this.carColorView);
             this.Controls.Add(this.wheelsView);
             this.Controls.Add(this.doorsView);
@@ -476,5 +514,7 @@
         private System.Windows.Forms.ListView wheelsView;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.ComboBox carColorView;
+        private System.Windows.Forms.Button clearInputButton;
+        private System.Windows.Forms.Button removeVehicleButt;
     }
 }
