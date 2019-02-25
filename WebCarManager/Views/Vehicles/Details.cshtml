@@ -1,0 +1,30 @@
+﻿@model CarManagement.Core.Models.DTOs.VehicleDto
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h2>Details</h2>
+
+<div>
+    <h4>VehicleDto</h4>
+    <hr />
+    <dl class="dl-horizontal"></dl>
+</div>
+
+<p>Enrollment: @this.ViewData["Serial"]-@this.ViewData["Number"]</p>
+
+<p>Color: </p>
+
+<p>Engine: </p>
+
+
+<p>
+    @Html.ActionLink("📝 Edit", "Edit", new {
+    serial = this.ViewData["Serial"],
+    number = this.ViewData["Number"] }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

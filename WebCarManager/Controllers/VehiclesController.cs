@@ -1,5 +1,8 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
+using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
@@ -8,20 +11,25 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            VehicleDto[] vehicles = new VehicleDto[]
+            string connectionString = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test;Password=123456; MultipleActiveResultSets=True;";
+            VehicleBuilder vehicleBuilder = new VehicleBuilder(new DefaultEnrollmentProvider());
+            SqlVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
+            List<VehicleDto> vehicles = new List<VehicleDto>();
+
+            foreach (IVehicle vehicle in vehicleStorage.get())
             {
-                new VehicleDto
-                {
-                    Enrollment = new EnrollmentDto
-                    {
-                        Serial= "XXX",
-                        Number = 666,
-                    },
-                    Color = CarManagement.Core.Models.CarColor.Red,
-                }
-            };
+                vehicles.Add(vehicleBuilder.export(vehicle));
+            }
 
             return View(vehicles);
+        }
+
+        public ActionResult Details(string serial, int number)
+        {
+            this.ViewData.Add("Serial", serial);
+            this.ViewData.Add("Number", number);
+
+            return View();
         }
     }
 }
