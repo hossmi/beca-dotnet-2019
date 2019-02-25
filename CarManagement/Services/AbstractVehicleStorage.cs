@@ -72,10 +72,20 @@ namespace CarManagement.Services
         private class PrvVehicleQuery : IVehicleQuery
         {
             private IEnumerable<IVehicle> filters;
+            private IEnumerable<IVehicle> vehicles;
 
             public PrvVehicleQuery(IEnumerable<IVehicle> vehicles)
             {
                 this.filters = vehicles;
+            }
+
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return this.vehicles
+                        .Select(v => v.Enrollment);
+                }
             }
 
             public IEnumerator<IVehicle> GetEnumerator()

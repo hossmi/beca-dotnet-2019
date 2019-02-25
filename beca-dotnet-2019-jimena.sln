@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolBox", "ToolBox\ToolBox.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinCarManager", "WinCarManager\WinCarManager.csproj", "{D9166B90-C950-4C4C-A370-F780457E13BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCarManager", "WebCarManager\WebCarManager.csproj", "{249658DA-BE75-4E3A-A67E-ED383B5E3410}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebCarManager.Tests", "WebCarManager.Tests\WebCarManager.Tests.csproj", "{EF9C802E-BABC-4017-A08E-E72DF6EBBD28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{D9166B90-C950-4C4C-A370-F780457E13BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9166B90-C950-4C4C-A370-F780457E13BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9166B90-C950-4C4C-A370-F780457E13BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{249658DA-BE75-4E3A-A67E-ED383B5E3410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{249658DA-BE75-4E3A-A67E-ED383B5E3410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{249658DA-BE75-4E3A-A67E-ED383B5E3410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{249658DA-BE75-4E3A-A67E-ED383B5E3410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9C802E-BABC-4017-A08E-E72DF6EBBD28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9C802E-BABC-4017-A08E-E72DF6EBBD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9C802E-BABC-4017-A08E-E72DF6EBBD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9C802E-BABC-4017-A08E-E72DF6EBBD28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

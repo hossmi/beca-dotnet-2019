@@ -382,6 +382,11 @@ namespace CarManagement.Services
 
                 return toMemory;
             }
+
+            public IEnrollment import(string serial, int number)
+            {
+                return this.enrollmentProvider.import(serial, number);
+            }
         }
     }
 }

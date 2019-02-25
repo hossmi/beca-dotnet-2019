@@ -335,6 +335,14 @@ namespace CarManagement.Services
             private readonly IDictionary<string, string> filters;
             private string indexEngineHorsePower = "whereHorsePower";
 
+            public IEnumerable<IEnrollment> Keys
+            {
+                get
+                {
+                    return enumerateEnrollments();
+                }
+            }
+
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
@@ -499,6 +507,10 @@ namespace CarManagement.Services
                 }
             }
 
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                throw new NotImplementedException();
+            }
 
         }
 

@@ -85,7 +85,7 @@ namespace CarManagement.Services
             return new Enrollment(this.lettersacept[this.letter3].ToString() + this.lettersacept[this.letter2].ToString() + this.lettersacept[this.letter1].ToString(), this.number);
         }
 
-        IEnrollment IEnrollmentProvider.import(string serial, int number)
+        IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             return new Enrollment(serial, number);
         }
