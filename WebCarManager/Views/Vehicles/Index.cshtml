@@ -15,20 +15,42 @@
 <table class="table">
     <tr>
         <th>Enrollment</th>
+        <th>Engine</th>
         <th>Action</th>
+        <th>Wheels</th>
+        <th>Doors</th>
+        <th>Color</th>
     </tr>
 
     @foreach (VehicleDto vehicle in this.Model)
     {
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number</td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number 
-                   /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                <ul>
+                    <li>
+                        @vehicle.Enrollment.Serial - @vehicle.Enrollment.Number
+                    </li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>@string.Format("HorsePower: {0}", vehicle.Engine.HorsePower)</li>
+                    <li> @string.Format("IsStarted: {0}", vehicle.Engine.IsStarted)</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+
+                    <li>
+                        @Html.ActionLink("Edit", "Edit", new {
+                            serial = vehicle.Enrollment.Serial,
+                            number = vehicle.Enrollment.Number
+                            /* id=item.PrimaryKey */ })
+                    </li>
+                    <li>
+                        @Html.ActionLink("Delete", "Delete", new { serial = vehicle.Enrollment.Serial, number = vehicle.Enrollment.Number })
+                    </li>
+                </ul>
             </td>
         </tr>
     }

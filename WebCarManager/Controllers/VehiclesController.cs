@@ -22,13 +22,24 @@ namespace WebCarManager.Controllers
                         Number = 0000
 
                     },
-                    Color = CarManagement.Core.Models.CarColor.Green
+                    Color = CarManagement.Core.Models.CarColor.Green,
+                    Engine = new EngineDto()
+                    {
+                        HorsePower = 15,
+                        IsStarted = true
+                    },
+                    
                 }
             };
             return View(vehicles);
         }
         public ActionResult Edit()
         {
+            return View();
+        }
+        public ActionResult Delete()
+        {
+            
             return View();
         }
     }
