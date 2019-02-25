@@ -35,7 +35,7 @@ namespace WinCarManager
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            
+            this.vehicleStorage.clear();
         }
     }    
 }
