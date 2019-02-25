@@ -126,7 +126,6 @@ namespace WinCarManager
 
             fullDisplayVehicleCollection();
         }
-
         private void clearInputButton_Click(object sender, EventArgs e)
         {
             this.currentVehicle = -1;
@@ -142,7 +141,6 @@ namespace WinCarManager
             this.wheelsView.Clear();
             this.wheelPressureView.Text = "";
         }
-
         private void exitSearchButt_Click(object sender, EventArgs e)
         {
             this.vehicles = new List<IVehicle>();
@@ -169,11 +167,10 @@ namespace WinCarManager
                 else
                 {
                     this.modifiableVehicles.RemoveAt(this.currentVehicle);
-                    this.fullDisplayVehicleCollection();
                 }
             }
+            this.fullDisplayVehicleCollection();
         }
-
         private void undoAllchangesButt_Click(object sender, EventArgs e)
         {
             this.modifiableVehicles = new List<DtoChangeableItem>();
@@ -185,14 +182,33 @@ namespace WinCarManager
             fullDisplayVehicleCollection();
         }
 
-        private void updateCarButt_Click(object sender, EventArgs e)
+        private void saveChangesButt_Click(object sender, EventArgs e)
         {
+            foreach (DtoChangeableItem dtoChangeable in this.modifiableVehicles)
+            {
+                switch (dtoChangeable.action)
+                {
+                    case ActionPerformed.unchanged:
+                        break;
+                    case ActionPerformed.changed:
+                        this.vehicleStorage.set( this.vehicleBuilder.import(dtoChangeable.vehicle) );
+                        break;
+                    case ActionPerformed.erased:
+                        break;
+                    case ActionPerformed.added:
+                        this.vehicleStorage.set(this.vehicleBuilder.import(dtoChangeable.vehicle));
+                        break;
+                    default:
+                        break;
+                }
+                
+            }
 
+            this.fullDisplayVehicleCollection();
         }
-
         private void addCarButt_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(this.enrollmentView.Text.Trim()) == false)
+            if (string.IsNullOrEmpty(this.enrollmentView.Text.Trim()) == false  & this.currentVehicle != -1)
             {
                 string[] enrollmentParam = this.enrollmentView.Text.Split('-');
                 string serial = enrollmentParam[0].Trim();
@@ -257,7 +273,6 @@ namespace WinCarManager
 
             fullDisplayVehicleCollection();
         }
-
         private void removeVehicleButt_Click(object sender, EventArgs e)
         {
             if (this.currentVehicle != -1)
@@ -316,11 +331,6 @@ namespace WinCarManager
                 this.currentVehicle = this.modifiableVehicles.Count -1;
                 this.fullDisplayVehicle(this.modifiableVehicles.Last().vehicle);
             }
-        }
-
-        private void storageTabButt_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void wheelPressureView_TextChanged(object sender, EventArgs e)
@@ -408,6 +418,18 @@ namespace WinCarManager
                 foreach (DtoChangeableItem dtoChangeableItem in this.modifiableVehicles)
                 {
                     this.carListView.Items.Add(dtoChangeableItem.vehicle.Enrollment.Serial + dtoChangeableItem.vehicle.Enrollment.Number.ToString());
+                    if (dtoChangeableItem.action == ActionPerformed.erased)
+                    {
+                        this.carListView.Items[this.carListView.Items.Count - 1].BackColor = Color.Red;
+                    }
+                    else if (dtoChangeableItem.action == ActionPerformed.added)
+                    {
+                        this.carListView.Items[this.carListView.Items.Count - 1].BackColor = Color.Green;
+                    }
+                    else
+                    {
+                        this.carListView.Items[this.carListView.Items.Count - 1].BackColor = Color.Transparent;
+                    }
                 }
                 this.currentVehicle = 0;
                 fullDisplayVehicle(this.modifiableVehicles.First().vehicle);
@@ -464,6 +486,8 @@ namespace WinCarManager
                         action = ActionPerformed.changed,
                         vehicle = this.modifiableVehicles[this.currentVehicle].vehicle,
                     };
+
+                this.carListView.Items[this.currentVehicle].BackColor = Color.Yellow;
             }
         }
     }

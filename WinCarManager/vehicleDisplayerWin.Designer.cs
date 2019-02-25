@@ -44,7 +44,7 @@
             this.goToLastButt = new System.Windows.Forms.Button();
             this.pictureBoxCar = new System.Windows.Forms.PictureBox();
             this.searchCarButt = new System.Windows.Forms.Button();
-            this.updateCarButt = new System.Windows.Forms.Button();
+            this.saveChangesButt = new System.Windows.Forms.Button();
             this.addCarButt = new System.Windows.Forms.Button();
             this.exitSearchButt = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -218,16 +218,16 @@
             this.searchCarButt.UseVisualStyleBackColor = true;
             this.searchCarButt.Click += new System.EventHandler(this.searchCarButt_Click);
             // 
-            // updateCarButt
+            // saveChangesButt
             // 
-            this.updateCarButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.updateCarButt.Location = new System.Drawing.Point(842, 187);
-            this.updateCarButt.Name = "updateCarButt";
-            this.updateCarButt.Size = new System.Drawing.Size(200, 35);
-            this.updateCarButt.TabIndex = 12;
-            this.updateCarButt.Text = "Apply changes";
-            this.updateCarButt.UseVisualStyleBackColor = true;
-            this.updateCarButt.Click += new System.EventHandler(this.updateCarButt_Click);
+            this.saveChangesButt.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.saveChangesButt.Location = new System.Drawing.Point(842, 187);
+            this.saveChangesButt.Name = "saveChangesButt";
+            this.saveChangesButt.Size = new System.Drawing.Size(200, 35);
+            this.saveChangesButt.TabIndex = 12;
+            this.saveChangesButt.Text = "Apply changes";
+            this.saveChangesButt.UseVisualStyleBackColor = true;
+            this.saveChangesButt.Click += new System.EventHandler(this.saveChangesButt_Click);
             // 
             // addCarButt
             // 
@@ -447,7 +447,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.exitSearchButt);
             this.Controls.Add(this.addCarButt);
-            this.Controls.Add(this.updateCarButt);
+            this.Controls.Add(this.saveChangesButt);
             this.Controls.Add(this.searchCarButt);
             this.Controls.Add(this.pictureBoxCar);
             this.Controls.Add(this.goToLastButt);
@@ -494,7 +494,7 @@
         private System.Windows.Forms.Button goToLastButt;
         private System.Windows.Forms.PictureBox pictureBoxCar;
         private System.Windows.Forms.Button searchCarButt;
-        private System.Windows.Forms.Button updateCarButt;
+        private System.Windows.Forms.Button saveChangesButt;
         private System.Windows.Forms.Button addCarButt;
         private System.Windows.Forms.Button exitSearchButt;
         private System.Windows.Forms.GroupBox groupBox1;
