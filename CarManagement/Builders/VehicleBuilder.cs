@@ -23,7 +23,12 @@ namespace CarManagement.Builders
 
         public void addWheel()
         {
-            this.wheelsCount++;
+            if (wheelsCount < 4)
+            {
+                this.wheelsCount++;
+            }
+            else throw new Exception("No puedes añadir mas de 4 ruedas");
+
         }
 
         public void setDoors(int doorsCount)
@@ -57,8 +62,9 @@ namespace CarManagement.Builders
                 Wheel wheel = new Wheel();
                 wheels.Add(wheel);
             }
-
+            
             enrollment = enrollmentProvider.getNewEnrollment();
+            if(wheels.Count <= 0) throw new Exception("No puedes añadir mas de 4 ruedas");
 
             return new Vehicle(this.color,this.engine,this.wheels,this.doors,this.enrollment);
         }
