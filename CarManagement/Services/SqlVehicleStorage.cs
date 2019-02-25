@@ -69,50 +69,6 @@ namespace CarManagement.Services
             throw new NotImplementedException();
         }
 
-        private static List<WheelDto> readWheels(SqlConnection connection, int vehicleId)
-        {
-            List<WheelDto> wheelsDto = new List<WheelDto>();
-
-            using (SqlCommand command = new SqlCommand())
-            {
-                command.Connection = connection;
-                command.CommandText = $@"SELECT * FROM wheel
-                                        WHERE vehicleId = {vehicleId}";
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        WheelDto wheelDto = new WheelDto();
-                        wheelDto.Pressure = Convert.ToDouble(reader["pressure"]);
-                        wheelsDto.Add(wheelDto);
-                    }
-                }
-            }
-            return wheelsDto;
-        }
-
-        private static List<DoorDto> readDoors(SqlConnection connection, int vehicleId)
-        {
-            List<DoorDto> doorsDto = new List<DoorDto>();
-
-            using (SqlCommand command = new SqlCommand())
-            {
-                command.Connection = connection;
-                command.CommandText = $@"SELECT  FROM door
-                                        WHERE vehicleId = {vehicleId}";
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        DoorDto doorDto = new DoorDto();
-                        doorDto.IsOpen = Convert.ToBoolean(reader["isOpen"]);
-                        doorsDto.Add(doorDto);
-                    }
-                }
-            }
-            return doorsDto;
-        }
-
         public void set(IVehicle vehicle)
         {
             int enrollmentId = 0;
@@ -207,39 +163,7 @@ namespace CarManagement.Services
                 };
                 executeCommand(this.connectionString, queryInsertDoor, parameterDoor);
             }
-        }
-
-        private bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
-        {
-            bool existEnrollment;
-
-            using (IDbConnection connection = new SqlConnection(connectionString))
-            using (IDbCommand command = connection.CreateCommand())
-            {
-                connection.Open();
-                command.CommandText = SELECT_ENROLLMENT_ID;
-                command.Connection = connection;
-                command.setParameter("@serial",enrollment.Serial);
-                command.setParameter("@number", enrollment.Number);
-
-                using (IDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        enrollmentId = (int) reader["id"];
-                        existEnrollment = true;
-                    }
-                    else
-                    {
-                        enrollmentId = 0;
-                        existEnrollment = false;
-                    }
-                }
-                connection.Close();
-            }
-
-            return existEnrollment;
-        }
+        }        
 
         public IVehicleQuery get()
         {
@@ -488,6 +412,82 @@ namespace CarManagement.Services
                     sqlConnection.Close();
                 }
             }
+        }
+
+        private static List<WheelDto> readWheels(SqlConnection connection, int vehicleId)
+        {
+            List<WheelDto> wheelsDto = new List<WheelDto>();
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connection;
+                command.CommandText = $@"SELECT * FROM wheel
+                                        WHERE vehicleId = {vehicleId}";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        WheelDto wheelDto = new WheelDto();
+                        wheelDto.Pressure = Convert.ToDouble(reader["pressure"]);
+                        wheelsDto.Add(wheelDto);
+                    }
+                }
+            }
+            return wheelsDto;
+        }
+
+        private static List<DoorDto> readDoors(SqlConnection connection, int vehicleId)
+        {
+            List<DoorDto> doorsDto = new List<DoorDto>();
+
+            using (SqlCommand command = new SqlCommand())
+            {
+                command.Connection = connection;
+                command.CommandText = $@"SELECT  FROM door
+                                        WHERE vehicleId = {vehicleId}";
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        DoorDto doorDto = new DoorDto();
+                        doorDto.IsOpen = Convert.ToBoolean(reader["isOpen"]);
+                        doorsDto.Add(doorDto);
+                    }
+                }
+            }
+            return doorsDto;
+        }
+
+        private bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
+        {
+            bool existEnrollment;
+
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbCommand command = connection.CreateCommand())
+            {
+                connection.Open();
+                command.CommandText = SELECT_ENROLLMENT_ID;
+                command.Connection = connection;
+                command.setParameter("@serial", enrollment.Serial);
+                command.setParameter("@number", enrollment.Number);
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        enrollmentId = (int)reader["id"];
+                        existEnrollment = true;
+                    }
+                    else
+                    {
+                        enrollmentId = 0;
+                        existEnrollment = false;
+                    }
+                }
+                connection.Close();
+            }
+
+            return existEnrollment;
         }
     }
 }
