@@ -17,7 +17,7 @@ namespace BusinessCore.Tests.Services
             public string Serial { get; }
             public int Number { get; }
 
-            public override string ToString()
+            public string Print()
             {
                 return $"{this.Serial}-{this.Number.ToString("0000")}";
             }
