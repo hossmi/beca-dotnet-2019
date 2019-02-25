@@ -1,9 +1,5 @@
-﻿using CarManagement.Core.Models.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using CarManagement.Core.Models.DTOs;
 
 namespace WebCarManager.Controllers
 {
@@ -12,20 +8,20 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            VehicleDto[] vehicleDtos = new VehicleDto[]
+            VehicleDto[] vehicles = new VehicleDto[]
             {
                 new VehicleDto
                 {
-                     Enrollment= new EnrollmentDto()
-                     {
-                          Number=666,
-                           Serial="BBB"
-                     },
-                      Color = CarManagement.Core.Models.CarColor.Black
+                    Enrollment = new EnrollmentDto
+                    {
+                        Serial= "XXX",
+                        Number = 666,
+                    },
+                    Color = CarManagement.Core.Models.CarColor.Red,
                 }
             };
 
-            return View(vehicleDtos);
+            return View(vehicles);
         }
     }
 }
