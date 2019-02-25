@@ -13,11 +13,11 @@ namespace CarManagement.Services
         private int doorsCount;
         private int wheelCounter;
         private CarColor color;
-        private int hp;
+        private int power;
         private IEngine engine;
         private VehicleDto vehicleDto;
         private IVehicle vehicle;
-        private bool t;
+        private bool checkColor;
         private List<IWheel> wheels;
         private List<IDoor> doors;
         private IEnrollment enrollment;
@@ -34,7 +34,7 @@ namespace CarManagement.Services
             this.engine = new Engine();
             this.wheelCounter = 0;
             this.vehicleDto = new VehicleDto();
-            this.t = false;
+            this.checkColor = false;
             this.color = new CarColor();
             this.wheels = new List<IWheel>();
             this.doors = new List<IDoor>();
@@ -59,7 +59,7 @@ namespace CarManagement.Services
         public void setEngine(int horsePorwer)
         {
             Asserts.isTrue(horsePorwer > 0);
-            this.hp = horsePorwer;
+            this.power = horsePorwer;
         }
         public VehicleDto export(IVehicle vehicle)
         {
@@ -74,20 +74,20 @@ namespace CarManagement.Services
         public void setColor(CarColor color)
         {
             this.color = color;
-            foreach (CarColor c in Enum.GetValues(typeof(CarColor)))
+            foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
             {
-                if (color == c)
+                if (color == carColor)
                 {
-                    this.t = true;
+                    this.checkColor = true;
                 }
             }
-            Asserts.isTrue(this.t == true);
+            Asserts.isTrue(this.checkColor == true);
         }
         public IVehicle build()
         {
             Asserts.isTrue(this.wheelCounter > 0);
-            Engine engine = new Engine();
-            engine.setEngine(this.hp);
+            Engine engineSet = new Engine();
+            engineSet.setEngine(this.power);
             this.enrollment = this.enrollmentProvider.getNew();
             for (int i = 0; i < this.wheelCounter; i++)
             {
@@ -99,8 +99,8 @@ namespace CarManagement.Services
                 this.door = new Door();
                 this.doors.Add(this.door);
             }
-            Vehicle vehicle = new Vehicle(this.wheels, this.doors, engine, this.color, this.enrollment);
-            return vehicle;
+            this.vehicle = new Vehicle(this.wheels, this.doors, engineSet, this.color, this.enrollment);
+            return this.vehicle;
         }
         public IEnrollment import(string serial, int number)
         {
@@ -298,40 +298,19 @@ namespace CarManagement.Services
         }
         private class Vehicle : IVehicle
         {
-            private List<IWheel> wheels = new List<IWheel>();
-            private List<IDoor> doors = new List<IDoor>();
-            public CarColor Color { set; get; }
-            public IEngine Engine { get; set; }
-            public IEnrollment Enrollment { get; }
+            private IEngine engine;
+            private List<IDoor> doors;
+            private List<IWheel> wheels;
+            private CarColor color;
+            private IEnrollment enrollment;
 
             public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor color, IEnrollment enrollment)
             {
-                this.wheels = wheels;
+                this.engine = engine;
                 this.doors = doors;
-                this.Engine = engine;
-                this.Color = color;
-                this.Enrollment = enrollment;
-            }
-
-            public Vehicle()
-            {
-            }
-
-            public int DoorsCount
-            {
-                get
-                {
-                    return this.doors.Count;
-                }
-            }
-
-            public int WheelCount
-            {
-                get
-                {
-                    return this.wheels.Count;
-                }
-
+                this.color = color;
+                this.wheels = wheels;
+                this.enrollment = enrollment;
             }
 
             public IDoor[] Doors
@@ -341,7 +320,20 @@ namespace CarManagement.Services
                     return this.doors.ToArray();
                 }
             }
-
+            public IEngine Engine
+            {
+                get
+                {
+                    return this.engine;
+                }
+            }
+            public IEnrollment Enrollment
+            {
+                get
+                {
+                    return this.enrollment;
+                }
+            }
             public IWheel[] Wheels
             {
                 get
@@ -349,6 +341,30 @@ namespace CarManagement.Services
                     return this.wheels.ToArray();
                 }
             }
+            public CarColor Color
+            {
+                get
+                {
+                    return this.color;
+                }
+            }
+            public int DoorsCount
+            {
+                get
+                {
+                    return this.doors.Count;
+                }
+
+            }
+            public int WheelCount
+            {
+                get
+                {
+                    return this.wheels.Count;
+                }
+
+            }
+
             public void setWheelsPressure(double pression)
             {
                 Asserts.isTrue(pression >= 0);
@@ -356,6 +372,10 @@ namespace CarManagement.Services
                 {
                     wheel.Pressure = pression;
                 }
+            }
+            public void setColor(CarColor color)
+            {
+                this.color = color;
             }
         }
     }

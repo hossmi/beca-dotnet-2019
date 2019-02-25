@@ -76,16 +76,34 @@ Layout = "~/Views/Shared/_Layout.cshtml";
             <th>Wheels</th>
         </tr>
         foreach (WheelDto wheelDto in this.Model.Select(wheels => wheels.Wheels).Single())
-        {    
+        {
+            int wheel = Array.IndexOf(this.Model.Select(wheels => wheels.Wheels).Single(), wheelDto);
             <tr>
-                <th>Wheel @wheelDto</th>
+                <th>[@wheel]</th>
                 <th>Actions</th>
             </tr>
             <tr>
-                <td>@vehicle.Color</td>
+                <td>Pressure @wheelDto.Pressure</td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new {
                    wheel = wheelDto }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+        foreach (DoorDto doorDto in this.Model.Select(doors => doors.Doors).Single())
+        {
+            int door = Array.IndexOf(this.Model.Select(doors => doors.Doors).Single(), doorDto);
+            <tr>
+                <th>[@door]</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>IsOpen @doorDto.IsOpen</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {
+                   door = doorDto }) |
                     @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                     @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                 </td>

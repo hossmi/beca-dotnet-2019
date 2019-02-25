@@ -1,15 +1,27 @@
 ﻿using System.Web.Mvc;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
+using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
     public class VehiclesController : Controller
     {
+        private readonly string connectionString;
+        private IEnrollmentProvider enrollmentProvider;
+        private IVehicleBuilder vehiclebuilder;
+        private SqlVehicleStorage sqlVehicleStorage;
+        private VehicleDto[] vehicles;
+
         // GET: Vehicles
         public ActionResult Index()
         {
-            VehicleDto[] vehicles = new VehicleDto[]
+            this.enrollmentProvider = new DefaultEnrollmentProvider();
+            //IEnrollment enrollment = enrollmentProvider.getNew();
+            this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
+            this.sqlVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehiclebuilder);
+            this.vehicles = new VehicleDto[]
             {
                 new VehicleDto
                 {
@@ -39,8 +51,9 @@ namespace WebCarManager.Controllers
 
                 }
             };
+            this.sqlVehicleStorage.get();
 
-            return View(vehicles);
+            return View(this.vehicles);
         }
     }
 }
