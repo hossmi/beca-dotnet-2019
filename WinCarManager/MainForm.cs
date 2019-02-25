@@ -28,9 +28,11 @@ namespace WinCarManager
             this.Visible = false;
             this.Close();
             VehicleStorageForm vehicleStorageForm = new VehicleStorageForm(this.vehicleStorage, this.enrollmentProvider);
-            Application.EnableVisualStyles();
+            vehicleStorageForm.Visible = true;
+            vehicleStorageForm.Activate();
+
             //Application.Run(vehicleStorageForm);
-            vehicleStorageForm.Show();
+            //vehicleStorageForm.Show();
             //vehicleStorageForm.ShowDialog();
             //ShowDialog(new VehicleStorageForm(this.vehicleStorage, this.enrollmentProvider));
         }
