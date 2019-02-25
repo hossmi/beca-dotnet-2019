@@ -1,4 +1,5 @@
 ﻿@using CarManagement.Core.Models.DTOs
+
 @model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
 
 @{
@@ -30,14 +31,30 @@ Layout = "~/Views/Shared/_Layout.cshtml";
             </td>
         </tr>
         <tr>
-            <th>Engine HorsePower</th>
+            <th>Engine</th>
+        </tr>
+        <tr>
+            <th>HorsePower</th>
             <th>Actions</th>
         </tr>
         <tr>
             <td>@vehicle.Engine.HorsePower</td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {
-                    = vehicle.Engine.HorsePower }) |
+                   horsePower = vehicle.Engine.HorsePower }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+        <tr>
+            <th>IsStarted</th>
+            <th>Actions</th>
+        </tr>
+        <tr>
+            <td>@vehicle.Engine.IsStarted</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {
+               IsStarted = vehicle.Engine.IsStarted }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
@@ -55,6 +72,25 @@ Layout = "~/Views/Shared/_Layout.cshtml";
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
+        <tr>
+            <th>Wheels</th>
+        </tr>
+        foreach (WheelDto wheelDto in this.Model.Select(wheels => wheels.Wheels).Single())
+        {    
+            <tr>
+                <th>Wheel @wheelDto</th>
+                <th>Actions</th>
+            </tr>
+            <tr>
+                <td>@vehicle.Color</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {
+                   wheel = wheelDto }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
     }
 
 </table>

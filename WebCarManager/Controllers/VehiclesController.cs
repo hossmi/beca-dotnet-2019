@@ -23,7 +23,7 @@ namespace WebCarManager.Controllers
                         HorsePower = 100,
                         IsStarted = true
                     },
-                    Color = CarManagement.Core.Models.CarColor.Red,
+                    Color = CarColor.Red,
                     Doors = new DoorDto[]
                     {
                         new DoorDto { IsOpen = true },
