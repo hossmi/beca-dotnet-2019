@@ -4,17 +4,25 @@ namespace CarManagement.Models
 {
     public class Engine
     {
+        private bool isStarted;
+        private int horsePower;
+        public Engine()
+        {
+            isStarted = false;
+            horsePower = 1;
+        }
+
         public bool IsStarted
         {
             get
             {
-                throw new NotImplementedException();
+                return isStarted;
             }
         }
 
         public void start()
         {
-            throw new NotImplementedException();
+            isStarted = true;
         }
     }
 }
