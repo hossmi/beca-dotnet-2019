@@ -1,4 +1,5 @@
-﻿@model CarManagement.Core.Models.DTOs.VehicleDto
+﻿@using CarManagement.Core.Models.DTOs
+@model CarManagement.Core.Models.DTOs.VehicleDto
 
 @{
     ViewBag.Title = "Details";
@@ -15,15 +16,56 @@
     <dl class="dl-horizontal"></dl>
 </div>
 
-<p>Enrollment: @this.ViewData["Serial"]-@this.ViewData["Number"]</p>
+<div>
+    <p>Enrollment: @this.ViewData["Serial"]-@this.ViewData["Number"]</p>
+</div>
 
-<p>Color: </p>
+<div>
+    <p>Color: @this.Model.Color.ToString()</p>
+</div>
 
-<p>Engine: </p>
+<div>
+    <p>ENGINE:</p>
+    <p>Horse Power: @this.Model.Engine.HorsePower.ToString()</p>
+    <p>IsStarted: @this.Model.Engine.IsStarted.ToString()</p>
+</div>
 
+<div>
+    <p>WHEELS:</p>
+    <table>
+        <tr>
+            <th>Pressure</th>
+        </tr>
+        @foreach (WheelDto wheelDto in this.Model.Wheels)
+        {
+            <tr>
+                <td>
+                    @wheelDto.Pressure
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    <p>DOORS:</p>
+    <table>
+        <tr>
+            <th>IsOpen</th>
+        </tr>
+        @foreach (DoorDto doorDto in this.Model.Doors)
+        {
+            <tr>
+                <td>
+                    @doorDto.IsOpen.ToString()
+                </td>
+            </tr>
+        }
+    </table>
+</div>
 
 <p>
-    @Html.ActionLink("📝 Edit", "Edit", new {
+    @Html.ActionLink("Edit", "Edit", new {
     serial = this.ViewData["Serial"],
     number = this.ViewData["Number"] }) |
     @Html.ActionLink("Back to List", "Index")

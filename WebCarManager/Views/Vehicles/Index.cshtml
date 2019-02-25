@@ -20,14 +20,14 @@ Layout = "~/Views/Shared/_Layout.cshtml";
     @foreach (VehicleDto vehicle in this.Model)
     {
         <tr>
-            <td>@Html.ActionLink("🚘 " + vehicle.Enrollment.Serial + "-" + vehicle.Enrollment.Number.ToString("0000"), "Details", new {
+            <td>@Html.ActionLink(vehicle.Enrollment.Serial + "-" + vehicle.Enrollment.Number.ToString("0000"), "Details", new {
                    serial = vehicle.Enrollment.Serial,
                    number = vehicle.Enrollment.Number })</td>
             <td>
-                @Html.ActionLink("📝 Edit", "Edit", new {
+                @Html.ActionLink("Edit", "Edit", new {
                    serial = vehicle.Enrollment.Serial,
                    number = vehicle.Enrollment.Number }) |
-                @Html.ActionLink("🗑️ Delete", "Delete", new{
+                @Html.ActionLink("Delete", "Delete", new{
                    serial = vehicle.Enrollment.Serial,
                    number = vehicle.Enrollment.Number })
             </td>

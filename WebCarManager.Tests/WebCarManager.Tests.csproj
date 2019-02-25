@@ -98,12 +98,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WebCarManager\WebCarManager.csproj">
-      <Project>{249658DA-BE75-4E3A-A67E-ED383B5E3410}</Project>
-      <Name>WebCarManager</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
