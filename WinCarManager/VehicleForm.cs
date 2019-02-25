@@ -4,13 +4,7 @@ using CarManagement.Core.Services;
 using CarManagement.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WinCarManager
@@ -192,13 +186,13 @@ namespace WinCarManager
 
         private void EnrollmentsGridView_SelectionChanged(object sender, EventArgs e)
         {
-            if (this.EnrollmentsGridView.SelectedRows.Count > 0 && refreshing == false)
+            if (this.EnrollmentsGridView.SelectedRows.Count > 0 && this.refreshing == false)
             {
                 this.position = this.EnrollmentsGridView.SelectedRows[0].Index;
                 LoadVehicle();
             }
 
-            if (refreshing && this.EnrollmentsGridView.Rows.Count > this.position)
+            if (this.refreshing && this.EnrollmentsGridView.Rows.Count > this.position)
             {
                 this.refreshing = false;
                 this.EnrollmentsGridView.Rows[this.position].Selected = true;

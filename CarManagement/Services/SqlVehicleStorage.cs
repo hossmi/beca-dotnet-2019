@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
@@ -11,9 +9,6 @@ using System.Collections;
 using CarManagement.Core;
 using ToolBox.Services;
 using System.Data;
-using System.Data.Common;
-using System.Linq.Expressions;
-using System.Reflection;
 
 namespace CarManagement.Services
 {
