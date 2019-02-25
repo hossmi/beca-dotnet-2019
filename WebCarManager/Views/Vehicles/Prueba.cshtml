@@ -1,0 +1,130 @@
+﻿﻿@using CarManagement.Core.Models.DTOs
+@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+
+@{
+    ViewBag.Title = "Prueba";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Matrículas</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>Matrícula</th>
+        <th>Serial</th>
+        <th>Number</th>
+        <th>Acciones</th>
+
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>@vehicle.Enrollment.Serial</td>
+            <td>@vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>
+                @Html.ActionLink("✏️Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("📇Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("🗑️Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    <tr>
+        <th>Motor</th>
+        <th>Potencia</th>
+        <th>Encendido</th>
+        <th>Acciones</th>
+
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Engine.HorsePower - @vehicle.Engine.IsStarted</td>
+            <td>@vehicle.Engine.HorsePower</td>
+            <td>@vehicle.Engine.IsStarted</td>
+            <td>
+                @Html.ActionLink("✏️Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("📇Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("🗑️Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    <tr>
+        <th>Color</th>
+        <th></th>
+        <th></th>
+        <th>Acciones</th>
+
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Color</td>
+            <td></td>
+            <td></td>
+            <td>
+                @Html.ActionLink("✏️Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("📇Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("🗑️Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    <tr>
+        <th>Puertas</th>
+        <th>Abiertas</th>
+        <th></th>
+        <th>Acciones</th>
+
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Doors.Count()</td>
+            <td>@vehicle.Engine.HorsePower</td>
+            <td></td>
+            <td>
+                @Html.ActionLink("✏️Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("📇Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("🗑️Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+    <tr>
+        <th>Ruedas</th>
+        <th>Presion</th>
+        <th>Media de presion</th>
+        <th>Acciones</th>
+
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Wheels.Count()</td>
+            <td>@vehicle.Wheels.</td>
+            <td></td>
+            <td>
+                @Html.ActionLink("✏️Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("📇Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("🗑️Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+</table>

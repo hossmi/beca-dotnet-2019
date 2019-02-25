@@ -1,90 +1,83 @@
-﻿using System;
+﻿using System.Web.Mvc;
+using CarManagement.Core.Models.DTOs;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using CarManagement.Core.Models;
+using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : Controller
 
+    public class VehiclesController : Controller
     {
-        // GET: Vehicle
+        // GET: Vehicles
         public ActionResult Index()
         {
-            return View();
-        }
-
-        // GET: Vehicle/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Vehicle/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Vehicle/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            VehicleDto[] vehicles = new VehicleDto[]
             {
-                // TODO: Add insert logic here
+                new VehicleDto
+                {
+                    Enrollment = new EnrollmentDto
+                    {
+                        Serial= "XXX",
+                        Number = 666,
+                    },
+                    Engine = new EngineDto
+                {
+                    HorsePower = 666,
+                    IsStarted = true,
+                },
+                Doors = new DoorDto[]
+                {
+                    new DoorDto { IsOpen = true },
+                    new DoorDto { IsOpen = false },
+                },
+                Wheels = new WheelDto[]
+                {
+                    new WheelDto{Pressure = 4},
+                    new WheelDto{Pressure = 4},
+                    new WheelDto{Pressure = 2},
+                    new WheelDto{Pressure = 2},
+                },
+                    Color = CarManagement.Core.Models.CarColor.Red,
+                }
+            };
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return View(vehicles);
         }
-
-        // GET: Vehicle/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Prueba()
         {
-            return View();
-        }
-
-        // POST: Vehicle/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
+            VehicleDto[] vehicles = new VehicleDto[]
             {
-                // TODO: Add update logic here
+                new VehicleDto
+                {
+      Enrollment = new EnrollmentDto
+                    {
+                        Serial= "XXX",
+                        Number = 666,
+                    },
+                    Engine = new EngineDto
+                {
+                    HorsePower = 666,
+                    IsStarted = true,
+                },
+                Doors = new IDoor[]
+                {
+                    new Door { IsOpen = true },
+                    new Door { IsOpen = false },
+                },
+                Wheels = new IWheel[]
+                {
+                    new Wheel{Pressure = 4},
+                    new Wheel{Pressure = 4},
+                    new Wheel{Pressure = 2},
+                    new Wheel{Pressure = 2},
+                },
+                    Color = CarManagement.Core.Models.CarColor.Red,
+            
+                }
+            };
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Vehicle/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Vehicle/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return View(vehicles);
         }
     }
 }
