@@ -45,7 +45,7 @@ namespace BusinessCore.Tests
         [TestCleanup]
         public void cleanUp()
         {
-            drop(this.connectionString);
+            //drop(this.connectionString);
         }
 
         [TestMethod]
@@ -58,7 +58,75 @@ namespace BusinessCore.Tests
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
 
+            String query = @"
+                    USE [CarManagement]
+                    CREATE TABLE [enrollment](
+	                    [serial] [char](3) NOT NULL,
+	                    [number] [smallint] NOT NULL,
+	                    [id] [int] IDENTITY(1,1) NOT NULL,
+                        CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ([id] ASC)
+                    )
+                    CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment]
+                    (
+	                    [serial] ASC,
+	                    [number] ASC
+                    )";
+            using (SqlCommand command = new SqlCommand(query, conn))
+            {
+                command.ExecuteNonQuery();
+            }
 
+            query = @"USE [CarManagement]
+                    CREATE TABLE [vehicle](
+	                [color] [smallint] NOT NULL,
+	                [engineHorsePower] [smallint] NOT NULL,
+	                [engineIsStarted] [bit] NOT NULL,
+	                [enrollmentId] [int] NOT NULL,
+                    CONSTRAINT [PK_vehicle] PRIMARY KEY CLUSTERED 
+                    ([enrollmentId] ASC
+                    ))
+                    ALTER TABLE [vehicle]  WITH CHECK ADD  CONSTRAINT [FK_vehicle_enrollment] FOREIGN KEY([enrollmentId])
+                    REFERENCES [enrollment] ([id])";
+            using (SqlCommand command = new SqlCommand(query, conn))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            query = @"
+                USE [CarManagement]
+
+                CREATE TABLE [door](
+	                [id] [int] NOT NULL,
+	                [vehicleId] [int] NOT NULL,
+	                [isOpen] [bit] NOT NULL,
+                    CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED 
+                (
+	                [id] ASC,
+	                [vehicleId] ASC
+                ))
+
+                ALTER TABLE [door] WITH CHECK ADD CONSTRAINT [FK_door_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [vehicle] ([enrollmentId])";
+
+            using (SqlCommand command = new SqlCommand(query, conn))
+            {
+                command.ExecuteNonQuery();
+            }
+
+            query = @"USE [CarManagement]
+                    CREATE TABLE [wheel](
+	                    [id] [int] NOT NULL,
+	                    [vehicleId] [int] NOT NULL,
+	                    [pressure] [float] NOT NULL,
+                     CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED 
+                    (
+	                    [id] ASC,
+	                    [vehicleId] ASC
+                    ))
+                    ALTER TABLE [wheel]  WITH CHECK ADD  CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([id]) REFERENCES [vehicle] ([enrollmentId])";
+            using (SqlCommand command = new SqlCommand(query, conn))
+            {
+                command.ExecuteNonQuery();
+            }
 
             conn.Close();
             
@@ -74,19 +142,19 @@ namespace BusinessCore.Tests
                 using (SqlCommand command = new SqlCommand(query, conn)) {
                     command.ExecuteNonQuery();
                 }
-                query = @"USE [CarManagement]
-                         DROP TABLE [wheel]  IF EXISTS";
-                using (SqlCommand command = new SqlCommand(query, conn)) {
+                query = @"USE [CarManagement] IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[wheel]') AND type in (N'U')) DROP TABLE [dbo].[wheel]";
+                using (SqlCommand command = new SqlCommand(query, conn))
+                {
                     command.ExecuteNonQuery();
                 }
-                query = @"USE [CarManagement]
-                         DROP TABLE [vehicle]  IF EXISTS";
-                using (SqlCommand command = new SqlCommand(query, conn)) {
+                query = @"USE [CarManagement] IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[vehicle]') AND type in (N'U')) DROP TABLE [dbo].[vehicle]";
+                using (SqlCommand command = new SqlCommand(query, conn))
+                {
                     command.ExecuteNonQuery();
                 }
-                query = @"USE [CarManagement]
-                         DROP TABLE [enrollment]  IF EXISTS";
-                using (SqlCommand command = new SqlCommand(query, conn)) {
+                query = @"USE [CarManagement] IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[enrollment]') AND type in (N'U')) DROP TABLE [dbo].[enrollment]";
+                using (SqlCommand command = new SqlCommand(query, conn))
+                {
                     command.ExecuteNonQuery();
                 }
 
