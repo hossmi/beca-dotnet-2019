@@ -63,9 +63,13 @@ namespace CarManagement.Services
              FROM enrollment
              WHERE serial = @serial
              AND number = @number ";
-        private const string DELETE_WHEELS_AND_DOORS = @"
+        private const string DELETE_DOORS = @"
               DELETE 
-              FROM wheel, door  
+              FROM Door 
+              WHERE vehicleId = @id ";
+        private const string DELETE_WHEELS = @"
+              DELETE 
+              FROM wheel
               WHERE vehicleId = @id ";
 
         private const string BASE_QUERRY = @"
@@ -210,7 +214,11 @@ namespace CarManagement.Services
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
 
-            command = new SqlCommand(DELETE_WHEELS_AND_DOORS, conection);
+            command = new SqlCommand(DELETE_DOORS, conection);
+            command.Parameters.AddWithValue("@id", id);
+            command.ExecuteNonQuery();
+
+            command = new SqlCommand(DELETE_WHEELS, conection);
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
 
