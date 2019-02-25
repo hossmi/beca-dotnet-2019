@@ -99,6 +99,10 @@
       <Project>{6542EE62-2A8A-4BAF-869F-4427B0416032}</Project>
       <Name>CarManagement</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ToolBox\ToolBox.csproj">
+      <Project>{67dca661-f0a4-4efa-91ba-a005f3a028bf}</Project>
+      <Name>ToolBox</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
