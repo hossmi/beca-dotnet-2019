@@ -22,15 +22,27 @@
     {
         string enrollment = $"{@vehicle.Enrollment.Serial} - {@vehicle.Enrollment.Number.ToString("0000")}";
         <tr>
-            <td>@enrollment</td>
+            <td>
+                @Html.ActionLink(@enrollment, "Detalles", new
+           {
+               serial = vehicle.Enrollment.Serial,
+               number = vehicle.Enrollment.Number
+           }, new
+           {
+               onclick = "return confirm(@enrollment);"
+           })
+            </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new
-                                   {
-                                       serial =vehicle.Enrollment.Serial,
-                                       number =vehicle.Enrollment.Number
-                                   }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    {
+                        serial =vehicle.Enrollment.Serial,
+                        number =vehicle.Enrollment.Number
+                    }) |
+                @Html.ActionLink("Delete", "Delete", new
+                    {
+                        serial = vehicle.Enrollment.Serial,
+                        number = vehicle.Enrollment.Number
+                    })
             </td>
         </tr>
     }
