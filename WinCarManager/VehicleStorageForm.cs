@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,12 +13,27 @@ namespace WinCarManager
 {
     public partial class VehicleStorageForm : Form
     {
-        public VehicleStorageForm()
+        private readonly IVehicleStorage vehicleStorage;
+        private readonly IEnrollmentProvider enrollmentProvider;
+
+        public VehicleStorageForm(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
+            this.vehicleStorage = vehicleStorage;
+            this.enrollmentProvider = enrollmentProvider;
             InitializeComponent();
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
         {
             
         }

@@ -9,7 +9,6 @@ namespace WinCarManager
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        private readonly IVehicleStorage vehicleStorage;
         private Button buttonAdd;
         private Button buttonModify;
         private Button buttonCancel;
@@ -24,12 +23,7 @@ namespace WinCarManager
         private TextBox textColor;
         private TextBox texHorsePower;
         private TextBox texStarted;
-
-        public VehicleStorageForm(IVehicleStorage vehicleStorage)
-        {
-            this.vehicleStorage = vehicleStorage;
-        }
-
+        
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -93,6 +87,7 @@ namespace WinCarManager
             this.buttonCancel.Size = new System.Drawing.Size(75, 50);
             this.buttonCancel.TabIndex = 1;
             this.buttonCancel.Text = "Cancel";
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // buttonDelete
             // 
@@ -101,6 +96,7 @@ namespace WinCarManager
             this.buttonDelete.Size = new System.Drawing.Size(75, 50);
             this.buttonDelete.TabIndex = 2;
             this.buttonDelete.Text = "Delete";
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
             // buttonFirst
             // 
