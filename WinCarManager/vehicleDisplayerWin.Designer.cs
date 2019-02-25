@@ -52,7 +52,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.horsePowerEngineView = new System.Windows.Forms.TextBox();
             this.doorPropGroup = new System.Windows.Forms.GroupBox();
-            this.isOpenedDoor = new System.Windows.Forms.CheckBox();
+            this.isOpenedDoorView = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.wheelPropGroup = new System.Windows.Forms.GroupBox();
             this.wheelPressureView = new System.Windows.Forms.TextBox();
@@ -291,7 +291,7 @@
             // 
             // doorPropGroup
             // 
-            this.doorPropGroup.Controls.Add(this.isOpenedDoor);
+            this.doorPropGroup.Controls.Add(this.isOpenedDoorView);
             this.doorPropGroup.Controls.Add(this.label3);
             this.doorPropGroup.Location = new System.Drawing.Point(289, 197);
             this.doorPropGroup.Name = "doorPropGroup";
@@ -300,14 +300,14 @@
             this.doorPropGroup.TabStop = false;
             this.doorPropGroup.Text = "Door";
             // 
-            // isOpenedDoor
+            // isOpenedDoorView
             // 
-            this.isOpenedDoor.AutoSize = true;
-            this.isOpenedDoor.Location = new System.Drawing.Point(68, 20);
-            this.isOpenedDoor.Name = "isOpenedDoor";
-            this.isOpenedDoor.Size = new System.Drawing.Size(18, 17);
-            this.isOpenedDoor.TabIndex = 6;
-            this.isOpenedDoor.UseVisualStyleBackColor = true;
+            this.isOpenedDoorView.AutoSize = true;
+            this.isOpenedDoorView.Location = new System.Drawing.Point(68, 20);
+            this.isOpenedDoorView.Name = "isOpenedDoorView";
+            this.isOpenedDoorView.Size = new System.Drawing.Size(18, 17);
+            this.isOpenedDoorView.TabIndex = 6;
+            this.isOpenedDoorView.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -509,7 +509,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button undoAllchangesButt;
         private System.Windows.Forms.CheckBox startedEngineView;
-        private System.Windows.Forms.CheckBox isOpenedDoor;
+        private System.Windows.Forms.CheckBox isOpenedDoorView;
         private System.Windows.Forms.ListView doorsView;
         private System.Windows.Forms.ListView wheelsView;
         private System.Windows.Forms.ErrorProvider errorProvider;
