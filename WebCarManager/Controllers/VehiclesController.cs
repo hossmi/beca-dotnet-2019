@@ -12,7 +12,9 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            VehicleDto[] vehicles = new VehicleDto[]
+
+            
+            List<VehicleDto> vehicles = new List<VehicleDto>
             {
                 new VehicleDto
                 {
@@ -27,8 +29,7 @@ namespace WebCarManager.Controllers
                     {
                         HorsePower = 15,
                         IsStarted = true
-                    },
-                    
+                    }, 
                 }
             };
             return View(vehicles);
