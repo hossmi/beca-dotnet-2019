@@ -24,7 +24,6 @@ namespace CarManagement.Services
             this.color = CarColor.Red;
             this.enrollmentProvider = enrollmentProvider;
         }
-
         public void addWheel()
         {
             Asserts.isTrue(this.numberWheel < 4);
@@ -92,6 +91,12 @@ namespace CarManagement.Services
         {
             return convert(vehicle);
         }
+        public IEnrollment import(string serial, int number)
+        {
+            return this.enrollmentProvider.import(serial, number);
+        }
+
+
         private IEnumerable<T> createList<T>(int numberItem) where T : class, new()
         {
             for (int x = 0; x < numberItem; x++)
@@ -99,8 +104,6 @@ namespace CarManagement.Services
                 yield return new T();
             }
         }
-        
-
         private EnrollmentDto convert(IEnrollment enrollment)
         {
             return new EnrollmentDto
@@ -114,7 +117,6 @@ namespace CarManagement.Services
             return this.enrollmentProvider.import(enrollmentDto.Serial,
                                                   enrollmentDto.Number);
         }
-
         private IWheel convert(WheelDto weelDto)
         {
             return new Wheel(weelDto.Pressure);
@@ -126,7 +128,6 @@ namespace CarManagement.Services
                 Pressure = wheel.Pressure
             };
         }
-
         private IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
@@ -138,7 +139,6 @@ namespace CarManagement.Services
                 IsOpen = door.IsOpen
             };
         }
-
         private IEngine convert(EngineDto engineDto)
         {
             return new Engine(engineDto.HorsePower, engineDto.IsStarted);
@@ -151,7 +151,6 @@ namespace CarManagement.Services
                 IsStarted = engine.IsStarted
             };
         }
-        
         private VehicleDto convert(IVehicle vehicle)
         {
             return new VehicleDto
@@ -172,8 +171,6 @@ namespace CarManagement.Services
                 ,convert(vehicleDto.Engine)
                 );
         }
-        
-        
 
         private class Wheel :IWheel
         {
@@ -205,7 +202,6 @@ namespace CarManagement.Services
                 this.Pressure = pressure;
             }
         }
-
         private class Vehicle : IVehicle
         {
             private IReadOnlyList<IWheel> wheels;
@@ -267,7 +263,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
         private class Engine: IEngine
         {
             private int horsePower;
@@ -353,11 +348,6 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.openDoor);
                 this.openDoor = false;
             }
-        }
-
-        public IEnrollment import(string serial, int number)
-        {
-            return this.enrollmentProvider.import(serial, number);
         }
     }
 }

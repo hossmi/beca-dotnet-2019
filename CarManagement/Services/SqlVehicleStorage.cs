@@ -14,11 +14,8 @@ using ToolBox.Extensions.DbCommands;
 
 namespace CarManagement.Services
 {
-
-
     public class SqlVehicleStorage : IVehicleStorage
     {
-        #region "SQL"
         private const string SELECT_FROM_VEHICLE = @"
                           SELECT v.enrollmentId
                                 ,v.color
@@ -27,7 +24,8 @@ namespace CarManagement.Services
 	                            ,e.serial
 	                            ,e.number
                           FROM vehicle v
-                          INNER JOIN enrollment e ON v.enrollmentId = e.id ";
+                          INNER JOIN enrollment e 
+                          ON v.enrollmentId = e.id ";
         private const string DELETE_ALL_TABLES = "DELETE FROM door  DELETE FROM wheel  DELETE FROM vehicle  DELETE FROM enrollment";
         private const string SELECT_COUNT_VEHICLE = "SELECT count(*) FROM vehicle ";
         private const string COUNT_ENROLLMENT_ID = @" SELECT count(*) FROM enrollment WHERE serial = @serial AND number = @number ";
@@ -35,8 +33,9 @@ namespace CarManagement.Services
         private const string SELECT_ALL_ERNOLLMETNS = @"
                           SELECT e.serial
                                 ,e.number
-                          FROM enrollment e ";
-        #endregion 
+                          FROM vehicle v 
+                          INNER JOIN enrollment e 
+                          ON v.enrollmentId = e.id ";
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
 
@@ -459,15 +458,12 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments() 
             {
-                //OJO select hecha solo necesito montar el enrollment que viene a ser la parte de vehicle ya montada la la la
-                //el tajo seigue aquí.
-                IEnumerable<IEnrollment> enrollments = executeQuery(SELECT_ALL_ERNOLLMETNS, this.connectionString, this.vehicleBuilder);
+                IEnumerable<IEnrollment> enrollments = executeQueryEnrollment(SELECT_ALL_ERNOLLMETNS, this.connectionString, this.vehicleBuilder);
 
-                return enrollments.GetEnumerator();
-                throw new NotImplementedException();
+                return enrollments;
             }
 
-            private static IEnumerable<IVehicle> executeQueryEnrollment(string query, string connectionString, IVehicleBuilder vehicleBuilder)
+            private static IEnumerable<IEnrollment> executeQueryEnrollment(string query, string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
@@ -479,25 +475,13 @@ namespace CarManagement.Services
                             while (reader.Read())
                             {
                                 int enrollmentId = (int)reader["enrollmentId"];
-
-                                VehicleDto vehicleDto = new VehicleDto
+                                EnrollmentDto enrollmentDto = new EnrollmentDto
                                 {
-                                    Color = (CarColor)Convert.ToInt32(reader["color"]),
-                                    Engine = new EngineDto
-                                    {
-                                        HorsePower = Convert.ToInt32(reader["engineHorsePower"]),
-                                        IsStarted = Convert.ToBoolean(reader["engineIsStarted"])
-                                    },
-                                    Enrollment = new EnrollmentDto
-                                    {
-                                        Number = Convert.ToInt32(reader["number"]),
-                                        Serial = Convert.ToString(reader["serial"])
-                                    }
+                                    Number = Convert.ToInt32(reader["number"]),
+                                    Serial = Convert.ToString(reader["serial"])
                                 };
-                                vehicleDto.Doors = getDoor(sqlConnection, enrollmentId).ToArray();
-                                vehicleDto.Wheels = getWheel(sqlConnection, enrollmentId).ToArray();
 
-                                yield return vehicleBuilder.import(vehicleDto); ;
+                                yield return vehicleBuilder.import(enrollmentDto.Serial, enrollmentDto.Number);
                             }
                         }
                     }
