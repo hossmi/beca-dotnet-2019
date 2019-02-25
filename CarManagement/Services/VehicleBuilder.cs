@@ -11,7 +11,7 @@ namespace CarManagement.Services
     {
         private IEnrollmentProvider enrollmentProvider;
         private int doorsCount;
-        private int wheelCounter;
+        private int wheelCount;
         private CarColor color;
         private int power;
         private IEngine engine;
@@ -32,24 +32,26 @@ namespace CarManagement.Services
         {
             this.enrollmentProvider = enrollmentProvider;
             this.engine = new Engine();
-            this.wheelCounter = 0;
+            this.wheelCount = 0;
             this.vehicleDto = new VehicleDto();
             this.checkColor = false;
             this.color = new CarColor();
             this.wheels = new List<IWheel>();
             this.doors = new List<IDoor>();
             this.engineDto = new EngineDto();
+            this.doorsCount = 0;
+            this.power = 0;
         }
 
         public void addWheel()
         {
-            Asserts.isTrue(this.wheelCounter < 4);
-            this.wheelCounter++;
+            Asserts.isTrue(this.wheelCount < 4);
+            this.wheelCount++;
         }
         public void removeWheel()
         {
-            this.wheelCounter--;
-            Asserts.isTrue(this.wheelCounter >= 0);
+            this.wheelCount--;
+            Asserts.isTrue(this.wheelCount >= 0);
         }
         public void setDoors(int doorsCount)
         {
@@ -85,11 +87,11 @@ namespace CarManagement.Services
         }
         public IVehicle build()
         {
-            Asserts.isTrue(this.wheelCounter > 0);
+            Asserts.isTrue(this.wheelCount > 0);
             Engine engineSet = new Engine();
             engineSet.setEngine(this.power);
             this.enrollment = this.enrollmentProvider.getNew();
-            for (int i = 0; i < this.wheelCounter; i++)
+            for (int i = 0; i < this.wheelCount; i++)
             {
                 this.wheel = new Wheel();
                 this.wheels.Add(this.wheel);
@@ -347,35 +349,6 @@ namespace CarManagement.Services
                 {
                     return this.color;
                 }
-            }
-            public int DoorsCount
-            {
-                get
-                {
-                    return this.doors.Count;
-                }
-
-            }
-            public int WheelCount
-            {
-                get
-                {
-                    return this.wheels.Count;
-                }
-
-            }
-
-            public void setWheelsPressure(double pression)
-            {
-                Asserts.isTrue(pression >= 0);
-                foreach (Wheel wheel in this.wheels)
-                {
-                    wheel.Pressure = pression;
-                }
-            }
-            public void setColor(CarColor color)
-            {
-                this.color = color;
             }
         }
     }
