@@ -59,7 +59,7 @@ namespace CarManagement.Services
                     }
                 }
             }
-            string serial = string.Format("{0}{1}{2}-", this.lettersacept[this.letter3], this.lettersacept[this.letter2], this.lettersacept[this.letter1]);
+            string serial = string.Format("{0}{1}{2}", this.lettersacept[this.letter3], this.lettersacept[this.letter2], this.lettersacept[this.letter1]);
             return new Enrollment(serial, this.number);
         }
     }
