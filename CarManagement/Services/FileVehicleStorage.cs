@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using CarManagement.Models;
 using CarManagement.Models.DTOs;
@@ -11,7 +12,7 @@ namespace CarManagement.Services
     {
         private readonly IDtoConverter dtoConverter;
         private readonly string filePath;
-
+   
         public FileVehicleStorage(string fileFullPath, IDtoConverter dtoConverter)
             : base(readFromFile(fileFullPath, dtoConverter))
         {
@@ -38,20 +39,14 @@ namespace CarManagement.Services
             return this.vehicles[enrollment];
         }
 
-        public new void set(Vehicle vehicle)
-        {
-            this.vehicles[vehicle.Enrollment] = vehicle;
-            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
-        }
-
         protected override void save(IEnumerable<Vehicle> vehicles)
         {
-
+            writeToFile(this.filePath, this.vehicles, this.dtoConverter);
         }
 
         private static void writeToFile(string filePath, IDictionary<IEnrollment, Vehicle> vehicles, IDtoConverter dtoConverter)
         {
-            VehicleDto[] vehicleArray = new VehicleDto[vehicles.Count];
+            VehicleDto[] vehicleArray = new VehicleDto[vehicles.Count()];
 
             int cont = 0;
 
