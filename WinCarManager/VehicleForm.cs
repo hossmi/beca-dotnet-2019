@@ -18,6 +18,7 @@ namespace WinCarManager
         private int position = 0;
         private bool refreshing;
         private bool refreshed;
+        private bool added = false;
 
         public VehicleForm(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
@@ -111,6 +112,8 @@ namespace WinCarManager
             this.WheelGridView.AllowUserToAddRows = true;
             this.WheelGridView.Rows.Clear();
 
+            this.added = true;
+
         }
 
         private void ButtonModify_Click(object sender, EventArgs e)
@@ -132,6 +135,7 @@ namespace WinCarManager
             this.DoorGridView.AllowUserToAddRows = false;
             this.WheelGridView.ReadOnly = false;
             this.WheelGridView.AllowUserToAddRows = false;
+
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
@@ -155,6 +159,8 @@ namespace WinCarManager
             this.DoorGridView.AllowUserToAddRows = false;
             this.WheelGridView.ReadOnly = true;
             this.WheelGridView.AllowUserToAddRows = false;
+
+            this.added = false;
 
             LoadVehicle();
         }
@@ -287,7 +293,12 @@ namespace WinCarManager
             IVehicle vehicle = builder.import(vehicleDto);
             this.vehicleStorage.set(vehicle);
 
-            RefreshEnrollments();
+            if (this.added == true)
+            {
+                RefreshEnrollments();
+            }
+
+            this.added = false;
         }
 
         private void LoadVehicle()
