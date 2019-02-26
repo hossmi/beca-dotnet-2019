@@ -1,0 +1,34 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+
+@{
+    ViewBag.Title = "Index";
+Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>Enrollment</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (VehicleDto vehicle in this.Model)
+    {
+        <tr>
+            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new {
+                   serial = vehicle.Enrollment.Serial,
+                   number = vehicle.Enrollment.Number }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+    }
+
+</table>
