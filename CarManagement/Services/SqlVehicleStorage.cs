@@ -398,7 +398,6 @@ namespace CarManagement.Services
                         {
                             while (reader.Read())
                             {
-                                int enrollmentId = (int)reader["enrollmentId"];
                                 EnrollmentDto enrollmentDto = new EnrollmentDto
                                 {
                                     Number = Convert.ToInt32(reader["number"]),
