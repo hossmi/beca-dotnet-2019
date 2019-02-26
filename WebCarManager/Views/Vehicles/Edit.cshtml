@@ -20,7 +20,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
             <div>
-                Enrollment: @Html.TextBoxFor(Model => Model.Enrollment.Serial)-@Html.TextBoxFor(Model => Model.Enrollment.Number)
+                Enrollment: @Html.TextBoxFor(Model => Model.Enrollment.Serial, new { @readonly = "readonly" })-@Html.TextBoxFor(Model => Model.Enrollment.Number, new { @readonly = "readonly", @Value = Model.Enrollment.Number.ToString("0000")})
             </div>
             Color:
             @Html.DropDownListFor(Model => Model.Color, new SelectList(Enum.GetValues(typeof(CarColor))))

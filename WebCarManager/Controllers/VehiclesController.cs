@@ -43,6 +43,20 @@ namespace WebCarManager.Controllers
             return View(vehicle);
         }
 
+        public ActionResult Create()
+        {
+            VehicleDto vehicleDto = new VehicleDto();
+            return View(vehicleDto);
+        }
+
+        [HttpPost]
+        public ActionResult Create(VehicleDto vehicleDto)
+        {
+            SetVehicleData(vehicleDto);
+
+            return View(vehicleDto);
+        }
+
         [HttpPost]
         public ActionResult Edit(VehicleDto vehicleDto)
         {
