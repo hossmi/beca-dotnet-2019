@@ -1,10 +1,10 @@
 ﻿@using CarManagement.Core.Models.DTOs
 
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+@model IEnumerable<CarManagement.Core.Models.DTOs.EnrollmentDto>
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
@@ -14,101 +14,22 @@ Layout = "~/Views/Shared/_Layout.cshtml";
 </p>
 <table class="table">
 
-    @foreach (VehicleDto vehicle in this.Model)
+    @foreach (EnrollmentDto enrollmentDto in this.Model)
     {
         <tr>
             <th>Enrollment</th>
             <th>Actions</th>
         </tr>
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>@enrollmentDto.Serial - @enrollmentDto.Number.ToString("0000")</td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number }) |
+                   serial = enrollmentDto.Serial,
+                   number = enrollmentDto.Number }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
-        <tr>
-            <th>Engine</th>
-        </tr>
-        <tr>
-            <th>HorsePower</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>@vehicle.Engine.HorsePower</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                   horsePower = vehicle.Engine.HorsePower }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-        <tr>
-            <th>IsStarted</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>@vehicle.Engine.IsStarted</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {
-               IsStarted = vehicle.Engine.IsStarted }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-        <tr>
-            <th>Color</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>@vehicle.Color</td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                    color = vehicle.Color }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-        <tr>
-            <th>Wheels</th>
-        </tr>
-        foreach (WheelDto wheelDto in this.Model.Select(wheels => wheels.Wheels).Single())
-        {
-            int wheel = Array.IndexOf(this.Model.Select(wheels => wheels.Wheels).Single(), wheelDto);
-            <tr>
-                <th>[@wheel]</th>
-                <th>Actions</th>
-            </tr>
-            <tr>
-                <td>Pressure @wheelDto.Pressure</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new {
-                   wheel = wheelDto }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
-        }
-        foreach (DoorDto doorDto in this.Model.Select(doors => doors.Doors).Single())
-        {
-            int door = Array.IndexOf(this.Model.Select(doors => doors.Doors).Single(), doorDto);
-            <tr>
-                <th>[@door]</th>
-                <th>Actions</th>
-            </tr>
-            <tr>
-                <td>IsOpen @doorDto.IsOpen</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new {
-                   door = doorDto }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
-        }
     }
 
 </table>

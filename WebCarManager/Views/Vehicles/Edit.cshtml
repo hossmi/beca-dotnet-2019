@@ -1,0 +1,67 @@
+﻿@using CarManagement.Core.Models.DTOs
+
+@model CarManagement.Core.Models.DTOs.VehicleDto
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Edit</h2><br />
+              
+<form class="form" method="get">
+
+    <table class="table">
+        <tr>
+            <th>
+                Enrollment
+            </th>
+            <th>
+                Serial
+            </th>
+            <th>
+                Number
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>@Model.Enrollment.Number.ToString("0000") - @Model.Enrollment.Serial</td>
+            <td>@Model.Enrollment.Serial</td>
+            <td>@Model.Enrollment.Number.ToString("0000")</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <th colspan="3">Color</th>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <input type="text" name="color" value="@Model.Color.ToString()" />
+            </td>
+        </tr>
+        <tr>
+            <th>Engine</th>
+            <th>Horse Power</th>
+            <th>Is Started</th>
+
+        </tr>
+        <tr>
+            <td>@Model.Engine.HorsePower cc - Started @Model.Engine.IsStarted.ToString()</td>
+            <td>
+                <input type="text" name="horsePower" value="@Model.Engine.HorsePower" />
+            </td>
+            <td>
+                @Html.CheckBox("IsStarted", @Model.Engine.IsStarted)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="save" />
+            </td>
+        </tr>
+
+    </table>
+</form>
+                  
+              

@@ -575,9 +575,9 @@ namespace CarManagement.Services
                         {
                             while (reader.Read())
                             {
-                                this.enrollmentDto.Number = (int)reader["number"];
+                                this.enrollmentDto.Number = Convert.ToInt16(reader["number"]);
                                 this.enrollmentDto.Serial = reader["serial"].ToString();
-                                yield return this.enrollmentProvider.import(reader["serial"].ToString(), (int)reader["number"]);
+                                yield return this.enrollmentProvider.import(this.enrollmentDto.Serial, this.enrollmentDto.Number);
                             }
                         }
                     }
