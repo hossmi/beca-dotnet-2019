@@ -10,6 +10,7 @@ using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using ToolBox.Services;
 
 namespace CarManagement.Services
 {
@@ -509,7 +510,21 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                throw new NotImplementedException();
+                string select = "SELECT [serial], [number] FROM [enrollment] " +
+                    "WHERE(EXISTS(select enrollmentId from vehicle v where v.enrollmentId = enrollment.id))";
+
+                DB<SqlConnection> db = new DB<SqlConnection>(this.connectionString);
+                IEnumerable<IEnrollment> enrollments = db.select<IEnrollment>(select, reader => conversorEnrollment(reader), this.parameters);
+
+                return enrollments;
+            }
+
+            private IEnrollment conversorEnrollment(IDataRecord reader)
+            {
+                int number = Convert.ToInt32(reader["number"]);
+                string serial = reader["serial"].ToString();
+
+                return this.vehicleBuilder.import(serial, number);
             }
 
         }
