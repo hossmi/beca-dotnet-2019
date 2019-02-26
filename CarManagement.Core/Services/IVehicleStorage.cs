@@ -9,6 +9,7 @@ namespace CarManagement.Core.Services
         int Count { get; }
         void set(IVehicle vehicle);
         void clear();
+        void remove(IEnrollment enrollment);
         IVehicleQuery get();
     }
 }

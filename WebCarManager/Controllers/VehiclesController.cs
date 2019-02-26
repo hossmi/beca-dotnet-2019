@@ -88,9 +88,9 @@ namespace WebCarManager.Controllers
         }
     }
 
-    internal class Door : IDoor
+    private class Door : IDoor
     {
-         public bool isOpen = false;
+        private bool isOpen = false;
 
         public void open()
         {
@@ -107,6 +107,22 @@ namespace WebCarManager.Controllers
             get
             {
                 return this.isOpen;
+            }
+        }
+    }
+    private class Wheel : IWheel
+    {
+        private double pressure = 1.0;
+
+        public double Pressure
+        {
+            get
+            {
+                return this.pressure;
+            }
+            set
+            {
+               this.pressure = value;
             }
         }
     }
