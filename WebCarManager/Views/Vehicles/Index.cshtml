@@ -1,9 +1,10 @@
-﻿@using CarManagement.Core.Models.DTOs
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+﻿@using CarManagement.Core.Models
+
+@model IEnumerable<IEnrollment>
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
@@ -13,20 +14,33 @@ Layout = "~/Views/Shared/_Layout.cshtml";
 </p>
 <table class="table">
     <tr>
-        <th>Enrollment</th>
+        <th>
+            @Html.DisplayNameFor(model => model.Serial)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
         <th>Actions</th>
     </tr>
 
-    @foreach (VehicleDto vehicle in this.Model)
+    @foreach (IEnrollment item in Model)
     {
+        var enrollment = new
+        {
+            serial= item.Serial,
+            number= item.Number
+        };
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.DisplayFor(modelItem => item.Serial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", enrollment) |
+                @Html.ActionLink("Details","Details", enrollment) |
+                @Html.ActionLink("Delete", "Delete", enrollment)
             </td>
         </tr>
     }
