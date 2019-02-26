@@ -376,6 +376,23 @@ namespace CarManagement.Services
                 }
             }
 
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
+                {
+                    SqlCommand querier = new SqlCommand(SELECT_STANDART, sqlDbConnection);
+                    sqlDbConnection.Open();
+                    using (SqlDataReader vehicleReader = querier.ExecuteReader())
+                    {
+                        while (vehicleReader.Read())
+                        {
+                            yield return this.vehicleBuilder.import(vehicleReader["serial"].ToString(), Convert.ToInt32(vehicleReader["number"]) );
+                        }
+                    }
+                    sqlDbConnection.Close();
+                }
+            }
+
             private static T[] queryArrayItemsOfId<T>(int masterId, string comand,
                 SqlConnection sqlDbConnection, Func<SqlDataReader, T> func,
                 string identifier = "@id")
@@ -396,11 +413,6 @@ namespace CarManagement.Services
                 }
 
                 return items.ToArray();
-            }
-
-            private IEnumerable<IEnrollment> enumerateEnrollments()
-            {
-                throw new NotImplementedException();
             }
 
         }

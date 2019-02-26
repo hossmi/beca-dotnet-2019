@@ -1,12 +1,13 @@
 ﻿@using CarManagement.Core.Models.DTOs
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+@using CarManagement.Core.Models;
+@model IEnumerable<IEnrollment>
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Web vehicle manager</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -17,16 +18,22 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         <th>Actions</th>
     </tr>
 
-    @foreach (VehicleDto vehicle in this.Model)
+    @foreach (IEnrollment enrollment in this.Model)
     {
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>@enrollment.Serial - @enrollment.Number.ToString("0000")</td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                   serial = enrollment.Serial,
+                   number = enrollment.Number }) |
+                @Html.ActionLink("Details", "Details", new{
+                   serial = enrollment.Serial,
+                   number = enrollment.Number
+                }) |
+                @Html.ActionLink("Delete", "Delete", new{
+                   serial = enrollment.Serial,
+                   number = enrollment.Number
+               })
             </td>
         </tr>
     }
