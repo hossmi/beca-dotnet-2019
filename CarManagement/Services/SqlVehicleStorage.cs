@@ -69,6 +69,10 @@ namespace CarManagement.Services
             throw new NotImplementedException();
         }
 
+        public void remove(IEnrollment enrollment)
+        {
+            throw new NotImplementedException();
+        }
 
         public void set(IVehicle vehicle)
         {
