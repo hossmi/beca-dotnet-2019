@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace WebCarManager.Controllers
 {
     public class HomeController : Controller
@@ -22,7 +23,6 @@ namespace WebCarManager.Controllers
         public ActionResult Contact()
         {
             this.ViewBag.Message = "Your contact page.";
-
             return View();
         }
     }
