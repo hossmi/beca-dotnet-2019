@@ -325,7 +325,10 @@ namespace CarManagement.Services
 
 
         }
-
+        public void remove(IEnrollment enrollment)
+        {
+            throw new NotImplementedException();
+        }
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);

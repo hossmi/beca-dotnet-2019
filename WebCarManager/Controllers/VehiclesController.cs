@@ -14,42 +14,50 @@ using System.Configuration;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : Controller
+    public class VehiclesController : AbstractController
     {
         private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
         private readonly string connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
+        private IVehicleStorage vehicleStorage;
+
         // GET: Vehicles
+        public VehiclesController()
+        {
+            this.vehicleStorage = getService<IVehicleStorage>();
+        }
         public ActionResult Index()
         {
-            IEnumerable<IEnrollment> enrollmentList = getEnrollments(this.connectionString);
+            //IEnumerable<IEnrollment> enrollmentList = getEnrollments(this.connectionString);
+            IEnumerable<IEnrollment> enrollmentList = this.vehicleStorage.get().Keys;
             return View(enrollmentList);
         }
         public ActionResult Edit()
         {
+            
             return View();
         }
         public ActionResult Delete()
         {
-            
+ 
             return View();
         }
 
-        private IEnumerable<IEnrollment> getEnrollments(string connectionString)
-        {
-            IEnrollmentProvider enrollmentprovider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicle = new VehicleBuilder(enrollmentprovider);
-            SqlVehicleStorage sqlVehicle = new SqlVehicleStorage(connectionString, vehicle);
-            List<IEnrollment> enrollments = new List<IEnrollment>();
+        //private IEnumerable<IEnrollment> getEnrollments(string connectionString)
+        //{
+        //    IEnrollmentProvider enrollmentprovider = new DefaultEnrollmentProvider();
+        //    IVehicleBuilder vehicle = new VehicleBuilder(enrollmentprovider);
+        //    SqlVehicleStorage sqlVehicle = new SqlVehicleStorage(connectionString, vehicle);
+        //    List<IEnrollment> enrollments = new List<IEnrollment>();
             
 
-            foreach (IEnrollment enrollment in sqlVehicle.get().Keys)
-            {
-                enrollments.Add(enrollment);
+        //    foreach (IEnrollment enrollment in sqlVehicle.get().Keys)
+        //    {
+        //        enrollments.Add(enrollment);
                 
-            }
-            return enrollments;
+        //    }
+        //    return enrollments;
             
  
-        } 
+        //} 
     }
 }
