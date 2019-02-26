@@ -9,8 +9,6 @@ namespace WebCarManager.Controllers
 {
     public class VehiclesController : AbstractController
     {
-        private const string CONNECTION_STRING = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test2;Password=123456;MultipleActiveResultSets=True";
-
         private readonly IVehicleStorage vehicleStorage;
 
         public VehiclesController()
@@ -21,11 +19,7 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            VehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(CONNECTION_STRING, vehicleBuilder);
-
-            IEnumerable<IEnrollment> enrollments = vehicleStorage.get().Keys;
+            IEnumerable<IEnrollment> enrollments = this.vehicleStorage.get().Keys;
 
             return View(enrollments);
         }
