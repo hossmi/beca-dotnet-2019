@@ -77,6 +77,11 @@ namespace CarManagement.Services
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
         }
 
+        public void remove(IEnrollment enrollment)
+        {
+            throw new NotImplementedException();
+        }
+
         public void set(IVehicle vehicle)
         {
             #region "SQL skels CONSTS"
