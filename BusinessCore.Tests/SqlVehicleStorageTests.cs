@@ -21,6 +21,16 @@ namespace BusinessCore.Tests
         private const string DESTRUCTION_SCRIPT_FILE_KEY = "DestructionScriptFile";
         private const string SCRIPTS_FOLDER_KEY = "scriptsFolder";
 
+        private const string INSERT_ENROLLMENT = @"INSERT INTO [enrollment] ([serial],[number]) 
+                                                VALUES (@serial,@number)";
+        private const string INSERT_VEHICLE = @"INSERT INTO [vehicle] ([color],[engineHorsePower],[engineIsStarted],[enrollmentId]) 
+                                                VALUES (@color,@engineHorsePower,@engineIsStarted,@enrollmentId)";
+        private const string INSERT_DOOR = @"INSERT INTO [door] ([vehicleId],[isOpen]) 
+                                            VALUES (@vehicleId,@isOpen)";
+        private const string INSERT_WHEEL = @"INSERT INTO [wheel] ([vehicleId],[pressure]) 
+                                            VALUES (@vehicleId,@pressure)";
+
+
         private readonly string connectionString;
         private readonly string creationScript;
         private readonly string destructionScript;
@@ -53,7 +63,7 @@ namespace BusinessCore.Tests
         [TestCleanup]
         public void cleanUp()
         {
-            drop(this.connectionString, this.destructionScript);
+            //drop(this.connectionString, this.destructionScript);
         }
 
         [TestMethod]
@@ -63,7 +73,58 @@ namespace BusinessCore.Tests
 
         private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
         {
-            throw new NotImplementedException();
+            SqlConnection conn = new SqlConnection(connectionString);
+            conn.Open();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                string enrollmentId;
+                using (SqlCommand command = new SqlCommand(INSERT_ENROLLMENT, conn))
+                {
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    command.ExecuteNonQuery();
+                }
+
+                string selectEnrollmentId = @"SELECT [id] FROM [enrollment] WHERE [serial] = @serial AND [number] = @number";
+                using (SqlCommand command = new SqlCommand(selectEnrollmentId, conn))
+                {
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    enrollmentId = command.ExecuteScalar().ToString();
+                }
+
+                using (SqlCommand command = new SqlCommand(INSERT_VEHICLE, conn))
+                {
+                    command.Parameters.AddWithValue("@enrollmentId", enrollmentId);
+                    command.Parameters.AddWithValue("@color", vehicle.Color);
+                    command.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                    command.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                    command.ExecuteNonQuery();
+                }
+
+                foreach(IWheel wheel in vehicle.Wheels)
+                {
+                    using (SqlCommand command = new SqlCommand(INSERT_WHEEL, conn))
+                    {
+                        command.Parameters.AddWithValue("@vehicleId", enrollmentId);
+                        command.Parameters.AddWithValue("@pressure", wheel.Pressure);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                foreach (IDoor door in vehicle.Doors)
+                {
+                    using (SqlCommand command = new SqlCommand(INSERT_DOOR, conn))
+                    {
+                        command.Parameters.AddWithValue("@vehicleId", enrollmentId);
+                        command.Parameters.AddWithValue("@isOpen", door.IsOpen);
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            conn.Close();
         }
 
         private static void create(string connectionString, string creationScript)
@@ -74,10 +135,10 @@ namespace BusinessCore.Tests
             String query = @"
                     USE [CarManagement]
                     CREATE TABLE [enrollment](
+                        [id] [int] IDENTITY(1,1) NOT NULL,
 	                    [serial] [char](3) NOT NULL,
 	                    [number] [smallint] NOT NULL,
-	                    [id] [int] IDENTITY(1,1) NOT NULL,
-                        CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ([id] ASC)
+	                    CONSTRAINT [PK_enrollment] PRIMARY KEY NONCLUSTERED ([id] ASC)
                     )
                     CREATE UNIQUE CLUSTERED INDEX [IX_enrollment] ON [dbo].[enrollment]
                     (
@@ -109,7 +170,7 @@ namespace BusinessCore.Tests
                 USE [CarManagement]
 
                 CREATE TABLE [door](
-	                [id] [int] NOT NULL,
+	                [id] [int] IDENTITY(1,1) NOT NULL,
 	                [vehicleId] [int] NOT NULL,
 	                [isOpen] [bit] NOT NULL,
                     CONSTRAINT [PK_door] PRIMARY KEY CLUSTERED 
@@ -127,7 +188,7 @@ namespace BusinessCore.Tests
 
             query = @"USE [CarManagement]
                     CREATE TABLE [wheel](
-	                    [id] [int] NOT NULL,
+	                    [id] [int] IDENTITY(1,1) NOT NULL,
 	                    [vehicleId] [int] NOT NULL,
 	                    [pressure] [float] NOT NULL,
                      CONSTRAINT [PK_wheel] PRIMARY KEY CLUSTERED 
@@ -135,7 +196,7 @@ namespace BusinessCore.Tests
 	                    [id] ASC,
 	                    [vehicleId] ASC
                     ))
-                    ALTER TABLE [wheel]  WITH CHECK ADD  CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([id]) REFERENCES [vehicle] ([enrollmentId])";
+                    ALTER TABLE [wheel]  WITH CHECK ADD  CONSTRAINT [FK_wheel_vehicle] FOREIGN KEY([vehicleId]) REFERENCES [vehicle] ([enrollmentId])";
             using (SqlCommand command = new SqlCommand(query, conn))
             {
                 command.ExecuteNonQuery();
