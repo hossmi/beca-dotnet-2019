@@ -1,16 +1,21 @@
-﻿using System.Web.Mvc;
-using CarManagement.Core.Models.DTOs;
-using System.Collections.Generic;
-using CarManagement.Core.Models;
-using CarManagement.Services;
+﻿using System.Collections.Generic;
 using System.Linq;
-
+using System.Web.Mvc;
+using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using CarManagement.Core.Services;
 
 namespace WebCarManager.Controllers
 {
-
-    public class VehiclesController : Controller
+    public class VehiclesController : AbstractController
     {
+        private readonly IVehicleStorage vehicleStorage;
+
+        public VehiclesController()
+        {
+            this.vehicleStorage = getService<IVehicleStorage>();
+        }
+
         // GET: Vehicles
         public ActionResult Index()
         {
