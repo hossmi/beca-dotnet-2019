@@ -3,10 +3,16 @@
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Deleted vehicle</h2>
+
+<p>
+    @Html.ActionLink("Go back", "Index")
+</p>
+
+
 
 <p>
     @Html.ActionLink("Go back", "Index")
