@@ -59,6 +59,12 @@ namespace CarManagement.Services
             return new PrvVehicleQuery(this.vehicles.Values);
         }
 
+        public void remove(IEnrollment enrollment)
+        {
+            Asserts.isTrue(this.vehicles.ContainsKey(enrollment));
+            this.vehicles.Remove(enrollment);
+        }
+
         private class PrvVehicleQuery : IVehicleQuery
         {
             private const string WHERE_ENROLLMENT = "WHERE_ENROLLMENT";
