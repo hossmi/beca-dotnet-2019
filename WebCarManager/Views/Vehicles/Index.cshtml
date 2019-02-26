@@ -23,17 +23,7 @@
         string enrollment = $"{@vehicle.Enrollment.Serial} - {@vehicle.Enrollment.Number.ToString("0000")}";
         <tr>
             <td>
-                @Html.ActionLink(@enrollment, "Detalles", new
-           {
-               serial = vehicle.Enrollment.Serial,
-               number = vehicle.Enrollment.Number
-           }//, new
-           //{
-             //  type = "submit;",
-               //onclick = "function()" +
-               //"{document.location.href = };"
-           //}
-           )
+                @Html.ActionLink(@enrollment, "Detalles")
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new
