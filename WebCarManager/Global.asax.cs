@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -13,6 +14,8 @@ namespace WebCarManager
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -22,8 +25,11 @@ namespace WebCarManager
 
             IInstanceProvider provider = DefaultInstanceProvider.Instance;
             provider.register<IEnrollmentProvider>(() => new DefaultEnrollmentProvider());
+            provider.register<IEnrollmentImporter>(() => provider.get<IEnrollmentProvider>());
             provider.register<IVehicleBuilder>(() => new VehicleBuilder(provider.get<IEnrollmentProvider>()));
-            provider.register<IVehicleStorage>(()  => new SqlVehicleStorage("", provider.get<IVehicleBuilder>()));
+            provider.register<IVehicleStorage>(()  => new SqlVehicleStorage(
+                ConfigurationManager.AppSettings[CONNECTION_STRING_KEY], 
+                provider.get<IVehicleBuilder>()));
         }
     }
 }
