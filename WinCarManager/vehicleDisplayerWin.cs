@@ -194,6 +194,12 @@ namespace WinCarManager
                         this.vehicleStorage.set( this.vehicleBuilder.import(dtoChangeable.vehicle) );
                         break;
                     case ActionPerformed.erased:
+                        this.vehicleStorage.remove( 
+                            this.vehicleBuilder.import(
+                                dtoChangeable.vehicle.Enrollment.Serial,
+                                dtoChangeable.vehicle.Enrollment.Number
+                            ) 
+                        );
                         break;
                     case ActionPerformed.added:
                         this.vehicleStorage.set(this.vehicleBuilder.import(dtoChangeable.vehicle));

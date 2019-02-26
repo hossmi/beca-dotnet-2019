@@ -15,6 +15,7 @@ namespace CarManagement.Services
 {
     public class SqlVehicleStorage : IVehicleStorage
     {
+        const string SELECT_ENROLLMENT_ID = "SELECT id FROM enrollment WHERE serial=@serial AND number=@number";
         const string QUERY_VEHICLE_SKEL = "SELECT * FROM vehicle WHERE enrollmentId=@id";
         const string QUERY_WHEEL_SKEL = "SELECT * FROM wheel WHERE vehicleId=@id";
         const string QUERY_DOOR_SKEL = "SELECT * FROM door WHERE vehicleId=@id";
@@ -79,7 +80,35 @@ namespace CarManagement.Services
 
         public void remove(IEnrollment enrollment)
         {
-            throw new NotImplementedException();
+            const string REMOVE_COMPLETE_VEHICLE =
+                "DELETE FROM door WHERE vehicleId=@id "
+                + "DELETE FROM wheel WHERE vehicleId=@id "
+                + "DELETE FROM vehicle WHERE enrollmentId=@id "
+                + "DELETE FROM enrollment WHERE id=@id ";
+
+            int idMarkedForRemoval = -1;
+
+            using (SqlConnection sqlDbConnection = new SqlConnection(this.connectionString))
+            {
+                SqlCommand querier = new SqlCommand(SELECT_ENROLLMENT_ID, sqlDbConnection);
+                querier.Parameters.AddWithValue("@serial", enrollment.Serial);
+                querier.Parameters.AddWithValue("@number", enrollment.Number);
+                sqlDbConnection.Open();
+
+                using (SqlDataReader sqlDataReader = querier.ExecuteReader())
+                {
+                    if (sqlDataReader.Read())
+                    {
+                        idMarkedForRemoval = Convert.ToInt32(sqlDataReader["id"]);
+                    }
+                }
+
+                querier = new SqlCommand(REMOVE_COMPLETE_VEHICLE, sqlDbConnection);
+                querier.Parameters.AddWithValue("@id", idMarkedForRemoval);
+                querier.ExecuteNonQuery();
+
+                sqlDbConnection.Close();
+            }
         }
 
         public void set(IVehicle vehicle)
