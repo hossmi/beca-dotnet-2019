@@ -88,7 +88,7 @@ namespace CarManagement.Services
                     }
                 };
 
-            if (tryGetEnrollmentId(this.connectionString, vehicle.Enrollment,out enrollmentId))
+            if (tryGetEnrollmentId(this.connectionString, vehicle.Enrollment, SELECT_ENROLLMENT_ID, out enrollmentId))
             {
 
                 string deleteTablesWithEnrollmentId = @"DELETE FROM door WHERE vehicleId = @id 
@@ -111,7 +111,7 @@ namespace CarManagement.Services
                 };
                 executeCommand(this.connectionString, queryInsertEnrollment, parameterEnrollment);
 
-                Asserts.isTrue(tryGetEnrollmentId(this.connectionString, vehicle.Enrollment, out enrollmentId));
+                Asserts.isTrue(tryGetEnrollmentId(this.connectionString, vehicle.Enrollment, SELECT_ENROLLMENT_ID , out enrollmentId));
             }
 
 
@@ -464,34 +464,38 @@ namespace CarManagement.Services
             return doorsDto;
         }
 
-        private static bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
+        private static bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, string querySelectEnrollmentId, out int enrollmentId)
         {
             bool existEnrollment;
 
             using (IDbConnection connection = new SqlConnection(connectionString))
-            using (IDbCommand command = connection.CreateCommand())
             {
-                connection.Open();
-                command.CommandText = SELECT_ENROLLMENT_ID;
-                command.Connection = connection;
-                command.setParameter("@serial", enrollment.Serial);
-                command.setParameter("@number", enrollment.Number);
-
-                using (IDataReader reader = command.ExecuteReader())
+                using (IDbCommand command = connection.CreateCommand())
                 {
-                    if (reader.Read())
+                    connection.Open();
+                    command.CommandText = querySelectEnrollmentId;
+                    command.Connection = connection;
+                    command.setParameter("@serial", enrollment.Serial);
+                    command.setParameter("@number", enrollment.Number);
+
+                    using (IDataReader reader = command.ExecuteReader())
                     {
-                        enrollmentId = (int)reader["id"];
-                        existEnrollment = true;
+                        if (reader.Read())
+                        {
+                            enrollmentId = (int)reader["id"];
+                            existEnrollment = true;
+                        }
+                        else
+                        {
+                            enrollmentId = 0;
+                            existEnrollment = false;
+                        }
                     }
-                    else
-                    {
-                        enrollmentId = 0;
-                        existEnrollment = false;
-                    }
+                    connection.Close();
                 }
-                connection.Close();
+
             }
+            
 
             return existEnrollment;
         }
