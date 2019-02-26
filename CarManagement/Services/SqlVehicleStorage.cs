@@ -122,6 +122,10 @@ namespace CarManagement.Services
                 con.Close();
             }    
         }
+        public IVehicleQuery get()
+        {
+            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
+        }
         public void set(IVehicle vehicle)
         {
             using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -129,44 +133,24 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    this.parameter = sentence.CreateParameter();
-                    this.parameter.ParameterName = "@serial";
-                    this.parameter.Value = vehicle.Enrollment.Serial;
-                    sentence.Parameters.Add(this.parameter);
-                    this.parameter = sentence.CreateParameter();
-                    this.parameter.ParameterName = "@number";
-                    this.parameter.Value = vehicle.Enrollment.Number;
-                    sentence.Parameters.Add(this.parameter);
+                    sentence.Parameters.Add(setParameter(sentence, "@serial", vehicle.Enrollment.Serial));
+                    sentence.Parameters.Add(setParameter(sentence, "@number", vehicle.Enrollment.Number));
                     sentence.CommandText = SELECT_FROM_ENROLLMENT;
                     if (sentence.ExecuteScalar() != null)
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             reader.Read();
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = "@id";
-                            this.parameter.Value = (int)reader["id"];
-                            sentence.Parameters.Add(this.parameter);
+                            sentence.Parameters.Add(setParameter(sentence, "@id", (int)reader["id"]));
                             reader.Close();
                             sentence.CommandText = SELECT_FROM_VEHICLE;
                             this.query = sentence.ExecuteScalar();
                             using (IDataReader reader2 = sentence.ExecuteReader())
                             {
                                 reader2.Read();
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@color";
-                                this.parameter.Value = (int)vehicle.Color;
-                                sentence.Parameters.Add(this.parameter);
-
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@engineIsStarted";
-                                this.parameter.Value = vehicle.Engine.IsStarted ? 1 : 0;
-                                sentence.Parameters.Add(this.parameter);
-
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@engineHorsePower";
-                                this.parameter.Value = vehicle.Engine.HorsePower;
-                                sentence.Parameters.Add(this.parameter);
+                                sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
+                                sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0));
+                                sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
                                 reader2.Close();
 
                                 if (this.query != null)
@@ -182,9 +166,7 @@ namespace CarManagement.Services
                                         {
                                             sentence.Parameters.Remove(this.parameter);
                                         }
-                                        this.parameter = sentence.CreateParameter();
-                                        this.parameter.ParameterName = "@pressure";
-                                        this.parameter.Value = wheel.Pressure;
+                                        this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
                                         sentence.Parameters.Add(this.parameter);
                                         sentence.CommandText = INSERT_WHEEL;
                                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -198,9 +180,7 @@ namespace CarManagement.Services
                                         {
                                             sentence.Parameters.Remove(this.parameter);
                                         }
-                                        this.parameter = sentence.CreateParameter();
-                                        this.parameter.ParameterName = "@isOpen";
-                                        this.parameter.Value = door.IsOpen;
+                                        this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
                                         sentence.Parameters.Add(this.parameter);
                                         sentence.CommandText = INSERT_DOOR;
                                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -214,13 +194,11 @@ namespace CarManagement.Services
                                     this.wheels = vehicle.Wheels;
                                     foreach (IWheel wheel in this.wheels)
                                     {
-                                        if (sentence.Parameters.Contains("@pressure"))
+                                        if (sentence.Parameters.Contains(this.parameter))
                                         {
-                                            sentence.Parameters.Remove("@pressure");
+                                            sentence.Parameters.Remove(this.parameter);
                                         }
-                                        this.parameter = sentence.CreateParameter();
-                                        this.parameter.ParameterName = "@pressure";
-                                        this.parameter.Value = wheel.Pressure;
+                                        this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
                                         sentence.Parameters.Add(this.parameter);
                                         sentence.CommandText = INSERT_WHEEL;
                                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -228,13 +206,11 @@ namespace CarManagement.Services
                                     this.doors = vehicle.Doors;
                                     foreach (IDoor door in this.doors)
                                     {
-                                        if (sentence.Parameters.Contains("@isOpen"))
+                                        if (sentence.Parameters.Contains(this.parameter))
                                         {
-                                            sentence.Parameters.Remove("@isOpen");
+                                            sentence.Parameters.Remove(this.parameter);
                                         }
-                                        this.parameter = sentence.CreateParameter();
-                                        this.parameter.ParameterName = "@isOpen";
-                                        this.parameter.Value = door.IsOpen;
+                                        this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
                                         sentence.Parameters.Add(this.parameter);
                                         sentence.CommandText = INSERT_DOOR;
                                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -251,26 +227,12 @@ namespace CarManagement.Services
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             reader.Read();
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = "@id";
-                            this.parameter.Value = (int)reader["id"];
-                            sentence.Parameters.Add(this.parameter);
+                            sentence.Parameters.Add(setParameter(sentence, "@id", (int)reader["id"]));
                             reader.Close();
 
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = "@color";
-                            this.parameter.Value = (int)vehicle.Color;
-                            sentence.Parameters.Add(this.parameter);
-
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = "@engineHorsePower";
-                            this.parameter.Value = vehicle.Engine.HorsePower;
-                            sentence.Parameters.Add(this.parameter);
-
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = "@engineIsStarted";
-                            this.parameter.Value = Convert.ToInt16(vehicle.Engine.IsStarted);
-                            sentence.Parameters.Add(this.parameter);
+                            sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
+                            sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
+                            sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", Convert.ToInt16(vehicle.Engine.IsStarted)));
 
                             sentence.CommandText = INSERT_VEHICLE;
                             sentence.ExecuteNonQuery();
@@ -281,9 +243,7 @@ namespace CarManagement.Services
                                 {
                                     sentence.Parameters.Remove(this.parameter);
                                 }
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@pressure";
-                                this.parameter.Value = wheel.Pressure;
+                                this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
                                 sentence.Parameters.Add(this.parameter);
                                 sentence.CommandText = INSERT_WHEEL;
                                 Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -295,9 +255,7 @@ namespace CarManagement.Services
                                 {
                                     sentence.Parameters.Remove(this.parameter);
                                 }
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@isOpen";
-                                this.parameter.Value = door.IsOpen;
+                                this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
                                 sentence.Parameters.Add(this.parameter);
                                 sentence.CommandText = INSERT_DOOR;
                                 Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -307,9 +265,13 @@ namespace CarManagement.Services
                 }
             }
         }
-        public IVehicleQuery get()
+
+        private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
         {
-            return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
+            IDataParameter parameter = sentence.CreateParameter();
+            parameter.ParameterName = name;
+            parameter.Value = thing;
+            return parameter;
         }
 
         private class PrvVehicleQuery : IVehicleQuery
@@ -328,8 +290,6 @@ namespace CarManagement.Services
             private IDictionary<string, string> queryParts;
             //private IDictionary<string, string> Type;
             private IEnrollmentProvider enrollmentProvider;
-            private IVehicle vehicle_get;
-            private IDbDataParameter parameter;
             private EnrollmentDto enrollmentDto;
             private VehicleDto vehicleDto;
             private EngineDto engineDto;
@@ -383,7 +343,6 @@ namespace CarManagement.Services
                     return enumerateEnrollments();
                 }
             }
-
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
@@ -442,6 +401,7 @@ namespace CarManagement.Services
                 this.min = min;
                 return this;
             }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return enumerate();
@@ -450,7 +410,6 @@ namespace CarManagement.Services
             {
                 return enumerate();
             }
-
             private IEnumerator<IVehicle> enumerate()
             {
                 this.query = createQuery(SELECT_VEHICLE_HEAD, this.queryParts);
@@ -487,10 +446,7 @@ namespace CarManagement.Services
                         {
                             while (reader.Read())
                             {
-                                this.parameter = sentence.CreateParameter();
-                                this.parameter.ParameterName = "@ID";
-                                this.parameter.Value = (int)reader["id"];
-                                sentence.Parameters.Add(this.parameter);
+                                sentence.Parameters.Add(setParameter(sentence, "@ID", (int)reader["id"]));
                                 this.id = (int)reader["id"];
                                 this.enrollmentDto.Serial = reader["serial"].ToString();
                                 this.enrollmentDto.Number = Convert.ToInt32(reader["number"]);
@@ -500,10 +456,7 @@ namespace CarManagement.Services
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
                                     sentence2.CommandText = SELECT_WHEELS;
-                                    this.parameter = sentence2.CreateParameter();
-                                    this.parameter.ParameterName = "@ID";
-                                    this.parameter.Value = this.id;
-                                    sentence2.Parameters.Add(this.parameter);
+                                    sentence2.Parameters.Add(setParameter(sentence2, "@ID", this.id));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
@@ -518,10 +471,7 @@ namespace CarManagement.Services
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
                                     sentence2.CommandText = SELECT_DOORS;
-                                    this.parameter = sentence2.CreateParameter();
-                                    this.parameter.ParameterName = "@ID";
-                                    this.parameter.Value = (int)reader["id"];
-                                    sentence2.Parameters.Add(this.parameter);
+                                    sentence2.Parameters.Add(setParameter(sentence2, "@ID", (int)reader["id"]));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
@@ -538,13 +488,19 @@ namespace CarManagement.Services
                                 this.vehicleDto.Wheels = this.wheelsDto.ToArray();
                                 this.vehicleDto.Engine = this.engineDto;
                                 this.vehicleDto.Enrollment = this.enrollmentDto;
-                                this.vehicle_get = this.vehicleBuilder.import(this.vehicleDto);
 
-                                yield return this.vehicle_get;
+                                yield return this.vehicleBuilder.import(this.vehicleDto);
                             }
                         }
                     }
                 }
+            }
+            private static IDataParameter setParameter (IDbCommand sentence, string name, object thing)
+            {
+                IDataParameter parameter = sentence.CreateParameter();
+                parameter.ParameterName = name;
+                parameter.Value = thing;
+                return parameter;
             }
             private static string createQuery(string query, IDictionary<string, string> conditionParts)
             {
@@ -575,9 +531,7 @@ namespace CarManagement.Services
                         {
                             while (reader.Read())
                             {
-                                this.enrollmentDto.Number = Convert.ToInt16(reader["number"]);
-                                this.enrollmentDto.Serial = reader["serial"].ToString();
-                                yield return this.enrollmentProvider.import(this.enrollmentDto.Serial, this.enrollmentDto.Number);
+                                yield return this.enrollmentProvider.import(reader["serial"].ToString(), Convert.ToInt16(reader["number"]));
                             }
                         }
                     }
