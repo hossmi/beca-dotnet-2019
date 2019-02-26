@@ -19,6 +19,15 @@ namespace CarManagement.Services
             "DELETE FROM vehicle; " +
             "DELETE FROM enrollment;";
 
+        private const string DELETE_VEHICLE = "DELETE FROM door " +
+            "WHERE (vehicleId=@vehicleId); " +
+            "DELETE FROM wheel " +
+            "WHERE(vehicleId = @vehicleId); " +
+            "DELETE FROM vehicle " +
+            "WHERE(enrollmentId=@vehicleId); " +
+            "DELETE FROM enrollment " +
+            "WHERE(id=@vehicleId); ";
+
         private const string COUNT_VEHICLES = "SELECT COUNT(enrollmentId) FROM vehicle";
 
         private const string INSERT_ENROLLMENT = "INSERT INTO [enrollment] (serial,number) " +
@@ -237,6 +246,31 @@ public IEnumerable<IVehicle> get()
    return vehicleCollection;
 }
 */
+        public void remove(IEnrollment enrollment)
+        {
+            int enrollmentId;
+            int vehicleId;
+
+            using (SqlCommand command = new SqlCommand(SELECT_ENROLLMENT_WITH_PARAMS, this.connection))
+            {
+                command.Parameters.AddWithValue("@serial", enrollment.Serial);
+                command.Parameters.AddWithValue("@number", enrollment.Number);
+                enrollmentId = Convert.ToInt32(command.ExecuteScalar());
+            }
+            using (SqlCommand command = new SqlCommand(SELECT_VEHICLE, this.connection))
+            {
+                command.Parameters.AddWithValue("@id", enrollmentId);
+                vehicleId = Convert.ToInt32(command.ExecuteScalar());
+            }
+
+            if (enrollmentId > 0 && vehicleId > 0)
+            {
+                SqlCommand sqlCommand = new SqlCommand(DELETE_VEHICLE, this.connection);
+                sqlCommand.Parameters.AddWithValue("@vehicleId", enrollmentId);
+                sqlCommand.ExecuteNonQuery();
+            }
+        }
+
         public void set(IVehicle vehicle)
         {
             int enrollmentId;
@@ -374,7 +408,7 @@ public IEnumerable<IVehicle> get()
 
             public IVehicleQuery whereColorIs(CarColor color)
             {
-                Asserts.isFalse(this.filters.ContainsKey(COLOR),"Color value has already been assigned");
+                Asserts.isFalse(this.filters.ContainsKey(COLOR), "Color value has already been assigned");
 
                 this.filters[COLOR] = " vehicle.color = @color ";
 
@@ -387,7 +421,7 @@ public IEnumerable<IVehicle> get()
                 Asserts.isFalse(this.filters.ContainsKey(nameof(whereEngineIsStarted)), "EngineIsStarted value has already been assigned");
                 this.filters[nameof(whereEngineIsStarted)] = " vehicle.engineIsStarted = @isStarted ";
 
-                this.parameters.Add("@isStarted",  Convert.ToInt32(started));
+                this.parameters.Add("@isStarted", Convert.ToInt32(started));
 
                 return this;
             }
@@ -417,7 +451,7 @@ public IEnumerable<IVehicle> get()
             {
                 Asserts.isFalse(this.filters.ContainsKey(ENGINE_POWER), "Engine HorsePower value has already been assigned");
                 this.filters[ENGINE_POWER] = " vehicle.engineHorsePower = @horsepower ";
-                this.parameters.Add("@horsepower",horsePower);
+                this.parameters.Add("@horsepower", horsePower);
                 return this;
             }
 
@@ -438,8 +472,8 @@ public IEnumerable<IVehicle> get()
             private IEnumerator<IVehicle> enumerate()
             {
                 string selectVehicle = ComposeQuery(this.filters.Values);
-                                               
-                DB<SqlConnection> db = new DB<SqlConnection> (this.connectionString);
+
+                DB<SqlConnection> db = new DB<SqlConnection>(this.connectionString);
                 IEnumerable<IVehicle> vehicles = db.select<IVehicle>(selectVehicle, reader => conversor(reader), this.parameters);
 
                 return vehicles.GetEnumerator();
@@ -537,9 +571,9 @@ public IEnumerable<IVehicle> get()
                 return vehicles.GetEnumerator();
             }
 
-            private static IEnumerable<T> SelectSubTable<T>(SqlConnection connection, string query, int id,string column)
+            private static IEnumerable<T> SelectSubTable<T>(SqlConnection connection, string query, int id, string column)
                 where T : class, new()
-              
+
             {
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@vehicleId", id);

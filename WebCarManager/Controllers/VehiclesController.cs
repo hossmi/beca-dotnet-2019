@@ -24,7 +24,16 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            IEnumerable<IEnrollment> enrollments = this.vehicleStorage.get().Keys;
+            List<EnrollmentDto> enrollments = new List<EnrollmentDto>();
+            foreach (IEnrollment enrollment in this.vehicleStorage.get().Keys)
+            {
+                EnrollmentDto enrollmentDto = new EnrollmentDto()
+                {
+                    Serial = enrollment.Serial,
+                    Number = enrollment.Number,
+                };
+                enrollments.Add(enrollmentDto);
+            }
 
             return View(enrollments);
         }
@@ -48,6 +57,26 @@ namespace WebCarManager.Controllers
             VehicleDto vehicleDto = new VehicleDto();
             return View(vehicleDto);
         }
+
+        public ActionResult Delete(string serial, int number)
+        {
+            EnrollmentDto enrollmentDto = new EnrollmentDto()
+            {
+                Serial = serial,
+                Number = number,
+            };
+            return View(enrollmentDto);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(EnrollmentDto enrollmentDto)
+        {
+            IEnrollment enrollment = this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            this.vehicleStorage.remove(enrollment);
+            return this.RedirectToAction("Index");
+            //return View(enrollmentDto);
+        }
+
 
         [HttpPost]
         public ActionResult Create(VehicleDto vehicleDto)

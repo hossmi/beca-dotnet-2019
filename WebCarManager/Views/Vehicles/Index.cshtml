@@ -1,5 +1,5 @@
-﻿@using CarManagement.Core.Models
-@model IEnumerable<CarManagement.Core.Models.IEnrollment>
+﻿@using CarManagement.Core.Models.DTOs
+@model IEnumerable<CarManagement.Core.Models.DTOs.EnrollmentDto>
 
 @{
     ViewBag.Title = "Index";
@@ -17,7 +17,7 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         <th>Actions</th>
     </tr>
 
-    @foreach (IEnrollment enrollment in this.Model)
+    @foreach (EnrollmentDto enrollment in this.Model)
     {
         <tr>
             <td>@Html.ActionLink(enrollment.Serial + "-" + enrollment.Number.ToString("0000"), "Details", new {
