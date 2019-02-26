@@ -11,43 +11,43 @@ namespace CarManagement.Services
     {
         private readonly IVehicleBuilder vehicleBuilder;
         private readonly string filePath;
+        private List<VehicleDto> vehiclesDtoList;
+        private XmlSerializer xmlSerializer;
+        private TextWriter textWriter;
 
         public FileVehicleStorage(string fileFullPath, IVehicleBuilder vehicleBuilder)
             : base(readFromFile(fileFullPath, vehicleBuilder))
         {
             this.filePath += fileFullPath;
             this.vehicleBuilder = vehicleBuilder;
+            this.vehiclesDtoList = new List<VehicleDto>();
+            this.xmlSerializer = new XmlSerializer(typeof(List<VehicleDto>));
+            this.textWriter = new StreamWriter(this.filePath);
         }
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
 
-            List<VehicleDto> vehiclesDtoList = new List<VehicleDto>();
-
-            foreach (IVehicle v in vehicles)
+            foreach (IVehicle vehicle in vehicles)
             {
-                vehiclesDtoList.Add(this.vehicleBuilder.export(v));
+                this.vehiclesDtoList.Add(this.vehicleBuilder.export(vehicle));
             }
-            XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
-            TextWriter writer = new StreamWriter(this.filePath);
-            ser.Serialize(writer, vehiclesDtoList);
-            writer.Close();
+            this.xmlSerializer.Serialize(this.textWriter, this.vehiclesDtoList);
+            this.textWriter.Close();
         }
-
-
         private static IDictionary<IEnrollment, IVehicle> readFromFile(string fileFullPath, IVehicleBuilder vehicleBuilder)
         {
             IDictionary<IEnrollment, IVehicle> vehicleDictionary = new Dictionary<IEnrollment, IVehicle>(new EnrollmentEqualityComparer());
 
             if (File.Exists(fileFullPath))
             {
-                XmlSerializer ser = new XmlSerializer(typeof(List<VehicleDto>));
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(List<VehicleDto>));
                 TextReader reader = new StreamReader(fileFullPath);
-                List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)ser.Deserialize(reader);
+                List<VehicleDto> vehiclesDtoList = (List<VehicleDto>)xmlSerializer.Deserialize(reader);
                 reader.Close();
-                foreach (VehicleDto vDto in vehiclesDtoList)
+                foreach (VehicleDto vehicleDto in vehiclesDtoList)
                 {
-                    IVehicle vehicle = vehicleBuilder.import(vDto);
+                    IVehicle vehicle = vehicleBuilder.import(vehicleDto);
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
                 }
             }
