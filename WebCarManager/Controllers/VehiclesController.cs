@@ -39,6 +39,21 @@ namespace WebCarManager.Controllers
         }
 
 
+        public ActionResult Delete(string serial, int number)
+        {
+            this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+            IVehicleStorage vehicleStorage = new SqlVehicleStorage(this.connectionString, vehicleBuilder);
+
+            IEnrollment enrollment = enrollmentProvider.import(serial, number);
+
+            vehicleStorage.remove(enrollment);
+
+            return RedirectToAction("Index");
+        }
+
+
         public ActionResult Details(string serial, int number)
         {
             VehicleDto vehicleDto = getVehicleDto(serial, number, CONNECTION_STRING_KEY);
