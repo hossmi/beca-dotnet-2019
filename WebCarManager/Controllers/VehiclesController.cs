@@ -7,9 +7,17 @@ using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : Controller
+    public class VehiclesController : AbstractController
     {
         private const string CONNECTION_STRING = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test2;Password=123456;MultipleActiveResultSets=True";
+
+        private readonly IVehicleStorage vehicleStorage;
+
+        public VehiclesController()
+        {
+            this.vehicleStorage = getService<IVehicleStorage>();
+        }
+
         // GET: Vehicles
         public ActionResult Index()
         {
@@ -18,19 +26,6 @@ namespace WebCarManager.Controllers
             IVehicleStorage vehicleStorage = new SqlVehicleStorage(CONNECTION_STRING, vehicleBuilder);
 
             IEnumerable<IEnrollment> enrollments = vehicleStorage.get().Keys;
-                
-            /*new VehicleDto[]
-            {
-                new VehicleDto
-                {
-                    Enrollment = new EnrollmentDto
-                    {
-                        Serial= "XXX",
-                        Number = 666,
-                    },
-                    Color = CarManagement.Core.Models.CarColor.Red,
-                }
-            };*/
 
             return View(enrollments);
         }
