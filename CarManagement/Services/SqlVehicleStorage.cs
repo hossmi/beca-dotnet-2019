@@ -21,6 +21,8 @@ namespace CarManagement.Services
         private readonly IVehicleBuilder vehicleBuilder;
 
         #region --------------------------SQL REGION---------------------------------------
+        private const string SELECT_ALL_ENROLLMENTS = @"SELECT serial, number FROM enrollment 
+                                WHERE(EXISTS(select enrollmentId from vehicle v where v.enrollmentId = enrollment.id))";
         private const string PUSH_TO_ENROLLMENTDB = @"
              INSERT INTO enrollment(serial, number) 
              output INSERTED.ID VALUES(@serial,@number) ";
@@ -510,21 +512,23 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                string select = "SELECT [serial], [number] FROM [enrollment] " +
-                    "WHERE(EXISTS(select enrollmentId from vehicle v where v.enrollmentId = enrollment.id))";
 
-                DB<SqlConnection> db = new DB<SqlConnection>(this.connectionString);
-                IEnumerable<IEnrollment> enrollments = db.select<IEnrollment>(select, reader => conversorEnrollment(reader), this.parameters);
-
-                return enrollments;
-            }
-
-            private IEnrollment conversorEnrollment(IDataRecord reader)
-            {
-                int number = Convert.ToInt32(reader["number"]);
-                string serial = reader["serial"].ToString();
-
-                return this.vehicleBuilder.import(serial, number);
+                using (IDbConnection connection = new SqlConnection(this.connectionString))
+                {
+                    IDbCommand command = new SqlCommand(SELECT_ALL_ENROLLMENTS);
+                    command.Connection = connection;
+                    connection.Open();
+                    using (IDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string serial = reader["serial"].ToString();
+                            int number = Convert.ToInt32(reader["number"]);
+                            yield return this.vehicleBuilder.import(serial, number);
+                        }
+                    }
+                    connection.Close();
+                }
             }
 
         }

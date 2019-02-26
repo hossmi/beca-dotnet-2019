@@ -1,53 +1,51 @@
-﻿@using CarManagement.Core.Models.DTOs
+﻿@using CarManagement.Core.Models;
 
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+@model IEnumerable<IEnrollment>
 
 
-    @{
-        ViewBag.Title = "Vehicle";
-        Layout = "~/Views/Shared/_Layout.cshtml";
+@{
+    ViewBag.Title = "Vehicle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>Enrollment</th>
+        <th>Action</th>
+
+    </tr>
+
+    @foreach (IEnrollment enrollment in this.Model)
+    {
+        <tr>
+            <td>
+                <ul>
+                    <li>
+                        @enrollment.Serial- @enrollment.Number
+                    </li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+
+                    <li>
+                        @Html.ActionLink("Edit", "Edit", new {
+                            serial = enrollment.Serial,
+                            number = enrollment.Number})
+                    </li>
+                    <li>
+                        @Html.ActionLink("Delete", "Delete", new {
+                            serial = enrollment.Serial,
+                            number = enrollment.Number })
+                    </li>
+                </ul>
+            </td>
+        </tr>
     }
 
-    <h2>Index</h2>
-
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-    <table class="table">
-        <tr>
-            <th>Enrollment</th>
-            <th>Engine</th>
-            <th>Color</th>
-            <th>Action</th>
-            <th>Wheels</th>
-            <th>Doors</th>
-        </tr>
-
-        @foreach (VehicleDto vehicle in this.Model)
-        {
-            <tr>
-                <td>
-                    <ul>
-                        <li>
-                            @vehicle.Enrollment.Serial - @vehicle.Enrollment.Number
-                        </li>
-                    </ul>
-                </td>
-                <td>
-                    <ul>
-
-                        <li>
-                            @Html.ActionLink("Edit", "Edit", new {
-                                serial = vehicle.Enrollment.Serial,
-                                number = vehicle.Enrollment.Number
-                                /* id=item.PrimaryKey */ })
-                        </li>
-                        <li>
-                            @Html.ActionLink("Delete", "Delete", new { serial = vehicle.Enrollment.Serial, number = vehicle.Enrollment.Number })
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        }
-
-    </table>
+</table>

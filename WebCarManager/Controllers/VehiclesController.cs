@@ -18,12 +18,11 @@ namespace WebCarManager.Controllers
     {
         private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
         private readonly string connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
-
         // GET: Vehicles
         public ActionResult Index()
         {
-            getEnrollments(this.connectionString);
-            return View();
+            IEnumerable<IEnrollment> enrollmentList = getEnrollments(this.connectionString);
+            return View(enrollmentList);
         }
         public ActionResult Edit()
         {
@@ -35,16 +34,21 @@ namespace WebCarManager.Controllers
             return View();
         }
 
-        private void getEnrollments(string connectionString)
+        private IEnumerable<IEnrollment> getEnrollments(string connectionString)
         {
             IEnrollmentProvider enrollmentprovider = new DefaultEnrollmentProvider();
             IVehicleBuilder vehicle = new VehicleBuilder(enrollmentprovider);
             SqlVehicleStorage sqlVehicle = new SqlVehicleStorage(connectionString, vehicle);
-            List<EnrollmentDto> enrollments = new List<EnrollmentDto>();
-            foreach (EnrollmentDto enrollment in sqlVehicle.get().Keys)
+            List<IEnrollment> enrollments = new List<IEnrollment>();
+            
+
+            foreach (IEnrollment enrollment in sqlVehicle.get().Keys)
             {
                 enrollments.Add(enrollment);
+                
             }
+            return enrollments;
+            
  
         } 
     }
