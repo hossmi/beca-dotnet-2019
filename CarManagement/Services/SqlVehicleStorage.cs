@@ -69,6 +69,7 @@ namespace CarManagement.Services
             throw new NotImplementedException();
         }
 
+
         public void set(IVehicle vehicle)
         {
             int enrollmentId = 0;
@@ -164,6 +165,7 @@ namespace CarManagement.Services
                 executeCommand(this.connectionString, queryInsertDoor, parameterDoor);
             }
         }        
+
 
         public IVehicleQuery get()
         {
@@ -457,7 +459,7 @@ namespace CarManagement.Services
             return doorsDto;
         }
 
-        private bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
+        private static bool tryGetEnrollmentId(string connectionString, IEnrollment enrollment, out int enrollmentId)
         {
             bool existEnrollment;
 
