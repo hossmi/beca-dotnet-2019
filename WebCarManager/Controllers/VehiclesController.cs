@@ -87,4 +87,27 @@ namespace WebCarManager.Controllers
             return View(vehicles);
         }
     }
+
+    internal class Door : IDoor
+    {
+         public bool isOpen = false;
+
+        public void open()
+        {
+            this.isOpen = true;
+        }
+
+        public void close()
+        {
+            this.isOpen = false;
+        }
+
+        public bool IsOpen
+        {
+            get
+            {
+                return this.isOpen;
+            }
+        }
+    }
 }
