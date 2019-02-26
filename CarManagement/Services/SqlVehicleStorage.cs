@@ -386,7 +386,9 @@ namespace CarManagement.Services
                     {
                         while (vehicleReader.Read())
                         {
-                            yield return this.vehicleBuilder.import(vehicleReader["serial"].ToString(), Convert.ToInt32(vehicleReader["number"]) );
+                            string serial = vehicleReader["serial"].ToString();
+                            int number = Convert.ToInt32(vehicleReader["number"]);
+                            yield return this.vehicleBuilder.import(serial , number );
                         }
                     }
                     sqlDbConnection.Close();
