@@ -6,6 +6,8 @@ using CarManagement.Services;
 using CarManagement.Core.Services;
 using System.Configuration;
 using CarManagement.Core.Models;
+using CarManagement.Core.Models.DTOs;
+using System.Linq;
 
 namespace WebCarManager.Controllers
 {
@@ -25,6 +27,31 @@ namespace WebCarManager.Controllers
             IEnumerable<IEnrollment> enrollments = vehicleStorage.get().Keys;
 
             return View(enrollments);
+        }
+
+
+        public ActionResult Details(string serial, int number)
+        {
+            VehicleDto vehicleDto = getVehicleDto(serial, number, CONNECTION_STRING_KEY);
+
+            return View(vehicleDto);
+        }
+
+        private static VehicleDto getVehicleDto(string serial, int number, string connection)
+        {
+            String connectionString = ConfigurationManager.AppSettings[connection];
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+            IVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
+
+            IEnrollment enrollment = enrollmentProvider.import(serial, number);
+
+            IVehicle vehicle = vehicleStorage.get().whereEnrollmentIs(enrollment).Single();
+
+            VehicleDto vehicleDto = vehicleBuilder.export(vehicle);
+
+
+            return vehicleDto;
         }
     }
 }

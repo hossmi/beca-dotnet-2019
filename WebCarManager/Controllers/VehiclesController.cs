@@ -5,6 +5,7 @@ namespace WebCarManager.Controllers
 {
     public class VehiclesController : Controller
     {
+        
         // GET: Vehicles
         public ActionResult Index()
         {

@@ -1,0 +1,32 @@
+﻿@using CarManagement.Core.Models.DTOs
+
+@model CarManagement.Core.Models.DTOs.VehicleDto
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>@Model.Enrollment.Serial @Model.Enrollment.Number</h4>
+    <hr />
+    <dl class="dl-horizontal"></dl>
+</div>
+
+<p>Color: @Model.Color.ToString()</p>
+<p>Engine: @Model.Engine.IsStarted</p>
+@foreach (DoorDto doorDto in Model.Doors)
+{
+    <p>Door is Open is @doorDto.IsOpen</p>
+}
+@foreach (WheelDto wheelDto in Model.Wheels)
+{
+    <p>Pressure of wheel is @wheelDto.Pressure</p>
+}
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -25,6 +25,11 @@
 
     @foreach (IEnrollment item in Model)
     {
+        var enrollment = new
+        {
+            serial= item.Serial,
+            number= item.Number
+        };
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Serial)
@@ -33,9 +38,9 @@
                 @Html.DisplayFor(modelItem => item.Number)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", enrollment) |
+                @Html.ActionLink("Details","Details", enrollment) |
+                @Html.ActionLink("Delete", "Delete", enrollment)
             </td>
         </tr>
     }
