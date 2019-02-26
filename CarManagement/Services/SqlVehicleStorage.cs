@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using System.Data.SqlClient;
 
 namespace CarManagement.Services
 {
@@ -15,6 +16,7 @@ namespace CarManagement.Services
         public SqlVehicleStorage(string connectionString)
         {
             this.connectionString = connectionString;
+
         }
 
         public int Count { get; }
