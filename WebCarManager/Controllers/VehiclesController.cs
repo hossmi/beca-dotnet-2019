@@ -96,7 +96,7 @@ namespace WebCarManager.Controllers
 
         private VehicleDto GetVehicleData(string serial, int number)
         {
-            IEnrollment enrollment = this.enrollmentProvider.import(serial,number);
+            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
             VehicleDto vehicleDto = this.vehicleStorage.get().whereEnrollmentIs(enrollment).Select(this.vehicleBuilder.export).Single();
 
             return vehicleDto;
@@ -107,5 +107,17 @@ namespace WebCarManager.Controllers
             IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
             this.vehicleStorage.set(vehicle);
         }
+
+        private class NewVehicleData
+        {
+            private int wheelCount;
+            private int doorCount;
+            private int horsePower;
+            private bool isStarted;
+            private CarColor color;
+        }
+            
+
+
     }
 }
