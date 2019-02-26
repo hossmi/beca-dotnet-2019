@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CarManagement.Core.Models;
@@ -10,45 +11,58 @@ namespace WebCarManager.Controllers
 {
     public class VehiclesController : Controller
     {
+        private const string connectionString = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test;Password=123456; MultipleActiveResultSets=True;";
+
         // GET: Vehicles
         public ActionResult Index()
         {
-            string connectionString = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test;Password=123456; MultipleActiveResultSets=True;";
-            VehicleBuilder vehicleBuilder = new VehicleBuilder(new DefaultEnrollmentProvider());
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             SqlVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
-            List<VehicleDto> vehicles = new List<VehicleDto>();
 
-            foreach (IVehicle vehicle in vehicleStorage.get())
-            {
-                vehicles.Add(vehicleBuilder.export(vehicle));
-            }
-
-            return View(vehicles);
+            return View(vehicleStorage.get().Keys);
         }
 
         public ActionResult Details(string serial, int number)
         {
-            this.ViewData.Add("Serial", serial);
-            this.ViewData.Add("Number", number);
+            VehicleDto vehicle = GetVehicleData(serial, number);
 
-            return View(GetVehicleData(serial, number));
+            return View(vehicle);
+        }
+
+        public ActionResult Edit(string serial, int number)
+        {
+            VehicleDto vehicle = GetVehicleData(serial, number);
+
+            return View(vehicle);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(VehicleDto vehicleDto)
+        {
+            SetVehicleData(vehicleDto);
+            return View(vehicleDto);
         }
 
         private VehicleDto GetVehicleData(string serial, int number)
         {
-            string connectionString = @"Server=localhost\SQLEXPRESS;Database=CarManagement;User Id=test;Password=123456; MultipleActiveResultSets=True;";
             IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
             VehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
             SqlVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
-            VehicleDto vehicle = new VehicleDto();
-                        
             IEnrollment enrollment = enrollmentProvider.import(serial,number);
+            IVehicle vehicle = vehicleStorage.get().whereEnrollmentIs(enrollment).Single();
+            VehicleDto vehicleDto = vehicleBuilder.export(vehicle);
+                       
+            return vehicleDto;
+        }
 
-            vehicle = vehicleBuilder.export(vehicleStorage.get().whereEnrollmentIs(enrollment).Single());
-
-
-
-            return vehicle;
+        private void SetVehicleData(VehicleDto vehicleDto)
+        {
+            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
+            VehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
+            SqlVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
+            IVehicle vehicle = vehicleBuilder.import(vehicleDto);
+            vehicleStorage.set(vehicle);
         }
     }
 }

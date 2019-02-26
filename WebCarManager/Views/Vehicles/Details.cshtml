@@ -17,7 +17,7 @@
 </div>
 
 <div>
-    <p>Enrollment: @this.ViewData["Serial"]-@this.ViewData["Number"]</p>
+    <p>Enrollment: @this.Model.Enrollment.Serial-@this.Model.Enrollment.Number.ToString("0000")</p>
 </div>
 
 <div>
@@ -66,7 +66,7 @@
 
 <p>
     @Html.ActionLink("Edit", "Edit", new {
-    serial = this.ViewData["Serial"],
-    number = this.ViewData["Number"] }) |
+    serial = this.Model.Enrollment.Serial,
+    number = this.Model.Enrollment.Number }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
