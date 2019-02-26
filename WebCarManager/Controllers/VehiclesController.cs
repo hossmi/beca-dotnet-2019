@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using CarManagement.Core.Models;
@@ -20,7 +21,6 @@ namespace WebCarManager.Controllers
             this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
-        // GET: Vehicles
         public ActionResult Index()
         {
             IEnumerable<IEnrollment> vehicles = this.vehicleStorage
@@ -30,7 +30,33 @@ namespace WebCarManager.Controllers
             return View(vehicles);
         }
 
-        public ActionResult  View(string serial, int number)
+        public ActionResult View(string serial, int number)
+        {
+            return getView(serial, number);
+        }
+
+        public ActionResult Edit(string serial, int number)
+        {
+            return getView(serial, number);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(VehicleDto vehicle)
+        {
+            IVehicle builtVehicle = this.vehicleBuilder.import(vehicle);
+            this.vehicleStorage.set(builtVehicle);
+            return RedirectToAction("index");
+        }
+
+        [HttpPost]
+        public ActionResult Delete(EnrollmentDto enrollment)
+        {
+            IEnrollment builtEnrollment = this.enrollmentImporter.import(enrollment.Serial, enrollment.Number);
+            this.vehicleStorage.remove(builtEnrollment);
+            return RedirectToAction("index");
+        }
+
+        private ActionResult getView(string serial, int number)
         {
             IEnrollment enrollment = this.enrollmentImporter.import(serial, number);
 
@@ -47,5 +73,6 @@ namespace WebCarManager.Controllers
             else
                 return View(vehicle);
         }
+
     }
 }

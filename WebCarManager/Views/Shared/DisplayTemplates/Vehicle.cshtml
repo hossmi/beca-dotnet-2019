@@ -1,0 +1,12 @@
+﻿@model CarManagement.Core.Models.DTOs.VehicleDto
+
+<div>
+    <h4>Vehicle @Html.DisplayFor(model => model.Enrollment, "Enrollment")</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @Html.DisplayFor(model => model.Color)
+        @Html.DisplayFor(model => model.Engine, "Engine")
+        @Html.DisplayFor(model => model.Doors, "Doors")
+        @Html.DisplayFor(model => model.Wheels, "Wheels")
+    </dl>
+</div>

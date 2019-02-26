@@ -3,19 +3,19 @@
 @model VehicleDto
 
 @{
-    ViewBag.Title = "View";
+    ViewBag.Title = $"Vehicle {Model.Enrollment.Serial}-{Model.Enrollment.Number}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>View</h2>
 
 <div>
-    <h4>VehicleDto</h4>
+    @Html.DisplayFor(model => model, "Vehicle")
     <hr />
     <dl class="dl-horizontal"></dl>
 
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Edit", "Edit", new { serial = Model.Enrollment.Serial, number = Model.Enrollment.Number }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

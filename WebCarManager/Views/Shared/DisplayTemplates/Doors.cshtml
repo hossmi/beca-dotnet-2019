@@ -1,0 +1,24 @@
+﻿@using  CarManagement.Core.Models.DTOs
+@model IEnumerable<DoorDto>
+
+<h3>Doors</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Door No.</th>
+            <th>State</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            DoorDto[] doors = Model.ToArray();
+        }
+        @for (int i = 0, n = doors.Length; i < n; i++)
+        {
+            <tr>
+                <td>@i</td>
+                <td>@doors[i].IsOpen </td>
+            </tr>
+        }
+    </tbody>
+</table>

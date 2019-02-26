@@ -198,10 +198,17 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Vehicles\Index.cshtml" />
     <Content Include="Views\Vehicles\View.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Vehicle.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Enrollment.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\CarColor.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Engine.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Doors.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Wheels.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Vehicles\DisplayTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
