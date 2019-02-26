@@ -29,16 +29,17 @@ namespace CarManagement.Services
 
             DELETE FROM enrollment";
 
-        private const string SELECT_COUNT_VEHICLES = "SELECT COUNT(enrollmentId) FROM vehicle";
+        private const string FROM_VEHICLE_SELECT_COUNT_enrollmentId = 
+            "SELECT COUNT(enrollmentId) FROM vehicle";
 
-        private const string SELECT_VEHICLE_ID = @"
+        private const string FROM_VEHICLE_SELECT_vehicleId_BY_serial_AND_number = @"
             SELECT		v.enrollmentId AS vehicleId
             FROM		vehicle v
             INNER JOIN	enrollment e ON v.enrollmentId = e.id
             WHERE		e.serial = @serial
             AND			e.number = @number";
 
-        private const string SELECT_ENROLLMENT_ID = @"
+        private const string FROM_ENROLLMENT_SELECT_id_BY_serial_AND_number = @"
             SELECT		id
             FROM		enrollment e
             WHERE		e.serial = @serial
@@ -60,32 +61,42 @@ namespace CarManagement.Services
             INSERT INTO door (vehicleId, isOpen)
             VALUES (@vehicleId, @isOpen)";
 
-        private const string UPDATE_VEHICLE = @"
+        private const string UPDATE_VEHICLE_by_enrollmentId = @"
             UPDATE vehicle
                SET color = @color
                   , engineHorsePower = @engineHorsePower
                   , engineIsStarted = @engineIsStarted
              WHERE enrollmentId = @enrollmentId";
 
-        private const string DELETE_WHEELS = @"DELETE FROM wheel WHERE vehicleId = @vehicleId";
-        private const string DELETE_DOORS = @"DELETE FROM door WHERE vehicleId = @vehicleId";
+        private const string DELETE_VEHICLE_by_serial_AND_number = @"
+            DELETE FROM vehicle
+            WHERE		serial = @serial
+            AND			number = @number";
 
-        private const string SELECT_VEHICLES = @"
+        private const string DELETE_ENROLLMENT_by_serial_AND_number = @"
+            DELETE FROM enrollment
+            WHERE		serial = @serial
+            AND			number = @number";
+
+        private const string DELETE_WHEELS_BY_vehicleId = @"DELETE FROM wheel WHERE vehicleId = @vehicleId";
+        private const string DELETE_DOORS_BY_vehicleId = @"DELETE FROM door WHERE vehicleId = @vehicleId";
+
+        private const string FROM_VEHICLE_AND_ENROLMENT = @"
             SELECT		v.enrollmentId AS vehicleId, v.color, v.engineHorsePower, v.engineIsStarted
                         , e.serial, e.number
             FROM		vehicle v
             INNER JOIN	enrollment e ON v.enrollmentId = e.id
             ";
 
-        private const string SELECT_ENROLLMENTS = @"
+        private const string FROM_VEHICLE_AND_ENROLLMENT_SELECT_enrollmentId_serial_and_number = @"
             SELECT		v.enrollmentId AS vehicleId
                         , e.serial, e.number
             FROM		vehicle v
             INNER JOIN	enrollment e ON v.enrollmentId = e.id
             ";
 
-        private static readonly string SELECT_WHEELS = @"SELECT vehicleId, pressure FROM wheel WHERE vehicleId = @vehicleId";
-        private static readonly string SELECT_DOORS = @"SELECT vehicleId, isOpen FROM door WHERE vehicleId = @vehicleId";
+        private static readonly string FROM_WHEELS = @"SELECT vehicleId, pressure FROM wheel WHERE vehicleId = @vehicleId";
+        private static readonly string FROM_DOORS = @"SELECT vehicleId, isOpen FROM door WHERE vehicleId = @vehicleId";
 
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
@@ -103,7 +114,7 @@ namespace CarManagement.Services
         {
             get
             {
-                return (int)this.db.selectValue(SELECT_COUNT_VEHICLES);
+                return (int)this.db.selectValue(FROM_VEHICLE_SELECT_COUNT_enrollmentId);
             }
         }
 
@@ -123,7 +134,50 @@ namespace CarManagement.Services
 
         public void remove(IEnrollment enrollment)
         {
-            throw new NotImplementedException();
+            this.db.transact(commandBuilder =>
+            {
+                IDbCommand command = commandBuilder
+                    .setQuery(FROM_VEHICLE_SELECT_vehicleId_BY_serial_AND_number)
+                    .setParameter("@serial", enrollment.Serial)
+                    .setParameter("@number", enrollment.Number)
+                    .build();
+
+                int vehicleId = 0;
+
+                using (IDataReader reader = command.ExecuteReader())
+                    if (reader.Read())
+                        vehicleId = (int)reader["vehicleId"];
+
+                Asserts.isTrue(vehicleId > 0);
+
+                commandBuilder
+                    .setQuery(DELETE_DOORS_BY_vehicleId)
+                    .setParameter("@vehicleId", vehicleId)
+                    .build()
+                    .ExecuteNonQuery();
+
+                commandBuilder
+                    .setQuery(DELETE_WHEELS_BY_vehicleId)
+                    .setParameter("@vehicleId", vehicleId)
+                    .build()
+                    .ExecuteNonQuery();
+
+                commandBuilder
+                    .setQuery(DELETE_VEHICLE_by_serial_AND_number)
+                    .setParameter("@serial", enrollment.Serial)
+                    .setParameter("@number", enrollment.Number)
+                    .build()
+                    .ExecuteNonQuery();
+
+                commandBuilder
+                    .setQuery(DELETE_ENROLLMENT_by_serial_AND_number)
+                    .setParameter("@serial", enrollment.Serial)
+                    .setParameter("@number", enrollment.Number)
+                    .build()
+                    .ExecuteNonQuery();
+
+                return TransactionAction.Commit;
+            });
         }
 
         public void set(IVehicle vehicle)
@@ -131,7 +185,7 @@ namespace CarManagement.Services
             this.db.transact(commandBuilder =>
             {
                 IDbCommand command = commandBuilder
-                    .setQuery(SELECT_VEHICLE_ID)
+                    .setQuery(FROM_VEHICLE_SELECT_vehicleId_BY_serial_AND_number)
                     .setParameter("@serial", vehicle.Enrollment.Serial)
                     .setParameter("@number", vehicle.Enrollment.Number)
                     .build();
@@ -165,7 +219,7 @@ namespace CarManagement.Services
             Asserts.isTrue(affectedRows == 1);
 
             vehicleId = (int)commandBuilder
-                .setQuery(SELECT_ENROLLMENT_ID)
+                .setQuery(FROM_ENROLLMENT_SELECT_id_BY_serial_AND_number)
                 .setParameter("@serial", vehicle.Enrollment.Serial)
                 .setParameter("@number", vehicle.Enrollment.Number)
                 .build()
@@ -214,7 +268,7 @@ namespace CarManagement.Services
             int affectedRows;
 
             affectedRows = commandBuilder
-                .setQuery(UPDATE_VEHICLE)
+                .setQuery(UPDATE_VEHICLE_by_enrollmentId)
                 .setParameter("@enrollmentId", vehicleId)
                 .setParameter("@color", vehicle.Color)
                 .setParameter("@engineHorsePower", vehicle.Engine.HorsePower)
@@ -225,7 +279,7 @@ namespace CarManagement.Services
             Asserts.isTrue(affectedRows == 1);
 
             commandBuilder
-                .setQuery(DELETE_WHEELS)
+                .setQuery(DELETE_WHEELS_BY_vehicleId)
                 .setParameter("@vehicleId", vehicleId)
                 .build()
                 .ExecuteNonQuery();
@@ -243,7 +297,7 @@ namespace CarManagement.Services
             }
 
             commandBuilder
-                .setQuery(DELETE_DOORS)
+                .setQuery(DELETE_DOORS_BY_vehicleId)
                 .setParameter("@vehicleId", vehicleId)
                 .build()
                 .ExecuteNonQuery();
@@ -314,8 +368,8 @@ namespace CarManagement.Services
                             int vehicleId = (int)reader["vehicleId"];
 
                             VehicleDto vehicleDto = buildVehicleDto(reader);
-                            vehicleDto.Wheels = build(transaction, SELECT_WHEELS, vehicleId, buildWheelDto).ToArray();
-                            vehicleDto.Doors = build(transaction, SELECT_DOORS, vehicleId, buildDoorDto).ToArray();
+                            vehicleDto.Wheels = build(transaction, FROM_WHEELS, vehicleId, buildWheelDto).ToArray();
+                            vehicleDto.Doors = build(transaction, FROM_DOORS, vehicleId, buildDoorDto).ToArray();
 
                             IVehicle vehicle = vehicleBuilder.import(vehicleDto);
                             yield return vehicle;
@@ -495,13 +549,13 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                string query = buildQuery(SELECT_VEHICLES, this.conditions.Values);
+                string query = buildQuery(FROM_VEHICLE_AND_ENROLMENT, this.conditions.Values);
                 return readAndBuildVehicles(this.connectionString, query, this.parameters, this.vehicleBuilder);
             }
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                string query = buildQuery(SELECT_ENROLLMENTS, this.conditions.Values);
+                string query = buildQuery(FROM_VEHICLE_AND_ENROLLMENT_SELECT_enrollmentId_serial_and_number, this.conditions.Values);
                 return readAndBuildEnrollments(this.connectionString, query, this.parameters, this.vehicleBuilder);
             }
         }
