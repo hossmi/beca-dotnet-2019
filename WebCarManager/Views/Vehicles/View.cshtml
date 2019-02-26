@@ -1,0 +1,21 @@
+﻿@using CarManagement.Core.Models.DTOs
+
+@model VehicleDto
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View</h2>
+
+<div>
+    <h4>VehicleDto</h4>
+    <hr />
+    <dl class="dl-horizontal"></dl>
+
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

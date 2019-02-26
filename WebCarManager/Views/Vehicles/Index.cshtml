@@ -1,9 +1,10 @@
-﻿@using CarManagement.Core.Models.DTOs
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+﻿@using CarManagement.Core.Models
+
+@model IEnumerable<IEnrollment>
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
@@ -17,16 +18,18 @@ Layout = "~/Views/Shared/_Layout.cshtml";
         <th>Actions</th>
     </tr>
 
-    @foreach (VehicleDto vehicle in this.Model)
+    @foreach (IEnrollment enrollment in this.Model)
     {
+        var data = new
+        {
+            serial = enrollment.Serial,
+            number = enrollment.Number
+        };
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>@Html.ActionLink($"{@enrollment.Serial} - {@enrollment.Number.ToString("0000")}","View", data)</td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", data) |
+                @Html.ActionLink("Delete", "Delete", data)
             </td>
         </tr>
     }
