@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -71,8 +72,23 @@ namespace CarManagement.Services
 
         public void remove(IEnrollment enrollment)
         {
+            int enrollmentId = 0;
 
-            throw new NotImplementedException();
+
+            if (tryGetEnrollmentId(this.connectionString, enrollment, SELECT_ENROLLMENT_ID, out enrollmentId))
+            {
+
+                string deleteTablesWithEnrollmentId = @"DELETE FROM door WHERE vehicleId = @id 
+                                                        DELETE FROM wheel WHERE vehicleId = @id 
+                                                        DELETE FROM vehicle WHERE enrollmentId = @id 
+                                                        DELETE FROM enrollment WHERE id = @id ";
+                var parameterDeleteTablesWithEnrollmentId = new Dictionary<string, object>
+                {
+                    { "@id", enrollmentId }
+                };
+                executeCommand(this.connectionString, deleteTablesWithEnrollmentId, parameterDeleteTablesWithEnrollmentId);
+            }
+            Asserts.isFalse(tryGetEnrollmentId(this.connectionString, enrollment, SELECT_ENROLLMENT_ID, out enrollmentId));
         }
 
         public void set(IVehicle vehicle)
