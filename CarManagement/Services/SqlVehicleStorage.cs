@@ -12,8 +12,6 @@ namespace CarManagement.Services
 {
     public class SqlVehicleStorage : IVehicleStorage
     {
-        private const string UPDATE_ENROLLMENT = @"INSERT INTO [enrollment] ([serial],[number]) 
-                                                VALUES (@serial,@number)";
         private const string UPDATE_VEHICLE = @"UPDATE [vehicle] SET [color] = @color, [engineHorsePower] = @engineHorsePower, [engineIsStarted] = @engineIsStarted
                                                 WHERE [enrollmentId] = @enrollmentId";
         private const string UPDATE_DOOR = @"UPDATE [door] SET [isOpen] = @isOpen WHERE [vehicleId] = @vehicleId";
