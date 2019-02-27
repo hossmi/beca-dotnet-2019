@@ -1,5 +1,5 @@
 ﻿@using CarManagement.Core.Models
-@model CarManagement.Core.Models.DTOs.VehicleDto
+@model WebCarManager.Controllers.VehiclesController.NewVehicleData
 
 @{
     ViewBag.Title = "Create";
@@ -23,13 +23,14 @@
     <hr />
     <div>
         Engine:
-        Horse Power: @Html.TextBoxFor(Model => Model.Engine.HorsePower)
-        IsStarted: @Html.CheckBoxFor(Model => Model.Engine.IsStarted)
+        Horse Power: @Html.TextBoxFor(Model => Model.HorsePower)
+        IsStarted: @Html.CheckBoxFor(Model => Model.IsStarted)
     </div>
 
-    Wheels: @Html.TextBox("WheelCount")
+    Wheels: @Html.TextBoxFor(Model => Model.WheelCount)
+    Wheels Pressure: @Html.TextBoxFor(Model => Model.Pressure)
 
-    Doors: @Html.TextBox("DoorCount")
+    Doors: @Html.TextBoxFor(Model => Model.DoorCount)
 
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
