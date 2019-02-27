@@ -1,4 +1,7 @@
-﻿
+﻿@using CarManagement.Core.Models
+
+@model IVehicle
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -7,6 +10,24 @@
 
 <div class="container">
     <div class="row">
-        <text>jhjhkhjhj</text>
+        <textarea name="prueba" rows="1" cols="10"></textarea>
+    </div>
+    <div class="row">
+        <select name="listaColores">
+            @{
+                string[] colors = { "Black", "Blue", "Green", "Purple", "Red", "White", "Yellow" };
+                for (int i = 0; i < 7; i++)
+                {
+                    if (Model.Color.ToString() == colors[i])
+                    {
+                        <option value=@colors[i] selected>@colors[i]</option>
+                    }
+                    else
+                    {
+                        <option value=@colors[i]>@colors[i]</option>
+                    }
+                }
+            }
+        </select>
     </div>
 </div>
