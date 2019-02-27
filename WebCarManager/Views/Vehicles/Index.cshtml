@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Index";
-Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Index</h2>
@@ -19,16 +19,17 @@ Layout = "~/Views/Shared/_Layout.cshtml";
 
     @foreach (VehicleDto vehicle in this.Model)
     {
+        string enrollment = $"{@vehicle.Enrollment.Serial} - {@vehicle.Enrollment.Number.ToString("0000")}";
+        var enrollmentParameters = new { serial = vehicle.Enrollment.Serial, number = vehicle.Enrollment.Number };
+
         <tr>
-            <td>@vehicle.Enrollment.Serial - @vehicle.Enrollment.Number.ToString("0000")</td>
+            <td>@Html.ActionLink(enrollment, "Detail", enrollmentParameters)</td>
+
             <td>
-                @Html.ActionLink("Edit", "Edit", new {
-                   serial = vehicle.Enrollment.Serial,
-                   number = vehicle.Enrollment.Number }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit",  enrollmentParameters) |
+                @Html.ActionLink("Delete", "Delete", enrollmentParameters)
             </td>
         </tr>
     }
-
+      
 </table>

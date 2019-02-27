@@ -26,5 +26,12 @@ namespace WebCarManager.Controllers
 
             return View();
         }
+
+        public ActionResult Vehicles()
+        {
+            this.ViewBag.Message = "Your vehicles.";
+
+            return View();
+        }
     }
 }
