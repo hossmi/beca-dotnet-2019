@@ -1,7 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
+using BusinessCore.Tests.Services;
+using CarManagement.Core.Models;
+using CarManagement.Core.Services;
+using CarManagement.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BusinessCore.Tests
@@ -10,34 +16,112 @@ namespace BusinessCore.Tests
     [TestClass]
     public class SqlVehicleStorageTests
     {
-        private const string ConnectionStringKey = "CarManagerConnectionString";
+        private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
+        private const string CREATION_SCRIPT_FILE_KEY = "CreationScriptFile";
+        private const string DESTRUCTION_SCRIPT_FILE_KEY = "DestructionScriptFile";
+        private const string SCRIPTS_FOLDER_KEY = "scriptsFolder";
+
+        private const string INSERT_ENROLLMENT = @"INSERT INTO [enrollment] ([serial],[number]) VALUES (@serial,@number)";
+        private const string INSERT_VEHICLE = @"INSERT INTO [vehicle] ([enrollmentId],[color],[engineHorsePower],[engineIsStarted]) VALUES (@enrollmentId,@color,@engineHorsePower,@engineIsStarted)";
+        private const string INSERT_DOOR = @"INSERT INTO [door]  ([vehicleId],[isOpen]) VALUES (@vehicleId,isOpen)";
+        private const string INSERT_WHEEL = @"INSERT INTO [wheel] ([pressure],[vehicleId]) VALUES (@pressure, @vehicleId)";
+
         private readonly string connectionString;
+        private readonly string creationScript;
+        private readonly string destructionScript;
+        private readonly IVehicleStorage fakeStorage;
 
         public SqlVehicleStorageTests()
         {
-            Assert.IsTrue(ConfigurationManager.AppSettings.AllKeys.Contains(ConnectionStringKey));
-            this.connectionString = ConfigurationManager.AppSettings[ConnectionStringKey].ToString();
+            this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY].ToString();
+
+            string baseFolder = ConfigurationManager.AppSettings[SCRIPTS_FOLDER_KEY].ToString();
+            baseFolder = Path.Combine(Environment.CurrentDirectory, baseFolder);
+
+            this.creationScript = ConfigurationManager.AppSettings[CREATION_SCRIPT_FILE_KEY].ToString();
+            this.creationScript = Path.Combine(baseFolder, this.creationScript);
+
+            this.destructionScript = ConfigurationManager.AppSettings[DESTRUCTION_SCRIPT_FILE_KEY].ToString();
+            this.destructionScript = Path.Combine(baseFolder, this.destructionScript);
+
+            this.fakeStorage = new ArrayVehicleStorage();
         }
 
         [TestInitialize]
         public void recreate()
         {
-            drop(this.connectionString);
-            create(this.connectionString);
+            drop(this.connectionString, this.destructionScript);
+            create(this.connectionString, this.creationScript);
+            fullfillWithSampleData(this.connectionString, this.fakeStorage.getAll());
         }
 
         [TestCleanup]
         public void cleanUp()
         {
-            //drop(this.connectionString);
+            drop(this.connectionString, this.destructionScript);
         }
 
         [TestMethod]
         public void create_and_drop_works()
         {
+
         }
 
-        private static void create(string connectionString)
+        private static void fullfillWithSampleData(string connectionString, IEnumerable<IVehicle> vehicles)
+        {
+            SqlConnection conn = new SqlConnection(connectionString);
+            conn.Open();
+
+            foreach (IVehicle vehicle in vehicles)
+            {
+                String enrollmentId;
+                using (SqlCommand command = new SqlCommand(INSERT_ENROLLMENT, conn)) {
+
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    command.ExecuteNonQuery();
+                }
+
+
+                string selectEnrollmentId = @"SELECT [id] FROM [enrollment] WHERE [serial] = @serial AND [number] = @number";
+                using (SqlCommand command = new SqlCommand(selectEnrollmentId, conn))
+                {
+                    command.Parameters.AddWithValue("@serial", vehicle.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicle.Enrollment.Number);
+                    enrollmentId = command.ExecuteScalar().ToString();
+                }
+
+
+                using (SqlCommand command = new SqlCommand(INSERT_VEHICLE, conn)) {
+
+                    command.Parameters.AddWithValue("@enrollmentId", enrollmentId);
+                    command.Parameters.AddWithValue("@color", vehicle.Color);
+                    command.Parameters.AddWithValue("@engineHorsePower", vehicle.Engine.HorsePower);
+                    command.Parameters.AddWithValue("@engineIsStarted", vehicle.Engine.IsStarted);
+                }
+
+                foreach (IDoor door in vehicle.Doors)
+                {
+                    using (SqlCommand command = new SqlCommand(INSERT_VEHICLE, conn)) {
+
+                        command.Parameters.AddWithValue("@vehicleId", enrollmentId);
+                        command.Parameters.AddWithValue("@isOpen", door.IsOpen);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                foreach (IWheel wheel in vehicle.Wheels)
+                {
+                    using (SqlCommand command = new SqlCommand(INSERT_WHEEL, conn)) {
+
+                        command.Parameters.AddWithValue("@pressure", wheel.Pressure);
+                        command.Parameters.AddWithValue("@vehicleId", enrollmentId);
+                    }
+                }
+            }
+        }
+
+        private static void create(string connectionString, string creationScript)
         {
             SqlConnection conn = new SqlConnection(connectionString);
             conn.Open();
@@ -123,7 +207,7 @@ namespace BusinessCore.Tests
 
         }
 
-        private static void drop(string connectionString)
+        private static void drop(string connectionString, string destructionScript)
         {
 
             using (SqlConnection conn = new SqlConnection(connectionString))
