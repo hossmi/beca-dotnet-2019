@@ -22,7 +22,6 @@ namespace CarManagement.Services
         private readonly IVehicleBuilder vehicleBuilder;
         private IDataReader reader;
         private IDataParameter parameter;
-        private IVehicle vehicle;
         private List<string> idList;
         private object query;
         private IDoor[] doors;
@@ -76,8 +75,7 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = COUNT_VEHICLE;
-                        int count = (int)sentence.ExecuteScalar();
-                        return count;
+                        return (int)sentence.ExecuteScalar();
                     }
 
                 }
@@ -104,6 +102,7 @@ namespace CarManagement.Services
                         this.parameter.ParameterName = "@id";
                         this.parameter.Value = id;
                         sentence.Parameters.Add(this.parameter);
+                        //setParameter(sentence, "@id", id);
 
                         sentence.CommandText = DELETE_ALL;
                         sentence.ExecuteNonQuery();
