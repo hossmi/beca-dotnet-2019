@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using CarManagement.Core.Models;
@@ -18,80 +16,72 @@ namespace WebCarManager.Controllers
         private IEnumerable<IEnrollment> enrollmentEnum;
         private EnrollmentDto enrollmentDto;
         private List<EnrollmentDto> enrollmentDtoList;
+        private VehicleBuilder vehicleBuilder;
         private VehicleDto vehicleDto;
-        private CarColor carcolor;
-        private EngineDto engineDto;
-        private List<WheelDto> wheelsDto;
-        private List<DoorDto> doorsDto;
-        private IEnrollment enrollment;
-        private IVehicle vehicle;
-        private WheelDto wheelDto;
-        private DoorDto doorDto;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
-
             this.enrollmentProvider = new DefaultEnrollmentProvider();
             this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
             this.enrollmentEnum = this.vehicleStorage.get().Keys;
             this.enrollmentDto = new EnrollmentDto();
             this.enrollmentDtoList = new List<EnrollmentDto>();
             this.enrollmentDto = new EnrollmentDto();
+            this.enrollmentProvider = new DefaultEnrollmentProvider();
+            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
+            this.vehicleDto = new VehicleDto();
         }
 
-        // GET: Vehicles
         public ActionResult Index()
         {
-            foreach (IEnrollment enrollment2 in this.enrollmentEnum)
+            foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
-                this.enrollmentDto.Number = enrollment2.Number;
-                this.enrollmentDto.Serial = enrollment2.Serial;
+                this.enrollmentDto.Number = enrollment.Number;
+                this.enrollmentDto.Serial = enrollment.Serial;
                 this.enrollmentDtoList.Add(this.enrollmentDto);
             }
             this.ViewBag.Message = "Enrollment list";
             return View(this.enrollmentDtoList);
         }
+        // GET: Vehicles
         [HttpGet]
         public ActionResult Edit(string serial, int number)
         {
-            this.enrollmentProvider = new DefaultEnrollmentProvider();
-            this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
+            return View(getVehicleData(serial, number));
+        }
+        // SET: Vehicles
+        [HttpGet]
+        public ActionResult Save(VehicleDto vehicleDto)
+        {
+            this.vehicleStorage.set(convert(vehicleDto));
+            return View(getVehicleData(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number));
+        }
 
-            this.enrollment = this.vehiclebuilder.import(serial, number);
-            this.vehicle = this.vehicleStorage.get()
-                .whereEnrollmentIs(this.enrollment)
-                .Select(vehicle => vehicle)
-                .Single();
-            this.vehicleDto = new VehicleDto();
-            this.carcolor = new CarColor();
-            this.engineDto = new EngineDto();
-            this.wheelsDto = new List<WheelDto>();
-            this.doorsDto = new List<DoorDto>();
-            this.enrollmentDto = new EnrollmentDto();
-            this.enrollmentDto.Number = this.vehicle.Enrollment.Number;
-            this.enrollmentDto.Serial = this.vehicle.Enrollment.Serial;
-            this.carcolor = this.vehicle.Color;
-            this.engineDto.HorsePower = this.vehicle.Engine.HorsePower;
-            this.engineDto.IsStarted = this.vehicle.Engine.IsStarted;
-            foreach (IWheel wheel in this.vehicle.Wheels)
-            {
-                this.wheelDto = new WheelDto();
-                this.wheelDto.Pressure = wheel.Pressure;
-                this.wheelsDto.Add(this.wheelDto);
-            }
-            foreach (IDoor door in this.vehicle.Doors)
-            {
-                this.doorDto = new DoorDto();
-                this.doorDto.IsOpen = door.IsOpen;
-                this.doorsDto.Add(this.doorDto);
-            }
-            this.vehicleDto.Color = this.carcolor;
-            this.vehicleDto.Enrollment = this.enrollmentDto;
-            this.vehicleDto.Engine = this.engineDto;
-            this.vehicleDto.Doors = this.doorsDto.ToArray();
-            this.vehicleDto.Wheels = this.wheelsDto.ToArray();
-            return View(this.vehicleDto);
+        private VehicleDto getVehicleData(string serial, int number)
+        {
+            return convert(selectIvehicle(this.vehicleStorage, convert(serial, number)));
+        }
+        private static IVehicle selectIvehicle(IVehicleStorage vehicleStorage, IEnrollment enrollment)
+        {
+            return vehicleStorage.get()
+            .whereEnrollmentIs(enrollment)
+            .Select(vehicle => vehicle)
+            .Single();
+        }
+        private IEnrollment convert(string serial, int number)
+        {
+            return this.enrollmentProvider.import(serial, number);
+        }
+        private VehicleDto convert(IVehicle vehicle)
+        {
+            this.vehicleDto = this.vehicleBuilder.export(vehicle);
+            return this.vehicleDto;
+        }
+        private IVehicle convert(VehicleDto vehicleDto)
+        {
+            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
+            return this.vehicleBuilder.import(vehicleDto);
         }
     }
 }
