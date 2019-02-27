@@ -11,9 +11,16 @@ using System.Web.Mvc;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : Controller
+    public class VehiclesController : AbstractController
     {
+        private readonly IVehicleStorage vehicleStorage;
         private const string CONNECTION_STRING = "CarManagerConnectionString";
+
+        public VehiclesController()
+        {
+            this.vehicleStorage = getService<IVehicleStorage>();
+        }
+
         // GET: Vehicles
         public ActionResult Index()
         {
