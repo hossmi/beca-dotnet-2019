@@ -4,6 +4,10 @@ using System.Web.Mvc;
 using CarManagement.Core.Services;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
+using CarManagement.Services;
+using System;
+using CarManagement.Core;
+using WebCarManager.Services;
 
 namespace WebCarManager.Controllers
 {
@@ -38,7 +42,46 @@ namespace WebCarManager.Controllers
         [HttpPost]
         public ActionResult CreateNew(VehicleDto vehicleDto)
         {
+            /*
+             (int) Color
+             Asserts.isEnumDefined(color);
+             this.color = color;
 
+             (int) HorsePower
+             (bool) IsStarted
+             (int) Doors (0-4)
+             (int) Wheel (0-4)
+             (double) wheel.Pressure (0-6)*/
+
+            Asserts.isTrue(vehicleDto.Wheels.Length > 0   && vehicleDto.Wheels.Length < 4);
+            Asserts.isTrue(vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
+            Asserts.isTrue(vehicleDto.Engine.HorsePower > 0);
+
+
+            this.vehicleBuilder.setColor(vehicleDto.Color);
+            this.vehicleBuilder.setEngine(vehicleDto.Engine.HorsePower);
+            this.vehicleBuilder.setDoors(vehicleDto.Doors.Length);
+
+            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+            {
+                this.vehicleBuilder.addWheel();
+            }
+
+            IVehicle vehicle = this.vehicleBuilder.build();
+
+
+            if (vehicle.Engine.IsStarted)
+            {
+                vehicle.Engine.start();
+            }
+
+            foreach (IWheel wheel in vehicleDto.Wheels)
+            {
+                wheel.Pressure = wheel.Pressure;
+            }
+
+            this.vehicleStorage.set(vehicle);
+                       
 
             return View("Details", vehicleDto);
         }
