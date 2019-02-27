@@ -63,21 +63,12 @@ namespace CarManagement.Services
 
         public void clear()
         {
-            using (SqlConnection connection = new SqlConnection(this.connectionString))
-            using (SqlCommand command = new SqlCommand())
-            {
-                string query = @"DELETE FROM wheel;
-                                DELETE FROM door;
-                                DELETE FROM vehicle;
-                                DELETE FROM enrollment;";
-                connection.Open();
-                command.Connection = connection;
-                command.CommandText = query;
+            string sentences = @"DELETE FROM wheel;
+                            DELETE FROM door;
+                            DELETE FROM vehicle;
+                            DELETE FROM enrollment;";
 
-                int afectedRows = command.ExecuteNonQuery();
-
-                connection.Close();
-            }
+            executeCommand(this.connectionString, sentences);
         }
 
         public void Dispose()
@@ -101,7 +92,51 @@ namespace CarManagement.Services
 
         public void remove(IEnrollment enrollment)
         {
-            throw new NotImplementedException();
+            //bool removed = false;
+
+            string query = $@"
+                     SELECT id
+                     FROM enrollment
+                     WHERE serial = '{enrollment.Serial}'
+                     AND number = {enrollment.Number};";
+
+            int enrollmentId = 0;
+
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            using (SqlCommand command = new SqlCommand())
+            {
+                connection.Open();
+                command.CommandText = query;
+                command.Connection = connection;
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        enrollmentId = (int)reader["id"];
+                    }
+                }
+                if (enrollmentId > 0)
+                {
+                    removeVehicle(this.connectionString, enrollmentId);
+                    // removed = true;
+                }
+                connection.Close();
+            }
+            //return removed
+        }
+
+        private void removeVehicle(string connectionString, int enrollmentId)
+        {
+            string sentences = $@"
+                        DELETE FORM door
+                        WHERE vehicleId = {enrollmentId};
+                        DELETE FORM wheel
+                        WHERE vehicleId = {enrollmentId};
+                        DELETE FROM vehicle
+                        WHERE enrollmentId = {enrollmentId};";
+            
+            executeCommand(connectionString, sentences);
         }
 
         public void set(IVehicle vehicle)

@@ -9,50 +9,32 @@
     <h3>@ViewBag.Title</h3>
 
     <table>
+        @{
+            string enrollment = $"{Model.Enrollment.Serial} - {Model.Enrollment.Number.ToString("0000")}";
+            int engine = Model.Engine.HorsePower;
+            CarColor color = Model.Color;
+            int numDoors = Model.Doors.Count();
+            int numWheels = Model.Wheels.Count();
+        }
         <tr>
             <th>Enrollment</th>
-            <td>
-                @{
-                    string enrollment = $"{Model.Enrollment.Serial} - {Model.Enrollment.Number.ToString("0000")}";
-                }
-                @enrollment
-            </td>
+            <td>@enrollment</td>
         </tr>
         <tr>
             <th>Engine  </th>
-            <td>
-                @{
-                    int engine = Model.Engine.HorsePower;
-                }
-                @engine
-            </td>
+            <td>@engine</td>
         </tr>
         <tr>
             <th>Color  </th>
-            <td>
-                @{
-                    CarColor color = Model.Color;
-                }
-                @color
-            </td>
+            <td>@color</td>
         </tr>
         <tr>
             <th>Doors</th>
-            <td>
-                @{
-                    int numDoors = Model.Doors.Count();
-                }
-                @numDoors
-            </td>
+            <td>@numDoors</td>
         </tr>
         <tr>
             <th>Wheels</th>
-            <td>
-                @{
-                    int numWheels = Model.Wheels.Count();
-                }
-                @numWheels
-            </td>
+            <td>@numWheels</td>
         </tr>
     </table>
 
