@@ -1,0 +1,89 @@
+﻿@using System;
+@using CarManagement.Core.Models.DTOs
+@using CarManagement.Core.Models;
+@model VehicleDto
+
+<div>
+    <h3>Enrollment</h3>
+    @if (this.Model.Enrollment == null)
+    {
+        <input type="text" value="" name="serial" />
+        <input type="text" value="" name="number" />
+    }
+    else
+    {
+        <input type="text" value="@this.Model.Enrollment.Serial" name="serial" />
+        <input type="text" value="@this.Model.Enrollment.Number" name="number" />
+    }
+    <br />
+    Color:
+    <select name="Color">
+        @foreach (string carColor in Enum.GetNames(typeof(CarColor)))
+        {
+            if (carColor == this.Model.Color.ToString())
+            {
+                <option value="@carColor" selected> @carColor </option>
+            }
+            else
+            {
+                <option value="@carColor"> @carColor </option>
+            }
+        }
+    </select>
+    <br />
+    <h3>Engine</h3>
+    Horse power || Started
+    <br />
+    <input type="text" name="engineHorsePower" value="@this.Model.Engine.HorsePower" />
+    <input type="checkbox" name="engineIsStarted" value="@this.Model.Engine.IsStarted" />
+    <br />
+    <h3>Doors</h3>
+    @if (this.Model.Doors == null)
+    {
+        <text>Quantity:</text> <input type="text" name="numberDoors" />
+    }
+    else
+    {
+        <br />
+        <text>Opened doors:</text>
+        <br />
+
+        int i = 0;
+        foreach (DoorDto door in this.Model.Doors)
+        {
+            string name = "door" + i.ToString();
+
+            <input type="checkbox" name="@name" value="@this.Model.Doors[i].IsOpen" />
+        }
+
+    }
+    <h3>Wheels</h3>
+    @if (this.Model.Doors == null)
+    {
+        <text>Quantity:</text> <input type="text" name="numberWheels" />
+    }
+    else
+    {
+        <br />
+        <text>Wheels pressure:</text>
+        <br />
+
+        int i = 0;
+        foreach (WheelDto wheel in this.Model.Wheels)
+        {
+            string name = "wheel" + i.ToString();
+
+            if (i % 2 == 0)
+            {
+                <br />
+            }
+
+            <input type="text" name="@name" value="@this.Model.Wheels[i].Pressure" />
+        }
+
+    }
+
+    <br />
+    <br />
+    <input type="submit" value="Submit" />
+</div>

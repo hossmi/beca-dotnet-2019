@@ -9,11 +9,14 @@
 <h2>Edit Vehicle</h2>
 
 <p>
-    @Html.ActionLink("Go back", "Index")
+    @Html.ActionLink("Index", "Index")
 </p>
 
-
+@using (Html.BeginForm("Edit", "Vehicles", FormMethod.Post))
+{
+    @Html.DisplayFor(model => model, "VehicleForm")
+}
 
 <p>
-    @Html.ActionLink("Go back", "Index")
+    @Html.ActionLink("Index", "Index")
 </p>

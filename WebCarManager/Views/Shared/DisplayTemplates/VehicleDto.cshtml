@@ -1,0 +1,14 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model VehicleDto
+
+<div>
+    @Html.DisplayFor(model => model.Enrollment, "EnrollmentDto")
+
+    <p>Color: @this.Model.Color </p>
+
+    @Html.DisplayFor(model => model.Engine, "EngineDto")
+
+    @Html.DisplayFor(model => model.Doors, "DoorsDto")
+
+    @Html.DisplayFor(model => model.Wheels, "WheelsDto")
+</div>

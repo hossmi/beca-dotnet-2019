@@ -1,19 +1,24 @@
-﻿@using CarManagement.Core.Models.DTOs
-@model EnrollmentDto
+﻿@using CarManagement.Core.Models
+@model IEnrollment
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Deleted vehicle</h2>
+<h2>Delete vehicle</h2>
 
 <p>
-    @Html.ActionLink("Go back", "Index")
+    @Html.ActionLink("Index", "Index")
 </p>
 
-
-
-<p>
-    @Html.ActionLink("Go back", "Index")
-</p>
+<h1>YOU SURE?</h1>
+@using (Html.BeginForm("Deleted", "Vehicles", FormMethod.Post))
+{
+    <input type="text" value="@this.Model.Serial" name="serial" readonly />
+    <input type="text" value="@this.Model.Number" name="number" readonly />
+    <br />
+    <br />
+    <input type="submit" value="YES!" />
+    @Html.ActionLink("uhm... I guess no", "Index")
+}

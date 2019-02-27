@@ -1,0 +1,12 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model DoorDto[]
+
+<div>
+    <h4>Doors</h4>
+    <ul>
+        @foreach (DoorDto doorDto in this.Model)
+        {
+            <li> Open: @doorDto.IsOpen </li>
+        }
+    </ul>
+</div>

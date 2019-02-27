@@ -202,6 +202,14 @@
     <Content Include="Views\Vehicles\Edit.cshtml" />
     <Content Include="Views\Vehicles\Delete.cshtml" />
     <Content Include="Views\Vehicles\Details.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\EnrollmentDto.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\EngineDto.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\WheelsDto.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\DoorsDto.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\VehicleDto.cshtml" />
+    <Content Include="Views\Vehicles\Created.cshtml" />
+    <Content Include="Views\Vehicles\Deleted.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\VehicleForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

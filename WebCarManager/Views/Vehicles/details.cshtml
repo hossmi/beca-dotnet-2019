@@ -9,11 +9,23 @@
 <h2>Vehicle details</h2>
 
 <p>
-    @Html.ActionLink("Go back", "Index")
+    @Html.ActionLink("Index", "Index")
 </p>
 
-
+@Html.DisplayFor(model => model, "VehicleDto")
 
 <p>
-    @Html.ActionLink("Go back", "Index")
+    @Html.ActionLink("Index", "Index") ||
+    @Html.ActionLink("Edit", "Edit", new
+        {
+            serial = this.Model.Enrollment.Serial,
+            number = this.Model.Enrollment.Number
+        }
+    ) ||
+    @Html.ActionLink("Delete", "Delete", new
+        {
+            serial = this.Model.Enrollment.Serial,
+            number = this.Model.Enrollment.Number
+        }
+    )
 </p>

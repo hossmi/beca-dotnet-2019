@@ -1,0 +1,12 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model WheelDto[]
+
+<div>
+    <h4>Wheels</h4>
+    <ul>
+        @foreach (WheelDto wheelDto in this.Model)
+        {
+        <li> Pressure: @wheelDto.Pressure </li>
+        }
+    </ul>
+</div>
