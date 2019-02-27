@@ -15,18 +15,12 @@ namespace CarManagement.Services
 {
     public class SqlVehicleStorage : IVehicleStorage
     {
-        private const string SELECT_FROM_VEHICLE = @"
+        private const string SELECT_FROM_VEHICLE_ENROLLMENT = @"
                         SELECT v.enrollmentId
                               ,v.color
                               ,v.engineHorsePower
                               ,v.engineIsStarted
 	                          ,e.serial
-	                          ,e.number
-                          FROM [vehicle] v
-                          INNER JOIN enrollment e ON v.enrollmentId = e.id ";
-
-        private const string SELECT_FROM_ENROLLMENT = @"
-                        SELECT e.serial
 	                          ,e.number
                           FROM [vehicle] v
                           INNER JOIN enrollment e ON v.enrollmentId = e.id ";
@@ -487,7 +481,7 @@ namespace CarManagement.Services
 
             private IEnumerator<IVehicle> enumerate()
             {
-                string query = composeQuery(this.filters.Values, SELECT_FROM_VEHICLE);
+                string query = composeQuery(this.filters.Values);
                 IEnumerable<IVehicle> vehicles = executeQuery(query, this.connectionString, this.vehicleBuilder);
 
                 return vehicles.GetEnumerator();
@@ -495,7 +489,7 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                string query = composeQuery(this.filters.Values, SELECT_FROM_VEHICLE);
+                string query = composeQuery(this.filters.Values);
                 IEnumerable<IEnrollment> enrollments = executeQueryEnrollment(query, this.connectionString, this.vehicleBuilder);
 
                 return enrollments;
@@ -568,7 +562,7 @@ namespace CarManagement.Services
                 }
             }
 
-            private static string composeQuery(IEnumerable<string> filters, string querySelect)
+            private static string composeQuery(IEnumerable<string> filters)
             {
                 string query = "";
 
@@ -580,7 +574,7 @@ namespace CarManagement.Services
                 {
                     query = $" WHERE {query.Substring(4)} ";
                 }
-                query = querySelect + query;
+                query = SELECT_FROM_VEHICLE_ENROLLMENT + query;
 
                 return query;
             }
