@@ -1,0 +1,72 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model CarManagement.Core.Models.DTOs.VehicleDto
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h2>Detalles</h2>
+
+<div>
+    <h4>Vehículo</h4>
+    <hr />
+    <dl class="dl-horizontal"></dl>
+</div>
+
+<div>
+    <p><b>Matrícula:</b> @this.Model.Enrollment.Serial-@this.Model.Enrollment.Number.ToString("0000")</p>
+</div>
+
+<div>
+    <p><b>Color:</b> @this.Model.Color.ToString()</p>
+</div>
+
+<div>
+    <p> <b>Motor:</b></p>
+    <p>Potencia: @this.Model.Engine.HorsePower.ToString() C.V.</p>
+    <p>Encendido: @this.Model.Engine.IsStarted.ToString()</p>
+</div>
+
+<div>
+    <p><b>Ruedas:</b></p>
+    <table>
+        <tr>
+            <th>Presión</th>
+        </tr>
+        @foreach (WheelDto wheelDto in this.Model.Wheels)
+        {
+            <tr>
+                <td>
+                    @wheelDto.Pressure var
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    <p><b>Puertas:</b></p>
+    <table>
+        <tr>
+            <th>Abierta</th>
+        </tr>
+        @foreach (DoorDto doorDto in this.Model.Doors)
+        {
+            <tr>
+                <td>
+                    @doorDto.IsOpen.ToString()
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+<p>
+    @Html.ActionLink("Editar", "Edit", new {
+    serial = this.Model.Enrollment.Serial,
+    number = this.Model.Enrollment.Number }) |
+    @Html.ActionLink("Volver a listado de mátriculas", "Prueba")
+</p>

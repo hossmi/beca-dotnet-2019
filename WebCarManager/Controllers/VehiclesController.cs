@@ -4,126 +4,126 @@ using System.Web.Mvc;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
+using CarManagement.Services;
+
 
 namespace WebCarManager.Controllers
 {
     public class VehiclesController : AbstractController
     {
         private readonly IVehicleStorage vehicleStorage;
+        private readonly IEnrollmentProvider enrollmentProvider;
+        private IVehicleBuilder vehicleBuilder;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
+            this.enrollmentProvider = getService<IEnrollmentProvider>();
+            this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
-        // GET: Vehicles
-        public ActionResult Index()
-        {
-            VehicleDto[] vehicles = new VehicleDto[]
-            {
-                new VehicleDto
-                {
-                    Enrollment = new EnrollmentDto
-                    {
-                        Serial= "XXX",
-                        Number = 666,
-                    },
-                    Engine = new EngineDto
-                {
-                    HorsePower = 666,
-                    IsStarted = true,
-                },
-                Doors = new DoorDto[]
-                {
-                    new DoorDto { IsOpen = true },
-                    new DoorDto { IsOpen = false },
-                },
-                Wheels = new WheelDto[]
-                {
-                    new WheelDto{Pressure = 4},
-                    new WheelDto{Pressure = 4},
-                    new WheelDto{Pressure = 2},
-                    new WheelDto{Pressure = 2},
-                },
-                    Color = CarManagement.Core.Models.CarColor.Red,
-                }
-            };
-
-            return View(vehicles);
-        }
         public ActionResult Prueba()
         {
-            VehicleDto[] vehicles = new VehicleDto[]
+            List<EnrollmentDto> enrollments = new List<EnrollmentDto>();
+            foreach (IEnrollment enrollment in this.vehicleStorage.get().Keys)
             {
-                new VehicleDto
+                EnrollmentDto enrollmentDto = new EnrollmentDto()
                 {
-      Enrollment = new EnrollmentDto
-                    {
-                        Serial= "XXX",
-                        Number = 666,
-                    },
-                    Engine = new EngineDto
-                {
-                    HorsePower = 666,
-                    IsStarted = true,
-                },
-                Doors = new IDoor[]
-                {
-                    new Door { IsOpen = true },
-                    new Door { IsOpen = false },
-                },
-                Wheels = new IWheel[]
-                {
-                    new Wheel{Pressure = 4},
-                    new Wheel{Pressure = 4},
-                    new Wheel{Pressure = 2},
-                    new Wheel{Pressure = 2},
-                },
-                    Color = CarManagement.Core.Models.CarColor.Red,
-            
-                }
+                    Serial = enrollment.Serial,
+                    Number = enrollment.Number,
+                };
+                enrollments.Add(enrollmentDto);
+            }
+
+            return View(enrollments);
+        }
+
+
+        public ActionResult Details(string serial, int number)
+        {
+            VehicleDto vehicle = GetVehicleData(serial, number);
+
+            return View(vehicle);
+        }
+
+        public ActionResult Edit(string serial, int number)
+        {
+            VehicleDto vehicle = GetVehicleData(serial, number);
+
+            return View(vehicle);
+        }
+
+        public ActionResult Create()
+        {
+            VehicleDto vehicleDto = new VehicleDto();
+            return View(vehicleDto);
+        }
+
+        public ActionResult Delete(string serial, int number)
+        {
+            EnrollmentDto enrollmentDto = new EnrollmentDto()
+            {
+                Serial = serial,
+                Number = number,
             };
-
-            return View(vehicles);
+            return View(enrollmentDto);
         }
-    }
 
-    private class Door : IDoor
-    {
-        private bool isOpen = false;
-
-        public void open()
+        [HttpPost]
+        public ActionResult Delete(EnrollmentDto enrollmentDto)
         {
-            this.isOpen = true;
+            IEnrollment enrollment = this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
+            this.vehicleStorage.remove(enrollment);
+            return RedirectToAction("Prueba");
+            //return View(enrollmentDto);
         }
 
-        public void close()
+
+        [HttpPost]
+        public ActionResult Create(VehicleDto vehicleDto)
         {
-            this.isOpen = false;
+            SetVehicleData(vehicleDto);
+
+            return View(vehicleDto);
         }
 
-        public bool IsOpen
+        [HttpPost]
+        public ActionResult Edit(VehicleDto vehicleDto)
         {
-            get
-            {
-                return this.isOpen;
-            }
-        }
-    }
-    private class Wheel : IWheel
-    {
-        private double pressure = 1.0;
+            SetVehicleData(vehicleDto);
 
-        public double Pressure
-        {
-            get
-            {
-                return this.pressure;
-            }
-            set
-            {
-               this.pressure = value;
-            }
+            return View(vehicleDto);
         }
+
+        private VehicleDto GetVehicleData(string serial, int number)
+        {
+            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
+            VehicleDto vehicleDto = this.vehicleStorage.get().whereEnrollmentIs(enrollment).Select(this.vehicleBuilder.export).Single();
+
+            return vehicleDto;
+        }
+
+        private void SetVehicleData(VehicleDto vehicleDto)
+        {
+            IVehicle vehicle = this.vehicleBuilder.import(vehicleDto);
+            this.vehicleStorage.set(vehicle);
+        }
+
+        private class NewVehicleData
+        {
+            private int wheelCount;
+            private int doorCount;
+            private int horsePower;
+            private bool isStarted;
+            private CarColor color;
+        }
+
+        //continuar en casa
+
     }
 }
+
+
+
+
+
