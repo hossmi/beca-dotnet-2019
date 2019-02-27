@@ -1,0 +1,21 @@
+﻿@using CarManagement.Core.Models.DTOs
+@model IEnumerable<WheelDto>
+
+<div>
+    <h4>WHEELS:</h4>
+    <table>
+        <tr>
+            <th align="center" width="30px">Nº</th>
+            <th align="center">Pressure</th>
+        </tr>
+        <tbody>
+            @for (int i = 0; i < Model.ToArray().Length; i++)
+            {
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@Html.TextBoxFor(Model => Model.ToArray()[i].Pressure)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

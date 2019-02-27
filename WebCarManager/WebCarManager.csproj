@@ -202,6 +202,18 @@
     <Content Include="Views\Vehicles\Edit.cshtml" />
     <Content Include="Views\Vehicles\Delete.cshtml" />
     <Content Include="Views\Vehicles\Create.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Vehicle.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Enrollment.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Engine.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Wheels.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Doors.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\CarColor.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Wheels.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\CarColor.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Doors.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Engine.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Enrollment.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Vehicle.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

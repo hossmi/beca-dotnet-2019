@@ -1,0 +1,5 @@
+﻿@model CarManagement.Core.Models.DTOs.EnrollmentDto
+
+<div>
+    Enrollment: @Html.TextBoxFor(Model => Model.Serial, new { @readonly = "readonly" })-@Html.TextBoxFor(Model => Model.Number, new { @readonly = "readonly", @Value = Model.Number.ToString("0000") })
+</div>

@@ -1,0 +1,13 @@
+﻿@model CarManagement.Core.Models.DTOs.VehicleDto
+
+<div>
+    <h4>Vehicle</h4>
+    @Html.EditorFor(Model => Model.Enrollment, "Enrollment")
+    <hr />
+    <dl>
+        @Html.EditorFor(Model => Model.Color, "CarColor")
+        @Html.EditorFor(Model => Model.Engine, "Engine")
+        @Html.EditorFor(Model => Model.Wheels, "Wheels")
+        @Html.EditorFor(Model => Model.Doors, "Doors")
+    </dl>
+</div>

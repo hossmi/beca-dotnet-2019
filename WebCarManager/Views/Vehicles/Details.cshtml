@@ -10,59 +10,9 @@
 
 <h2>Details</h2>
 
-<div>
-    <h4>VehicleDto</h4>
-    <hr />
-    <dl class="dl-horizontal"></dl>
-</div>
+@Html.DisplayFor(Model => Model, "Vehicle")
 
-<div>
-    <p>Enrollment: @this.Model.Enrollment.Serial-@this.Model.Enrollment.Number.ToString("0000")</p>
-</div>
 
-<div>
-    <p>Color: @this.Model.Color.ToString()</p>
-</div>
-
-<div>
-    <p>ENGINE:</p>
-    <p>Horse Power: @this.Model.Engine.HorsePower.ToString()</p>
-    <p>IsStarted: @this.Model.Engine.IsStarted.ToString()</p>
-</div>
-
-<div>
-    <p>WHEELS:</p>
-    <table>
-        <tr>
-            <th>Pressure</th>
-        </tr>
-        @foreach (WheelDto wheelDto in this.Model.Wheels)
-        {
-            <tr>
-                <td>
-                    @wheelDto.Pressure
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-
-<div>
-    <p>DOORS:</p>
-    <table>
-        <tr>
-            <th>IsOpen</th>
-        </tr>
-        @foreach (DoorDto doorDto in this.Model.Doors)
-        {
-            <tr>
-                <td>
-                    @doorDto.IsOpen.ToString()
-                </td>
-            </tr>
-        }
-    </table>
-</div>
 
 <p>
     @Html.ActionLink("Edit", "Edit", new {
