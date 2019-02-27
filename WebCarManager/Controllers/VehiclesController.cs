@@ -79,22 +79,10 @@ namespace WebCarManager.Controllers
 
         private bool validateValues(VehicleDto vehicleDto)
         {
-            /*
-             (int) Color
-             ;
-             this.color = color;
+            bool validateValues= Enum.IsDefined(typeof(VehicleDto), vehicleDto.Color);
+            validateValues = (vehicleDto.Wheels.Length > 0 && vehicleDto.Wheels.Length < 4);
+            validateValues = (vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
 
-             (int) HorsePower
-             (bool) IsStarted
-             (int) Doors (0-4)
-             (int) Wheel (0-4)
-             (double) wheel.Pressure (0-6)
-             */
-
-
-            Asserts.isEnumDefined(vehicleDto.Color);
-            Asserts.isTrue(vehicleDto.Wheels.Length > 0 && vehicleDto.Wheels.Length < 4);
-            Asserts.isTrue(vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
             Asserts.isTrue(vehicleDto.Engine.HorsePower > 0);
 
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
@@ -102,7 +90,7 @@ namespace WebCarManager.Controllers
                 Asserts.isTrue(wheelDto.Pressure >= 1 && wheelDto.Pressure <= 5);
             };
 
-
+            return validateValues;
         }
 
         public ActionResult Delete(string serial, int number)
