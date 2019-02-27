@@ -79,9 +79,16 @@ namespace WebCarManager.Controllers
 
         private bool validateValues(VehicleDto vehicleDto)
         {
+            int numberMinWheel = 0;
+            int numberManWheel = 4;
+            int numberMinDoor = 0;
+
+
+
             bool validateValues= Enum.IsDefined(typeof(VehicleDto), vehicleDto.Color);
-            validateValues = (vehicleDto.Wheels.Length > 0 && vehicleDto.Wheels.Length < 4);
+            validateValues = (vehicleDto.Wheels.Length > numberMinWheel && vehicleDto.Wheels.Length <= numberManWheel);
             validateValues = (vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
+
 
             Asserts.isTrue(vehicleDto.Engine.HorsePower > 0);
 
