@@ -1,0 +1,42 @@
+﻿@model CarManagement.Core.Models.DTOs.VehicleDto
+
+@{
+    ViewBag.Title = "CreateNew";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>CreateNew</h2>
+
+
+@using (Html.BeginForm("CreateNew", "Vehicles", FormMethod.Post)) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>VehicleDto</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                Color: Black
+
+                Engine: False
+
+                Door is Open is False
+
+                Door is Open is False
+
+                Pressure of wheel is 5
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
