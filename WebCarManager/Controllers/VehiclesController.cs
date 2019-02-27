@@ -1,16 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System;
-using System.Collections.Generic;
-using System.Web;
 using System.Web.Mvc;
-using CarManagement.Services;
 using CarManagement.Core.Services;
-using System.Configuration;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
-using CarManagement.Core.Services;
-using System.Linq;
 
 namespace WebCarManager.Controllers
 {
