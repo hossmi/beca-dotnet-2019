@@ -10,21 +10,49 @@
 
     <table>
         <tr>
+            <th width="50px">Enrollment</th>
             <td>
-                @{ 
+                @{
                     string enrollment = $"{Model.Enrollment.Serial} - {Model.Enrollment.Number.ToString("0000")}";
                 }
                 @enrollment
             </td>
         </tr>
         <tr>
-            <td></td>
+            <th>Engine  </th>
+            <td>
+                @{
+                    int engine = Model.Engine.HorsePower;
+                }
+                @engine
+            </td>
         </tr>
         <tr>
-            <td></td>
+            <th>Color  </th>
+            <td>
+                @{
+                    CarColor color = Model.Color;
+                }
+                @color
+            </td>
         </tr>
         <tr>
-            <td></td>
+            <th>Doors</th>
+            <td>
+                @{
+                    int numDoors = Model.Doors.Count();
+                }
+                @numDoors
+            </td>
+        </tr>
+        <tr>
+            <th>Wheels</th>
+            <td>
+                @{
+                    int numWheels = Model.Wheels.Count();
+                }
+                @numWheels
+            </td>
         </tr>
     </table>
 
