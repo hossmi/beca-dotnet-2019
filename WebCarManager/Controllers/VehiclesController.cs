@@ -17,36 +17,42 @@ namespace WebCarManager.Controllers
     public class VehiclesController : AbstractController
     {
         private readonly IVehicleStorage vehicleStorage;
-        private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
-        private string connectionString;
+        private readonly IEnrollmentProvider enrollmentProvider;
+        private readonly IVehicleBuilder vehicleBuilder;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
+            this.enrollmentProvider = getService<IEnrollmentProvider>();
+            this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
         // GET: Vehicles
         public ActionResult Index()
         {
-            this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
-            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(this.connectionString, vehicleBuilder);
-
-            IEnumerable<IEnrollment> enrollments = vehicleStorage.get().Keys;
+            IEnumerable<IEnrollment> enrollments = this.vehicleStorage.get().Keys;
 
             return View(enrollments);
         }
 
+        public ActionResult CreateNew()
+        {
+            VehicleDto vehicleDto = new VehicleDto();
+
+            return View(vehicleDto);
+        }
+
+        [HttpPost]
+        public ActionResult CreateNew(VehicleDto vehicleDto)
+        {
+
+
+            return View("Details", vehicleDto);
+        }
 
         public ActionResult Delete(string serial, int number)
         {
-            this.connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
-            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(this.connectionString, vehicleBuilder);
-
-            IEnrollment enrollment = enrollmentProvider.import(serial, number);
+            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
 
             vehicleStorage.remove(enrollment);
 
@@ -56,18 +62,16 @@ namespace WebCarManager.Controllers
 
         public ActionResult Details(string serial, int number)
         {
-            VehicleDto vehicleDto = getVehicleDto(serial, number, CONNECTION_STRING_KEY);
+            VehicleDto vehicleDto = getVehicleDto(serial, number, this.vehicleStorage,
+                this.enrollmentProvider, this.vehicleBuilder);
 
             return View(vehicleDto);
         }
 
-        private static VehicleDto getVehicleDto(string serial, int number, string connection)
+        private static VehicleDto getVehicleDto(string serial, int number,
+            IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider,
+            IVehicleBuilder vehicleBuilder)
         {
-            String connectionString = ConfigurationManager.AppSettings[connection];
-            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
-
             IEnrollment enrollment = enrollmentProvider.import(serial, number);
 
             IVehicle vehicle = vehicleStorage.get().whereEnrollmentIs(enrollment).Single();
