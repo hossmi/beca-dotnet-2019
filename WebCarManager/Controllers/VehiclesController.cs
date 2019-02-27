@@ -5,6 +5,7 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using CarManagement.Services;
+using WebCarManager.Models;
 
 namespace WebCarManager.Controllers
 {
@@ -77,11 +78,15 @@ namespace WebCarManager.Controllers
             //return View(enrollmentDto);
         }
 
-
         [HttpPost]
         public ActionResult Create(NewVehicleData vehicleData)
         {
             IVehicle vehicle;
+
+            if (this.ModelState.IsValid==false)
+            {
+                return View(vehicleData);
+            }
             VehicleBuilder builder = new VehicleBuilder(this.enrollmentProvider);
 
             builder.setColor(vehicleData.Color);
@@ -132,23 +137,6 @@ namespace WebCarManager.Controllers
             this.vehicleStorage.set(vehicle);
         }
 
-        public class NewVehicleData
-        {
-            private int wheelCount;
-            private int doorCount;
-            private int horsePower;
-            private bool isStarted;
-            private CarColor color;
-            private double pressure;
-
-            public int WheelCount { get => this.wheelCount; set => this.wheelCount = value; }
-            public int DoorCount { get => this.doorCount; set => this.doorCount = value; }
-            public int HorsePower { get => this.horsePower; set => this.horsePower = value; }
-            public bool IsStarted { get => this.isStarted; set => this.isStarted = value; }
-            public CarColor Color { get => this.color; set => this.color = value; }
-            public double Pressure { get => this.pressure; set => this.pressure = value; }
-
-        }
             
 
 

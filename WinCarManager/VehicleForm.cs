@@ -113,7 +113,6 @@ namespace WinCarManager
             this.WheelGridView.Rows.Clear();
 
             this.added = true;
-
         }
 
         private void ButtonModify_Click(object sender, EventArgs e)
@@ -135,7 +134,6 @@ namespace WinCarManager
             this.DoorGridView.AllowUserToAddRows = false;
             this.WheelGridView.ReadOnly = false;
             this.WheelGridView.AllowUserToAddRows = false;
-
         }
 
         private void ButtonCancel_Click(object sender, EventArgs e)
@@ -188,6 +186,11 @@ namespace WinCarManager
             this.DoorGridView.AllowUserToAddRows = false;
             this.WheelGridView.ReadOnly = true;
             this.WheelGridView.AllowUserToAddRows = false;
+        }
+
+        private void ButtonDelete_Click(object sender, EventArgs e)
+        {
+            DeleteVehicle();
         }
 
         private void EnrollmentsGridView_SelectionChanged(object sender, EventArgs e)
@@ -312,6 +315,13 @@ namespace WinCarManager
 
                 loadVehicle(vehicle);
             }
+        }
+
+        private void DeleteVehicle()
+        {
+            IEnrollment enrollment = this.enrollmentProvider.import(this.EnrollmentSerial.Text, Convert.ToInt32(this.EnrollmentNumber.Text));
+            this.vehicleStorage.remove(enrollment);
+            RefreshEnrollments();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@using CarManagement.Core.Models
-@model WebCarManager.Controllers.VehiclesController.NewVehicleData
+@using WebCarManager.Models
+@model NewVehicleData
 
 @{
     ViewBag.Title = "Create";
@@ -18,26 +19,40 @@
     <hr />
     <div>
         Color:
-        @Html.DropDownListFor(Model => Model.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
+        @Html.DropDownListFor(model => model.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
+        @Html.ValidationMessageFor(model => model.Color)
     </div>
     <hr />
     <div>
         Engine:
-        Horse Power: @Html.TextBoxFor(Model => Model.HorsePower)
-        IsStarted: @Html.CheckBoxFor(Model => Model.IsStarted)
+        <p>
+            Horse Power: @Html.TextBoxFor(model => model.HorsePower)
+            @Html.ValidationMessageFor(model => model.HorsePower, "Potencia tiene que ser positiva", new { @class = "alert-danger" })
+        </p>
+        <p>
+            IsStarted: @Html.CheckBoxFor(model => model.IsStarted)
+            @Html.ValidationMessageFor(model => model.IsStarted)
+        </p>
     </div>
+    <p>
+        Wheels: @Html.TextBoxFor(model => model.WheelCount)
+        @Html.ValidationMessageFor(model => model.WheelCount)
+    </p>
+    <p>
+        Wheels Pressure: @Html.TextBoxFor(model => model.Pressure)
+        @Html.ValidationMessageFor(model => model.Pressure)
+    </p>
+    <p>
+        Doors: @Html.TextBoxFor(model => model.DoorCount)
+        @Html.ValidationMessageFor(model => model.DoorCount)
+    </p>
 
-    Wheels: @Html.TextBoxFor(Model => Model.WheelCount)
-    Wheels Pressure: @Html.TextBoxFor(Model => Model.Pressure)
-
-    Doors: @Html.TextBoxFor(Model => Model.DoorCount)
-
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
         </div>
-    </div>
 </div>
 }
 
