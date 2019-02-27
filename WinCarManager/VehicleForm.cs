@@ -204,8 +204,8 @@ namespace WinCarManager
             if (this.refreshing && this.EnrollmentsGridView.Rows.Count > this.position)
             {
                 this.refreshing = false;
-                this.EnrollmentsGridView.Rows[this.position].Selected = true;
-                
+                //this.EnrollmentsGridView.Rows[this.position].Selected = true;
+                LoadVehicle();
             }
         }
 
@@ -222,7 +222,17 @@ namespace WinCarManager
                 this.EnrollmentsGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
                 i++;
             }
-            this.EnrollmentsGridView.Rows[this.position].Selected = true;
+
+            if (this.position < this.EnrollmentsGridView.Rows.Count)
+            {
+                this.EnrollmentsGridView.Rows[this.position].Selected = true;
+            }
+            else if(this.EnrollmentsGridView.Rows.Count>0)
+            {
+                this.EnrollmentsGridView.Rows[0].Selected = true;
+                LoadVehicle();
+                this.position = 0;
+            }
             this.refreshing = false;
         }
 
