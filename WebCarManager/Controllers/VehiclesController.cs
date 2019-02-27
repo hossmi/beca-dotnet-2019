@@ -42,48 +42,67 @@ namespace WebCarManager.Controllers
         [HttpPost]
         public ActionResult CreateNew(VehicleDto vehicleDto)
         {
+            
+
+            if (validateValues(vehicleDto))
+            {
+                this.vehicleBuilder.setColor(vehicleDto.Color);
+                this.vehicleBuilder.setEngine(vehicleDto.Engine.HorsePower);
+                this.vehicleBuilder.setDoors(vehicleDto.Doors.Length);
+
+                for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+                {
+                    this.vehicleBuilder.addWheel();
+                }
+
+                IVehicle vehicle = this.vehicleBuilder.build();
+
+
+                if (vehicle.Engine.IsStarted)
+                {
+                    vehicle.Engine.start();
+                }
+
+                foreach (IWheel wheel in vehicleDto.Wheels)
+                {
+                    wheel.Pressure = wheel.Pressure;
+                }
+
+                this.vehicleStorage.set(vehicle);
+
+                return View("Details", vehicleDto);
+            }
+
+
+            return View();
+        }
+
+        private bool validateValues(VehicleDto vehicleDto)
+        {
             /*
              (int) Color
-             Asserts.isEnumDefined(color);
+             ;
              this.color = color;
 
              (int) HorsePower
              (bool) IsStarted
              (int) Doors (0-4)
              (int) Wheel (0-4)
-             (double) wheel.Pressure (0-6)*/
+             (double) wheel.Pressure (0-6)
+             */
 
-            Asserts.isTrue(vehicleDto.Wheels.Length > 0   && vehicleDto.Wheels.Length < 4);
+
+            Asserts.isEnumDefined(vehicleDto.Color);
+            Asserts.isTrue(vehicleDto.Wheels.Length > 0 && vehicleDto.Wheels.Length < 4);
             Asserts.isTrue(vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
             Asserts.isTrue(vehicleDto.Engine.HorsePower > 0);
 
-
-            this.vehicleBuilder.setColor(vehicleDto.Color);
-            this.vehicleBuilder.setEngine(vehicleDto.Engine.HorsePower);
-            this.vehicleBuilder.setDoors(vehicleDto.Doors.Length);
-
-            for (int i = 0; i < vehicleDto.Wheels.Length; i++)
+            foreach (WheelDto wheelDto in vehicleDto.Wheels)
             {
-                this.vehicleBuilder.addWheel();
-            }
-
-            IVehicle vehicle = this.vehicleBuilder.build();
+                Asserts.isTrue(wheelDto.Pressure >= 1 && wheelDto.Pressure <= 5);
+            };
 
 
-            if (vehicle.Engine.IsStarted)
-            {
-                vehicle.Engine.start();
-            }
-
-            foreach (IWheel wheel in vehicleDto.Wheels)
-            {
-                wheel.Pressure = wheel.Pressure;
-            }
-
-            this.vehicleStorage.set(vehicle);
-                       
-
-            return View("Details", vehicleDto);
         }
 
         public ActionResult Delete(string serial, int number)
