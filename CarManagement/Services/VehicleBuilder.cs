@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
@@ -15,7 +16,6 @@ namespace CarManagement.Services
         private int wheelsCount;
         private int doorsCount;
         private int enginePower;
-        private bool engineStarted;
         private CarColor colorCode;
         private readonly IEnrollmentProvider enrollmentProvider;
 
@@ -30,27 +30,27 @@ namespace CarManagement.Services
 
         public void addWheel()
         {
-            Asserts.isTrue(this.wheelsCount < MAX_WHEELS);
+            Asserts.isTrue(this.wheelsCount < MAX_WHEELS, "Maximum number of wheels reached. Cannot add more wheels.");
             this.wheelsCount++;
         }
 
         public void setDoors(int doorsCount)
         {
-            Asserts.isTrue(doorsCount >= 0);
-            Asserts.isTrue(doorsCount <= MAX_DOORS);
+            Asserts.isTrue(doorsCount >= 0, "Cannot create a vehicle with negative doors");
+            Asserts.isTrue(doorsCount <= MAX_DOORS, $"Cannot create a vehicle with more than {MAX_DOORS} doors");
             this.doorsCount = doorsCount;
         }
 
         public void setEngine(int horsePorwer)
         {
-            Asserts.isTrue(horsePorwer >= MINPOWER);
-            Asserts.isTrue(horsePorwer <= MAXPOWER);
+            Asserts.isTrue(horsePorwer >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
+            Asserts.isTrue(horsePorwer <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
             this.enginePower = horsePorwer;
         }
 
         public void setColor(CarColor color)
         {
-            Asserts.isEnumDefined<CarColor>(color);
+            Asserts.isEnumDefined<CarColor>(color, "The selected color does not match.");
             this.colorCode = color;
         }
 
@@ -89,13 +89,18 @@ namespace CarManagement.Services
 
         public void removeWheel()
         {
-            Asserts.isTrue(this.wheelsCount > 0);
+            Asserts.isTrue(this.wheelsCount > 0, "The vehicle does not have any more wheels to remove.");
             this.wheelsCount--;
         }
 
         private class Wheel : IWheel
         {
-            private double pressure = 1.0;
+            private double pressure;
+
+            public Wheel()
+            {
+                this.pressure = 1.0;
+            }
 
             public double Pressure
             {
@@ -105,8 +110,8 @@ namespace CarManagement.Services
                 }
                 set
                 {
-                    Asserts.isTrue(value >= 1);
-                    Asserts.isTrue(value <= 5);
+                    Asserts.isTrue(value >= 1.0, "Cannot set pressure lower than 1.0");
+                    Asserts.isTrue(value <= 5.0, "Cannot set pressure higher than 5.0");
                     this.pressure = value;
                 }
             }
@@ -114,17 +119,22 @@ namespace CarManagement.Services
 
         private class Door : IDoor
         {
-            private bool isOpen = false;
+            private bool isOpen;
+
+            public Door()
+            {
+                this.isOpen = false;
+            }
 
             public void open()
             {
-                Asserts.isFalse(this.isOpen);
+                Asserts.isFalse(this.isOpen, "Door is already open.");
                 this.isOpen = true;
             }
 
             public void close()
             {
-                Asserts.isTrue(this.isOpen);
+                Asserts.isTrue(this.isOpen, "Door is already close.");
                 this.isOpen = false;
             }
 
@@ -148,14 +158,14 @@ namespace CarManagement.Services
 
             public Engine(int h)
             {
-                Asserts.isTrue(h >= MINPOWER);
-                Asserts.isTrue(h <= MAXPOWER);
+                Asserts.isTrue(h >= MINPOWER, $"Cannot create an engine with less than {MINPOWER} Horse Power.");
+                Asserts.isTrue(h <= MAXPOWER, $"Cannot create an engine above {MAXPOWER} Horse Power.");
                 this.horsepower = h;
-            }           
+            }
 
             public void start()
             {
-                Asserts.isFalse(this.isStarted);
+                Asserts.isFalse(this.isStarted, "Engine is already started.");
                 this.isStarted = true;
             }
 
@@ -177,7 +187,7 @@ namespace CarManagement.Services
 
             public void stop()
             {
-                Asserts.isTrue(this.isStarted);
+                Asserts.isTrue(this.isStarted, "Engine is already stopped.");
                 this.isStarted = false;
             }
         }
@@ -189,14 +199,13 @@ namespace CarManagement.Services
             private IEngine engine;
             private CarColor color;
             private IEnrollment enrollment;
-            private CarColor colorCode;
 
             public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor colorCode, IEnrollment enrollment)
             {
                 this.wheels = wheels;
                 this.doors = doors;
                 this.engine = engine;
-                this.colorCode = colorCode;
+                this.color = colorCode;
                 this.enrollment = enrollment;
             }
 
@@ -266,7 +275,13 @@ namespace CarManagement.Services
                 }
             }
 
-            public CarColor Color { get; }
+            public CarColor Color
+            {
+                get
+                {
+                    return this.color;
+                }
+            }
 
             public void setWheelsPressure(double pression)
             {
@@ -345,7 +360,8 @@ namespace CarManagement.Services
 
             if (engineDto.IsStarted)
                 e.start();
-                return e;
+
+            return e;
         }
 
         public EngineDto convert(IEngine engine)
@@ -364,8 +380,6 @@ namespace CarManagement.Services
 
             if (doorDto.IsOpen)
                 d.open();
-            else
-                d.close();
 
             return d;
         }
@@ -411,5 +425,6 @@ namespace CarManagement.Services
         {
             return this.enrollmentProvider.import(serial, number);
         }
+
     }
 }
