@@ -495,7 +495,7 @@ namespace CarManagement.Services
 
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
-                string query = composeQuery(this.filters.Values, SELECT_FROM_ENROLLMENT);
+                string query = composeQuery(this.filters.Values, SELECT_FROM_VEHICLE);
                 IEnumerable<IEnrollment> enrollments = executeQueryEnrollment(query, this.connectionString, this.vehicleBuilder);
 
                 return enrollments;
@@ -514,7 +514,7 @@ namespace CarManagement.Services
                     {
                         while (reader.Read())
                         {
-                            IEnrollment enrollment = vehicleBuilder.import(reader["serial"].ToString(), (int)reader["number"]);
+                            IEnrollment enrollment = vehicleBuilder.import(reader["serial"].ToString(), Convert.ToInt32(reader["number"]));
                             yield return enrollment;
                         }
                     }
