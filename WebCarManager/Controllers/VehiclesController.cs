@@ -27,20 +27,6 @@ namespace WebCarManager.Controllers
         {
             IEnumerable<IEnrollment> enrollments = this.vehicleStorage.get().Keys;
 
-            /*VehicleDto[] vehicles = new VehicleDto[]
-            {
-                new VehicleDto
-                {
-                    Enrollment = new EnrollmentDto
-                    {
-                        Serial = "JVC",
-                        Number = 300,
-                    },
-                    Color = CarColor.Black,
-                },
-                
-            };*/
-
             return View(enrollments);
         }
 
@@ -54,5 +40,18 @@ namespace WebCarManager.Controllers
             
             return View(vehicle);
         }
+
+        public ActionResult Edit(string serial, int number)
+        {
+            this.ViewBag.Title = "Edit";
+
+            IEnrollment enrollment = this.vehicleBuilder.import(serial, number);
+            IVehicle vehicle = this.vehicleStorage.get()
+                .whereEnrollmentIs(enrollment).Single();
+
+            return View(vehicle);
+        }
+
+        //public ActionResult Update() { }
     }
 }
