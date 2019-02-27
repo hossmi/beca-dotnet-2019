@@ -48,7 +48,9 @@ namespace WebCarManager.Controllers
         [HttpGet]
         public ActionResult Edit(string serial, int number)
         {
-            return View(getVehicleData(serial, number));
+            this.vehicleDto = new VehicleDto();
+            this.vehicleDto = getVehicleData(serial, number);
+            return View(this.vehicleDto);
         }
         // SET: Vehicles
         [HttpGet]
