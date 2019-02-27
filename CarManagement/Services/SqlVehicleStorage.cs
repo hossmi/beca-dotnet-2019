@@ -98,11 +98,8 @@ namespace CarManagement.Services
                     this.reader.Close();
                     foreach (string id in this.idList)
                     {
-                        this.parameter = sentence.CreateParameter();
-                        this.parameter.ParameterName = "@id";
-                        this.parameter.Value = id;
+                        this.parameter = setParameter(sentence, "@id", id);
                         sentence.Parameters.Add(this.parameter);
-                        //setParameter(sentence, "@id", id);
 
                         sentence.CommandText = DELETE_ALL;
                         sentence.ExecuteNonQuery();
@@ -312,7 +309,6 @@ namespace CarManagement.Services
             private int id;
             private IDictionary<string, object> queryParameters;
             private IDictionary<string, string> queryParts;
-            //private IDictionary<string, string> Type;
             private IEnrollmentProvider enrollmentProvider;
             private EnrollmentDto enrollmentDto;
             private VehicleDto vehicleDto;
@@ -322,8 +318,7 @@ namespace CarManagement.Services
             private WheelDto wheelDto;
             private DoorDto doorDto;
             private string query;
-            //private object data;
-            //private string dataType;
+            private string command;
             private const string SELECT_VEHICLE_HEAD = @"
                 SELECT e.serial, 
                     e.number, 
@@ -351,7 +346,6 @@ namespace CarManagement.Services
                 this.vehicleBuilder = vehicleBuilder;
                 this.queryParts = new Dictionary<string, string>();
                 this.queryParameters = new Dictionary<string, object>();
-                //this.Type = new Dictionary<string, string>();
                 this.vehicleDto = new VehicleDto();
                 this.enrollmentDto = new EnrollmentDto();
                 this.engineDto = new EngineDto();
@@ -370,28 +364,22 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                this.queryParameters.Add("@color", (int)color);
-                this.queryParts.Add("color"," color = " + (int)color);
+                addParametersDictionary("@color", "color", (int)color);
                 this.color = color;
                 return this;
             }
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
                 this.queryParameters.Add("@engineIsStarted", started);
-                this.queryParts.Add("@engineIsStarted", " engineIsStarted = @engineIsStarted");
-                //this.Type.Add("@engineIsStarted", "int");
+                this.queryParts.Add("@engineIsStarted", "engineIsStarted");
                 this.engineIsStarted = started;
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                this.queryParameters.Add("@number", enrollment.Number);
-                this.queryParameters.Add("@serial", enrollment.Serial);
-                this.queryParts.Add("@number", "number = @number");
-                this.queryParts.Add("@serial", "serial = @serial");
-                //this.Type.Add("@serial", "string");
-                //this.Type.Add("@number", "int");
+                addParametersDictionary("@number", "number", enrollment.Number);
+                addParametersDictionary("@serial", "serial", enrollment.Serial);
                 this.enrollment = enrollment;
                 return this;
             }
@@ -399,17 +387,13 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
-                this.queryParameters.Add("@serial", serial);
-                this.queryParts.Add("@serial", "serial = @serial");
-                //this.Type.Add("@serial", "string");
+                addParametersDictionary("@serial", "serial", serial);
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.queryParameters.Add("@engineHorsePower", horsePower);
-                this.queryParts.Add("@engineHorsePower", "engineHorsePower = @engineHorsePower");
+                addParametersDictionary("@engineHorsePower", "engineHorsePower", horsePower);
                 this.horsePower = horsePower;
-                //this.Type.Add("@engineHorsePower", "int");
                 return this;
             }
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
@@ -419,11 +403,15 @@ namespace CarManagement.Services
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 this.queryParts.Add("@engineHorsePower", "engineHorsePower BETWEEN @min AND @max");
-                //this.Type.Add("@min", "int");
-                //this.Type.Add("@max", "int");
                 this.max = max;
                 this.min = min;
                 return this;
+            }
+            private void addParametersDictionary(string key, string sqlCollumn, object parameter)
+            {
+                string command = sqlCollumn + " = " + key;
+                this.queryParameters.Add(key, parameter);
+                this.queryParts.Add(key, command);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -444,27 +432,6 @@ namespace CarManagement.Services
                     {
                         sentence.CommandText = this.query;
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
-                        /*foreach (var item in this.queryParameters.Keys)
-                        {
-                            this.Type
-                                .TryGetValue(item, out this.dataType);
-                            if (this.dataType == "int")
-                            {
-                                this.queryParameters
-                                    .TryGetValue(item, out this.data);
-                                this.data = Convert.ToInt32(this.data);
-                            }
-                            else
-                            {
-                                this.queryParameters
-                                    .TryGetValue(item, out this.data);
-                                this.data = Convert.ToString(this.data);
-                            }
-                            this.parameter = sentence.CreateParameter();
-                            this.parameter.ParameterName = $"{item}";
-                            this.parameter.Value = this.data;
-                            sentence.Parameters.Add(this.parameter);
-                        }*/
 
                     using (IDataReader reader = sentence.ExecuteReader())
                         {
