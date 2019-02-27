@@ -25,7 +25,7 @@ namespace WebCarManager.Controllers
         // GET: Vehicles
         public ActionResult Index()
         {
-            IEnumerable<IVehicle> vehicles = this.vehicleStorage.get();
+            IEnumerable<IEnrollment> enrollments = this.vehicleStorage.get().Keys;
 
             /*VehicleDto[] vehicles = new VehicleDto[]
             {
@@ -41,7 +41,7 @@ namespace WebCarManager.Controllers
                 
             };*/
 
-            return View(vehicles);
+            return View(enrollments);
         }
 
         public ActionResult Details(string serial, int number)

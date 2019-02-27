@@ -1,6 +1,6 @@
 ﻿@using CarManagement.Core.Models
 
-@model IEnumerable<IVehicle>
+@model IEnumerable<IEnrollment>
 
 @{
     ViewBag.Title = "Index";
@@ -18,17 +18,17 @@
         <th>Actions</th>
     </tr>
 
-    @foreach (IVehicle vehicle in this.Model)
+    @foreach (IEnrollment enrollment in this.Model)
     {
-        string enrollment = $"{vehicle.Enrollment.Serial} - {vehicle.Enrollment.Number.ToString("0000")}";
+        string enrollmentFinal = $"{enrollment.Serial} - {enrollment.Number.ToString("0000")}";
         var paramsEnrollment = new
         {
-            serial = vehicle.Enrollment.Serial,
-            number = vehicle.Enrollment.Number
+            serial = enrollment.Serial,
+            number = enrollment.Number
         };
         <tr>
             <td>
-                @Html.ActionLink(enrollment, "Details", paramsEnrollment)
+                @Html.ActionLink(enrollmentFinal, "Details", paramsEnrollment)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", paramsEnrollment) |
