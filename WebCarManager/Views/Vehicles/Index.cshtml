@@ -14,12 +14,7 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Serial)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Number)
-        </th>
+        <th>Enrollmets</th>
         <th>Actions</th>
     </tr>
 
@@ -32,10 +27,7 @@
         };
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Serial)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Number)
+                @Html.ActionLink($"{item.Serial}-{item.Number.ToString("0000")}", "Details", enrollment)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", enrollment) |
