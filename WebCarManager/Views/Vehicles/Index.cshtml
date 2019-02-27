@@ -9,6 +9,11 @@
 }
 
 <h2>Index</h2>
+@if (string.IsNullOrWhiteSpace(string.Format("{0}", Session["infoMessage"])) == false)
+{
+
+}
+<p> @ViewBag.Message </p>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -26,7 +31,7 @@
             <td>
                 <ul>
                     <li>
-                        @enrollment.Serial- @enrollment.Number
+                        @string.Format("{0}-{1:0###}", enrollment.Serial, enrollment.Number)
                     </li>
                 </ul>
             </td>

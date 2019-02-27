@@ -327,7 +327,61 @@ namespace CarManagement.Services
         }
         public void remove(IEnrollment enrollment)
         {
-            throw new NotImplementedException();
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto.Enrollment.Number = enrollment.Number;
+            vehicleDto.Enrollment.Serial = enrollment.Serial;
+
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            {
+
+                string DELETE_VEHICLE = @"
+                      DELETE  
+                      FROM vehicle 
+                      WHERE enrollmentId = @Id";
+                string DELETE_ENROLLMENT = @"
+                      DELETE  
+                      FROM enrollment 
+                      WHERE enrollmentId = @Id";
+                string DELETE_DOORS = @"
+                      DELETE 
+                      FROM Door 
+                      WHERE vehicleId = @id ";
+               string DELETE_WHEELS = @"
+                      DELETE 
+                      FROM wheel
+                      WHERE vehicleId = @id ";
+               int id;
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(SELECT_ID_FROM_ENROLLMENT, connection))
+                {
+                    command.Parameters.AddWithValue("@serial", vehicleDto.Enrollment.Serial);
+                    command.Parameters.AddWithValue("@number", vehicleDto.Enrollment.Number);
+                    id = Convert.ToInt32(command.ExecuteScalar());
+                }
+                using (SqlCommand command = new SqlCommand(DELETE_DOORS, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+                }
+                using (SqlCommand command = new SqlCommand(DELETE_WHEELS, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.ExecuteNonQuery();
+                }
+
+                using (SqlCommand command = new SqlCommand(DELETE_VEHICLE, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    command.ExecuteNonQuery();
+                }
+                using (SqlCommand command = new SqlCommand(DELETE_ENROLLMENT, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", id);
+                    command.ExecuteNonQuery();
+                }
+              connection.Close();
+            }
+
         }
         public IVehicleQuery get()
         {

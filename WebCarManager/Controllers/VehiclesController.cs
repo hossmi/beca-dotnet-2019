@@ -19,11 +19,16 @@ namespace WebCarManager.Controllers
         private const string CONNECTION_STRING_KEY = "CarManagerConnectionString";
         private readonly string connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING_KEY];
         private IVehicleStorage vehicleStorage;
+        private IEnrollmentProvider enrollmentProvider;
+        private IEnrollment enrollment;
+        //private ;
 
         // GET: Vehicles
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
+            this.enrollmentProvider = getService<IEnrollmentProvider>();
+            this.enrollment = getService<IEnrollment>();
         }
         public ActionResult Index()
         {
@@ -33,12 +38,22 @@ namespace WebCarManager.Controllers
         }
         public ActionResult Edit()
         {
-            
+
             return View();
         }
-        public ActionResult Delete()
+        public ActionResult Delete(string serial, int number)
         {
- 
+            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
+            IVehicle vehicle = this.vehicleStorage.get().whereEnrollmentIs(enrollment).Single();
+            return View(vehicle);
+        }
+
+        [HttpPost]
+        public ActionResult Delete(VehicleDto vehicleDto)
+        {
+            //this.Session["infoMessage"] = "The vehicle has been deleted";
+            //IEnrollment enrollment = this.enrollmentProvider.import(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
+            //this.vehicleStorage.remove(enrollment);
             return View();
         }
 
@@ -48,16 +63,16 @@ namespace WebCarManager.Controllers
         //    IVehicleBuilder vehicle = new VehicleBuilder(enrollmentprovider);
         //    SqlVehicleStorage sqlVehicle = new SqlVehicleStorage(connectionString, vehicle);
         //    List<IEnrollment> enrollments = new List<IEnrollment>();
-            
+
 
         //    foreach (IEnrollment enrollment in sqlVehicle.get().Keys)
         //    {
         //        enrollments.Add(enrollment);
-                
+
         //    }
         //    return enrollments;
-            
- 
+
+
         //} 
     }
 }
