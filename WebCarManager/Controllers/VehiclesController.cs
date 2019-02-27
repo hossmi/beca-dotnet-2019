@@ -140,6 +140,7 @@ namespace WebCarManager.Controllers
             private bool isStarted;
             private CarColor color;
             private double pressure;
+            private bool isOpen;
 
             public int WheelCount { get => this.wheelCount; set => this.wheelCount = value; }
             public int DoorCount { get => this.doorCount; set => this.doorCount = value; }
@@ -147,7 +148,7 @@ namespace WebCarManager.Controllers
             public bool IsStarted { get => this.isStarted; set => this.isStarted = value; }
             public CarColor Color { get => this.color; set => this.color = value; }
             public double Pressure { get => this.pressure; set => this.pressure = value; }
-
+            public bool IsOpen { get => this.isOpen; set => this.isOpen = value; }
         }
 
 

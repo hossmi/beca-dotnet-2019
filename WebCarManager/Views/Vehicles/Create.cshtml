@@ -13,32 +13,38 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="container">
-        <h4>Vehículo</h4>
-        <hr />
-        <div>
-            Color:
-            @Html.DropDownListFor(Model => Model.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
-        </div>
-        <hr />
-        <div>
+<div class="container">
+    <h4>Vehículo</h4>
+    <hr />
+    <div>
+        <h2>Color:</h2>
+        @Html.DropDownListFor(Model => Model.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
+    </div>
+    <hr />
+    <div>
+        <h2>
             Engine:
-            Horse Power: @Html.TextBoxFor(Model => Model.HorsePower)
-            IsStarted: @Html.CheckBoxFor(Model => Model.IsStarted)
-        </div>
+        </h2>
+        <p> Horse Power: @Html.TextBoxFor(Model => Model.HorsePower)C.V.</p>
+        <p> IsStarted: @Html.CheckBoxFor(Model => Model.IsStarted)</p>
 
-        Wheels: @Html.TextBoxFor(Model => Model.WheelCount)
-        Wheels Pressure: @Html.TextBoxFor(Model => Model.Pressure)
+    </div>
 
-        Doors: @Html.TextBoxFor(Model => Model.DoorCount)
+    <h2>Ruedas: </h2>
+    <p>Cantidad: @Html.TextBoxFor(Model => Model.WheelCount)</p>
+    <p> Presión: @Html.TextBoxFor(Model => Model.Pressure) Var</p>
 
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Crear" class="btn btn-default" />
-            </div>
+    <h2>Puertas:</h2>
+    <p>Cantidad: @Html.TextBoxFor(Model => Model.DoorCount)</p>
+    <p> Abierto: @Html.CheckBoxFor(Model => Model.IsOpen)</p>
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Crear" class="btn btn-default" />
         </div>
     </div>
+</div>
 }
 
 <div>
