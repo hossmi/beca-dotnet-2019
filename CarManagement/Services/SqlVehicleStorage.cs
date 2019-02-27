@@ -22,10 +22,12 @@ namespace CarManagement.Services
         private readonly IVehicleBuilder vehicleBuilder;
         private IDataReader reader;
         private IDataParameter parameter;
+        private IVehicle vehicle;
         private List<string> idList;
         private object query;
         private IDoor[] doors;
         private IWheel[] wheels;
+        private int id;
         const string DELETE_ALL = @"USE Carmanagement;
             DELETE FROM door WHERE vehicleId = @id
             DELETE FROM wheel WHERE vehicleId = @id
@@ -65,7 +67,6 @@ namespace CarManagement.Services
             this.vehicleBuilder = vehicleBuilder;
             this.idList = new List<string>();
         }
-
         public int Count {
             get
             {
@@ -83,7 +84,6 @@ namespace CarManagement.Services
 
             }
         }
-
         public void clear()
         {
             using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -125,6 +125,33 @@ namespace CarManagement.Services
         public IVehicleQuery get()
         {
             return new PrvVehicleQuery(this.connectionString, this.vehicleBuilder);
+        }
+        public void remove(IEnrollment enrollment)
+        {
+            using (IDbConnection con = new SqlConnection(this.connectionString))
+            {
+                using (IDbCommand sentence = con.CreateCommand())
+                {
+                    con.Open();
+                    sentence.Parameters.Add(setParameter(sentence, "@serial", enrollment.Serial));
+                    sentence.Parameters.Add(setParameter(sentence, "@number", enrollment.Number));
+                    sentence.CommandText = SELECT_ENROLLMENT_FROM_VEHICLE + "WHERE serial = @serial AND number = @number";
+
+                    using (IDataReader reader = sentence.ExecuteReader())
+                    {
+                        this.reader.Read();
+                        this.id = (int)this.reader["enrollmentId"];
+                        this.reader.Close();
+                    }
+                    sentence.CommandText = SELECT_FROM_VEHICLE;
+                    sentence.Parameters.Add(setParameter(sentence, "@id", this.id));
+                    if (sentence.ExecuteScalar() != null)
+                    {
+                        sentence.CommandText = DELETE_ALL;
+                        sentence.ExecuteNonQuery();
+                    }
+                }
+            }
         }
         public void set(IVehicle vehicle)
         {
@@ -265,7 +292,6 @@ namespace CarManagement.Services
                 }
             }
         }
-
         private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
         {
             IDataParameter parameter = sentence.CreateParameter();
@@ -273,7 +299,6 @@ namespace CarManagement.Services
             parameter.Value = thing;
             return parameter;
         }
-
         private class PrvVehicleQuery : IVehicleQuery
         {
             private readonly string connectionString;

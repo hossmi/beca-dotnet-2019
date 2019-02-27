@@ -10,14 +10,11 @@ using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : Controller
+    public class VehiclesController : AbstractController
     {
-        //private string connectionString = ConfigurationManager.AppSettings["CarManagerConnectionString"];
-        private string connectionString = @"Data Source = localhost\SQLEXPRESS;DataBase=CarManagement;Persist Security Info=True;User ID = test; Password=123456;MultipleActiveResultSets=true;";
-
+        private readonly IVehicleStorage vehicleStorage;
         private IEnrollmentProvider enrollmentProvider;
         private IVehicleBuilder vehiclebuilder;
-        private SqlVehicleStorage sqlVehicleStorage;
         private IEnumerable<IEnrollment> enrollmentEnum;
         private EnrollmentDto enrollmentDto;
         private List<EnrollmentDto> enrollmentDtoList;
@@ -31,21 +28,25 @@ namespace WebCarManager.Controllers
         private WheelDto wheelDto;
         private DoorDto doorDto;
 
-        // GET: Vehicles
-        public ActionResult Index()
+        public VehiclesController()
         {
+            this.vehicleStorage = getService<IVehicleStorage>();
+
             this.enrollmentProvider = new DefaultEnrollmentProvider();
             this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
-            this.sqlVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehiclebuilder);
-            this.enrollmentEnum = this.sqlVehicleStorage.get().Keys;
+            this.enrollmentEnum = this.vehicleStorage.get().Keys;
             this.enrollmentDto = new EnrollmentDto();
             this.enrollmentDtoList = new List<EnrollmentDto>();
             this.enrollmentDto = new EnrollmentDto();
+        }
+
+        // GET: Vehicles
+        public ActionResult Index()
+        {
             foreach (IEnrollment enrollment2 in this.enrollmentEnum)
             {
                 this.enrollmentDto.Number = enrollment2.Number;
                 this.enrollmentDto.Serial = enrollment2.Serial;
-
                 this.enrollmentDtoList.Add(this.enrollmentDto);
             }
             this.ViewBag.Message = "Enrollment list";
@@ -56,10 +57,9 @@ namespace WebCarManager.Controllers
         {
             this.enrollmentProvider = new DefaultEnrollmentProvider();
             this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
-            this.sqlVehicleStorage = new SqlVehicleStorage(this.connectionString, this.vehiclebuilder);
 
             this.enrollment = this.vehiclebuilder.import(serial, number);
-            this.vehicle = this.sqlVehicleStorage.get()
+            this.vehicle = this.vehicleStorage.get()
                 .whereEnrollmentIs(this.enrollment)
                 .Select(vehicle => vehicle)
                 .Single();
