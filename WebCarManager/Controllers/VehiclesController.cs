@@ -14,42 +14,45 @@ namespace WebCarManager.Controllers
     public class VehiclesController : AbstractController
     {
         private readonly IVehicleStorage vehicleStorage;
-        private const string CONNECTION_STRING = "CarManagerConnectionString";
+        private readonly IVehicleBuilder vehicleBuilder;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
+            this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
         // GET: Vehicles
         public ActionResult Index()
         {
-            VehicleDto[] vehicles = new VehicleDto[]
+            IEnumerable<IVehicle> vehicles = this.vehicleStorage.get();
+
+            /*VehicleDto[] vehicles = new VehicleDto[]
             {
                 new VehicleDto
                 {
                     Enrollment = new EnrollmentDto
                     {
-                        Serial = "XXX",
-                        Number = 6666,
+                        Serial = "JVC",
+                        Number = 300,
                     },
                     Color = CarColor.Black,
                 },
                 
-            };
+            };*/
 
             return View(vehicles);
         }
 
-        public ActionResult Detalles()
+        public ActionResult Details(string serial, int number)
         {
-            string connectionString = ConfigurationManager.AppSettings[CONNECTION_STRING];
-            IEnrollmentProvider enrollmentProvider = new DefaultEnrollmentProvider();
-            IVehicleBuilder vehicleBuilder = new VehicleBuilder(enrollmentProvider);
-            IVehicleStorage vehicleStorage = new SqlVehicleStorage(connectionString, vehicleBuilder);
-            IEnumerable<IVehicle> vehicles = vehicleStorage.get();
-            //vehicles.Select(vehicle => vehicleStorage.get().whereEnrollmentIs());
-            return View(vehicles);
+            this.ViewBag.Title = "Details";
+
+            IEnrollment enrollment = this.vehicleBuilder.import(serial, number);
+            IVehicle vehicle = this.vehicleStorage.get()
+                .whereEnrollmentIs(enrollment).Single();
+            
+            return View(vehicle);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿@using CarManagement.Core.Models.DTOs
+﻿@using CarManagement.Core.Models
 
-@model IEnumerable<CarManagement.Core.Models.DTOs.VehicleDto>
+@model IEnumerable<IVehicle>
 
 @{
     ViewBag.Title = "Index";
@@ -18,24 +18,21 @@
         <th>Actions</th>
     </tr>
 
-    @foreach (VehicleDto vehicle in this.Model)
+    @foreach (IVehicle vehicle in this.Model)
     {
-        string enrollment = $"{@vehicle.Enrollment.Serial} - {@vehicle.Enrollment.Number.ToString("0000")}";
+        string enrollment = $"{vehicle.Enrollment.Serial} - {vehicle.Enrollment.Number.ToString("0000")}";
+        var paramsEnrollment = new
+        {
+            serial = vehicle.Enrollment.Serial,
+            number = vehicle.Enrollment.Number
+        };
         <tr>
             <td>
-                @Html.ActionLink(@enrollment, "Detalles")
+                @Html.ActionLink(enrollment, "Details", paramsEnrollment)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new
-                    {
-                        serial =vehicle.Enrollment.Serial,
-                        number =vehicle.Enrollment.Number
-                    }) |
-                @Html.ActionLink("Delete", "Delete", new
-                    {
-                        serial = vehicle.Enrollment.Serial,
-                        number = vehicle.Enrollment.Number
-                    })
+                @Html.ActionLink("Edit", "Edit", paramsEnrollment) |
+                @Html.ActionLink("Delete", "Delete", paramsEnrollment)
             </td>
         </tr>
     }

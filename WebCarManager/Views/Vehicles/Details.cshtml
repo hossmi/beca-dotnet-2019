@@ -1,0 +1,30 @@
+﻿@using CarManagement.Core.Models
+
+@model IVehicle
+
+    @{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <h3>@ViewBag.Title</h3>
+
+    <table>
+        <tr>
+            <td>
+                @{ 
+                    string enrollment = $"{Model.Enrollment.Serial} - {Model.Enrollment.Number.ToString("0000")}";
+                }
+                @enrollment
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+
