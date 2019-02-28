@@ -42,8 +42,6 @@ namespace WebCarManager.Controllers
         [HttpPost]
         public ActionResult CreateNew(VehicleDto vehicleDto)
         {
-            
-
             if (validateValues(vehicleDto))
             {
                 this.vehicleBuilder.setColor(vehicleDto.Color);
@@ -79,26 +77,41 @@ namespace WebCarManager.Controllers
 
         private bool validateValues(VehicleDto vehicleDto)
         {
-            int numberMinWheel = 0;
+            bool validateValueColor = false;
+            bool validateValueNumberWheel = false;
+            bool validateValueNumberDooor = false;
+            bool validateValueHorsePower = false;
+            bool validateValuesWheelsPressure = true;
+            int numberMinWheel = 1;
             int numberManWheel = 4;
             int numberMinDoor = 0;
+            int numberMaxDoor = 6;
+            int pressureMin = 1;
+            int pressureMax = 5;
+            int numberWheelsCorrectPressure = vehicleDto.Wheels.Length;
 
 
-
-            bool validateValues= Enum.IsDefined(typeof(VehicleDto), vehicleDto.Color);
-            validateValues = (vehicleDto.Wheels.Length > numberMinWheel && vehicleDto.Wheels.Length <= numberManWheel);
-            validateValues = (vehicleDto.Doors.Length >= 0 && vehicleDto.Doors.Length <= 6);
-
-
-            Asserts.isTrue(vehicleDto.Engine.HorsePower > 0);
-
+            validateValueColor = Enum.IsDefined(typeof(VehicleDto), vehicleDto.Color);
+            validateValueNumberWheel = (vehicleDto.Wheels.Length >= numberMinWheel && vehicleDto.Wheels.Length <= numberManWheel);
+            validateValueNumberDooor = (vehicleDto.Doors.Length >= numberMinDoor && vehicleDto.Doors.Length <= numberMaxDoor);
+            validateValueHorsePower = (vehicleDto.Engine.HorsePower > 0);
+                
+            
+            //OJO no esta bien el validate presión....son las 5 de la mañana y no  veo la solución
+            
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
             {
-                Asserts.isTrue(wheelDto.Pressure >= 1 && wheelDto.Pressure <= 5);
-            };
+                if ( (wheelDto.Pressure >= pressureMin && wheelDto.Pressure <= pressureMax) 
+                    && validateValuesWheelsPressure )
+                {
+                    validateValuesWheelsPressure = true;
+                }
+            }
 
-            return validateValues;
+            return (validateValueColor && validateValueNumberWheel && validateValueNumberDooor && validateValueHorsePower && validateValuesWheelsPressure);
         }
+
+
 
         public ActionResult Delete(string serial, int number)
         {
