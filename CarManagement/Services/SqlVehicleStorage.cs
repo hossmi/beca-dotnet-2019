@@ -2,16 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
-using ToolBox;
 using ToolBox.Extensions.DbCommands;
 
 namespace CarManagement.Services
@@ -32,8 +27,6 @@ namespace CarManagement.Services
             DELETE FROM wheel WHERE vehicleId = @id
             DELETE FROM vehicle WHERE enrollmentId = @id
             DELETE FROM enrollment WHERE id = @id";
-        const string SELECT_ENROLLMENT_FROM_VEHICLE = @"USE Carmanagement;
-            SELECT enrollmentId FROM vehicle";
         const string SELECT_FROM_ENROLLMENT = @"USE CarManagement; 
             SELECT id FROM enrollment 
             WHERE serial = @serial AND number = @number";
@@ -89,7 +82,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = SELECT_ENROLLMENT_FROM_VEHICLE;
+                    sentence.CommandText = selectMethod("enrollment");
                     this.reader = sentence.ExecuteReader();
                     while (this.reader.Read())
                     {
@@ -131,7 +124,7 @@ namespace CarManagement.Services
                     con.Open();
                     sentence.Parameters.Add(setParameter(sentence, "@serial", enrollment.Serial));
                     sentence.Parameters.Add(setParameter(sentence, "@number", enrollment.Number));
-                    sentence.CommandText = SELECT_ENROLLMENT_FROM_VEHICLE + "WHERE serial = @serial AND number = @number";
+                    sentence.CommandText = selectMethod("enrollment") + "WHERE serial = @serial AND number = @number";
 
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
@@ -151,6 +144,14 @@ namespace CarManagement.Services
         }
         public void set(IVehicle vehicle)
         {
+            void buildObject(string name, object param, string query, IDbCommand sentence)
+            {
+                this.parameter = setParameter(sentence, name, param);
+                sentence.Parameters.Add(this.parameter);
+                sentence.CommandText = query;
+                Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                sentence.Parameters.Remove(this.parameter);
+            }
             using (IDbConnection con = new SqlConnection(this.connectionString))
             {
                 con.Open();
@@ -163,6 +164,7 @@ namespace CarManagement.Services
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
+                            sentence.Parameters.Clear();
                             reader.Read();
                             sentence.Parameters.Add(setParameter(sentence, "@id", (int)reader["id"]));
                             reader.Close();
@@ -185,28 +187,14 @@ namespace CarManagement.Services
                                     this.wheels = vehicle.Wheels;
                                     foreach (IWheel wheel in this.wheels)
                                     {
-                                        if (sentence.Parameters.Contains(this.parameter))
-                                        {
-                                            sentence.Parameters.Remove(this.parameter);
-                                        }
-                                        this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
-                                        sentence.Parameters.Add(this.parameter);
-                                        sentence.CommandText = INSERT_WHEEL;
-                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                        buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
                                     }
                                     sentence.CommandText = DELETE_DOOR;
                                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                                     this.doors = vehicle.Doors;
                                     foreach (IDoor door in this.doors)
                                     {
-                                        if (sentence.Parameters.Contains(this.parameter))
-                                        {
-                                            sentence.Parameters.Remove(this.parameter);
-                                        }
-                                        this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
-                                        sentence.Parameters.Add(this.parameter);
-                                        sentence.CommandText = INSERT_DOOR;
-                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                        buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
                                     }
                                 }
                                 else
@@ -217,26 +205,12 @@ namespace CarManagement.Services
                                     this.wheels = vehicle.Wheels;
                                     foreach (IWheel wheel in this.wheels)
                                     {
-                                        if (sentence.Parameters.Contains(this.parameter))
-                                        {
-                                            sentence.Parameters.Remove(this.parameter);
-                                        }
-                                        this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
-                                        sentence.Parameters.Add(this.parameter);
-                                        sentence.CommandText = INSERT_WHEEL;
-                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                        buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
                                     }
                                     this.doors = vehicle.Doors;
                                     foreach (IDoor door in this.doors)
                                     {
-                                        if (sentence.Parameters.Contains(this.parameter))
-                                        {
-                                            sentence.Parameters.Remove(this.parameter);
-                                        }
-                                        this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
-                                        sentence.Parameters.Add(this.parameter);
-                                        sentence.CommandText = INSERT_DOOR;
-                                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                        buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
                                     }
                                 }
                             }
@@ -247,6 +221,7 @@ namespace CarManagement.Services
                         sentence.CommandText = INSERT_ENROLLMENT;
                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                         sentence.CommandText = SELECT_FROM_ENROLLMENT;
+                        Asserts.isTrue(sentence.ExecuteScalar() != null);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             reader.Read();
@@ -262,26 +237,12 @@ namespace CarManagement.Services
                             this.wheels = vehicle.Wheels;
                             foreach (IWheel wheel in this.wheels)
                             {
-                                if (sentence.Parameters.Contains(this.parameter))
-                                {
-                                    sentence.Parameters.Remove(this.parameter);
-                                }
-                                this.parameter = setParameter(sentence, "@pressure", wheel.Pressure);
-                                sentence.Parameters.Add(this.parameter);
-                                sentence.CommandText = INSERT_WHEEL;
-                                Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
                             }
                             this.doors = vehicle.Doors;
                             foreach (IDoor door in this.doors)
                             {
-                                if (sentence.Parameters.Contains(this.parameter))
-                                {
-                                    sentence.Parameters.Remove(this.parameter);
-                                }
-                                this.parameter = setParameter(sentence, "@isOpen", door.IsOpen);
-                                sentence.Parameters.Add(this.parameter);
-                                sentence.CommandText = INSERT_DOOR;
-                                Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                                buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
                             }
                         }
                     }
@@ -295,10 +256,22 @@ namespace CarManagement.Services
             parameter.Value = thing;
             return parameter;
         }
+        private static string selectMethod(string table)
+        {
+            string select = $"SELECT * FROM {table}";
+            return select;
+        }
+        private static string whereMethod(string field, string condition)
+        {
+            string where = $" WHERE {field} = {condition}";
+            return where;
+        }
+
         private class PrvVehicleQuery : IVehicleQuery
         {
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
+            private VehicleBuilder vehicleBuilder2;
             private CarColor color;
             private bool engineIsStarted;
             private IEnrollment enrollment;
@@ -317,8 +290,8 @@ namespace CarManagement.Services
             private List<DoorDto> doorsDto;
             private WheelDto wheelDto;
             private DoorDto doorDto;
-            private string query;
-            private string command;
+            private IDictionary<string, object> dictionaryId;
+            private IDictionary<string, string> dictionaryId2;
             private const string SELECT_VEHICLE_HEAD = @"
                 SELECT e.serial, 
                     e.number, 
@@ -328,22 +301,13 @@ namespace CarManagement.Services
                     v.engineHorsePower 
                 FROM enrollment e 
                 INNER JOIN vehicle v ON e.id = v.enrollmentId ";
-            private const string SELECT_WHEELS = @"
-                    SELECT pressure 
-                    FROM wheel 
-                    WHERE vehicleId = @ID";
-            private const string SELECT_DOORS = @"
-                    SELECT isOpen 
-                    FROM door 
-                    WHERE vehicleId = @ID";
-            private const string SELECT_ENROLLMENT = @"
-                    SELECT *
-                    FROM enrollment";
 
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
             {
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
+                this.enrollmentProvider = new DefaultEnrollmentProvider();
+                this.vehicleBuilder2 = new VehicleBuilder(this.enrollmentProvider);
                 this.queryParts = new Dictionary<string, string>();
                 this.queryParameters = new Dictionary<string, object>();
                 this.vehicleDto = new VehicleDto();
@@ -352,6 +316,9 @@ namespace CarManagement.Services
                 this.wheelsDto = new List<WheelDto>();
                 this.doorsDto = new List<DoorDto>();
                 this.enrollmentProvider = new DefaultEnrollmentProvider();
+                this.dictionaryId = new Dictionary<string, object>();
+                this.dictionaryId2 = new Dictionary<string, string>();
+
             }
 
             public IEnumerable<IEnrollment> Keys
@@ -364,22 +331,21 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                addParametersDictionary("@color", "color", (int)color);
+                addParametersDictionary("@color", "color", (int)color, this.queryParameters, this.queryParts);
                 this.color = color;
                 return this;
             }
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.queryParameters.Add("@engineIsStarted", started);
-                this.queryParts.Add("@engineIsStarted", "engineIsStarted");
+                addParametersDictionary("@engineIsStarted", "engineIsStarted", started, this.queryParameters, this.queryParts);
                 this.engineIsStarted = started;
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                addParametersDictionary("@number", "number", enrollment.Number);
-                addParametersDictionary("@serial", "serial", enrollment.Serial);
+                addParametersDictionary("@number", "number", enrollment.Number, this.queryParameters, this.queryParts);
+                addParametersDictionary("@serial", "serial", enrollment.Serial, this.queryParameters, this.queryParts);
                 this.enrollment = enrollment;
                 return this;
             }
@@ -387,12 +353,12 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
-                addParametersDictionary("@serial", "serial", serial);
+                addParametersDictionary("@serial", "serial", serial, this.queryParameters, this.queryParts);
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                addParametersDictionary("@engineHorsePower", "engineHorsePower", horsePower);
+                addParametersDictionary("@engineHorsePower", "engineHorsePower", horsePower, this.queryParameters, this.queryParts);
                 this.horsePower = horsePower;
                 return this;
             }
@@ -407,11 +373,11 @@ namespace CarManagement.Services
                 this.min = min;
                 return this;
             }
-            private void addParametersDictionary(string key, string sqlCollumn, object parameter)
+            private static void addParametersDictionary(string key, string sqlCollumn, object parameter, IDictionary<string, object> queryParameters, IDictionary<string, string> queryParts)
             {
-                string command = sqlCollumn + " = " + key;
-                this.queryParameters.Add(key, parameter);
-                this.queryParts.Add(key, command);
+                string command = command = sqlCollumn + " = " + key;
+                queryParameters.Add(key, parameter);
+                queryParts.Add(key, command);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -424,69 +390,58 @@ namespace CarManagement.Services
             }
             private IEnumerator<IVehicle> enumerate()
             {
-                this.query = createQuery(SELECT_VEHICLE_HEAD, this.queryParts);
                 using (IDbConnection con = new SqlConnection(this.connectionString))
                 {
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = this.query;
+                        sentence.CommandText = createQuery(SELECT_VEHICLE_HEAD, this.queryParts);
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
 
-                    using (IDataReader reader = sentence.ExecuteReader())
+                        using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                sentence.Parameters.Add(setParameter(sentence, "@ID", (int)reader["id"]));
                                 this.id = (int)reader["id"];
-                                this.enrollmentDto.Serial = reader["serial"].ToString();
-                                this.enrollmentDto.Number = Convert.ToInt32(reader["number"]);
+                                this.enrollmentDto = this.vehicleBuilder2.enrollmentDtoBuilder(reader["serial"].ToString(), Convert.ToInt32(reader["number"]));
                                 this.color = (CarColor)Enum.Parse(typeof(CarColor), reader["color"].ToString());
-                                this.engineDto.IsStarted = Convert.ToBoolean(reader["engineIsStarted"]);
-                                this.engineDto.HorsePower = Convert.ToInt32(reader["engineHorsePower"]);
+                                this.engineDto = this.vehicleBuilder2.engineDtoBuilder(Convert.ToBoolean(reader["engineIsStarted"]), Convert.ToInt32(reader["engineHorsePower"]));
+
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.CommandText = SELECT_WHEELS;
-                                    sentence2.Parameters.Add(setParameter(sentence2, "@ID", this.id));
+                                    sentence2.CommandText = selectMethod("wheel") + whereMethod("vehicleId", "@id");
+                                    sentence2.Parameters.Add(setParameter(sentence2, "@id", this.id));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
                                         while (reader2.Read())
                                         {
-                                            this.wheelDto = new WheelDto();
-                                            this.wheelDto.Pressure = Convert.ToDouble(reader2["pressure"]);
+                                            this.wheelDto = this.vehicleBuilder2.wheelDtoBuilder(Convert.ToDouble(reader2["pressure"]));
                                             this.wheelsDto.Add(this.wheelDto);
                                         }
                                     }
                                 }
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.CommandText = SELECT_DOORS;
-                                    sentence2.Parameters.Add(setParameter(sentence2, "@ID", (int)reader["id"]));
+                                    sentence2.CommandText = selectMethod("door") + whereMethod("vehicleId", "@id");
+                                    sentence2.Parameters.Add(setParameter(sentence2, "@id", (int)reader["id"]));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
                                     {
                                         while (reader2.Read())
                                         {
-                                            this.doorDto = new DoorDto();
-                                            this.doorDto.IsOpen = Convert.ToBoolean(reader2["isOpen"]);
+                                            this.doorDto = this.vehicleBuilder2.doorDtoBuilder(Convert.ToBoolean(reader2["isOpen"]));
                                             this.doorsDto.Add(this.doorDto);
                                         }
                                     }
                                 }
-                                this.vehicleDto.Color = this.color;
-                                this.vehicleDto.Doors = this.doorsDto.ToArray();
-                                this.vehicleDto.Wheels = this.wheelsDto.ToArray();
-                                this.vehicleDto.Engine = this.engineDto;
-                                this.vehicleDto.Enrollment = this.enrollmentDto;
-
-                                yield return this.vehicleBuilder.import(this.vehicleDto);
+                                yield return this.vehicleBuilder.import(this.vehicleBuilder2.vehicleDtoBuilder(this.enrollmentDto, this.engineDto, this.color, this.wheelsDto.ToArray(), this.doorsDto.ToArray()));
                             }
                         }
                     }
                 }
             }
-            private static IDataParameter setParameter (IDbCommand sentence, string name, object thing)
+            private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
             {
                 IDataParameter parameter = sentence.CreateParameter();
                 parameter.ParameterName = name;
@@ -510,6 +465,17 @@ namespace CarManagement.Services
                 }
                 return query;
             }
+
+            private static string selectMethod(string table)
+            {
+                string select = $"SELECT * FROM {table}";
+                return select;
+            }
+            private static string whereMethod(string field, string condition)
+            {
+                string where = $" WHERE {field} = {condition}";
+                return where;
+            }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -517,7 +483,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = SELECT_ENROLLMENT;
+                        sentence.CommandText = selectMethod("enrollment");
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())

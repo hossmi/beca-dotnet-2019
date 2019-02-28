@@ -33,12 +33,10 @@ namespace CarManagement.Services
             this.enrollmentProvider = enrollmentProvider;
             this.engine = new Engine();
             this.wheelCount = 0;
-            this.vehicleDto = new VehicleDto();
             this.checkColor = false;
             this.color = new CarColor();
             this.wheels = new List<IWheel>();
             this.doors = new List<IDoor>();
-            this.engineDto = new EngineDto();
             this.doorsCount = 0;
             this.power = 0;
         }
@@ -65,6 +63,7 @@ namespace CarManagement.Services
         }
         public VehicleDto export(IVehicle vehicle)
         {
+            this.vehicleDto = new VehicleDto();
             this.vehicleDto = convert(vehicle);
             return this.vehicleDto;
         }
@@ -118,6 +117,7 @@ namespace CarManagement.Services
         }
         private EngineDto convert(IEngine engine)
         {
+            this.engineDto = new EngineDto();
             this.engineDto.HorsePower = engine.HorsePower;
             this.engineDto.IsStarted = engine.IsStarted;
             return this.engineDto;
@@ -142,6 +142,7 @@ namespace CarManagement.Services
         }
         private VehicleDto convert(IVehicle vehicle)
         {
+            this.vehicleDto = new VehicleDto();
             this.vehicleDto.Color = new CarColor();
             this.vehicleDto.Doors = new DoorDto[vehicle.Doors.Length];
             this.vehicleDto.Wheels = new WheelDto[vehicle.Wheels.Length];
@@ -350,6 +351,43 @@ namespace CarManagement.Services
                     return this.color;
                 }
             }
+        }
+
+        public EngineDto engineDtoBuilder(bool isStarted, int horsePower)
+        {
+            this.engineDto = new EngineDto();
+            this.engineDto.IsStarted = isStarted;
+            this.engineDto.HorsePower = horsePower;
+            return this.engineDto;
+        }
+        public EnrollmentDto enrollmentDtoBuilder(string serial, int number)
+        {
+            this.enrollmentDto = new EnrollmentDto();
+            this.enrollmentDto.Serial = serial;
+            this.enrollmentDto.Number = number;
+            return this.enrollmentDto;
+        }
+        public WheelDto wheelDtoBuilder(double pressure)
+        {
+            this.wheelDto = new WheelDto();
+            this.wheelDto.Pressure = pressure;
+            return this.wheelDto;
+        }
+        public DoorDto doorDtoBuilder(bool isOpen)
+        {
+            this.doorDto = new DoorDto();
+            this.doorDto.IsOpen = isOpen;
+            return this.doorDto;
+        }
+        public VehicleDto vehicleDtoBuilder(EnrollmentDto enrollmentDto, EngineDto engineDto, CarColor color, WheelDto[] wheelsDto, DoorDto[] doorsDto)
+        {
+            this.vehicleDto = new VehicleDto();
+            this.vehicleDto.Color = color;
+            this.vehicleDto.Enrollment = enrollmentDto;
+            this.vehicleDto.Engine = engineDto;
+            this.vehicleDto.Doors = doorsDto;
+            this.vehicleDto.Wheels = wheelsDto;
+            return this.vehicleDto;
         }
     }
 }
