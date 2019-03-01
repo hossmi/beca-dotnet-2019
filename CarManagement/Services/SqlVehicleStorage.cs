@@ -15,7 +15,6 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private IDataReader reader;
         private IDataParameter parameter;
         private List<string> idList;
         private object query;
@@ -83,12 +82,14 @@ namespace CarManagement.Services
                 {
                     con.Open();
                     sentence.CommandText = selectMethod("enrollment");
-                    this.reader = sentence.ExecuteReader();
-                    while (this.reader.Read())
+                    using (IDataReader reader = sentence.ExecuteReader())
                     {
-                        this.idList.Add(this.reader["enrollmentId"].ToString());
+                        while (reader.Read())
+                        {
+                            this.idList.Add(reader["id"].ToString());
+                        }
+                        reader.Close();
                     }
-                    this.reader.Close();
                     foreach (string id in this.idList)
                     {
                         this.parameter = setParameter(sentence, "@id", id);
@@ -128,9 +129,9 @@ namespace CarManagement.Services
 
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
-                        this.reader.Read();
-                        this.id = (int)this.reader["enrollmentId"];
-                        this.reader.Close();
+                        reader.Read();
+                        this.id = (int)reader["enrollmentId"];
+                        reader.Close();
                     }
                     sentence.CommandText = SELECT_FROM_VEHICLE;
                     sentence.Parameters.Add(setParameter(sentence, "@id", this.id));
@@ -409,7 +410,7 @@ namespace CarManagement.Services
 
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.CommandText = selectMethod("wheel") + whereMethod("vehicleId", "@id");
+                                    sentence2.CommandText = selectDeleteMethod("SELECT pressure ", "wheel") + whereMethod("vehicleId", "@id");
                                     sentence2.Parameters.Add(setParameter(sentence2, "@id", this.id));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
@@ -423,7 +424,7 @@ namespace CarManagement.Services
                                 }
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    sentence2.CommandText = selectMethod("door") + whereMethod("vehicleId", "@id");
+                                    sentence2.CommandText = selectDeleteMethod("SELECT isOpen ", "door") + whereMethod("vehicleId", "@id");
                                     sentence2.Parameters.Add(setParameter(sentence2, "@id", (int)reader["id"]));
 
                                     using (IDataReader reader2 = sentence2.ExecuteReader())
@@ -465,17 +466,71 @@ namespace CarManagement.Services
                 }
                 return query;
             }
-
-            private static string selectMethod(string table)
-            {
-                string select = $"SELECT * FROM {table}";
-                return select;
-            }
             private static string whereMethod(string field, string condition)
             {
                 string where = $" WHERE {field} = {condition}";
                 return where;
             }
+            private static string elementString(string query, List<string> elements)
+            {
+                int counter = 0;
+                foreach (string element in elements)
+                {
+                    if (counter < elements.Count)
+                    {
+                        query += element + ", ";
+                    }
+                    else
+                    {
+                        query += element + ")";
+                    }
+                    counter++;
+                }
+                return query;
+            }
+            private static string selectDeleteMethod(string command, string table)
+            {
+                string select = $"{command} FROM {table}";
+                return select;
+            }
+            private static string insertupdateMethod(string table, IDictionary<string, string> dataDictionary, string type, string instruction)
+            {
+                List<string> columns = new List<string>();
+                List<string> values = new List<string>();
+                foreach (string value in dataDictionary.Values)
+                {
+                    values.Add(value);
+                }
+                foreach (string column in dataDictionary.Keys)
+                {
+                    columns.Add(column);
+                }
+                string query = "";
+                query = $"{type}{table} (";
+                query = query + $"{elementString(query, columns)}{instruction}(";
+                query = query + elementString(query, values);
+
+                return query;
+            }
+            private static string simpleQueryMethod(string table, string field, IDictionary<string, string> conditionParts, string command, IDictionary<string, string> dataDictionary)
+            {
+                string query ="";
+                if(command.Contains("SELECT") || command.Contains("DELETE"))
+                {
+                    query = selectDeleteMethod(command, table);
+                    query = query + createQuery(query, conditionParts);
+                }
+                else if(command.Contains("INSERT"))
+                {
+                    query = insertupdateMethod(table, dataDictionary, command, " SET ");
+                }
+                else if(command.Contains("UPDATE"))
+                {
+                    query = insertupdateMethod(table, dataDictionary, command, " VALUES ");
+                }
+                return query;
+            }
+
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -483,7 +538,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = selectMethod("enrollment");
+                        sentence.CommandText = selectDeleteMethod("SELECT * ", "enrollment");
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
