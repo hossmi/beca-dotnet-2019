@@ -81,7 +81,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = selectMethod("enrollment");
+                    sentence.CommandText = selectDeleteMethod("SELECT id ", "enrollment");
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -94,8 +94,7 @@ namespace CarManagement.Services
                     {
                         this.parameter = setParameter(sentence, "@id", id);
                         sentence.Parameters.Add(this.parameter);
-
-                        sentence.CommandText = DELETE_ALL;
+                        sentence.CommandText = deleteAll();
                         sentence.ExecuteNonQuery();
                         sentence.Parameters.Remove(this.parameter);
 
@@ -105,6 +104,16 @@ namespace CarManagement.Services
             }
 
         }
+
+        private static string deleteAll()
+        {
+            string query = $"{selectDeleteMethod("DELETE ", "door")}{whereMethod("vehicleId", "@id")};" +
+                $"{selectDeleteMethod("DELETE ", "wheel")}{whereMethod("vehicleId", "@id")};" +
+                $"{selectDeleteMethod("DELETE ", "vehicle")}{whereMethod("enrollmentId", "@id")};" +
+                $"{selectDeleteMethod("DELETE ", "enrollment")}{whereMethod("id", "@id")};";
+            return query;
+        }
+
         public void Dispose()
         {
             using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -125,7 +134,7 @@ namespace CarManagement.Services
                     con.Open();
                     sentence.Parameters.Add(setParameter(sentence, "@serial", enrollment.Serial));
                     sentence.Parameters.Add(setParameter(sentence, "@number", enrollment.Number));
-                    sentence.CommandText = selectMethod("enrollment") + "WHERE serial = @serial AND number = @number";
+                    sentence.CommandText = selectDeleteMethod("SELECT id ","enrollment") + "WHERE serial = @serial AND number = @number";
 
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
@@ -133,11 +142,11 @@ namespace CarManagement.Services
                         this.id = (int)reader["enrollmentId"];
                         reader.Close();
                     }
-                    sentence.CommandText = SELECT_FROM_VEHICLE;
+                    sentence.CommandText = $"{selectDeleteMethod("SELECT * ", "vehicle")}{whereMethod("enrollmentId", "@id")};";
                     sentence.Parameters.Add(setParameter(sentence, "@id", this.id));
                     if (sentence.ExecuteScalar() != null)
                     {
-                        sentence.CommandText = DELETE_ALL;
+                        sentence.CommandText = deleteAll();
                         sentence.ExecuteNonQuery();
                     }
                 }
@@ -145,7 +154,7 @@ namespace CarManagement.Services
         }
         public void set(IVehicle vehicle)
         {
-            void buildObject(string name, object param, string query, IDbCommand sentence)
+            void buildObject(string query, IDbCommand sentence, string name, object param)
             {
                 this.parameter = setParameter(sentence, name, param);
                 sentence.Parameters.Add(this.parameter);
@@ -188,14 +197,20 @@ namespace CarManagement.Services
                                     this.wheels = vehicle.Wheels;
                                     foreach (IWheel wheel in this.wheels)
                                     {
-                                        buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
+                                        IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                        dictionary.Add("vehicleId", "@id");
+                                        dictionary.Add("pressure", "@pressure");
+                                        buildObject(insertupdateMethod("INSERT INTO ", "wheel", dictionary, "VALUES "), sentence, "@pressure", wheel.Pressure);
                                     }
                                     sentence.CommandText = DELETE_DOOR;
                                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                                     this.doors = vehicle.Doors;
                                     foreach (IDoor door in this.doors)
                                     {
-                                        buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
+                                        IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                        dictionary.Add("isOpen", "@isOpen");
+                                        dictionary.Add("vehicleId", "@id");
+                                        buildObject(insertupdateMethod("INSERT INTO ", "door", dictionary, "VALUES "), sentence, "@isOpen", door.IsOpen);
                                     }
                                 }
                                 else
@@ -206,12 +221,18 @@ namespace CarManagement.Services
                                     this.wheels = vehicle.Wheels;
                                     foreach (IWheel wheel in this.wheels)
                                     {
-                                        buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
+                                        IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                        dictionary.Add("vehicleId", "@id");
+                                        dictionary.Add("pressure", "@pressure");
+                                        buildObject(insertupdateMethod("INSERT INTO ", "wheel", dictionary, "VALUES "), sentence, "@pressure", wheel.Pressure);
                                     }
                                     this.doors = vehicle.Doors;
                                     foreach (IDoor door in this.doors)
                                     {
-                                        buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
+                                        IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                        dictionary.Add("isOpen", "@isOpen");
+                                        dictionary.Add("vehicleId", "@id");
+                                        buildObject(insertupdateMethod("INSERT INTO ", "door", dictionary, "VALUES "), sentence, "@isOpen", door.IsOpen);
                                     }
                                 }
                             }
@@ -238,12 +259,18 @@ namespace CarManagement.Services
                             this.wheels = vehicle.Wheels;
                             foreach (IWheel wheel in this.wheels)
                             {
-                                buildObject("@pressure", wheel.Pressure, INSERT_WHEEL, sentence);
+                                IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                dictionary.Add("vehicleId", "@id");
+                                dictionary.Add("pressure", "@pressure");
+                                buildObject(insertupdateMethod("INSERT INTO ", "wheel", dictionary, "VALUES "), sentence, "@pressure", wheel.Pressure);
                             }
                             this.doors = vehicle.Doors;
                             foreach (IDoor door in this.doors)
                             {
-                                buildObject("@isOpen", door.IsOpen, INSERT_DOOR, sentence);
+                                IDictionary<string, string> dictionary = new Dictionary<string, string>();
+                                dictionary.Add("isOpen", "@isOpen");
+                                dictionary.Add("vehicleId", "@id");
+                                buildObject(insertupdateMethod("INSERT INTO ", "door", dictionary, "VALUES "), sentence, "@isOpen", door.IsOpen);
                             }
                         }
                     }
@@ -257,15 +284,90 @@ namespace CarManagement.Services
             parameter.Value = thing;
             return parameter;
         }
-        private static string selectMethod(string table)
+        private static string createQuery(string query, IDictionary<string, string> conditionParts)
         {
-            string select = $"SELECT * FROM {table}";
-            return select;
+            int counter = 0;
+            foreach (string conditionPart in conditionParts.Values)
+            {
+                if (counter == 0)
+                {
+                    query += " WHERE " + conditionPart;
+                }
+                else
+                {
+                    query += " AND " + conditionPart;
+                }
+                counter++;
+            }
+            return query;
         }
         private static string whereMethod(string field, string condition)
         {
             string where = $" WHERE {field} = {condition}";
             return where;
+        }
+        private static string elementString(string query, List<string> elements)
+        {
+            int counter = 0;
+            foreach (string element in elements)
+            {
+                if (counter < elements.Count -1)
+                {
+                    query += element + ", ";
+                }
+                else  
+                {
+                    query += element + ") ";
+                }
+                counter++;
+            }
+            return query;
+        }
+        private static string selectDeleteMethod(string command, string table)
+        {
+            string select = $"{command} FROM {table}";
+            return select;
+        }
+        private static string insertupdateMethod(string type, string table, IDictionary<string, string> dataDictionary, string instruction)
+        {
+            List<string> columns, values;
+            dataToList(dataDictionary, out columns, out values);
+            string query = "";
+            query = elementString($"{elementString($"{type}{table} (", columns)}{instruction} (", values); //INSERT INTO wheel (vehicleId, pressure) VALUES (@id, @pressure)
+
+            return query;
+        }
+        private static void dataToList(IDictionary<string, string> dataDictionary, out List<string> columns, out List<string> values)
+        {
+            columns = new List<string>();
+            values = new List<string>();
+            foreach (string value in dataDictionary.Values)
+            {
+                values.Add(value);
+            }
+            foreach (string column in dataDictionary.Keys)
+            {
+                columns.Add(column);
+            }
+        }
+        private static string simpleQueryMethod(string table, string field, IDictionary<string, string> conditionParts, string command, IDictionary<string, string> dataDictionary)
+        {
+            string query = "";
+            if (command.Contains("SELECT") || command.Contains("DELETE"))
+            {
+                query = selectDeleteMethod(command, table);
+                query = query + createQuery(query, conditionParts);
+            }
+            else if (command.Contains("INSERT"))
+            {
+                query = insertupdateMethod(" SET ", table, dataDictionary, command);
+            }
+            else if (command.Contains("UPDATE"))
+            {
+                query = insertupdateMethod(" VALUES ", table, dataDictionary, command);
+                query = query + createQuery(query, conditionParts);
+            }
+            return query;
         }
 
         private class PrvVehicleQuery : IVehicleQuery
@@ -407,38 +509,61 @@ namespace CarManagement.Services
                                 this.enrollmentDto = this.vehicleBuilder2.enrollmentDtoBuilder(reader["serial"].ToString(), Convert.ToInt32(reader["number"]));
                                 this.color = (CarColor)Enum.Parse(typeof(CarColor), reader["color"].ToString());
                                 this.engineDto = this.vehicleBuilder2.engineDtoBuilder(Convert.ToBoolean(reader["engineIsStarted"]), Convert.ToInt32(reader["engineHorsePower"]));
-
-                                using (IDbCommand sentence2 = con.CreateCommand())
-                                {
-                                    sentence2.CommandText = selectDeleteMethod("SELECT pressure ", "wheel") + whereMethod("vehicleId", "@id");
-                                    sentence2.Parameters.Add(setParameter(sentence2, "@id", this.id));
-
-                                    using (IDataReader reader2 = sentence2.ExecuteReader())
-                                    {
-                                        while (reader2.Read())
-                                        {
-                                            this.wheelDto = this.vehicleBuilder2.wheelDtoBuilder(Convert.ToDouble(reader2["pressure"]));
-                                            this.wheelsDto.Add(this.wheelDto);
-                                        }
-                                    }
-                                }
-                                using (IDbCommand sentence2 = con.CreateCommand())
-                                {
-                                    sentence2.CommandText = selectDeleteMethod("SELECT isOpen ", "door") + whereMethod("vehicleId", "@id");
-                                    sentence2.Parameters.Add(setParameter(sentence2, "@id", (int)reader["id"]));
-
-                                    using (IDataReader reader2 = sentence2.ExecuteReader())
-                                    {
-                                        while (reader2.Read())
-                                        {
-                                            this.doorDto = this.vehicleBuilder2.doorDtoBuilder(Convert.ToBoolean(reader2["isOpen"]));
-                                            this.doorsDto.Add(this.doorDto);
-                                        }
-                                    }
-                                }
+                                elementCreator(con, sentence, "wheel");
+                                elementCreator(con, sentence, "door");
                                 yield return this.vehicleBuilder.import(this.vehicleBuilder2.vehicleDtoBuilder(this.enrollmentDto, this.engineDto, this.color, this.wheelsDto.ToArray(), this.doorsDto.ToArray()));
                             }
+                            reader.Close();
                         }
+                    }
+                }
+            }
+
+            private void elementCreator(IDbConnection con, IDbCommand sentence, string type)
+            {
+                using (IDbCommand sentence2 = con.CreateCommand())
+                {
+                    copyParameters(sentence, sentence2);
+                    sentence2.Parameters.Add(setParameter(sentence2, "@id", this.id));
+                    if (type == "door")
+                    {
+                        sentence2.CommandText = selectDeleteMethod("SELECT isOpen ", type) + whereMethod("vehicleId", "@id");
+
+                    }
+                    else if (type == "wheel")
+                    {
+                        sentence2.CommandText = selectDeleteMethod("SELECT pressure ", type) + whereMethod("vehicleId", "@id");
+                    }
+                    elementExtractor(sentence2, type);
+                }
+            }
+            private void elementExtractor(IDbCommand sentence2, string type)
+            {
+                using (IDataReader reader2 = sentence2.ExecuteReader())
+                {
+                    while (reader2.Read())
+                    {
+                        if (type == "wheel")
+                        {
+                            this.wheelDto = this.vehicleBuilder2.wheelDtoBuilder(Convert.ToDouble(reader2["pressure"]));
+                            this.wheelsDto.Add(this.wheelDto);
+                        }
+                        else if (type == "door")
+                        {
+                            this.doorDto = this.vehicleBuilder2.doorDtoBuilder(Convert.ToBoolean(reader2["isOpen"]));
+                            this.doorsDto.Add(this.doorDto);
+                        }
+                    }
+                }
+
+            }
+            private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
+            {
+                if (sentence2.Parameters == null)
+                {
+                    foreach (IDbDataParameter parameter in sentence.Parameters)
+                    {
+                        sentence2.Parameters.Add(parameter);
                     }
                 }
             }
@@ -449,6 +574,7 @@ namespace CarManagement.Services
                 parameter.Value = thing;
                 return parameter;
             }
+
             private static string createQuery(string query, IDictionary<string, string> conditionParts)
             {
                 int counter = 0;
@@ -493,44 +619,6 @@ namespace CarManagement.Services
                 string select = $"{command} FROM {table}";
                 return select;
             }
-            private static string insertupdateMethod(string table, IDictionary<string, string> dataDictionary, string type, string instruction)
-            {
-                List<string> columns = new List<string>();
-                List<string> values = new List<string>();
-                foreach (string value in dataDictionary.Values)
-                {
-                    values.Add(value);
-                }
-                foreach (string column in dataDictionary.Keys)
-                {
-                    columns.Add(column);
-                }
-                string query = "";
-                query = $"{type}{table} (";
-                query = query + $"{elementString(query, columns)}{instruction}(";
-                query = query + elementString(query, values);
-
-                return query;
-            }
-            private static string simpleQueryMethod(string table, string field, IDictionary<string, string> conditionParts, string command, IDictionary<string, string> dataDictionary)
-            {
-                string query ="";
-                if(command.Contains("SELECT") || command.Contains("DELETE"))
-                {
-                    query = selectDeleteMethod(command, table);
-                    query = query + createQuery(query, conditionParts);
-                }
-                else if(command.Contains("INSERT"))
-                {
-                    query = insertupdateMethod(table, dataDictionary, command, " SET ");
-                }
-                else if(command.Contains("UPDATE"))
-                {
-                    query = insertupdateMethod(table, dataDictionary, command, " VALUES ");
-                }
-                return query;
-            }
-
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
