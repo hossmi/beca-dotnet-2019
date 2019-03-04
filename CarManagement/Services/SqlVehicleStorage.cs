@@ -18,24 +18,7 @@ namespace CarManagement.Services
         private IDataParameter parameter;
         private List<string> idList;
         private object query;
-        private IDoor[] doors;
-        private IWheel[] wheels;
         private int id;
-        const string INSERT_ENROLLMENT = @"INSERT INTO enrollment(serial, number)
-            VALUES (@serial, @number)";
-        const string UPDATE_VEHICLE = @"UPDATE vehicle
-            SET color = @color, 
-            engineHorsePower = @engineHorsePower, 
-            engineIsStarted = @engineIsStarted
-            WHERE enrollmentId = @id";
-        const string DELETE_WHEEL = @"DELETE FROM wheel
-            WHERE vehicleId = @id";
-        const string INSERT_WHEEL = @"INSERT INTO wheel(vehicleId, pressure)
-            VALUES (@id, @pressure)";
-        const string DELETE_DOOR = @"DELETE FROM door
-            WHERE vehicleId = @id";
-        const string INSERT_DOOR = @"INSERT INTO door(vehicleId, isOpen)
-            VALUES (@id, @isOpen)";
         const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
@@ -73,7 +56,7 @@ namespace CarManagement.Services
                     {
                         while (reader.Read())
                         {
-                            this.idList.Add(reader["id"].ToString());
+                            this.idList.Add(reader.GetValue(0).ToString());
                         }
                         reader.Close();
                     }
@@ -146,80 +129,83 @@ namespace CarManagement.Services
                 {
                     sentence.Parameters.Add(setParameter(sentence, "@serial", vehicle.Enrollment.Serial));
                     sentence.Parameters.Add(setParameter(sentence, "@number", vehicle.Enrollment.Number));
-                    IDictionary<string, string> where = selectIdEnrollment(sentence);
+                    selectIdEnrollment(sentence);
                     if (sentence.ExecuteScalar() != null)
                     {
-                        using (IDataReader reader = sentence.ExecuteReader())
-                        {
-                            sentence.Parameters.Clear();
-                            reader.Read();
-                            sentence.Parameters.Add(setParameter(sentence, $"@{reader.GetName(0)}", reader.GetValue(0)));
-                            reader.Close();
-                            where = selectVehicle(sentence);
-                            this.query = sentence.ExecuteScalar();
-                            using (IDataReader reader2 = sentence.ExecuteReader())
-                            {
-                                reader2.Read();
-                                sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
-                                sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0));
-                                sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
-                                reader2.Close();
+                        readEnrollmentId(sentence);
+                        selectVehicle(sentence);
+                        this.query = sentence.ExecuteScalar();
+                        setVehicleParameters(vehicle, sentence);
 
-                                if (this.query != null)
-                                {
-                                    sentence.CommandText = UPDATE_VEHICLE;
-                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                                    sentence.CommandText = DELETE_WHEEL;
-                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                                    sentence.CommandText = DELETE_DOOR;
-                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                                    insertwheelsdoors(vehicle, sentence);
-                                }
-                                else
-                                {
-                                    insertVehicle(sentence);
-                                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                                    insertwheelsdoors(vehicle, sentence);
-                                }
-                            }
+                        if (this.query != null)
+                        {
+                            updateVehicle(sentence);
+                            deleteWheelsDoors(sentence);
+                            insertwheelsdoors(vehicle, sentence);
+                        }
+                        else
+                        {
+                            insertVehicle(sentence);
+                            insertwheelsdoors(vehicle, sentence);
                         }
                     }
                     else
                     {
-                        sentence.CommandText = INSERT_ENROLLMENT;
+                        insertEnrollment(sentence);
+                        selectIdEnrollment(sentence);
+                        readEnrollmentId(sentence);
+                        setVehicleParameters(vehicle, sentence);
+                        insertVehicle(sentence);
                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                        where = selectIdEnrollment(sentence);
-                        Asserts.isTrue(sentence.ExecuteScalar() != null);
-                        using (IDataReader reader = sentence.ExecuteReader())
-                        {
-                            reader.Read();
-                            sentence.Parameters.Add(setParameter(sentence, "@id", (int)reader["id"]));
-                            reader.Close();
-
-                            sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
-                            sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
-                            sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", Convert.ToInt16(vehicle.Engine.IsStarted)));
-
-                            insertVehicle(sentence);
-                            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            insertwheelsdoors(vehicle, sentence);
-                        }
+                        insertwheelsdoors(vehicle, sentence);
                     }
                 }
             }
         }
-        private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
+
+        private static void insertEnrollment(IDbCommand sentence)
         {
-            this.wheels = vehicle.Wheels;
-            foreach (IWheel wheel in this.wheels)
+            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("serial", "@serial");
+            dictionary.Add("number", "@number");
+            sentence.CommandText = makeInsertUpdate("INSERT INTO ", "enrollment", dictionary, "VALUES ");
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        private static void setVehicleParameters(IVehicle vehicle, IDbCommand sentence)
+        {
+            sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
+            sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0));
+            sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
+        }
+        private static void readEnrollmentId(IDbCommand sentence)
+        {
+            using (IDataReader reader = sentence.ExecuteReader())
             {
-                makeWheelDoor(sentence, wheel.Pressure, "pressure", "wheel");
+                //sentence.Parameters.Clear();
+                reader.Read();
+                sentence.Parameters.Add(setParameter(sentence, $"@{reader.GetName(0)}", reader.GetValue(0)));
+                reader.Close();
             }
-            this.doors = vehicle.Doors;
-            foreach (IDoor door in this.doors)
-            {
-                makeWheelDoor(sentence, door.IsOpen, "isOpen", "door");
-            }
+        }
+        private static void updateVehicle(IDbCommand sentence)
+        {
+            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("color", "@color");
+            dictionary.Add("engineHorsePower", "@engineHorsePower");
+            dictionary.Add("engineIsStarted", "@engineIsStarted");
+            IDictionary<string, string> where = new Dictionary<string, string>();
+            where.Add("@id", "enrollmentId");
+            sentence.CommandText = createQuery(makeInsertUpdate("UPDATE ", "vehicle ", dictionary, "SET "), buildConditions(where, "vehicle"));
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        private static void deleteWheelsDoors(IDbCommand sentence)
+        {
+            IDictionary<string, string> where = new Dictionary<string, string>();
+            where.Add("@id", "vehicleId");
+            sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "wheel "), buildConditions(where, "vehicle"));
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+            sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "door "), buildConditions(where, "vehicle"));
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private static void insertVehicle(IDbCommand sentence)
         {
@@ -237,13 +223,30 @@ namespace CarManagement.Services
             sentence.CommandText = createQuery(makeSelectDelete("SELECT * ", "vehicle"), buildConditions(where, "vehicle"));
             return where;
         }
-        private static IDictionary<string, string> selectIdEnrollment(IDbCommand sentence)
+        private static void selectIdEnrollment(IDbCommand sentence)
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
             where.Add("@serial", "serial");
             where.Add("@number", "number");
             sentence.CommandText = createQuery(makeSelectDelete("SELECT id ", "enrollment"), buildConditions(where, "erollment"));
-            return where;
+        }
+        private static void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
+        {
+            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+            dictionary.Add("vehicleId", "@id");
+            dictionary.Add(column, $"@{column}");
+            inserObject(makeInsertUpdate("INSERT INTO ", table, dictionary, "VALUES "), sentence, $"@{column}", parameter);
+        }
+        private static void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
+        {
+            foreach (IWheel wheel in vehicle.Wheels)
+            {
+                makeWheelDoor(sentence, wheel.Pressure, "pressure", "wheel");
+            }
+            foreach (IDoor door in vehicle.Doors)
+            {
+                makeWheelDoor(sentence, door.IsOpen, "isOpen", "door");
+            }
         }
         private static IDictionary<string, string> buildConditions(IDictionary<string, string> where, string table)
         {
@@ -289,9 +292,10 @@ namespace CarManagement.Services
         {
             return $" WHERE {field} = {condition}";
         }
-        private static string makeElementString(string query, List<string> elements)
+        private static string makeElementString(List<string> elements)
         {
             int counter = 0;
+            string query = "";
             foreach (string element in elements)
             {
                 if (counter < elements.Count -1)
@@ -300,7 +304,7 @@ namespace CarManagement.Services
                 }
                 else  
                 {
-                    query += element + ") ";
+                    query += element;
                 }
                 counter++;
             }
@@ -314,21 +318,41 @@ namespace CarManagement.Services
         {
             List<string> columns, values;
             convertDataToList(dataDictionary, out columns, out values);
-
-            return makeElementString($"{makeElementString($"{type}{table} (", columns)}{instruction} (", values);
+            if (type.Contains("UPDATE"))
+            {
+                return type + table + instruction + makeElementString(buildStringList(dataDictionary));
+            }
+            else
+            {
+                return $"{type}{table}({makeElementString(columns)}){instruction}({makeElementString(values)})";
+            }
         }
         private static void convertDataToList(IDictionary<string, string> dataDictionary, out List<string> columns, out List<string> values)
         {
             columns = new List<string>();
             values = new List<string>();
-            foreach (string value in dataDictionary.Values)
+            foreach (KeyValuePair<string, string> pair in dataDictionary)
+            {
+                values.Add(pair.Value);
+                columns.Add(pair.Key);
+            }
+            /*foreach (string value in dataDictionary.Values)
             {
                 values.Add(value);
             }
             foreach (string column in dataDictionary.Keys)
             {
                 columns.Add(column);
+            }*/
+        }
+        private static List<string> buildStringList(IDictionary<string, string> dictionary)
+        {
+            List<string> strinList = new List<string>();
+            foreach (KeyValuePair<string, string> key in dictionary)
+            {
+                strinList.Add($"{key.Key} = {key.Value}");
             }
+            return strinList;
         }
         IDictionary<string, string> buildDictionary(string name, string parameter)
         {
@@ -362,13 +386,6 @@ namespace CarManagement.Services
             sentence.CommandText = query;
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             sentence.Parameters.Remove(parameter);
-        }
-        private static void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
-        {
-            IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("vehicleId", "@id");
-            dictionary.Add(column, $"@{column}");
-            inserObject(makeInsertUpdate("INSERT INTO ", table, dictionary, "VALUES "), sentence, $"@{column}", parameter);
         }
         private static void makeElements(string type, IDbCommand sentence, object[] things)
         {
