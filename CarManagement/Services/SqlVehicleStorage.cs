@@ -18,8 +18,8 @@ namespace CarManagement.Services
         private readonly IVehicleBuilder vehicleBuilder;
         private IDataParameter parameter;
         private List<string> idList;
-        private object query;
         private int id;
+        private object query;
         const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
@@ -52,7 +52,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = makeSelectDelete("SELECT id ", "enrollment");
+                    sentence.CommandText = buildSimpleQuery("SELECT id ", "enrollment").ToString();
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -65,7 +65,7 @@ namespace CarManagement.Services
                     {
                         this.parameter = setParameter(sentence, "@id", id);
                         sentence.Parameters.Add(this.parameter);
-                        sentence.CommandText = deleteAll();
+                        sentence.CommandText = deleteAll().ToString();
                         sentence.ExecuteNonQuery();
                         sentence.Parameters.Remove(this.parameter);
 
@@ -77,10 +77,7 @@ namespace CarManagement.Services
         }
         public void Dispose()
         {
-            using (IDbConnection con = new SqlConnection(this.connectionString))
-            {
-                con.Close();
-            }    
+            SqlConnection.ClearAllPools();
         }
         public IVehicleQuery get()
         {
@@ -95,19 +92,13 @@ namespace CarManagement.Services
                     con.Open();
                     sentence.Parameters.Add(setParameter(sentence, "@serial", enrollment.Serial));
                     sentence.Parameters.Add(setParameter(sentence, "@number", enrollment.Number));
-                    sentence.CommandText = makeSelectDelete("SELECT id ","enrollment") + "WHERE serial = @serial AND number = @number";
-
-                    using (IDataReader reader = sentence.ExecuteReader())
-                    {
-                        reader.Read();
-                        this.id = (int)reader["enrollmentId"];
-                        reader.Close();
-                    }
-                    sentence.CommandText = $"{makeSelectDelete("SELECT * ", "vehicle")}{makeSimpleWhere("enrollmentId", "@id")};";
+                    selectIdEnrollment(sentence);
+                    readEnrollmentId(sentence);
+                    selectVehicle(sentence);
                     sentence.Parameters.Add(setParameter(sentence, "@id", this.id));
                     if (sentence.ExecuteScalar() != null)
                     {
-                        sentence.CommandText = deleteAll();
+                        sentence.CommandText = deleteAll().ToString();
                         sentence.ExecuteNonQuery();
                     }
                 }
@@ -183,19 +174,19 @@ namespace CarManagement.Services
         private static void insertEnrollment(IDbCommand sentence)
         {
             IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("serial", "@serial");
-            dictionary.Add("number", "@number");
-            sentence.CommandText = makeInsertUpdate("INSERT INTO ", "enrollment", dictionary, "VALUES ");
+            dictionary.Add("@serial", "serial");
+            dictionary.Add("@number", "number");
+            sentence.CommandText = buildSimpleQuery("INSERT INTO", "enrollment", dictionary, dictionary).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private static void insertVehicle(IDbCommand sentence)
         {
             IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("enrollmentId", "@id");
-            dictionary.Add("color", "@color");
-            dictionary.Add("engineHorsePower", "@engineHorsePower");
-            dictionary.Add("engineIsStarted", "@engineIsStarted");
-            sentence.CommandText = makeInsertUpdate("INSERT INTO ", "vehicle", dictionary, "VALUES ");
+            dictionary.Add("@id", "enrollmentId");
+            dictionary.Add("@color", "color");
+            dictionary.Add("@engineHorsePower", "engineHorsePower");
+            dictionary.Add("@engineIsStarted", "engineIsStarted");
+            sentence.CommandText = buildSimpleQuery("INSERT INTO ", "vehicle", dictionary, dictionary).ToString();
         }
         private static void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
@@ -211,9 +202,9 @@ namespace CarManagement.Services
         private static void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
         {
             IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("vehicleId", "@id");
-            dictionary.Add(column, $"@{column}");
-            inserObject(makeInsertUpdate("INSERT INTO ", table, dictionary, "VALUES "), sentence, $"@{column}", parameter);
+            dictionary.Add("@id", "vehicleId");
+            dictionary.Add($"@{column}", column);
+            inserObject(buildSimpleQuery("INSERT INTO ", table, dictionary, dictionary).ToString(), sentence, $"@{column}", parameter);
         }
         private static void makeElements(string type, IDbCommand sentence, object[] things)
         {
@@ -234,9 +225,8 @@ namespace CarManagement.Services
         private static object selectVehicle(IDbCommand sentence)
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@id", "enrollmentId");
-            //sentence.CommandText = createQuery(makeSelectDelete("SELECT * ", "vehicle"), buildConditions(where, "vehicle"));
-            sentence.CommandText = buildSimpleQuery("SELECT *", "vehicle", where).ToString();
+            where.Add("@id", "id");
+            sentence.CommandText = buildSimpleQuery("SELECT * ", "vehicle", where).ToString();
             return sentence.ExecuteScalar();
         }
 
@@ -246,7 +236,6 @@ namespace CarManagement.Services
             where.Add("@serial", "serial");
             where.Add("@number", "number");
             sentence.CommandText = buildSimpleQuery("SELECT id", "enrollment", where).ToString();
-            //sentence.CommandText = createQuery(makeSelectDelete("SELECT id ", "enrollment"), buildConditions(where, "erollment"));
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -269,26 +258,30 @@ namespace CarManagement.Services
             IDictionary<string, string> where = new Dictionary<string, string>();
             where.Add("@id", "enrollmentId");
             sentence.CommandText = buildSimpleQuery("UPDATE ", "vehicle", where, dictionary).ToString();
-            //sentence.CommandText = createQuery(makeInsertUpdate("UPDATE ", "vehicle ", dictionary, "SET "), buildConditions(where, "vehicle"));
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
 
         //deleteTools
-        private static string deleteAll()
+        private static StringBuilder deleteAll()
         {
-            string query = $"{makeSelectDelete("DELETE ", "door")}{makeSimpleWhere("vehicleId", "@id")};" +
-                $"{makeSelectDelete("DELETE ", "wheel")}{makeSimpleWhere("vehicleId", "@id")};" +
-                $"{makeSelectDelete("DELETE ", "vehicle")}{makeSimpleWhere("enrollmentId", "@id")};" +
-                $"{makeSelectDelete("DELETE ", "enrollment")}{makeSimpleWhere("id", "@id")};";
+            IDictionary<string, string> where = new Dictionary<string, string>();
+            where.Add("@id", "id");
+            StringBuilder query = new StringBuilder();
+            query.Insert(query.Length, $@"
+                {buildSimpleQuery("DELETE ", "wheel", where, where)};
+                {buildSimpleQuery("DELETE ", "door", where, where)};");
+            query.Insert(query.Length, $"{buildSimpleQuery("DELETE ", "vehicle", where, where)};");
             return query;
         }
         private static void deleteWheelsDoors(IDbCommand sentence)
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
             where.Add("@id", "vehicleId");
-            sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "wheel "), buildConditions(where, "vehicle"));
+            //sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "wheel "), buildConditions(where, "vehicle"));
+            sentence.CommandText = buildSimpleQuery("DELETE ", "wheel", where).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "door "), buildConditions(where, "vehicle"));
+            sentence.CommandText = buildSimpleQuery("DELETE ", "door", where).ToString();
+            //sentence.CommandText = createQuery(makeSelectDelete("DELETE ", "door "), buildConditions(where, "vehicle"));
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
 
@@ -296,31 +289,19 @@ namespace CarManagement.Services
         public static StringBuilder buildSimpleQuery(string command, string table, IDictionary<string, string> conditions = null, IDictionary<string, string> columnsValues = null)
         {
             StringBuilder query = new StringBuilder();
+            query.Capacity = 60;
+            //select without condition(s)
             if (conditions == null && columnsValues == null)
             {
                 query.Insert(query.Length, $"{command} FROM {table}");
             }
+            //select-delete with condition(s)
             else if (command.Contains("SELECT") || command.Contains("DELETE"))
             {
                 query.Insert(query.Length, $"{command} FROM {table}");
-                int counter = 0;
-                foreach (KeyValuePair<string, string> condition in conditions)
-                {
-                    if (counter == 0)
-                    {
-                        query.Insert(query.Length, $" WHERE {condition.Value} = {condition.Key}");
-                    }
-                    else if (counter < conditions.Count - 1)
-                    {
-                        query.Insert(query.Length, $", AND {condition.Value} = {condition.Key}");
-                        if (counter == conditions.Count - 1)
-                        {
-                            query.Insert(query.Length, $", ");
-                        }
-                    }
-                    counter++;
-                }
+                addConditions(table, conditions, query);
             }
+            //update
             else if (command.Contains("UPDATE"))
             {
                 //update with condition(s)
@@ -329,195 +310,89 @@ namespace CarManagement.Services
                 foreach (KeyValuePair<string, string> columnValue in columnsValues)
                 {
                     query.Insert(query.Length, $"{columnValue.Value} = {columnValue.Key}");
-                    if(counter < columnsValues.Count-1)
+                    if (counter < columnsValues.Count - 1)
                     {
                         query.Insert(query.Length, ", ");
                     }
                     counter++;
                 }
-                counter = 0;
-                foreach (KeyValuePair<string, string> condition in conditions)
+                addConditions(table, conditions, query);
+            }
+            //insert
+            else if (command.Contains("INSERT"))
+            {
+                query.Insert(query.Length, $"{command} {table}");
+                addFields(columnsValues.Values, query);
+                query.Insert(query.Length, " VALUES ");
+                addFields(columnsValues.Keys, query);
+
+            }
+            return query;
+        }
+        private static void addConditions(string table, IDictionary<string, string> conditions, StringBuilder query)
+        {
+            int counter = 0;
+            foreach (KeyValuePair<string, string> condition in conditions)
+            {
+                StringBuilder conditionsp = new StringBuilder();
+                conditionsp.Capacity = 30;
+                if (condition.Value == "id")
                 {
+                    if (table == "vehicle")
+                    {
+                        conditionsp.Insert(conditionsp.Length, $"enrollmentId = {condition.Key}");
+                    }
+                    else if (table != "enrollment")
+                    {
+                        conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
+                    }
+                    else
+                    {
+                        conditionsp.Insert(conditionsp.Length, $"vehicleId = {condition.Key}");
+                    }
+                }
+                else
+                {
+                    conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
                     if (counter == 0 || conditions.Count == 1)
                     {
-                        query.Insert(query.Length, $" WHERE {condition.Value} = {condition.Key}");
+                        query.Insert(query.Length, $" WHERE {conditionsp}");
                     }
                     else if (counter < conditions.Count - 1)
                     {
-                        query.Insert(query.Length, $", AND {condition.Value} = {condition.Key}");
+                        query.Insert(query.Length, $", AND {conditionsp}");
                         if (counter == conditions.Count - 1)
                         {
                             query.Insert(query.Length, ", ");
                         }
                     }
-                    counter++;
                 }
+                counter++;
             }
-            //insert
-            else if (command.Contains("INSERT"))
-            {
-                int counter = 0;
-                query.Insert(query.Length, $"{command} {table}");
-                foreach (KeyValuePair<string, string> columnValue in columnsValues)
-                {
-                    if (counter == 0)
-                    {
-                        query.Insert(query.Length, $"({columnValue.Value} ");
-                        if (columnsValues.Count == 1)
-                        {
-                            query.Insert(query.Length, ")");
-                        }
-                    }
-                    else if (counter < columnsValues.Count - 1)
-                    {
-                        query.Insert(query.Length, $", {columnValue.Value}");
-                        if (counter == columnsValues.Count - 1)
-                        {
-                            query.Insert(query.Length, ") ");
-                        }
-                    }
-                    counter++;
-                }
-                query.Insert(query.Length, " VALUES ");
-                counter = 0;
-                foreach (KeyValuePair<string, string> columnValue in columnsValues)
-                {
-                    if (counter == 0)
-                    {
-                        query.Insert(query.Length, $"({columnValue.Key}");
-                        if (columnsValues.Count == 1)
-                        {
-                            query.Insert(query.Length, ")");
-                        }
-                    }
-                    else if (counter < columnsValues.Count - 1)
-                    {
-                        query.Insert(query.Length, $", {columnValue.Key}");
-                        if (counter == columnsValues.Count - 1)
-                        {
-                            query.Insert(query.Length, ") ");
-                        }
-                    }
-                    counter++;
-                }
-            }
-            return query;
         }
-        private static string createQuery(string query, IDictionary<string, string> conditionParts)
+        private static void addFields(ICollection<string> values, StringBuilder query)
         {
             int counter = 0;
-            foreach (string conditionPart in conditionParts.Values)
+            foreach (string value in values)
             {
                 if (counter == 0)
                 {
-                    query += " WHERE " + conditionPart;
+                    query.Insert(query.Length, $"({value}");
+                    if (values.Count == 1)
+                    {
+                        query.Insert(query.Length, ")");
+                    }
                 }
-                else
+                else if (counter < values.Count)
                 {
-                    query += " AND " + conditionPart;
+                    query.Insert(query.Length, $", {value}");
+                    if (counter == values.Count - 1)
+                    {
+                        query.Insert(query.Length, ") ");
+                    }
                 }
                 counter++;
             }
-            return query;
-        }
-        private static string makeSimpleWhere(string field, string condition)
-        {
-            return $" WHERE {field} = {condition}";
-        }
-        private static string makeElementString(List<string> elements)
-        {
-            int counter = 0;
-            string query = "";
-            foreach (string element in elements)
-            {
-                if (counter < elements.Count - 1)
-                {
-                    query += element + ", ";
-                }
-                else
-                {
-                    query += element;
-                }
-                counter++;
-            }
-            return query;
-        }
-        private static string makeSelectDelete(string command, string table)
-        {
-            return $"{command} FROM {table}";
-        }
-        private static string makeInsertUpdate(string type, string table, IDictionary<string, string> dataDictionary, string instruction)
-        {
-            List<string> columns, values;
-            convertDataToList(dataDictionary, out columns, out values);
-            if (type.Contains("UPDATE"))
-            {
-                return type + table + instruction + makeElementString(buildStringList(dataDictionary));
-            }
-            else
-            {
-                return $"{type}{table}({makeElementString(columns)}){instruction}({makeElementString(values)})";
-            }
-        }
-        private static void convertDataToList(IDictionary<string, string> dataDictionary, out List<string> columns, out List<string> values)
-        {
-            columns = new List<string>();
-            values = new List<string>();
-            foreach (KeyValuePair<string, string> pair in dataDictionary)
-            {
-                values.Add(pair.Value);
-                columns.Add(pair.Key);
-            }
-        }
-        private static List<string> buildStringList(IDictionary<string, string> dictionary)
-        {
-            List<string> strinList = new List<string>();
-            foreach (KeyValuePair<string, string> key in dictionary)
-            {
-                strinList.Add($"{key.Key} = {key.Value}");
-            }
-            return strinList;
-        }
-        IDictionary<string, string> buildDictionary(string name, string parameter)
-        {
-            IDictionary<string, string> conditionPart = new Dictionary<string, string>();
-            conditionPart.Add(parameter, $"{name} = {parameter}");
-            return conditionPart;
-        }
-        private static string makeSimpleQuery(string command, string table, string field, IDictionary<string, string> conditionParts, IDictionary<string, string> dataDictionary)
-        {
-            string query = "";
-            if (command.Contains("SELECT") || command.Contains("DELETE"))
-            {
-                query = makeSelectDelete(command, table);
-                query += createQuery(query, conditionParts);
-            }
-            else if (command.Contains("INSERT"))
-            {
-                query = makeInsertUpdate(" SET ", table, dataDictionary, command);
-            }
-            else if (command.Contains("UPDATE"))
-            {
-                query = makeInsertUpdate(" VALUES ", table, dataDictionary, command);
-                query += createQuery(query, conditionParts);
-            }
-            return query;
-        }
-        private static IDictionary<string, string> buildConditions(IDictionary<string, string> where, string table)
-        {
-            IDictionary<string, string> conditions = new Dictionary<string, string>();
-            foreach (string value in where.Values)
-            {
-                if (value == "id" || value == "enrollmentId" || value == "vehicleId")
-                {
-                    conditions.Add($"@id", $"{value} = @id");
-                }
-                else
-                {
-                    conditions.Add($"@{value}", $"{value} = @{value}");
-                }
-            }
-            return conditions;
         }
 
         private class PrvVehicleQuery : IVehicleQuery
@@ -621,18 +496,11 @@ namespace CarManagement.Services
                 Asserts.isTrue(max > 0);
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
-                this.queryParts.Add("@engineHorsePower", "engineHorsePower BETWEEN @min AND @max");
+                this.queryParts.Add("@engineHorsePower", createCondition("engineHorsePower", "BETWEEN", "@min", "@max"));
                 this.max = max;
                 this.min = min;
                 return this;
             }
-            private static void addParametersDictionary(string key, string sqlCollumn, object parameter, IDictionary<string, object> queryParameters, IDictionary<string, string> queryParts)
-            {
-                string command = command = sqlCollumn + " = " + key;
-                queryParameters.Add(key, parameter);
-                queryParts.Add(key, command);
-            }
-
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return enumerate();
@@ -648,7 +516,9 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = createQuery(SELECT_VEHICLE_HEAD, this.queryParts);
+                        StringBuilder query = new StringBuilder(60);
+                        query.Insert(query.Length, SELECT_VEHICLE_HEAD);
+                        sentence.CommandText = createQuery(query, this.queryParts).ToString();
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
 
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -661,6 +531,7 @@ namespace CarManagement.Services
                                 this.engineDto = this.vehicleBuilder2.engineDtoBuilder(Convert.ToBoolean(reader.GetValue(4)), Convert.ToInt32(reader.GetValue(5)));
                                 CreateElement(con, sentence, "wheel");
                                 CreateElement(con, sentence, "door");
+
                                 yield return this.vehicleBuilder.import(this.vehicleBuilder2.vehicleDtoBuilder(this.enrollmentDto, this.engineDto, this.color, this.wheelsDto.ToArray(), this.doorsDto.ToArray()));
                             }
                             reader.Close();
@@ -669,6 +540,77 @@ namespace CarManagement.Services
                 }
             }
 
+            //stringTools
+            private static StringBuilder createQuery(StringBuilder query, IDictionary<string, string> conditionParts)
+            {
+                int counter = 0;
+                foreach (string conditionPart in conditionParts.Values)
+                {
+                    if (counter == 0)
+                    {
+                        query.Insert(query.Length, $" WHERE {conditionPart}");
+                    }
+                    else
+                    {
+                        query.Insert(query.Length, $" AND {conditionPart}");
+                    }
+                    counter++;
+                }
+                return query;
+            }
+            private static string addWhere(string field, string condition)
+            {
+                string where = $" WHERE {createFieldPart(field, "=", condition)}";
+                return where;
+            }
+            private static string makeSelectDelete(string command, string table)
+            {
+                string select = $"{command} FROM {table}";
+                return select;
+            }
+            private static void addParametersDictionary(string value, string column, object parameter, IDictionary<string, object> queryParameters, IDictionary<string, string> queryParts, string key = "=")
+            {
+                queryParameters.Add(value, parameter);
+                queryParts.Add(value, createFieldPart(column, "=", value));
+            }
+            private static string createCondition(string column, string key, string value, string value2 = null)
+            {
+                string query;
+                if (key == "BETWEEN")
+                {
+                    query = $"{column} {key} {createFieldPart(value, "AND", value2)}";
+                }
+                else
+                {
+                    query = createFieldPart(column, key, value);
+                }
+                return query;
+            }
+            private static string createFieldPart(string column, string key, string value)
+            {
+                return $"{column} {key} {value}";
+            }
+
+            //parameterTools
+            private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
+            {
+                if (sentence2.Parameters == null)
+                {
+                    foreach (IDbDataParameter parameter in sentence.Parameters)
+                    {
+                        sentence2.Parameters.Add(parameter);
+                    }
+                }
+            }
+            private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
+            {
+                IDataParameter parameter = sentence.CreateParameter();
+                parameter.ParameterName = name;
+                parameter.Value = thing;
+                return parameter;
+            }
+
+            //otherTools
             private void CreateElement(IDbConnection con, IDbCommand sentence, string type)
             {
                 using (IDbCommand sentence2 = con.CreateCommand())
@@ -706,68 +648,7 @@ namespace CarManagement.Services
                     }
                 }
             }
-            private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
-            {
-                if (sentence2.Parameters == null)
-                {
-                    foreach (IDbDataParameter parameter in sentence.Parameters)
-                    {
-                        sentence2.Parameters.Add(parameter);
-                    }
-                }
-            }
-            private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
-            {
-                IDataParameter parameter = sentence.CreateParameter();
-                parameter.ParameterName = name;
-                parameter.Value = thing;
-                return parameter;
-            }
 
-            private static string createQuery(string query, IDictionary<string, string> conditionParts)
-            {
-                int counter = 0;
-                foreach (string conditionPart in conditionParts.Values)
-                {
-                    if (counter == 0)
-                    {
-                        query += " WHERE " + conditionPart;
-                    }
-                    else
-                    {
-                        query += " AND " + conditionPart;
-                    }
-                    counter++;
-                }
-                return query;
-            }
-            private static string addWhere(string field, string condition)
-            {
-                string where = $" WHERE {field} = {condition}";
-                return where;
-            }
-            private static string elementString(string query, List<string> elements)
-            {
-                int counter = 0;
-                foreach (string element in elements)
-                {
-                    if (counter < elements.Count)
-                    {
-                        query += element + ", ";
-                    }
-                    else
-                    {
-                        query += element + ")";
-                    }
-                    counter++;
-                }
-                return query;
-            }
-            private static string makeSelectDelete(string command, string table)
-            {
-                string select = $"{command} FROM {table}";
-                return select;
-            }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -787,6 +668,7 @@ namespace CarManagement.Services
                 }
                 
             }
+            
         }
     }
 }
