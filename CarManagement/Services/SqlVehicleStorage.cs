@@ -17,7 +17,7 @@ namespace CarManagement.Services
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private IDataParameter parameter;
-        private List<string> idList;
+        private List<int> idList;
         private int id;
         private object query;
         const string COUNT_VEHICLE = @"USE CarManagement
@@ -27,8 +27,9 @@ namespace CarManagement.Services
         {
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
-            this.idList = new List<string>();
+            this.idList = new List<int>();
         }
+
         public int Count {
             get
             {
@@ -57,23 +58,20 @@ namespace CarManagement.Services
                     {
                         while (reader.Read())
                         {
-                            this.idList.Add(reader.GetValue(0).ToString());
+                            this.idList.Add((int)reader.GetValue(0));
                         }
                         reader.Close();
                     }
-                    foreach (string id in this.idList)
+                    foreach (int id in this.idList)
                     {
                         this.parameter = setParameter(sentence, "@id", id);
                         sentence.Parameters.Add(this.parameter);
                         sentence.CommandText = deleteAll().ToString();
                         sentence.ExecuteNonQuery();
                         sentence.Parameters.Remove(this.parameter);
-
                     }
                 }
-
             }
-
         }
         public void Dispose()
         {
@@ -147,7 +145,6 @@ namespace CarManagement.Services
             }
         }
 
-        //parameterTools
         private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
         {
             IDataParameter parameter = sentence.CreateParameter();
@@ -169,8 +166,7 @@ namespace CarManagement.Services
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             sentence.Parameters.Remove(parameter);
         }
-
-        //insertTools
+        
         private static void insertEnrollment(IDbCommand sentence)
         {
             IDictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -221,7 +217,6 @@ namespace CarManagement.Services
             }
         }
 
-        //selectTools
         private static object selectVehicle(IDbCommand sentence)
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
@@ -229,7 +224,6 @@ namespace CarManagement.Services
             sentence.CommandText = buildSimpleQuery("SELECT * ", "vehicle", where).ToString();
             return sentence.ExecuteScalar();
         }
-
         private static void selectIdEnrollment(IDbCommand sentence)
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
@@ -248,7 +242,6 @@ namespace CarManagement.Services
             }
         }
 
-        //updateToools
         private static void updateVehicle(IDbCommand sentence)
         {
             IDictionary<string, string> dictionary = new Dictionary<string, string>();
@@ -261,7 +254,6 @@ namespace CarManagement.Services
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
 
-        //deleteTools
         private static StringBuilder deleteAll()
         {
             IDictionary<string, string> where = new Dictionary<string, string>();
@@ -438,7 +430,26 @@ namespace CarManagement.Services
                 this.dictionaryId = new Dictionary<string, object>();
                 this.dictionaryId2 = new Dictionary<string, string>();
             }
+            private IEnumerable<IEnrollment> enumerateEnrollments()
+            {
+                using (IDbConnection con = new SqlConnection(this.connectionString))
+                {
+                    con.Open();
+                    using (IDbCommand sentence = con.CreateCommand())
+                    {
 
+                        sentence.CommandText = select("SELECT serial, number ", "enrollment").ToString();
+                        using (IDataReader reader = sentence.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                yield return this.enrollmentProvider.import(reader.GetValue(0).ToString(), Convert.ToInt16(reader.GetValue(1)));
+                            }
+                        }
+                    }
+                }
+
+            }
             public IEnumerable<IEnrollment> Keys
             {
                 get
@@ -491,6 +502,7 @@ namespace CarManagement.Services
                 this.min = min;
                 return this;
             }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return enumerate();
@@ -678,27 +690,6 @@ namespace CarManagement.Services
                         }
                     }
                 }
-            }
-
-            private IEnumerable<IEnrollment> enumerateEnrollments()
-            {
-                using (IDbConnection con = new SqlConnection(this.connectionString))
-                {
-                    con.Open();
-                    using (IDbCommand sentence = con.CreateCommand())
-                    {
-                        
-                        sentence.CommandText = select("SELECT * ", "enrollment").ToString();
-                        using (IDataReader reader = sentence.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                yield return this.enrollmentProvider.import(reader["serial"].ToString(), Convert.ToInt16(reader["number"]));
-                            }
-                        }
-                    }
-                }
-                
             }
             
         }

@@ -27,9 +27,6 @@ namespace WebCarManager.Controllers
             this.enrollmentEnum = this.vehicleStorage.get().Keys;
             this.enrollmentDto = new EnrollmentDto();
             this.enrollmentDtoList = new List<EnrollmentDto>();
-            this.enrollmentDto = new EnrollmentDto();
-            this.enrollmentProvider = new DefaultEnrollmentProvider();
-            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
             this.vehicleDto = new VehicleDto();
         }
 

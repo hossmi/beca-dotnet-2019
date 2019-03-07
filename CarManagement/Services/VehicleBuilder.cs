@@ -107,6 +107,10 @@ namespace CarManagement.Services
         {
             return this.enrollmentProvider.import(serial, number);
         }
+        public EnrollmentDto export(IEnrollment enrollment)
+        {
+            return convert(enrollment);
+        }
 
         private IEngine convert(EngineDto engineDto)
         {

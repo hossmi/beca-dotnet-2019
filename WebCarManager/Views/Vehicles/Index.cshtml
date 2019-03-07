@@ -1,13 +1,13 @@
 ﻿@using CarManagement.Core.Models.DTOs
 
-@model IEnumerable<CarManagement.Core.Models.DTOs.EnrollmentDto>
+@model List<EnrollmentDto>
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Vehiculos: @this.Model.Count</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
