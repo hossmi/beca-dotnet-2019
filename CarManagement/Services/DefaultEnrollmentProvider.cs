@@ -1,5 +1,7 @@
 ﻿using CarManagement.Core.Models;
 using CarManagement.Core.Services;
+using System;
+using System.Text;
 
 namespace CarManagement.Services
 {
@@ -24,49 +26,49 @@ namespace CarManagement.Services
         }
         IEnrollment IEnrollmentProvider.getNew()
         {
-                int Number = 0;
-                string Serial;
-                string A = "BCDFGHJKLMNPRSTUVWXYZ";
-                int lenght = A.Length - 1;
-                int i = 0;
-                int i2 = 0;
-                int i3 = 0;
-                int numo = 9999;
+            int Number = 0;
+            StringBuilder Serial = new StringBuilder(3);
+            StringBuilder A = new StringBuilder("BCDFGHJKLMNPRSTUVWXYZ", 21);
+            int lenght = A.Length - 1;
+            int i = 0;
+            int i2 = 0;
+            int i3 = 0;
+            int total = 9999;
 
-                Serial = System.Convert.ToString(A[i]) + System.Convert.ToString(A[i2]) + System.Convert.ToString(A[i3]);
-                if (i <= lenght)
+            Serial.Insert(0, $"{(A[i])}{(A[i2])}{(A[i3])}");
+            if (i <= lenght)
+            {
+
+                if (Number == total)
                 {
-
-                    if (Number == numo)
+                    if (i2 >= lenght && i3 == lenght)
                     {
-                        if (i2 >= lenght && i3 == lenght)
-                        {
-                            i2 = 0;
-                            i3 = 0;
-                            i++;
-                        }
-                        if (i3 == lenght)
-                        {
-                            i3 = 0;
-                            i2++;
-                        }
-                        else
-                        {
-                            i3++;
-                            Number = 0;
-                        }
+                        i2 = 0;
+                        i3 = 0;
+                        i++;
+                    }
+                    if (i3 == lenght)
+                    {
+                        i3 = 0;
+                        i2++;
                     }
                     else
                     {
-                        Number++;
+                        i3++;
+                        Number = 0;
                     }
                 }
                 else
                 {
-                    System.Console.WriteLine("Has alcanzado el máximo de matrículas");
+                    Number++;
                 }
-                Enrollment enrollment = new Enrollment(Serial, Number);
-                return enrollment;
+            }
+            else
+            {
+                Console.WriteLine("Has alcanzado el máximo de matrículas");
+            }
+            Enrollment enrollment = new Enrollment(Serial.ToString(), Number);
+            return enrollment;
         }
 
         IEnrollment IEnrollmentImporter.import(string serial, int number)
