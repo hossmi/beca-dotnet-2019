@@ -12,30 +12,30 @@ namespace WebCarManager.Controllers
     {
         private readonly IVehicleStorage vehicleStorage;
         private IEnrollmentProvider enrollmentProvider;
-        private IVehicleBuilder vehiclebuilder;
+        private VehicleBuilder vehicleBuilder;
         private IEnumerable<IEnrollment> enrollmentEnum;
         private EnrollmentDto enrollmentDto;
-        private List<EnrollmentDto> enrollmentDtoList;
-        private VehicleBuilder vehicleBuilder;
         private VehicleDto vehicleDto;
+        private List<EnrollmentDto> enrollmentDtoList;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
             this.enrollmentProvider = new DefaultEnrollmentProvider();
-            this.vehiclebuilder = new VehicleBuilder(this.enrollmentProvider);
-            this.enrollmentEnum = this.vehicleStorage.get().Keys;
+            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
             this.enrollmentDto = new EnrollmentDto();
-            this.enrollmentDtoList = new List<EnrollmentDto>();
             this.vehicleDto = new VehicleDto();
+            this.enrollmentDtoList = new List<EnrollmentDto>();
+            this.enrollmentEnum = this.vehicleStorage
+                .get()
+                .Keys;
         }
 
         public ActionResult Index()
         {
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
-                this.enrollmentDto.Number = enrollment.Number;
-                this.enrollmentDto.Serial = enrollment.Serial;
+                this.enrollmentDto = this.vehicleBuilder.export(enrollment);
                 this.enrollmentDtoList.Add(this.enrollmentDto);
             }
             this.ViewBag.Message = "Enrollment list";

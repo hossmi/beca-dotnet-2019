@@ -24,8 +24,9 @@
             <td>@enrollmentDto.Serial - @enrollmentDto.Number.ToString("0000")</td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {
-                   serial = enrollmentDto.Serial,
-                   number = enrollmentDto.Number }) |
+               serial = enrollmentDto.Serial,
+               number = enrollmentDto.Number.ToString("0000")
+           }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
