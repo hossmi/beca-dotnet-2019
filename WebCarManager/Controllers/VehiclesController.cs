@@ -23,7 +23,6 @@ namespace WebCarManager.Controllers
             this.vehicleStorage = getService<IVehicleStorage>();
             this.enrollmentProvider = new DefaultEnrollmentProvider();
             this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
-            this.vehicleDto = new VehicleDto();
         }
 
         public ActionResult Index()
@@ -34,9 +33,7 @@ namespace WebCarManager.Controllers
                 .Keys;
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
-                this.enrollmentDto = new EnrollmentDto();
-                //this.vehicleBuilder.export(enrollment);
-                this.enrollmentDto = this.vehicleBuilder.export(enrollment);
+                this.enrollmentDto = new EnrollmentDto(enrollment.Serial, enrollment.Number);
                 this.enrollmentDtoList.Add(this.enrollmentDto);
             }
             this.ViewBag.Message = "Enrollment list";
@@ -46,6 +43,7 @@ namespace WebCarManager.Controllers
         [HttpGet]
         public ActionResult Edit(string serial, int number)
         {
+            this.vehicleDto = new VehicleDto();
             this.vehicleDto = getVehicleData(serial, number);
             return View(this.vehicleDto);
         }
@@ -54,15 +52,26 @@ namespace WebCarManager.Controllers
         public ActionResult Save(VehicleDto vehicleDto)
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
-            return View(getVehicleData(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number));
+            this.vehicleDto = new VehicleDto();
+            this.vehicleDto = getVehicleData(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
+            return View(this.vehicleDto);
         }
 
         private VehicleDto getVehicleData(string serial, int number)
         {
-            return this.vehicleDto = this.vehicleBuilder.export(this.vehicleStorage.get()
-            .whereEnrollmentIs(this.enrollmentProvider.import(serial, number))
-            .Select(vehicle => vehicle)
-            .Single());
+            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
+            IEnumerable<IVehicle> vehicleList = this.vehicleStorage
+                .get()
+                .whereEnrollmentIs(enrollment);
+
+            IVehicle Ivehicle = vehicleList
+                //.Where(vehicle => vehicle.Enrollment == enrollment)
+                //.Select(vehicle => vehicle)
+                .Single();
+
+            VehicleDto vehicleDto = new VehicleDto();
+            vehicleDto = this.vehicleBuilder.export(Ivehicle);
+            return vehicleDto;
         }
     }
 }
