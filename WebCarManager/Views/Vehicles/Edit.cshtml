@@ -48,8 +48,7 @@
                     }
                 </select>
             </td>
-            <td colspan="3">
-            </td>
+            <td colspan="3"></td>
         </tr>
         <tr>
             <th>Engine</th>
@@ -67,7 +66,43 @@
             </td>
         </tr>
         <tr>
+            <th>Wheels</th>
+        </tr>
+        <tr>
             <td>
+                <select name="wheels">
+                    <option selected value="@Model.Wheels.Count()">@Model.Wheels.Count()</option>
+                    @for (int i = 0; i < 7; i++)
+                    {
+                        if (Model.Wheels.Count() != i)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>Doors</th>
+        </tr>
+        <tr>
+            <td>
+                <select name="doors">
+                    <option selected value="@Model.Doors.Count()">@Model.Doors.Count()</option>
+                    @for (int i = 0; i < 7; i++)
+                    {
+                        if (Model.Doors.Count() != i)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="hidden" name="serial" value="@Model.Enrollment.Serial" />
+                <input type="hidden" name="number" value="@Model.Enrollment.Number" />
                 <input type="submit" value="save" />
             </td>
         </tr>
