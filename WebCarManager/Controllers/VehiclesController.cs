@@ -11,9 +11,10 @@ namespace WebCarManager.Controllers
     public class VehiclesController : AbstractController
     {
         private readonly IVehicleStorage vehicleStorage;
-        private IEnrollmentProvider enrollmentProvider;
-        private VehicleBuilder vehicleBuilder;
-        private IEnumerable<IEnrollment> enrollmentEnum;
+        private readonly IEnrollmentProvider enrollmentProvider;
+        private readonly VehicleBuilder vehicleBuilder;
+        private readonly IEnumerable<IEnrollment> enrollmentEnum;
+        private readonly IEnumerable<IVehicle> vehicleList;
         private EnrollmentDto enrollmentDto;
         private VehicleDto vehicleDto;
         private List<EnrollmentDto> enrollmentDtoList;
@@ -23,14 +24,15 @@ namespace WebCarManager.Controllers
             this.vehicleStorage = getService<IVehicleStorage>();
             this.enrollmentProvider = new DefaultEnrollmentProvider();
             this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
+            this.vehicleList = this.vehicleStorage
+                .get();
+            this.enrollmentEnum = this.vehicleList
+                .Select(vehicle => vehicle.Enrollment);
         }
 
         public ActionResult Index()
         {
             this.enrollmentDtoList = new List<EnrollmentDto>();
-            this.enrollmentEnum = this.vehicleStorage
-                .get()
-                .Keys;
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
                 this.enrollmentDto = new EnrollmentDto(enrollment.Serial, enrollment.Number);
@@ -39,39 +41,32 @@ namespace WebCarManager.Controllers
             this.ViewBag.Message = "Enrollment list";
             return View(this.enrollmentDtoList);
         }
+
         // GET: Vehicles
         [HttpGet]
         public ActionResult Edit(string serial, int number)
         {
             this.vehicleDto = new VehicleDto();
-            this.vehicleDto = getVehicleData(serial, number);
+            this.vehicleDto = getVehicle(serial, number);
             return View(this.vehicleDto);
         }
+
         // SET: Vehicles
         [HttpGet]
         public ActionResult Save(VehicleDto vehicleDto)
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
             this.vehicleDto = new VehicleDto();
-            this.vehicleDto = getVehicleData(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
+            this.vehicleDto = getVehicle(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
             return View(this.vehicleDto);
         }
 
-        private VehicleDto getVehicleData(string serial, int number)
+        private VehicleDto getVehicle(string serial, int number)
         {
-            IEnrollment enrollment = this.enrollmentProvider.import(serial, number);
-            IEnumerable<IVehicle> vehicleList = this.vehicleStorage
+                return this.vehicleBuilder.export(this.vehicleStorage
                 .get()
-                .whereEnrollmentIs(enrollment);
-
-            IVehicle Ivehicle = vehicleList
-                //.Where(vehicle => vehicle.Enrollment == enrollment)
-                //.Select(vehicle => vehicle)
-                .Single();
-
-            VehicleDto vehicleDto = new VehicleDto();
-            vehicleDto = this.vehicleBuilder.export(Ivehicle);
-            return vehicleDto;
+                .whereEnrollmentIs(this.enrollmentProvider.import(serial, number))
+                .Single());
         }
     }
 }
