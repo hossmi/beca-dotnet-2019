@@ -37,10 +37,18 @@
         </tr>
         <tr>
             <td colspan="3">
-                <input type="text" name="color" value="@Model.Color.ToString()" />
+                <select name="color">
+                    <option selected value="@Convert.ToInt32(Model.Color)">@Model.Color.ToString()</option>
+                    @foreach (CarColor color in Enum.GetValues(typeof(CarColor)))
+                    {
+                        if (color != Model.Color)
+                        {
+                            <option value="@Convert.ToInt32(color)">@color</option>
+                        }
+                    }
+                </select>
             </td>
             <td colspan="3">
-                @Html.DropDownList("color", @Enum.GetNames(typeof(CarColor)).ToString());
             </td>
         </tr>
         <tr>
