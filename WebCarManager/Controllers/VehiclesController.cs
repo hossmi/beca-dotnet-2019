@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
-using CarManagement.Services;
 
 namespace WebCarManager.Controllers
 {
@@ -12,27 +11,27 @@ namespace WebCarManager.Controllers
     {
         private readonly IVehicleStorage vehicleStorage;
         private readonly IEnrollmentProvider enrollmentProvider;
-        private readonly VehicleBuilder vehicleBuilder;
-        private readonly IEnumerable<IEnrollment> enrollmentEnum;
-        private readonly IEnumerable<IVehicle> vehicleList;
+        private readonly IVehicleBuilder vehicleBuilder;
+        private IEnumerable<IEnrollment> enrollmentEnum;
+        private IEnumerable<IVehicle> vehicleList;
+        private IVehicle vehicle;
         private EnrollmentDto enrollmentDto;
-        private VehicleDto vehicleDto;
         private List<EnrollmentDto> enrollmentDtoList;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
-            this.enrollmentProvider = new DefaultEnrollmentProvider();
-            this.vehicleBuilder = new VehicleBuilder(this.enrollmentProvider);
-            this.vehicleList = this.vehicleStorage
-                .get();
-            this.enrollmentEnum = this.vehicleList
-                .Select(vehicle => vehicle.Enrollment);
+            this.enrollmentProvider = getService<IEnrollmentProvider>();
+            this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
         public ActionResult Index()
         {
+            this.vehicleList = this.vehicleStorage
+                .get();
             this.enrollmentDtoList = new List<EnrollmentDto>();
+            this.enrollmentEnum = this.vehicleList
+                .Select(vehicle => vehicle.Enrollment);
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
                 this.enrollmentDto = new EnrollmentDto(enrollment.Serial, enrollment.Number);
@@ -46,9 +45,8 @@ namespace WebCarManager.Controllers
         [HttpGet]
         public ActionResult Edit(string serial, int number)
         {
-            this.vehicleDto = new VehicleDto();
-            this.vehicleDto = getVehicle(serial, number);
-            return View(this.vehicleDto);
+            this.ViewBag.Message = "Edit Vehicle";
+            return View(getVehicle(serial, number));
         }
 
         // SET: Vehicles
@@ -56,14 +54,13 @@ namespace WebCarManager.Controllers
         public ActionResult Save(VehicleDto vehicleDto)
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
-            this.vehicleDto = new VehicleDto();
-            this.vehicleDto = getVehicle(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
-            return View(this.vehicleDto);
+            this.ViewBag.Message = "Edited Vehicle";
+            return View(getVehicle(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number));
         }
 
         private VehicleDto getVehicle(string serial, int number)
         {
-                return this.vehicleBuilder.export(this.vehicleStorage
+            return this.vehicleBuilder.export(this.vehicle = this.vehicleStorage
                 .get()
                 .whereEnrollmentIs(this.enrollmentProvider.import(serial, number))
                 .Single());
