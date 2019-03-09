@@ -12,8 +12,7 @@ namespace WebCarManager.Controllers
         private readonly IVehicleStorage vehicleStorage;
         private readonly IVehicleBuilder vehicleBuilder;
         private IEnumerable<IEnrollment> enrollmentEnum;
-        private IEnumerable<IVehicle> vehicleList;
-        private List<EnrollmentDto> enrollmentDtoList;
+        private IList<EnrollmentDto> enrollmentDtoList;
 
         public VehiclesController()
         {
@@ -23,11 +22,11 @@ namespace WebCarManager.Controllers
 
         public ActionResult Index()
         {
-            this.vehicleList = this.vehicleStorage
-                .get();
-            this.enrollmentDtoList = new List<EnrollmentDto>();
-            this.enrollmentEnum = this.vehicleList
+            
+            this.enrollmentEnum = this.vehicleStorage
+                .get()
                 .Select(vehicle => vehicle.Enrollment);
+            this.enrollmentDtoList = new List<EnrollmentDto>();
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
                 this.enrollmentDtoList.Add(
@@ -48,8 +47,8 @@ namespace WebCarManager.Controllers
         }
 
         // SET: Vehicles
-        [HttpGet]
-        public ActionResult Save(VehicleDto vehicleDto)
+        [HttpPost]
+        public ActionResult Edit(VehicleDto vehicleDto)
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
             this.ViewBag.Message = "Edited Vehicle";

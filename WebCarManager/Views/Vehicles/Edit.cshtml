@@ -37,16 +37,7 @@
         </tr>
         <tr>
             <td colspan="3">
-                <select name="color">
-                    <option selected value="@Convert.ToInt32(Model.Color)">@Model.Color.ToString()</option>
-                    @foreach (CarColor color in Enum.GetValues(typeof(CarColor)))
-                    {
-                        if (color != Model.Color)
-                        {
-                            <option value="@Convert.ToInt32(color)">@color</option>
-                        }
-                    }
-                </select>
+                @Html.DropDownListFor(vehicle => vehicle.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
             </td>
             <td colspan="3"></td>
         </tr>
@@ -58,10 +49,10 @@
         <tr>
             <td>@Model.Engine.HorsePower cc - Started @Model.Engine.IsStarted.ToString()</td>
             <td>
-                <input type="text" name="horsePower" value="@Model.Engine.HorsePower" />
+                <input type="number" min="0" name="horsePower" value="@Model.Engine.HorsePower" />
             </td>
             <td>
-                @Html.CheckBox("IsStarted", @Model.Engine.IsStarted)
+                @Html.CheckBox("isStarted")
             </td>
         </tr>
         <tr>
