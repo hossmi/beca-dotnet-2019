@@ -10,18 +10,14 @@ namespace WebCarManager.Controllers
     public class VehiclesController : AbstractController
     {
         private readonly IVehicleStorage vehicleStorage;
-        private readonly IEnrollmentProvider enrollmentProvider;
         private readonly IVehicleBuilder vehicleBuilder;
         private IEnumerable<IEnrollment> enrollmentEnum;
         private IEnumerable<IVehicle> vehicleList;
-        private IVehicle vehicle;
-        private EnrollmentDto enrollmentDto;
         private List<EnrollmentDto> enrollmentDtoList;
 
         public VehiclesController()
         {
             this.vehicleStorage = getService<IVehicleStorage>();
-            this.enrollmentProvider = getService<IEnrollmentProvider>();
             this.vehicleBuilder = getService<IVehicleBuilder>();
         }
 
@@ -34,8 +30,10 @@ namespace WebCarManager.Controllers
                 .Select(vehicle => vehicle.Enrollment);
             foreach (IEnrollment enrollment in this.enrollmentEnum)
             {
-                this.enrollmentDto = new EnrollmentDto(enrollment.Serial, enrollment.Number);
-                this.enrollmentDtoList.Add(this.enrollmentDto);
+                this.enrollmentDtoList.Add(
+                    new EnrollmentDto(
+                        enrollment.Serial,
+                        enrollment.Number));
             }
             this.ViewBag.Message = "Enrollment list";
             return View(this.enrollmentDtoList);
@@ -55,15 +53,20 @@ namespace WebCarManager.Controllers
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
             this.ViewBag.Message = "Edited Vehicle";
-            return View(getVehicle(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number));
+            return View(
+                getVehicle(
+                    vehicleDto.Enrollment.Serial, 
+                    vehicleDto.Enrollment.Number));
         }
 
         private VehicleDto getVehicle(string serial, int number)
         {
-            return this.vehicleBuilder.export(this.vehicle = this.vehicleStorage
-                .get()
-                .whereEnrollmentIs(this.enrollmentProvider.import(serial, number))
-                .Single());
+            return this.vehicleBuilder.export(
+                this.vehicleStorage
+                    .get()
+                    .whereEnrollmentIs(this.vehicleBuilder.import(serial, number))
+                    .Single());
+            
         }
     }
 }
