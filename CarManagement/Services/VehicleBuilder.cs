@@ -51,8 +51,6 @@ namespace CarManagement.Services
         }
         public void setColor(CarColor color)
         {
-            this.color = new CarColor();
-            this.color = color;
             foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
             {
                 if (color == carColor)
@@ -61,6 +59,8 @@ namespace CarManagement.Services
                 }
             }
             Asserts.isTrue(this.checkColor == true);
+            this.color = new CarColor();
+            this.color = color;
         }
         public IVehicle build()
         {
@@ -77,7 +77,13 @@ namespace CarManagement.Services
                 this.door = new Door();
                 this.doors.Add(this.door);
             }
-            return new Vehicle(this.wheels, this.doors, new Engine(this.power), this.color, this.enrollmentProvider.getNew());
+            return new Vehicle(
+                this.wheels, 
+                this.doors, 
+                new Engine(
+                    this.power), 
+                this.color, 
+                this.enrollmentProvider.getNew());
         }
 
         public VehicleDto export(IVehicle vehicle)
@@ -117,7 +123,12 @@ namespace CarManagement.Services
             {
                 this.doors.Add(convert(doorDto));
             }
-            return new Vehicle(this.wheels, this.doors, convert(vehicleDto.Engine), vehicleDto.Color, convert(vehicleDto.Enrollment));
+            return new Vehicle(
+                this.wheels, 
+                this.doors, 
+                convert(vehicleDto.Engine), 
+                vehicleDto.Color, 
+                convert(vehicleDto.Enrollment));
         }
         private VehicleDto convert(IVehicle vehicle)
         {
@@ -131,16 +142,16 @@ namespace CarManagement.Services
             {
                 doorsDto[i] = convert(vehicle.Doors[i]);
             }
-            return new VehicleDto(vehicle.Color, convert(vehicle.Engine), convert(vehicle.Enrollment), wheelsDto, doorsDto);
+            return new VehicleDto(
+                vehicle.Color, 
+                convert(vehicle.Engine), 
+                convert(vehicle.Enrollment), 
+                wheelsDto, 
+                doorsDto);
         }
         private IDoor convert(DoorDto doorDto)
         {
-            this.door = new Door();
-            if (doorDto.IsOpen)
-            {
-                this.door.open();
-            }
-            return this.door;
+            return new Door(doorDto.IsOpen);
         }
         private DoorDto convert(IDoor door)
         {
@@ -179,15 +190,13 @@ namespace CarManagement.Services
                 this.HorsePower = 1;
             }
 
-            public int HorsePower { get; set; }
-            public bool IsStarted { get; set; }
-
+            public int HorsePower { get; }
+            public bool IsStarted { get; private set; }
             public void start()
             {
                 Asserts.isTrue(this.IsStarted == false);
                 this.IsStarted = true;
             }
-
             public void stop()
             {
                 Asserts.isTrue(this.IsStarted == true);
