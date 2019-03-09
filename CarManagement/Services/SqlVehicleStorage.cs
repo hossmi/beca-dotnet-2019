@@ -527,14 +527,21 @@ namespace CarManagement.Services
                         {
                             while (reader.Read())
                             {
-                                this.enrollmentDto = this.vehicleBuilder2.enrollmentDtoBuilder(reader.GetValue(0).ToString(), Convert.ToInt32(reader.GetValue(1)));
                                 this.id = (int)reader.GetValue(2);
-                                this.color = (CarColor)Enum.Parse(typeof(CarColor), reader.GetValue(3).ToString());
-                                this.engineDto = this.vehicleBuilder2.engineDtoBuilder(Convert.ToBoolean(reader.GetValue(4)), Convert.ToInt32(reader.GetValue(5)));
                                 CreateElement(con, sentence, "wheel");
                                 CreateElement(con, sentence, "door");
-
-                                yield return this.vehicleBuilder.import(this.vehicleBuilder2.vehicleDtoBuilder(this.enrollmentDto, this.engineDto, this.color, this.wheelsDto.ToArray(), this.doorsDto.ToArray()));
+                                yield return this.vehicleBuilder.import(
+                                    new VehicleDto(
+                                        (CarColor)Enum.Parse(typeof(CarColor), 
+                                        reader.GetValue(3).ToString()),
+                                        new EngineDto(
+                                            Convert.ToInt32(reader.GetValue(5)), 
+                                            Convert.ToBoolean(reader.GetValue(4))),
+                                        new EnrollmentDto(
+                                            reader.GetValue(0).ToString(), 
+                                            Convert.ToInt32(reader.GetValue(1))), 
+                                        this.wheelsDto.ToArray(), 
+                                        this.doorsDto.ToArray()));
                             }
                             reader.Close();
                         }
@@ -680,13 +687,11 @@ namespace CarManagement.Services
                     {
                         if (type == "wheel")
                         {
-                            this.wheelDto = this.vehicleBuilder2.wheelDtoBuilder(Convert.ToDouble(reader2.GetValue(0)));
-                            this.wheelsDto.Add(this.wheelDto);
+                            this.wheelsDto.Add(new WheelDto(Convert.ToDouble(reader2.GetValue(0))));
                         }
                         else if (type == "door")
                         {
-                            this.doorDto = this.vehicleBuilder2.doorDtoBuilder(Convert.ToBoolean(reader2.GetValue(0)));
-                            this.doorsDto.Add(this.doorDto);
+                            this.doorsDto.Add(new DoorDto(Convert.ToBoolean(reader2.GetValue(0))));
                         }
                     }
                 }

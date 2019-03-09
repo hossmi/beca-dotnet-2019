@@ -7,14 +7,13 @@
         public EnrollmentDto Enrollment { get; set; }
         public WheelDto[] Wheels { get; set; }
         public DoorDto[] Doors { get; set; }
-        public EnrollmentDto enrollmentDto { get; set; }
-        public VehicleDto(CarColor Color, EngineDto Engine, EnrollmentDto Enrollment, WheelDto[] Wheels, DoorDto[] Doors, EnrollmentDto enrollmentDto)
+        public VehicleDto(CarColor color, EngineDto engineDto, EnrollmentDto enrollmentDto, WheelDto[] wheelsDto, DoorDto[] doorsDto)
         {
-            this.Color = Color;
-            this.Engine = Engine;
-            this.Wheels = Wheels;
-            this.Doors = Doors;
-            this.enrollmentDto = enrollmentDto;
+            this.Color = color;
+            this.Engine = engineDto;
+            this.Wheels = wheelsDto;
+            this.Doors = doorsDto;
+            this.Enrollment = enrollmentDto;
         }
         public VehicleDto()
         {
