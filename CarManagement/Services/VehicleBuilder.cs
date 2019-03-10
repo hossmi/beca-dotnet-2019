@@ -28,6 +28,18 @@ namespace CarManagement.Services
             this.doorsCount = 0;
             this.power = 0;
         }
+        public VehicleBuilder(IEnrollmentProvider enrollmentProvider, CarColor color, int horsePower, int wheels, int doors)
+        {
+            this.enrollmentProvider = enrollmentProvider;
+            checkColors(color);
+            this.color = color;
+            Asserts.isTrue(horsePower > -1);
+            this.power = horsePower;
+            Asserts.isTrue(doors > -1 && doors < 6);
+            this.doorsCount = doors;
+            Asserts.isTrue(wheels > -1 && wheels < 7);
+            this.wheelCount = wheels;
+        }
 
         public void addWheel()
         {
@@ -51,6 +63,12 @@ namespace CarManagement.Services
         }
         public void setColor(CarColor color)
         {
+            checkColors(color);
+            this.color = new CarColor();
+            this.color = color;
+        }
+        private void checkColors(CarColor color)
+        {
             foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
             {
                 if (color == carColor)
@@ -59,9 +77,8 @@ namespace CarManagement.Services
                 }
             }
             Asserts.isTrue(this.checkColor == true);
-            this.color = new CarColor();
-            this.color = color;
         }
+
         public IVehicle build()
         {
             Asserts.isTrue(this.wheelCount > 0);
@@ -255,6 +272,15 @@ namespace CarManagement.Services
         {
             private List<IDoor> doors;
             private List<IWheel> wheels;
+            public IEngine Engine { get; }
+            public IEnrollment Enrollment { get; }
+            public IWheel[] Wheels
+            {
+                get
+                {
+                    return this.wheels.ToArray();
+                }
+            }
 
             public Vehicle(List<IWheel> wheels, List<IDoor> doors, IEngine engine, CarColor color, IEnrollment enrollment)
             {
@@ -274,15 +300,6 @@ namespace CarManagement.Services
                 get
                 {
                     return this.doors.ToArray();
-                }
-            }
-            public IEngine Engine { get; }
-            public IEnrollment Enrollment { get; }
-            public IWheel[] Wheels
-            {
-                get
-                {
-                    return this.wheels.ToArray();
                 }
             }
             public CarColor Color { get; }
