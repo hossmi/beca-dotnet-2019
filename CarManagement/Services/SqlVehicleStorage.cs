@@ -389,9 +389,14 @@ namespace CarManagement.Services
             private int max;
             private int id;
             private IDictionary<string, object> queryParameters;
-            private IDictionary<string, string> queryParts;
-            private IDictionary<string, object> dictionaryId;
-            private IDictionary<string, string> dictionaryId2;
+
+
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+
             private List<WheelDto> wheelsDto;
             private List<DoorDto> doorsDto;
             private const string SELECT_VEHICLE_HEAD = @"
@@ -409,11 +414,11 @@ namespace CarManagement.Services
                 this.connectionString = connectionString;
                 this.vehicleBuilder = vehicleBuilder;
                 this.enrollmentProvider = new DefaultEnrollmentProvider();
-
-                this.queryParts = new Dictionary<string, string>();
                 this.queryParameters = new Dictionary<string, object>();
-                this.dictionaryId = new Dictionary<string, object>();
-                this.dictionaryId2 = new Dictionary<string, string>();
+                this.conditions = new List<string>();
+                this.values = new List<List<string>>();
+                this.value = new List<string>();
+                this.keys = new List<string>();
             }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
@@ -430,7 +435,7 @@ namespace CarManagement.Services
                             {
                                 yield return this.enrollmentProvider
                                     .import(
-                                    reader.GetValue(0).ToString(), 
+                                    reader.GetValue(0).ToString(),
                                     Convert.ToInt16(reader.GetValue(1)));
                             }
                         }
@@ -448,21 +453,45 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                addParametersDictionary("@color", "color", (int)color, this.queryParameters, this.queryParts);
+
+                this.value.Add("@color");
+                this.conditions.Add("color");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParameters.Add("@color", (int)color);
                 this.color = color;
                 return this;
             }
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                addParametersDictionary("@engineIsStarted", "engineIsStarted", started, this.queryParameters, this.queryParts);
+
+                this.value.Add("@engineIsStarted");
+                this.conditions.Add("engineIsStarted");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParameters.Add("@engineIsStarted", started);
+
                 this.engineIsStarted = started;
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                addParametersDictionary("@number", "number", enrollment.Number, this.queryParameters, this.queryParts);
-                addParametersDictionary("@serial", "serial", enrollment.Serial, this.queryParameters, this.queryParts);
+                this.value.Add("@number");
+                this.conditions.Add("number");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParameters.Add("@number", enrollment.Number);
+
+                this.value.Add("@serial");
+                this.conditions.Add("serial");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParameters.Add("@serial", enrollment.Serial);
                 this.enrollment = enrollment;
                 return this;
             }
@@ -470,12 +499,23 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(serial != null);
                 this.enrollmentSerial = serial;
-                addParametersDictionary("@serial", "serial", serial, this.queryParameters, this.queryParts);
+
+                this.value.Add("@serial");
+                this.conditions.Add("serial");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParts.Add("@serial", "serial = @serial");
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                addParametersDictionary("@engineHorsePower", "engineHorsePower", horsePower, this.queryParameters, this.queryParts);
+                this.value.Add("@engineHorsePower");
+                this.conditions.Add("engineHorsePower");
+                this.values.Add(this.value);
+                this.keys.Add("=");
+
+                this.queryParameters.Add("@engineHorsePower", horsePower);
                 this.horsePower = horsePower;
                 return this;
             }
@@ -483,9 +523,15 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
+
+                this.value.Add("@min");
+                this.value.Add("@max");
+                this.conditions.Add("engineHorsePower");
+                this.values.Add(this.value);
+                this.keys.Add("BETWEEN");
+
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
-                this.queryParts.Add("@engineHorsePower", createCondition("engineHorsePower", "BETWEEN", "@min", "@max"));
                 this.max = max;
                 this.min = min;
                 return this;
@@ -506,9 +552,10 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        StringBuilder query = new StringBuilder(60);
+                        StringBuilder query = new StringBuilder(400);
                         query.Insert(query.Length, SELECT_VEHICLE_HEAD);
-                        sentence.CommandText = createQuery(query, this.queryParts).ToString();
+                        query.Insert(query.Length, where("enrollment", this.conditions, this.values, this.keys));
+                        sentence.CommandText = query.ToString();
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
 
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -521,23 +568,33 @@ namespace CarManagement.Services
                                     copyParameters(sentence, sentence2);
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
-                                    IDictionary<string, string> where = idparameter(sentence2);
-                                    sentence2.CommandText = select("SELECT isOpen ", "door", where).ToString();
-                                    elements(sentence2, where, "door");
-                                    sentence2.CommandText = select("SELECT pressure ", "wheel", where).ToString();
-                                    elements(sentence2, where, "wheel");
+                                    this.conditions = new List<string>();
+                                    this.values = new List<List<string>>();
+                                    this.value = new List<string>();
+                                    this.keys = new List<string>();
+                                    sentence2.Parameters.Add(setParameter(sentence, "@id", this.id));
+
+                                    this.value.Add("@id");
+                                    this.conditions.Add("id");
+                                    this.values.Add(this.value);
+                                    this.keys.Add("=");
+
+                                    sentence2.CommandText = select("SELECT isOpen ", "door", this.conditions, this.values, this.keys).ToString();
+                                    elements(sentence2, "door");
+                                    sentence2.CommandText = select("SELECT pressure ", "wheel", this.conditions, this.values, this.keys).ToString();
+                                    elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
                                     new VehicleDto(
-                                        (CarColor)Enum.Parse(typeof(CarColor), 
+                                        (CarColor)Enum.Parse(typeof(CarColor),
                                         reader.GetValue(3).ToString()),
                                         new EngineDto(
-                                            Convert.ToInt32(reader.GetValue(5)), 
+                                            Convert.ToInt32(reader.GetValue(5)),
                                             Convert.ToBoolean(reader.GetValue(4))),
                                         new EnrollmentDto(
-                                            reader.GetValue(0).ToString(), 
-                                            Convert.ToInt32(reader.GetValue(1))), 
-                                        this.wheelsDto.ToArray(), 
+                                            reader.GetValue(0).ToString(),
+                                            Convert.ToInt32(reader.GetValue(1))),
+                                        this.wheelsDto.ToArray(),
                                         this.doorsDto.ToArray()));
                             }
                             reader.Close();
@@ -545,7 +602,7 @@ namespace CarManagement.Services
                     }
                 }
             }
-            void elements(IDbCommand sentence2, IDictionary<string, string> where, string type)
+            void elements(IDbCommand sentence2, string type)
             {
                 using (IDataReader reader2 = sentence2.ExecuteReader())
                 {
@@ -563,98 +620,99 @@ namespace CarManagement.Services
                 }
             }
 
-            private static StringBuilder createQuery(StringBuilder query, IDictionary<string, string> conditionParts)
-            {
-                int counter = 0;
-                foreach (string conditionPart in conditionParts.Values)
-                {
-                    if (counter == 0)
-                    {
-                        query.Insert(query.Length, $" WHERE {conditionPart}");
-                    }
-                    else
-                    {
-                        query.Insert(query.Length, $" AND {conditionPart}");
-                    }
-                    counter++;
-                }
-                return query;
-            }
-            private static void addParametersDictionary(string value, string column, object parameter, IDictionary<string, object> queryParameters, IDictionary<string, string> queryParts, string key = "=")
-            {
-                queryParameters.Add(value, parameter);
-                queryParts.Add(value, createFieldPart(column, "=", value));
-            }
-            private static string createCondition(string column, string key, string value, string value2 = null)
-            {
-                string query;
-                if (key == "BETWEEN")
-                {
-                    query = $"{column} {key} {createFieldPart(value, "AND", value2)}";
-                }
-                else
-                {
-                    query = createFieldPart(column, key, value);
-                }
-                return query;
-            }
-            private static string createFieldPart(string column, string key, string value)
-            {
-                return $"{column} {key} {value}";
-            }
-            private static StringBuilder select(string command, string table, IDictionary<string, string> conditions = null)
+            StringBuilder select(string command, string table, List<string> conditions = null, List<List<string>> values = null, List<string> keys = null)
             {
                 StringBuilder query = new StringBuilder(60);
                 query.Insert(query.Length, $"{command} FROM {table}");
                 if (conditions != null)
                 {
-                    query.Insert(query.Length, where(table, conditions));
+                    query.Insert(query.Length, where(table, conditions, values, keys));
                 }
                 return query;
             }
-            private static StringBuilder where(string table, IDictionary<string, string> conditions)
+            StringBuilder where(string table, List<string> conditions, List<List<string>> values, List<string> keys)
             {
-                StringBuilder query = new StringBuilder(60);
-                int counter = 0;
-                foreach (KeyValuePair<string, string> condition in conditions)
+                StringBuilder query = new StringBuilder(100);
+                for (int i = 0; i < keys.Count; i++)
                 {
                     StringBuilder conditionsp = new StringBuilder(30);
-                    if (condition.Value == "id")
+                    if (conditions[i] == "id" && table != "enrollment")
                     {
                         if (table == "vehicle")
                         {
-                            conditionsp.Insert(conditionsp.Length, $"enrollmentId = {condition.Key}");
-                        }
-                        else if (table != "enrollment")
-                        {
-                            conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
+                            conditionsp.Insert(conditionsp.Length, buildCondition("enrollmentId", keys[i], values[i]));
                         }
                         else
                         {
-                            conditionsp.Insert(conditionsp.Length, $"vehicleId = {condition.Key}");
+                            conditionsp.Insert(conditionsp.Length, buildCondition("vehicleId", keys[i], values[i]));
                         }
                     }
                     else
                     {
-                        conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
-                        if (counter == 0 || conditions.Count == 1)
-                        {
-                            query.Insert(query.Length, $" WHERE {conditionsp}");
-                        }
-                        else if (counter < conditions.Count - 1)
-                        {
-                            query.Insert(query.Length, $", AND {conditionsp}");
-                            if (counter == conditions.Count - 1)
-                            {
-                                query.Insert(query.Length, ", ");
-                            }
-                        }
+                        conditionsp.Insert(conditionsp.Length, buildCondition(conditions[i], keys[i], values[i]));
                     }
-                    counter++;
+
+                    if (i == 0 || conditions.Count == 1)
+                    {
+                        query.Insert(query.Length, $" WHERE {conditionsp}");
+                    }
+                    else if (i < conditions.Count - 1)
+                    {
+                        query.Insert(query.Length, $" AND {conditionsp}");
+                    }
                 }
                 return query;
             }
-            
+            StringBuilder buildCondition(string condition, string key, List<string> value)
+            {
+                StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
+                if (value.Count !=1)
+                {
+                    if (key == "BETWEEN")
+                    {
+                        query.Insert(query.Length, betweenfields(value));
+                    }
+                    else if (key == "IN")
+                    {
+                        query.Insert(query.Length, inFields(value));
+                    }
+                    else
+                    {
+                        query.Insert(query.Length, value[0]);
+                    }
+                }
+                else
+                {
+                    query.Insert(query.Length, value[0]);
+                }
+                return query;
+            }
+            StringBuilder inFields(List<string> value)
+            {
+                StringBuilder query = new StringBuilder(60);
+                for (int i = 0; i < value.Capacity; i++)
+                {
+                    query.Insert(query.Length, $"({value[i]} ,");
+                    if (i == value.Capacity-1)
+                    {
+                        query.Insert(query.Length, $")");
+                    }
+                }
+                return query;
+            }
+            StringBuilder betweenfields(List<string> value)
+            {
+                StringBuilder query = new StringBuilder(60);
+                for (int i = 0; i < value.Capacity; i++)
+                {
+                    query.Insert(query.Length, value[i]);
+                    if (i == 0)
+                    {
+                        query.Insert(query.Length, $" AND ");
+                    }
+                }
+                return query;
+            }
             private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
             {
                 if (sentence2.Parameters == null)
@@ -664,13 +722,6 @@ namespace CarManagement.Services
                         sentence2.Parameters.Add(parameter);
                     }
                 }
-            }
-            IDictionary<string, string> idparameter(IDbCommand sentence)
-            {
-                sentence.Parameters.Add(setParameter(sentence, "@id", this.id));
-                IDictionary<string, string> where = new Dictionary<string, string>();
-                where.Add("@id", "vehicleId");
-                return where;
             }
             private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
             {
