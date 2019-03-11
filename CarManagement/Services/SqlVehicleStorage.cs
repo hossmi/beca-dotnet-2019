@@ -167,20 +167,48 @@ namespace CarManagement.Services
         
         private static void insertEnrollment(IDbCommand sentence)
         {
-            IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("@serial", "serial");
-            dictionary.Add("@number", "number");
-            sentence.CommandText = buildSimpleQuery("INSERT INTO", "enrollment", dictionary, dictionary).ToString();
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+            value.Add("@serial");
+            conditions.Add("serial");
+            keys.Add("=");
+
+            conditions.Add("number");
+            value.Add("@number");
+            keys.Add("=");
+
+            values.Add(value);
+
+            sentence.CommandText = newBuildSimpleQuery("INSERT INTO", "enrollment", conditions, values, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private static void insertVehicle(IDbCommand sentence)
         {
-            IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("@id", "enrollmentId");
-            dictionary.Add("@color", "color");
-            dictionary.Add("@engineHorsePower", "engineHorsePower");
-            dictionary.Add("@engineIsStarted", "engineIsStarted");
-            sentence.CommandText = buildSimpleQuery("INSERT INTO ", "vehicle", dictionary, dictionary).ToString();
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+            conditions.Add("enrollmentId");
+            value.Add("@id");
+            keys.Add("=");
+
+            conditions.Add("color");
+            value.Add("@color");
+            keys.Add("=");
+
+            conditions.Add("engineHorsePower");
+            value.Add("@engineHorsePower");
+            keys.Add("=");
+
+            conditions.Add("engineIsStarted");
+            value.Add("@engineIsStarted");
+            keys.Add("=");
+            values.Add(value);
+            sentence.CommandText = newBuildSimpleQuery("INSERT INTO", "vehicle", conditions, values, keys).ToString();
         }
         private static void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
@@ -217,17 +245,35 @@ namespace CarManagement.Services
 
         private static object selectVehicle(IDbCommand sentence)
         {
-            IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@id", "id");
-            sentence.CommandText = buildSimpleQuery("SELECT * ", "vehicle", where).ToString();
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+            conditions.Add("enrollmentId");
+            value.Add("@id");
+            keys.Add("=");
+            values.Add(value);
+            sentence.CommandText = newBuildSimpleQuery("SELECT * ", "vehicle", conditions, values, keys).ToString();
             return sentence.ExecuteScalar();
         }
         private static void selectIdEnrollment(IDbCommand sentence)
         {
-            IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@serial", "serial");
-            where.Add("@number", "number");
-            sentence.CommandText = buildSimpleQuery("SELECT id", "enrollment", where).ToString();
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+            conditions.Add("serial");
+            value.Add("@serial");
+            keys.Add("=");
+            values.Add(value);
+
+            conditions.Add("number");
+            value.Add("@number");
+            keys.Add("=");
+            values.Add(value);
+            sentence.CommandText = newBuildSimpleQuery("SELECT id", "enrollment", conditions, values, keys).ToString();
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -241,7 +287,7 @@ namespace CarManagement.Services
 
         private static void updateVehicle(IDbCommand sentence)
         {
-            IDictionary<string, string> dictionary = new Dictionary<string, string>();
+           IDictionary<string, string> dictionary = new Dictionary<string, string>();
             dictionary.Add("@color", "color");
             dictionary.Add("@engineHorsePower", "engineHorsePower");
             dictionary.Add("@engineIsStarted", "engineIsStarted");
@@ -275,14 +321,13 @@ namespace CarManagement.Services
         public static StringBuilder buildSimpleQuery(string command, string table, IDictionary<string, string> conditions = null, IDictionary<string, string> columnsValues = null)
         {
             StringBuilder query = new StringBuilder(60);
-            if (conditions == null && columnsValues == null)
+            if (command.Contains("SELECT") || command.Contains("DELETE"))
             {
                 query.Insert(query.Length, $"{command} FROM {table}");
-            }
-            else if (command.Contains("SELECT") || command.Contains("DELETE"))
-            {
-                query.Insert(query.Length, $"{command} FROM {table}");
-                addConditions(table, conditions, query);
+                if (conditions != null)
+                {
+                    addConditions(table, conditions, query);
+                }
             }
             else if (command.Contains("UPDATE"))
             {
@@ -305,6 +350,43 @@ namespace CarManagement.Services
                 addFields(columnsValues.Values, query);
                 query.Insert(query.Length, " VALUES ");
                 addFields(columnsValues.Keys, query);
+
+            }
+            return query;
+        }
+        private static StringBuilder newBuildSimpleQuery(string command, string table, List<string> conditions = null, List<List<string>> values = null, List<string> keys = null)
+        {
+            StringBuilder query = new StringBuilder(60);
+            if (command.Contains("SELECT") || command.Contains("DELETE"))
+            {
+                query.Insert(query.Length, $"{command} FROM {table}");
+                if (conditions != null)
+                {
+                    query.Insert(query.Length, where(table, conditions, values, keys));
+                }
+            }
+            else if (command.Contains("UPDATE"))
+            {
+                query.Insert(query.Length, $"{command}{table} SET ");
+                for (int i = 0; i < keys.Count; i++)
+                {
+                    if (values[i][i] != "id" || values[i][i] != "vehicleId" || values[i][i] != "enrollmentId")
+                    {
+                        query.Insert(query.Length, $"{conditions[i]} = {values[i][i]}");
+                    }
+                    if (i < keys.Count - 1)
+                    {
+                        query.Insert(query.Length, ", ");
+                    }
+                }
+                where(table, conditions, values, keys);
+            }
+            else if (command.Contains("INSERT"))
+            {
+                query.Insert(query.Length, $"{command} {table}");
+                addFields(conditions, query);
+                query.Insert(query.Length, " VALUES ");
+                addFields(values[0], query);
 
             }
             return query;
@@ -373,6 +455,90 @@ namespace CarManagement.Services
                 }
                 counter++;
             }
+        }
+
+        private static StringBuilder where(string table, List<string> conditions, List<List<string>> values, List<string> keys)
+        {
+            StringBuilder query = new StringBuilder(100);
+            for (int i = 0; i < keys.Count; i++)
+            {
+                StringBuilder conditionsp = new StringBuilder(30);
+                if (conditions[i] == "id" && table != "enrollment")
+                {
+                    if (table == "vehicle")
+                    {
+                        conditionsp.Insert(conditionsp.Length, buildCondition("enrollmentId", keys[i], values[i]));
+                    }
+                    else
+                    {
+                        conditionsp.Insert(conditionsp.Length, buildCondition("vehicleId", keys[i], values[i]));
+                    }
+                }
+                else
+                {
+                    conditionsp.Insert(conditionsp.Length, buildCondition(conditions[i], keys[i], values[i]));
+                }
+
+                if (i == 0 || conditions.Count == 1)
+                {
+                    query.Insert(query.Length, $" WHERE {conditionsp}");
+                }
+                else if (i < conditions.Count - 1)
+                {
+                    query.Insert(query.Length, $" AND {conditionsp}");
+                }
+            }
+            return query;
+        }
+        private static StringBuilder buildCondition(string condition, string key, List<string> value)
+        {
+            StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
+            if (value.Count != 1)
+            {
+                if (key == "BETWEEN")
+                {
+                    query.Insert(query.Length, betweenfields(value));
+                }
+                else if (key == "IN")
+                {
+                    query.Insert(query.Length, inFields(value));
+                }
+                else
+                {
+                    query.Insert(query.Length, value[0]);
+                }
+            }
+            else
+            {
+                query.Insert(query.Length, value[0]);
+            }
+            return query;
+        }
+        private static StringBuilder inFields(List<string> value)
+        {
+            StringBuilder query = new StringBuilder(60);
+            for (int i = 0; i < value.Capacity; i++)
+            {
+                query.Insert(query.Length, $"({value[i]} ,");
+                if (i == value.Capacity - 1)
+                {
+                    query.Insert(query.Length, $")");
+                }
+            }
+            return query;
+        }
+        private static StringBuilder betweenfields(List<string> value)
+        {
+            StringBuilder query = new StringBuilder(60);
+            for (int i = 0; i < value.Capacity; i++)
+            {
+                query.Insert(query.Length, value[i]);
+                if (i == 0)
+                {
+                    query.Insert(query.Length, $" AND ");
+                }
+            }
+            return query;
         }
 
         private class PrvVehicleQuery : IVehicleQuery
@@ -504,8 +670,6 @@ namespace CarManagement.Services
                 this.conditions.Add("serial");
                 this.values.Add(this.value);
                 this.keys.Add("=");
-
-                this.queryParts.Add("@serial", "serial = @serial");
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
