@@ -65,7 +65,7 @@ namespace CarManagement.Services
                     {
                         this.parameter = setParameter(sentence, "@id", id);
                         sentence.Parameters.Add(this.parameter);
-                        sentence.CommandText = deleteAll().ToString();
+                        sentence.CommandText = deleteAllQuery().ToString();
                         sentence.ExecuteNonQuery();
                         sentence.Parameters.Remove(this.parameter);
                     }
@@ -94,7 +94,7 @@ namespace CarManagement.Services
                     selectVehicle(sentence);
                     if (sentence.ExecuteScalar() != null)
                     {
-                        sentence.CommandText = deleteAll().ToString();
+                        sentence.CommandText = deleteAllQuery().ToString();
                         sentence.ExecuteNonQuery();
                     }
                 }
@@ -167,48 +167,21 @@ namespace CarManagement.Services
         
         private static void insertEnrollment(IDbCommand sentence)
         {
-            List<string> conditions = new List<string>();
-            List<List<string>> values = new List<List<string>>();
-            List<string> value = new List<string>();
-            List<string> keys = new List<string>();
+            List<string> columnsValues = new List<string>();
+            columnsValues.Add("serial");
+            columnsValues.Add("number");
 
-            value.Add("@serial");
-            conditions.Add("serial");
-            keys.Add("=");
-
-            conditions.Add("number");
-            value.Add("@number");
-            keys.Add("=");
-
-            values.Add(value);
-
-            sentence.CommandText = newBuildSimpleQuery("INSERT INTO", "enrollment", conditions, values, keys).ToString();
+            sentence.CommandText = buildSimpleQuery("INSERT INTO", "enrollment", columnsValues).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private static void insertVehicle(IDbCommand sentence)
         {
-            List<string> conditions = new List<string>();
-            List<List<string>> values = new List<List<string>>();
-            List<string> value = new List<string>();
-            List<string> keys = new List<string>();
-
-            conditions.Add("enrollmentId");
-            value.Add("@id");
-            keys.Add("=");
-
-            conditions.Add("color");
-            value.Add("@color");
-            keys.Add("=");
-
-            conditions.Add("engineHorsePower");
-            value.Add("@engineHorsePower");
-            keys.Add("=");
-
-            conditions.Add("engineIsStarted");
-            value.Add("@engineIsStarted");
-            keys.Add("=");
-            values.Add(value);
-            sentence.CommandText = newBuildSimpleQuery("INSERT INTO", "vehicle", conditions, values, keys).ToString();
+            List<string> columnsValues = new List<string>();
+            columnsValues.Add("id");
+            columnsValues.Add("color");
+            columnsValues.Add("engineHorsePower");
+            columnsValues.Add("engineIsStarted");
+            sentence.CommandText = buildSimpleQuery("INSERT INTO", "vehicle", columnsValues).ToString();
         }
         private static void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
@@ -223,57 +196,39 @@ namespace CarManagement.Services
         }
         private static void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
         {
-            IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("@id", "vehicleId");
-            dictionary.Add($"@{column}", column);
-            inserObject(buildSimpleQuery("INSERT INTO ", table, dictionary, dictionary).ToString(), sentence, $"@{column}", parameter);
-        }
-        private static void makeElements(string type, IDbCommand sentence, object[] things)
-        {
-            foreach (dynamic thing in things)
-            {
-                if (type == "door")
-                {
-                    makeWheelDoor(sentence, thing.IsOpen, "isOpen", "door");
-                }
-                else if (type == "wheel")
-                {
-                    makeWheelDoor(sentence, thing.Pressure, "pressure", "wheel");
-                }
-            }
+            List<string> columnsValues = new List<string>();
+            columnsValues.Add("id");
+            columnsValues.Add(column);
+            buildSimpleQuery("INSERT INTO ", table, columnsValues);
+            inserObject(buildSimpleQuery("INSERT INTO ", table, columnsValues).ToString(), sentence, $"@{column}", parameter);
         }
 
         private static object selectVehicle(IDbCommand sentence)
         {
-            List<string> conditions = new List<string>();
-            List<List<string>> values = new List<List<string>>();
-            List<string> value = new List<string>();
+            List<string> values = new List<string>();
+            List<string> columnsValues = new List<string>();
             List<string> keys = new List<string>();
-
-            conditions.Add("enrollmentId");
-            value.Add("@id");
+            IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+            values.Add("@id");
+            whereParams.Add(values, "id");
             keys.Add("=");
-            values.Add(value);
-            sentence.CommandText = newBuildSimpleQuery("SELECT * ", "vehicle", conditions, values, keys).ToString();
+            sentence.CommandText = buildSimpleQuery("SELECT * ", "vehicle", columnsValues, whereParams, keys).ToString();
             return sentence.ExecuteScalar();
         }
         private static void selectIdEnrollment(IDbCommand sentence)
         {
-            List<string> conditions = new List<string>();
-            List<List<string>> values = new List<List<string>>();
-            List<string> value = new List<string>();
+            List<string> values = new List<string>();
             List<string> keys = new List<string>();
-
-            conditions.Add("serial");
-            value.Add("@serial");
+            IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+            List<string> columnsValues = new List<string>();
+            values.Add("@serial");
+            whereParams.Add(values, "serial");
             keys.Add("=");
-            values.Add(value);
-
-            conditions.Add("number");
-            value.Add("@number");
+            values = new List<string>();
+            values.Add("@number");
+            whereParams.Add(values, "number");
             keys.Add("=");
-            values.Add(value);
-            sentence.CommandText = newBuildSimpleQuery("SELECT id", "enrollment", conditions, values, keys).ToString();
+            sentence.CommandText = buildSimpleQuery("SELECT id", "enrollment", columnsValues, whereParams, keys).ToString();
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -284,162 +239,112 @@ namespace CarManagement.Services
                 reader.Close();
             }
         }
-
         private static void updateVehicle(IDbCommand sentence)
         {
-           IDictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("@color", "color");
-            dictionary.Add("@engineHorsePower", "engineHorsePower");
-            dictionary.Add("@engineIsStarted", "engineIsStarted");
-            IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@id", "enrollmentId");
-            sentence.CommandText = buildSimpleQuery("UPDATE ", "vehicle", where, dictionary).ToString();
+            List<string> conditions = new List<string>();
+            List<List<string>> values = new List<List<string>>();
+            List<string> value = new List<string>();
+            List<string> keys = new List<string>();
+
+            List<string> columnsValues = new List<string>();
+            IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+            columnsValues.Add("color");
+            columnsValues.Add("engineHorsePower");
+            columnsValues.Add("engineIsStarted");
+            value.Add("@id");
+            whereParams.Add(value, "id");
+            keys.Add("=");
+            sentence.CommandText = buildSimpleQuery("UPDATE ", "vehicle", columnsValues, whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-
-        private static StringBuilder deleteAll()
+        private static StringBuilder deleteAllQuery()
         {
-            IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@id", "id");
+            List<string> columnsValues = new List<string>();
+            IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+            List<string> values = new List<string>();
+            List<string> keys = new List<string>();
+            values.Add("@id");
+            whereParams.Add(values, "id");
+            keys.Add("=");
             StringBuilder query = new StringBuilder();
             query.Insert(query.Length, $@"
-                {buildSimpleQuery("DELETE ", "wheel", where, where)};
-                {buildSimpleQuery("DELETE ", "door", where, where)};");
-            query.Insert(query.Length, $"{buildSimpleQuery("DELETE ", "vehicle", where, where)};");
+                {buildSimpleQuery("DELETE ", "wheel", columnsValues, whereParams, keys)};
+                {buildSimpleQuery("DELETE ", "door", columnsValues, whereParams, keys)};
+                {buildSimpleQuery("DELETE ", "vehicle", columnsValues, whereParams, keys)};");
+
             return query;
         }
         private static void deleteWheelsDoors(IDbCommand sentence)
         {
-            IDictionary<string, string> where = new Dictionary<string, string>();
-            where.Add("@id", "vehicleId");
-            sentence.CommandText = buildSimpleQuery("DELETE ", "wheel", where).ToString();
+            List<string> columnsValues = new List<string>();
+            IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+            List<string> values = new List<string>();
+            List<string> keys = new List<string>();
+            values.Add("@id");
+            whereParams.Add(values, "id");
+            keys.Add("=");
+
+            sentence.CommandText = buildSimpleQuery("DELETE ", "wheel", columnsValues, whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            sentence.CommandText = buildSimpleQuery("DELETE ", "door", where).ToString();
+            sentence.CommandText = buildSimpleQuery("DELETE ", "door", columnsValues, whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
 
-        public static StringBuilder buildSimpleQuery(string command, string table, IDictionary<string, string> conditions = null, IDictionary<string, string> columnsValues = null)
+        private static StringBuilder buildSimpleQuery(string command, string table, List<string> values = null, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
         {
             StringBuilder query = new StringBuilder(60);
             if (command.Contains("SELECT") || command.Contains("DELETE"))
             {
                 query.Insert(query.Length, $"{command} FROM {table}");
-                if (conditions != null)
+                if (whereParams != null)
                 {
-                    addConditions(table, conditions, query);
+                    query.Insert(query.Length, where(table, whereParams, keys));
                 }
             }
             else if (command.Contains("UPDATE"))
             {
                 query.Insert(query.Length, $"{command}{table} SET ");
                 int counter = 0;
-                foreach (KeyValuePair<string, string> columnValue in columnsValues)
+                foreach (string value in values)
                 {
-                    query.Insert(query.Length, $"{columnValue.Value} = {columnValue.Key}");
-                    if (counter < columnsValues.Count - 1)
+                    query.Insert(query.Length, $"{value} = @{value}");
+                    if (counter < values.Count - 1)
                     {
                         query.Insert(query.Length, ", ");
                     }
                     counter++;
                 }
-                addConditions(table, conditions, query);
+                query.Insert(query.Length, where(table, whereParams, keys));
             }
             else if (command.Contains("INSERT"))
             {
                 query.Insert(query.Length, $"{command} {table}");
-                addFields(columnsValues.Values, query);
+
+                query.Insert(query.Length, addFields(values, table, "condition"));
                 query.Insert(query.Length, " VALUES ");
-                addFields(columnsValues.Keys, query);
+                query.Insert(query.Length, addFields(values, table, "value"));
 
             }
             return query;
         }
-        private static StringBuilder newBuildSimpleQuery(string command, string table, List<string> conditions = null, List<List<string>> values = null, List<string> keys = null)
+        private static StringBuilder addFields(List<string> values, string table, string type)
         {
-            StringBuilder query = new StringBuilder(60);
-            if (command.Contains("SELECT") || command.Contains("DELETE"))
-            {
-                query.Insert(query.Length, $"{command} FROM {table}");
-                if (conditions != null)
-                {
-                    query.Insert(query.Length, where(table, conditions, values, keys));
-                }
-            }
-            else if (command.Contains("UPDATE"))
-            {
-                query.Insert(query.Length, $"{command}{table} SET ");
-                for (int i = 0; i < keys.Count; i++)
-                {
-                    if (values[i][i] != "id" || values[i][i] != "vehicleId" || values[i][i] != "enrollmentId")
-                    {
-                        query.Insert(query.Length, $"{conditions[i]} = {values[i][i]}");
-                    }
-                    if (i < keys.Count - 1)
-                    {
-                        query.Insert(query.Length, ", ");
-                    }
-                }
-                where(table, conditions, values, keys);
-            }
-            else if (command.Contains("INSERT"))
-            {
-                query.Insert(query.Length, $"{command} {table}");
-                addFields(conditions, query);
-                query.Insert(query.Length, " VALUES ");
-                addFields(values[0], query);
-
-            }
-            return query;
-        }
-        private static void addConditions(string table, IDictionary<string, string> conditions, StringBuilder query)
-        {
-            int counter = 0;
-            foreach (KeyValuePair<string, string> condition in conditions)
-            {
-                StringBuilder conditionsp = new StringBuilder();
-                conditionsp.Capacity = 30;
-                if (condition.Value == "id")
-                {
-                    if (table == "vehicle")
-                    {
-                        conditionsp.Insert(conditionsp.Length, $"enrollmentId = {condition.Key}");
-                    }
-                    else if (table != "enrollment")
-                    {
-                        conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
-                    }
-                    else
-                    {
-                        conditionsp.Insert(conditionsp.Length, $"vehicleId = {condition.Key}");
-                    }
-                }
-                else
-                {
-                    conditionsp.Insert(conditionsp.Length, $"{condition.Value} = {condition.Key}");
-                    if (counter == 0 || conditions.Count == 1)
-                    {
-                        query.Insert(query.Length, $" WHERE {conditionsp}");
-                    }
-                    else if (counter < conditions.Count - 1)
-                    {
-                        query.Insert(query.Length, $", AND {conditionsp}");
-                        if (counter == conditions.Count - 1)
-                        {
-                            query.Insert(query.Length, ", ");
-                        }
-                    }
-                }
-                counter++;
-            }
-        }
-        private static void addFields(ICollection<string> values, StringBuilder query)
-        {
+            StringBuilder query = new StringBuilder(50);
+            string thing = "";
             int counter = 0;
             foreach (string value in values)
             {
+                if (type == "value")
+                {
+                    thing = $"@{value}";
+                }
+                else
+                {
+                    thing = value;
+                }
                 if (counter == 0)
                 {
-                    query.Insert(query.Length, $"({value}");
+                    query.Insert(query.Length, $"({checkCondition(thing, table)}");
                     if (values.Count == 1)
                     {
                         query.Insert(query.Length, ")");
@@ -447,7 +352,7 @@ namespace CarManagement.Services
                 }
                 else if (counter < values.Count)
                 {
-                    query.Insert(query.Length, $", {value}");
+                    query.Insert(query.Length, $", {checkCondition(thing, table)}");
                     if (counter == values.Count - 1)
                     {
                         query.Insert(query.Length, ") ");
@@ -455,62 +360,58 @@ namespace CarManagement.Services
                 }
                 counter++;
             }
+            return query;
         }
-
-        private static StringBuilder where(string table, List<string> conditions, List<List<string>> values, List<string> keys)
+        private static string checkCondition(string condition, string table)
+        {
+            string fix;
+            if (condition == "id" && table != "enrollment")
+            {
+                if (table == "vehicle")
+                    fix = "enrollmentId";
+                else
+                    fix = "vehicleId";
+            }
+            else
+                fix = condition;
+            return fix;
+        }
+        private static StringBuilder where(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
         {
             StringBuilder query = new StringBuilder(100);
-            for (int i = 0; i < keys.Count; i++)
+            int counter = 0;
+            foreach (KeyValuePair<List<string>, string> where in whereParams)
             {
-                StringBuilder conditionsp = new StringBuilder(30);
-                if (conditions[i] == "id" && table != "enrollment")
+                if (counter == 0 || whereParams.Count == 1)
                 {
-                    if (table == "vehicle")
-                    {
-                        conditionsp.Insert(conditionsp.Length, buildCondition("enrollmentId", keys[i], values[i]));
-                    }
-                    else
-                    {
-                        conditionsp.Insert(conditionsp.Length, buildCondition("vehicleId", keys[i], values[i]));
-                    }
+                    query.Insert(query.Length, " WHERE ");
                 }
-                else
+                else if (counter > 0)
                 {
-                    conditionsp.Insert(conditionsp.Length, buildCondition(conditions[i], keys[i], values[i]));
+                    query.Insert(query.Length, " AND ");
                 }
-
-                if (i == 0 || conditions.Count == 1)
-                {
-                    query.Insert(query.Length, $" WHERE {conditionsp}");
-                }
-                else if (i < conditions.Count - 1)
-                {
-                    query.Insert(query.Length, $" AND {conditionsp}");
-                }
+                query.Insert(query.Length, buildCondition(checkCondition(where.Value, table), keys[counter], where.Key));
+                counter++;
             }
             return query;
         }
-        private static StringBuilder buildCondition(string condition, string key, List<string> value)
+        private static StringBuilder buildCondition(string condition, string key, List<string> values)
         {
             StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
-            if (value.Count != 1)
+            if (values.Count != 1)
             {
                 if (key == "BETWEEN")
                 {
-                    query.Insert(query.Length, betweenfields(value));
+                    query.Insert(query.Length, betweenfields(values));
                 }
                 else if (key == "IN")
                 {
-                    query.Insert(query.Length, inFields(value));
-                }
-                else
-                {
-                    query.Insert(query.Length, value[0]);
+                    query.Insert(query.Length, inFields(values));
                 }
             }
             else
             {
-                query.Insert(query.Length, value[0]);
+                query.Insert(query.Length, values[0]);
             }
             return query;
         }
@@ -555,14 +456,11 @@ namespace CarManagement.Services
             private int max;
             private int id;
             private IDictionary<string, object> queryParameters;
-
-
-            List<string> conditions = new List<string>();
-            List<List<string>> values = new List<List<string>>();
-            List<string> value = new List<string>();
-            List<string> keys = new List<string>();
-
-
+            private List<string> conditions;
+            private IDictionary<List<string>, string> whereParams;
+            private List<List<string>> values;
+            private List<string> value;
+            private List<string> keys;
             private List<WheelDto> wheelsDto;
             private List<DoorDto> doorsDto;
             private const string SELECT_VEHICLE_HEAD = @"
@@ -585,6 +483,7 @@ namespace CarManagement.Services
                 this.values = new List<List<string>>();
                 this.value = new List<string>();
                 this.keys = new List<string>();
+                this.whereParams = new Dictionary<List<string>, string>();
             }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
@@ -736,6 +635,11 @@ namespace CarManagement.Services
                                     this.values = new List<List<string>>();
                                     this.value = new List<string>();
                                     this.keys = new List<string>();
+                                    IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
+                                    List<string> values = new List<string>();
+                                    values.Add("@id");
+                                    whereParams.Add(values, "id");
+
                                     sentence2.Parameters.Add(setParameter(sentence, "@id", this.id));
 
                                     this.value.Add("@id");
@@ -743,9 +647,9 @@ namespace CarManagement.Services
                                     this.values.Add(this.value);
                                     this.keys.Add("=");
 
-                                    sentence2.CommandText = select("SELECT isOpen ", "door", this.conditions, this.values, this.keys).ToString();
+                                    sentence2.CommandText = buildSimpleQuery("SELECT isOpen ", "door", this.conditions, whereParams, this.keys).ToString();
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = select("SELECT pressure ", "wheel", this.conditions, this.values, this.keys).ToString();
+                                    sentence2.CommandText = buildSimpleQuery("SELECT pressure ", "wheel", this.conditions, whereParams, this.keys).ToString();
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
@@ -877,6 +781,160 @@ namespace CarManagement.Services
                 }
                 return query;
             }
+
+
+            private static StringBuilder buildSimpleQuery(string command, string table, List<string> values = null, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
+            {
+                StringBuilder query = new StringBuilder(60);
+                if (command.Contains("SELECT") || command.Contains("DELETE"))
+                {
+                    query.Insert(query.Length, $"{command} FROM {table}");
+                    if (whereParams != null)
+                    {
+                        query.Insert(query.Length, newwhere(table, whereParams, keys));
+                    }
+                }
+                else if (command.Contains("UPDATE"))
+                {
+                    query.Insert(query.Length, $"{command}{table} SET ");
+                    int counter = 0;
+                    foreach (string value in values)
+                    {
+                        query.Insert(query.Length, $"{value} = @{value}");
+                        if (counter < values.Count - 1)
+                        {
+                            query.Insert(query.Length, ", ");
+                        }
+                        counter++;
+                    }
+                    query.Insert(query.Length, newwhere(table, whereParams, keys));
+                }
+                else if (command.Contains("INSERT"))
+                {
+                    query.Insert(query.Length, $"{command} {table}");
+
+                    query.Insert(query.Length, addFields(values, table, "condition"));
+                    query.Insert(query.Length, " VALUES ");
+                    query.Insert(query.Length, addFields(values, table, "value"));
+
+                }
+                return query;
+            }
+            private static StringBuilder addFields(List<string> values, string table, string type)
+            {
+                StringBuilder query = new StringBuilder(50);
+                string thing = "";
+                int counter = 0;
+                foreach (string value in values)
+                {
+                    if (type == "value")
+                    {
+                        thing = $"@{value}";
+                    }
+                    else
+                    {
+                        thing = value;
+                    }
+                    if (counter == 0)
+                    {
+                        query.Insert(query.Length, $"({checkCondition(thing, table)}");
+                        if (values.Count == 1)
+                        {
+                            query.Insert(query.Length, ")");
+                        }
+                    }
+                    else if (counter < values.Count)
+                    {
+                        query.Insert(query.Length, $", {checkCondition(thing, table)}");
+                        if (counter == values.Count - 1)
+                        {
+                            query.Insert(query.Length, ") ");
+                        }
+                    }
+                    counter++;
+                }
+                return query;
+            }
+            private static string checkCondition(string condition, string table)
+            {
+                string fix;
+                if (condition == "id" && table != "enrollment")
+                {
+                    if (table == "vehicle")
+                        fix = "enrollmentId";
+                    else
+                        fix = "vehicleId";
+                }
+                else
+                    fix = condition;
+                return fix;
+            }
+            private static StringBuilder newwhere(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+            {
+                StringBuilder query = new StringBuilder(100);
+                int counter = 0;
+                foreach (KeyValuePair<List<string>, string> where in whereParams)
+                {
+                    if (counter == 0 || whereParams.Count == 1)
+                    {
+                        query.Insert(query.Length, " WHERE ");
+                    }
+                    else if (counter > 0)
+                    {
+                        query.Insert(query.Length, " AND ");
+                    }
+                    query.Insert(query.Length, newbuildCondition(checkCondition(where.Value, table), keys[counter], where.Key));
+                    counter++;
+                }
+                return query;
+            }
+            private static StringBuilder newbuildCondition(string condition, string key, List<string> values)
+            {
+                StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
+                if (values.Count != 1)
+                {
+                    if (key == "BETWEEN")
+                    {
+                        query.Insert(query.Length, newbetweenfields(values));
+                    }
+                    else if (key == "IN")
+                    {
+                        query.Insert(query.Length, newinFields(values));
+                    }
+                }
+                else
+                {
+                    query.Insert(query.Length, values[0]);
+                }
+                return query;
+            }
+            private static StringBuilder newinFields(List<string> value)
+            {
+                StringBuilder query = new StringBuilder(60);
+                for (int i = 0; i < value.Capacity; i++)
+                {
+                    query.Insert(query.Length, $"({value[i]} ,");
+                    if (i == value.Capacity - 1)
+                    {
+                        query.Insert(query.Length, $")");
+                    }
+                }
+                return query;
+            }
+            private static StringBuilder newbetweenfields(List<string> value)
+            {
+                StringBuilder query = new StringBuilder(60);
+                for (int i = 0; i < value.Capacity; i++)
+                {
+                    query.Insert(query.Length, value[i]);
+                    if (i == 0)
+                    {
+                        query.Insert(query.Length, $" AND ");
+                    }
+                }
+                return query;
+            }
+
             private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
             {
                 if (sentence2.Parameters == null)
