@@ -16,14 +16,10 @@ namespace ToolBox.Services
                 {
                     query.Insert(query.Length, $"{tableColumns.Key[0]}.{tableColumns.Value[i]}");
                     if (i < tableColumns.Value.Count - 1)
-                    {
                         query.Insert(query.Length, ", ");
-                    }
                 }
                 if (counter < tablesColumns.Count - 1)
-                {
                     query.Insert(query.Length, ", ");
-                }
                 counter++;
             }
             query.Insert(query.Length, " FROM ");
@@ -32,9 +28,7 @@ namespace ToolBox.Services
             {
                 query.Insert(query.Length, $"{tableColumns.Key} {tableColumns.Key[0]}");
                 if (counter < tablesColumns.Count - 1)
-                {
                     query.Insert(query.Length, " INNER JOIN ");
-                }
                 counter++;
             }
             query.Insert(query.Length, " ON ");
@@ -43,9 +37,7 @@ namespace ToolBox.Services
             {
                 query.Insert(query.Length, $"{joinCondition.Key} = {joinCondition.Value}");
                 if (counter < joinConditions.Count - 1)
-                {
                     query.Insert(query.Length, " AND ");
-                }
                 counter++;
             }
             return query;
@@ -59,9 +51,7 @@ namespace ToolBox.Services
             {
                 query.Insert(query.Length, $"{value} = @{value}");
                 if (counter < values.Count - 1)
-                {
                     query.Insert(query.Length, ", ");
-                }
                 counter++;
             }
             query.Insert(query.Length, where(table, whereParams, keys));
@@ -81,9 +71,7 @@ namespace ToolBox.Services
             StringBuilder query = new StringBuilder(30);
             query.Insert(query.Length, $"{command} FROM {table}");
             if (whereParams != null)
-            {
                 query.Insert(query.Length, where(table, whereParams, keys));
-            }
             return query;
         }
         public StringBuilder where(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
@@ -93,13 +81,9 @@ namespace ToolBox.Services
             foreach (KeyValuePair<List<string>, string> where in whereParams)
             {
                 if (counter == 0 || whereParams.Count == 1)
-                {
                     query.Insert(query.Length, " WHERE ");
-                }
                 else if (counter > 0)
-                {
                     query.Insert(query.Length, " AND ");
-                }
                 query.Insert(query.Length, buildCondition(checkCondition(where.Value, table), keys[counter], where.Key));
                 counter++;
             }
@@ -113,28 +97,20 @@ namespace ToolBox.Services
             foreach (string value in values)
             {
                 if (type == "value")
-                {
                     thing = $"@{value}";
-                }
                 else
-                {
                     thing = value;
-                }
                 if (counter == 0)
                 {
                     query.Insert(query.Length, $"({checkCondition(thing, table)}");
                     if (values.Count == 1)
-                    {
                         query.Insert(query.Length, ")");
-                    }
                 }
                 else if (counter < values.Count)
                 {
                     query.Insert(query.Length, $", {checkCondition(thing, table)}");
                     if (counter == values.Count - 1)
-                    {
                         query.Insert(query.Length, ") ");
-                    }
                 }
                 counter++;
             }
@@ -165,24 +141,18 @@ namespace ToolBox.Services
                     {
                         query.Insert(query.Length, $"({values[i]} ,");
                         if (i == values.Count - 1)
-                        {
                             query.Insert(query.Length, $")");
-                        }
                     }
                     else
                     {
                         query.Insert(query.Length, values[i]);
                         if (i == 0)
-                        {
                             query.Insert(query.Length, $" AND ");
-                        }
                     }
                 }
             }
             else
-            {
                 query.Insert(query.Length, values[0]);
-            }
             return query;
         }
     }
