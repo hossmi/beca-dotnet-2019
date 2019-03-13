@@ -9,6 +9,7 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using ToolBox.Extensions.DbCommands;
+using ToolBox.Services;
 
 namespace CarManagement.Services
 {
@@ -19,6 +20,7 @@ namespace CarManagement.Services
         private IDataParameter parameter;
         private List<int> idList;
         private object query;
+        private QueryBuilder queryBuilder = new QueryBuilder();
         const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
@@ -52,7 +54,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = selectDelete("SELECT id ", "enrollment").ToString();
+                    sentence.CommandText = this.queryBuilder.selectDelete("SELECT id ", "enrollment").ToString();
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -165,25 +167,25 @@ namespace CarManagement.Services
             sentence.Parameters.Remove(parameter);
         }
         
-        private static void insertEnrollment(IDbCommand sentence)
+        private void insertEnrollment(IDbCommand sentence)
         {
             List<string> columnsValues = new List<string>();
             columnsValues.Add("serial");
             columnsValues.Add("number");
 
-            sentence.CommandText = insert("enrollment", columnsValues).ToString();
+            sentence.CommandText = this.queryBuilder.insert("enrollment", columnsValues).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        private static void insertVehicle(IDbCommand sentence)
+        private void insertVehicle(IDbCommand sentence)
         {
             List<string> columnsValues = new List<string>();
             columnsValues.Add("id");
             columnsValues.Add("color");
             columnsValues.Add("engineHorsePower");
             columnsValues.Add("engineIsStarted");
-            sentence.CommandText = insert("vehicle", columnsValues).ToString();
+            sentence.CommandText = this.queryBuilder.insert("vehicle", columnsValues).ToString();
         }
-        private static void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
+        private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
             foreach (IWheel wheel in vehicle.Wheels)
             {
@@ -194,15 +196,15 @@ namespace CarManagement.Services
                 makeWheelDoor(sentence, door.IsOpen, "isOpen", "door");
             }
         }
-        private static void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
+        private void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
         {
             List<string> columnsValues = new List<string>();
             columnsValues.Add("id");
             columnsValues.Add(column);
-            inserObject(insert(table, columnsValues).ToString(), sentence, $"@{column}", parameter);
+            inserObject(this.queryBuilder.insert(table, columnsValues).ToString(), sentence, $"@{column}", parameter);
         }
 
-        private static object selectVehicle(IDbCommand sentence)
+        private object selectVehicle(IDbCommand sentence)
         {
             List<string> values = new List<string>();
             List<string> keys = new List<string>();
@@ -210,10 +212,10 @@ namespace CarManagement.Services
             values.Add("@id");
             whereParams.Add(values, "id");
             keys.Add("=");
-            sentence.CommandText = selectDelete("SELECT * ", "vehicle") + where("vehicle", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.selectDelete("SELECT * ", "vehicle", whereParams, keys).ToString();
             return sentence.ExecuteScalar();
         }
-        private static void selectIdEnrollment(IDbCommand sentence)
+        private void selectIdEnrollment(IDbCommand sentence)
         {
             List<string> values = new List<string>();
             List<string> keys = new List<string>();
@@ -225,7 +227,7 @@ namespace CarManagement.Services
             values.Add("@number");
             whereParams.Add(values, "number");
             keys.Add("=");
-            sentence.CommandText = selectDelete("SELECT id ", "enrollment") + where("enrollment", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.selectDelete("SELECT id ", "enrollment", whereParams, keys).ToString();
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -236,7 +238,7 @@ namespace CarManagement.Services
                 reader.Close();
             }
         }
-        private static void updateVehicle(IDbCommand sentence)
+        private void updateVehicle(IDbCommand sentence)
         {
             List<string> conditions = new List<string>();
             List<List<string>> values = new List<List<string>>();
@@ -251,10 +253,10 @@ namespace CarManagement.Services
             value.Add("@id");
             whereParams.Add(value, "id");
             keys.Add("=");
-            sentence.CommandText = update("vehicle", columnsValues, whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.update("vehicle", columnsValues, whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        private static StringBuilder deleteAllQuery()
+        private StringBuilder deleteAllQuery()
         {
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             List<string> values = new List<string>();
@@ -264,13 +266,13 @@ namespace CarManagement.Services
             keys.Add("=");
             StringBuilder query = new StringBuilder();
             query.Insert(query.Length, $@"
-                {selectDelete("DELETE ", "wheel")}{where("wheel", whereParams, keys)};
-                {selectDelete("DELETE ", "door")}{where("door", whereParams, keys)};
-                {selectDelete("DELETE ", "vehicle")}{where("vehicle", whereParams, keys)};");
+                {this.queryBuilder.selectDelete("DELETE ", "wheel", whereParams, keys)};
+                {this.queryBuilder.selectDelete("DELETE ", "door", whereParams, keys)};
+                {this.queryBuilder.selectDelete("DELETE ", "vehicle", whereParams, keys)};");
 
             return query;
         }
-        private static void deleteWheelsDoors(IDbCommand sentence)
+        private void deleteWheelsDoors(IDbCommand sentence)
         {
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             List<string> values = new List<string>();
@@ -279,214 +281,14 @@ namespace CarManagement.Services
             whereParams.Add(values, "id");
             keys.Add("=");
 
-            sentence.CommandText = selectDelete("DELETE ", "wheel") + where("wheel", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.selectDelete("DELETE ", "wheel", whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            sentence.CommandText = selectDelete("DELETE ", "door") + where("door", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.selectDelete("DELETE ", "door", whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-
-        private static StringBuilder complexSelect(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
-        {
-            StringBuilder query = new StringBuilder(100);
-            query.Insert(query.Length, "SELECT ");
-            int counter = 0;
-            foreach (KeyValuePair<string, List<string>> tableColumns in tablesColumns)
-            {
-                for (int i = 0; i < tableColumns.Value.Count; i++)
-                {
-                    query.Insert(query.Length, $"{tableColumns.Key[0]}.{tableColumns.Value[i]}");
-                    if (i < tableColumns.Value.Count - 1)
-                    {
-                        query.Insert(query.Length, ", ");
-                    }
-                }
-                if (counter < tablesColumns.Count - 1)
-                {
-                    query.Insert(query.Length, ", ");
-                }
-                counter++;
-            }
-            query.Insert(query.Length, " FROM ");
-            counter = 0;
-            foreach (KeyValuePair<string, List<string>> tableColumns in tablesColumns)
-            {
-                query.Insert(query.Length, $"{tableColumns.Key} {tableColumns.Key[0]}");
-                if (counter < tablesColumns.Count - 1)
-                {
-                    query.Insert(query.Length, " INNER JOIN ");
-                }
-                counter++;
-            }
-            query.Insert(query.Length, " ON ");
-            counter = 0;
-            foreach (KeyValuePair<string, string> joinCondition in joinConditions)
-            {
-                query.Insert(query.Length, $"{joinCondition.Key} = {joinCondition.Value}");
-                if (counter < joinConditions.Count - 1)
-                {
-                    query.Insert(query.Length, " AND ");
-                }
-                counter++;
-            }
-            return query;
-        }
-        private static StringBuilder buildSimpleQuery(string command, string table, List<string> values = null, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
-        {
-            StringBuilder query = new StringBuilder(60);
-            if (command.Contains("SELECT") || command.Contains("DELETE"))
-            {
-                query.Insert(query.Length, selectDelete(command, table));
-                if (whereParams != null)
-                {
-                    query.Insert(query.Length, where(table, whereParams, keys));
-                }
-            }
-            else if (command.Contains("UPDATE"))
-            {
-                query.Insert(query.Length, update(table, values, whereParams, keys));
-            }
-            else if (command.Contains("INSERT"))
-            {
-                query.Insert(query.Length, insert(table, values));
-
-            }
-            return query;
-        }
-        
-        private static StringBuilder update(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
-        {
-            StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {table} SET ");
-            int counter = 0;
-            foreach (string value in values)
-            {
-                query.Insert(query.Length, $"{value} = @{value}");
-                if (counter < values.Count - 1)
-                {
-                    query.Insert(query.Length, ", ");
-                }
-                counter++;
-            }
-            query.Insert(query.Length, where(table, whereParams, keys));
-            return query;
-        }
-        private static StringBuilder insert(string table, List<string> values)
-        {
-            StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {table}");
-            query.Insert(query.Length, addFields(values, table, "condition"));
-            query.Insert(query.Length, " VALUES ");
-            query.Insert(query.Length, addFields(values, table, "value"));
-            return query;
-        }
-        private static StringBuilder selectDelete(string command, string table)
-        {
-            StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{command} FROM {table}");
-            return query;
-        }
-        private static StringBuilder addFields(List<string> values, string table, string type)
-        {
-            StringBuilder query = new StringBuilder(50);
-            string thing = "";
-            int counter = 0;
-            foreach (string value in values)
-            {
-                if (type == "value")
-                {
-                    thing = $"@{value}";
-                }
-                else
-                {
-                    thing = value;
-                }
-                if (counter == 0)
-                {
-                    query.Insert(query.Length, $"({checkCondition(thing, table)}");
-                    if (values.Count == 1)
-                    {
-                        query.Insert(query.Length, ")");
-                    }
-                }
-                else if (counter < values.Count)
-                {
-                    query.Insert(query.Length, $", {checkCondition(thing, table)}");
-                    if (counter == values.Count - 1)
-                    {
-                        query.Insert(query.Length, ") ");
-                    }
-                }
-                counter++;
-            }
-            return query;
-        }
-        private static string checkCondition(string condition, string table)
-        {
-            string fix;
-            if (condition == "id" && table != "enrollment")
-            {
-                if (table == "vehicle")
-                    fix = "enrollmentId";
-                else
-                    fix = "vehicleId";
-            }
-            else
-                fix = condition;
-            return fix;
-        }
-        private static StringBuilder where(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
-        {
-            StringBuilder query = new StringBuilder(100);
-            int counter = 0;
-            foreach (KeyValuePair<List<string>, string> where in whereParams)
-            {
-                if (counter == 0 || whereParams.Count == 1)
-                {
-                    query.Insert(query.Length, " WHERE ");
-                }
-                else if (counter > 0)
-                {
-                    query.Insert(query.Length, " AND ");
-                }
-                query.Insert(query.Length, buildCondition(checkCondition(where.Value, table), keys[counter], where.Key));
-                counter++;
-            }
-            return query;
-        }
-        private static StringBuilder buildCondition(string condition, string key, List<string> values)
-        {
-            StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
-            if (values.Count != 1)
-            {
-                for (int i = 0; i < values.Count; i++)
-                {
-                    if (key == "IN")
-                    {
-                        query.Insert(query.Length, $"({values[i]} ,");
-                        if (i == values.Count - 1)
-                        {
-                            query.Insert(query.Length, $")");
-                        }
-                    }
-                    else
-                    {
-                        query.Insert(query.Length, values[i]);
-                        if (i == 0)
-                        {
-                            query.Insert(query.Length, $" AND ");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                query.Insert(query.Length, values[0]);
-            }
-            return query;
-        }
-
         private class PrvVehicleQuery : IVehicleQuery
         {
+            private QueryBuilder queryBuilder = new QueryBuilder();
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IEnrollmentProvider enrollmentProvider;
@@ -520,7 +322,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = buildSimpleQuery("SELECT serial, number ", "enrollment").ToString();
+                        sentence.CommandText = this.queryBuilder.selectDelete("SELECT serial, number ", "enrollment").ToString();
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -628,8 +430,8 @@ namespace CarManagement.Services
                         this.columns.Add("engineHorsePower");
                         this.tablesColumns.Add("vehicle", this.columns);
                         this.joinConditions.Add("id", "enrollmentId");
-                        query.Insert(query.Length, complexSelect(this.tablesColumns, this.joinConditions));
-                        query.Insert(query.Length, where("enrollment", this.whereParams, this.keys));
+                        query.Insert(query.Length, this.queryBuilder.complexSelect(this.tablesColumns, this.joinConditions));
+                        query.Insert(query.Length, this.queryBuilder.where("enrollment", this.whereParams, this.keys));
                         sentence.CommandText = query.ToString();
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -652,9 +454,9 @@ namespace CarManagement.Services
                                     this.keys.Add("=");
                                     this.whereParams.Add(this.values, "id");
 
-                                    sentence2.CommandText = selectDelete("SELECT isOpen ", "door") + where("door", this.whereParams, this.keys).ToString();
+                                    sentence2.CommandText = this.queryBuilder.selectDelete("SELECT isOpen ", "door", this.whereParams, this.keys).ToString();
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = selectDelete("SELECT pressure ", "wheel") + where("wheel", this.whereParams, this.keys).ToString();
+                                    sentence2.CommandText = this.queryBuilder.selectDelete("SELECT pressure ", "wheel", this.whereParams, this.keys).ToString();
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
