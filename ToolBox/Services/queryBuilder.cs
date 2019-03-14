@@ -5,7 +5,6 @@ namespace ToolBox.Services
 {
     public class QueryBuilder
     {
-
         public StringBuilder complexSelect(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
         {
             StringBuilder query = new StringBuilder(100);
@@ -46,22 +45,13 @@ namespace ToolBox.Services
         public StringBuilder update(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {table} SET ");
-            int counter = 0;
-            foreach (string value in values)
-            {
-                query.Insert(query.Length, $"{value} = @{value}");
-                if (counter < values.Count - 1)
-                    query.Insert(query.Length, ", ");
-                counter++;
-            }
-            query.Insert(query.Length, where(table, whereParams, keys));
+            query.Insert(query.Length, $"UPDATE {table} SET {addFields(values, table, "UPDATE")} {where(table, whereParams, keys)}");
             return query;
         }
         public StringBuilder insert(string table, List<string> values)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "condition")}) VALUES ({addFields(values, table, "value")})");
+            query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "INSERT", "condition")}) VALUES ({addFields(values, table, "INSERT", "value")})");
             return query;
         }
         public StringBuilder selectDelete(string command, string table, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
@@ -87,16 +77,21 @@ namespace ToolBox.Services
             }
             return query;
         }
-        private static StringBuilder addFields(List<string> list, string table, string type)
+        private static StringBuilder addFields(List<string> list, string table, string from, string type = null)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
             foreach (string item in list)
             {
-                if (type == "condition")
-                    query.Insert(query.Length, checkCondition(item, table));
+                if (from.Contains("INSERT"))
+                {
+                    if (type == "condition")
+                        query.Insert(query.Length, checkCondition(item, table));
+                    else
+                        query.Insert(query.Length, $"@{item}");
+                }
                 else
-                    query.Insert(query.Length, $"@{item}");
+                    query.Insert(query.Length, $"{item} = @{item}");
                 if (counter < list.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
