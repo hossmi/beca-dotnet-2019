@@ -54,7 +54,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = this.queryBuilder.selectDelete("SELECT id ", "enrollment").ToString();
+                    sentence.CommandText = this.queryBuilder.select("SELECT id ", "enrollment").ToString();
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -212,7 +212,7 @@ namespace CarManagement.Services
             values.Add("@id");
             whereParams.Add(values, "id");
             keys.Add("=");
-            sentence.CommandText = this.queryBuilder.selectDelete("SELECT * ", "vehicle", whereParams, keys).ToString();
+            sentence.CommandText = $"{this.queryBuilder.select("SELECT * ", "vehicle")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
             return sentence.ExecuteScalar();
         }
         private void selectIdEnrollment(IDbCommand sentence)
@@ -227,7 +227,7 @@ namespace CarManagement.Services
             values.Add("@number");
             whereParams.Add(values, "number");
             keys.Add("=");
-            sentence.CommandText = this.queryBuilder.selectDelete("SELECT id ", "enrollment", whereParams, keys).ToString();
+            sentence.CommandText = $"{this.queryBuilder.select("SELECT id ", "enrollment")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -266,9 +266,9 @@ namespace CarManagement.Services
             keys.Add("=");
             StringBuilder query = new StringBuilder();
             query.Insert(query.Length, $@"
-                {this.queryBuilder.selectDelete("DELETE ", "wheel", whereParams, keys)};
-                {this.queryBuilder.selectDelete("DELETE ", "door", whereParams, keys)};
-                {this.queryBuilder.selectDelete("DELETE ", "vehicle", whereParams, keys)};");
+                {this.queryBuilder.delete("wheel", whereParams, keys)};
+                {this.queryBuilder.delete("door", whereParams, keys)};
+                {this.queryBuilder.delete("vehicle", whereParams, keys)};");
 
             return query;
         }
@@ -281,9 +281,9 @@ namespace CarManagement.Services
             whereParams.Add(values, "id");
             keys.Add("=");
 
-            sentence.CommandText = this.queryBuilder.selectDelete("DELETE ", "wheel", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.delete("wheel", whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            sentence.CommandText = this.queryBuilder.selectDelete("DELETE ", "door", whereParams, keys).ToString();
+            sentence.CommandText = this.queryBuilder.delete("door", whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private class PrvVehicleQuery : IVehicleQuery
@@ -322,7 +322,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = this.queryBuilder.selectDelete("SELECT serial, number ", "enrollment").ToString();
+                        sentence.CommandText = this.queryBuilder.select("SELECT serial, number ", "enrollment").ToString();
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -419,7 +419,6 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        StringBuilder query = new StringBuilder(400);
                         this.columns.Add("serial");
                         this.columns.Add("number");
                         this.columns.Add("id");
@@ -430,9 +429,7 @@ namespace CarManagement.Services
                         this.columns.Add("engineHorsePower");
                         this.tablesColumns.Add("vehicle", this.columns);
                         this.joinConditions.Add("id", "enrollmentId");
-                        query.Insert(query.Length, this.queryBuilder.complexSelect(this.tablesColumns, this.joinConditions));
-                        query.Insert(query.Length, this.queryBuilder.where("enrollment", this.whereParams, this.keys));
-                        sentence.CommandText = query.ToString();
+                        sentence.CommandText = $"{this.queryBuilder.complexSelect(this.tablesColumns, this.joinConditions)}{this.queryBuilder.where("enrollment", this.whereParams, this.keys)}";
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
@@ -454,9 +451,9 @@ namespace CarManagement.Services
                                     this.keys.Add("=");
                                     this.whereParams.Add(this.values, "id");
 
-                                    sentence2.CommandText = this.queryBuilder.selectDelete("SELECT isOpen ", "door", this.whereParams, this.keys).ToString();
+                                    sentence2.CommandText = $"{this.queryBuilder.select("SELECT isOpen ", "door")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = this.queryBuilder.selectDelete("SELECT pressure ", "wheel", this.whereParams, this.keys).ToString();
+                                    sentence2.CommandText = $"{this.queryBuilder.select("SELECT pressure ", "wheel")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
