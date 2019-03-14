@@ -5,6 +5,7 @@ namespace ToolBox.Services
 {
     public class QueryBuilder
     {
+
         public StringBuilder complexSelect(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
         {
             StringBuilder query = new StringBuilder(100);
@@ -60,10 +61,7 @@ namespace ToolBox.Services
         public StringBuilder insert(string table, List<string> values)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {table}");
-            query.Insert(query.Length, addFields(values, table, "condition"));
-            query.Insert(query.Length, " VALUES ");
-            query.Insert(query.Length, addFields(values, table, "value"));
+            query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "condition")}) VALUES ({addFields(values, table, "value")})");
             return query;
         }
         public StringBuilder selectDelete(string command, string table, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
@@ -89,29 +87,18 @@ namespace ToolBox.Services
             }
             return query;
         }
-        private static StringBuilder addFields(List<string> values, string table, string type)
+        private static StringBuilder addFields(List<string> list, string table, string type)
         {
-            StringBuilder query = new StringBuilder(50);
-            string thing = "";
+            StringBuilder query = new StringBuilder(100);
             int counter = 0;
-            foreach (string value in values)
+            foreach (string item in list)
             {
-                if (type == "value")
-                    thing = $"@{value}";
+                if (type == "condition")
+                    query.Insert(query.Length, checkCondition(item, table));
                 else
-                    thing = value;
-                if (counter == 0)
-                {
-                    query.Insert(query.Length, $"({checkCondition(thing, table)}");
-                    if (values.Count == 1)
-                        query.Insert(query.Length, ")");
-                }
-                else if (counter < values.Count)
-                {
-                    query.Insert(query.Length, $", {checkCondition(thing, table)}");
-                    if (counter == values.Count - 1)
-                        query.Insert(query.Length, ") ");
-                }
+                    query.Insert(query.Length, $"@{item}");
+                if (counter < list.Count - 1)
+                    query.Insert(query.Length, ", ");
                 counter++;
             }
             return query;
