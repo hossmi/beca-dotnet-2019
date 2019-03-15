@@ -21,7 +21,7 @@ namespace CarManagement.Services
         private List<int> idList;
         private int id;
         private object query;
-        private QueryBuilder queryBuilder = new QueryBuilder();
+        private QueryBuilder queryBuilder;
         const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
@@ -30,6 +30,7 @@ namespace CarManagement.Services
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
             this.idList = new List<int>();
+            this.queryBuilder = new QueryBuilder();
         }
 
         public int Count {
