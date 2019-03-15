@@ -117,17 +117,12 @@ namespace CarManagement.Services
                     {
                         readEnrollmentId(sentence);
                         this.query = selectVehicle(sentence);
-                        setVehicleParameters(vehicle, sentence);
-
+                        List<string> columnsValues = setVehicleParameters(vehicle, sentence);
                         if (this.query != null)
-                        {
-                            updateVehicle(sentence);
-                            deleteWheelsDoors(sentence);
-                            insertwheelsdoors(vehicle, sentence);
-                        }
+                            updateVehicle(sentence, vehicle, columnsValues);
                         else
                         {
-                            insertVehicle(sentence);
+                            sentence.CommandText = this.queryBuilder.insert("vehicle", columnsValues).ToString();
                             insertwheelsdoors(vehicle, sentence);
                         }
                     }
@@ -136,22 +131,16 @@ namespace CarManagement.Services
                         insertEnrollment(sentence);
                         selectIdEnrollment(sentence);
                         readEnrollmentId(sentence);
-                        setVehicleParameters(vehicle, sentence);
-                        insertVehicle(sentence);
-                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                        insertwheelsdoors(vehicle, sentence);
+                        insertVehicle(sentence, vehicle);
                     }
                 }
             }
         }
 
-        void insertPrams(IDbCommand sentence, List<string> columnsValues, object thing, string name)
+        private static IDataParameter insertParams(IDbCommand sentence, List<string> columnsValues, object thing, string name)
         {
             columnsValues.Add(name);
-            IDataParameter parameter = sentence.CreateParameter();
-            parameter.ParameterName = $"@{name}";
-            parameter.Value = thing;
-            sentence.Parameters.Add(parameter);
+            return setParameter(sentence, $"@{name}", thing);
         }
         private static IDataParameter setParameter(IDbCommand sentence, string name, object thing)
         {
@@ -160,29 +149,30 @@ namespace CarManagement.Services
             parameter.Value = thing;
             return parameter;
         }
-        private static void setVehicleParameters(IVehicle vehicle, IDbCommand sentence)
+        private static List<string> setVehicleParameters(IVehicle vehicle, IDbCommand sentence)
         {
-            sentence.Parameters.Add(setParameter(sentence, "@color", (int)vehicle.Color));
-            sentence.Parameters.Add(setParameter(sentence, "@engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0));
-            sentence.Parameters.Add(setParameter(sentence, "@engineHorsePower", vehicle.Engine.HorsePower));
+            List<string> columnsValues = new List<string>();
+            sentence.Parameters.Add(insertParams(sentence, columnsValues, (int)vehicle.Color, "color"));
+            sentence.Parameters.Add(insertParams(sentence, columnsValues, vehicle.Engine.IsStarted ? 1 : 0, "engineIsStarted"));
+            sentence.Parameters.Add(insertParams(sentence, columnsValues, vehicle.Engine.HorsePower, "engineHorsePower"));
+            return columnsValues;
         }
         private void insertEnrollment(IDbCommand sentence)
         {
             List<string> columnsValues = new List<string>();
             columnsValues.Add("serial");
             columnsValues.Add("number");
-
             sentence.CommandText = this.queryBuilder.insert("enrollment", columnsValues).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        private void insertVehicle(IDbCommand sentence)
+        private void insertVehicle(IDbCommand sentence, IVehicle vehicle)
         {
-            List<string> columnsValues = new List<string>();
+            List<string> columnsValues = setVehicleParameters(vehicle, sentence);
             columnsValues.Add("id");
-            columnsValues.Add("color");
-            columnsValues.Add("engineHorsePower");
-            columnsValues.Add("engineIsStarted");
             sentence.CommandText = this.queryBuilder.insert("vehicle", columnsValues).ToString();
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+            insertwheelsdoors(vehicle, sentence);
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
@@ -199,8 +189,8 @@ namespace CarManagement.Services
         {
             sentence.Parameters.Clear();
             List<string> columnsValues = new List<string>();
-            insertPrams(sentence, columnsValues, this.id, "id");
-            insertPrams(sentence, columnsValues, parameter, column);
+            sentence.Parameters.Add(insertParams(sentence, columnsValues, this.id, "id"));
+            sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter, column));
             sentence.CommandText = $"{this.queryBuilder.insert(table, columnsValues)}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
@@ -238,17 +228,15 @@ namespace CarManagement.Services
                 reader.Close();
             }
         }
-        private void updateVehicle(IDbCommand sentence)
+        private void updateVehicle(IDbCommand sentence, IVehicle vehicle, List<string> columnsValues)
         {
             List<string> keys = new List<string>();
-            List<string> columnsValues = new List<string>();
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
-            columnsValues.Add("color");
-            columnsValues.Add("engineHorsePower");
-            columnsValues.Add("engineIsStarted");
             whereParam("=", "id", keys, whereParams);
             sentence.CommandText = this.queryBuilder.update("vehicle", columnsValues, whereParams, keys).ToString();
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+            deleteWheelsDoors(sentence);
+            insertwheelsdoors(vehicle, sentence);
         }
         private StringBuilder deleteAllQuery()
         {
@@ -260,7 +248,6 @@ namespace CarManagement.Services
                 {this.queryBuilder.delete("wheel", whereParams, keys)};
                 {this.queryBuilder.delete("door", whereParams, keys)};
                 {this.queryBuilder.delete("vehicle", whereParams, keys)};");
-
             return query;
         }
         private void deleteWheelsDoors(IDbCommand sentence)
