@@ -54,9 +54,9 @@ namespace ToolBox.Services
             query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "INSERT", "condition")}) VALUES ({addFields(values, table, "INSERT", "value")})");
             return query;
         }
-        public StringBuilder select(string command, string table)
+        public StringBuilder select(string column, string table)
         {
-            return selectDelete(command, table);
+            return selectDelete($"SELECT {column} ", table);
         }
         public StringBuilder delete(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
         {

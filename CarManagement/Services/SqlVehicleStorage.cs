@@ -54,7 +54,7 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = this.queryBuilder.select("SELECT id ", "enrollment").ToString();
+                    sentence.CommandText = this.queryBuilder.select("id ", "enrollment").ToString();
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -212,7 +212,7 @@ namespace CarManagement.Services
             values.Add("@id");
             whereParams.Add(values, "id");
             keys.Add("=");
-            sentence.CommandText = $"{this.queryBuilder.select("SELECT * ", "vehicle")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
+            sentence.CommandText = $"{this.queryBuilder.select("*", "vehicle")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
             return sentence.ExecuteScalar();
         }
         private void selectIdEnrollment(IDbCommand sentence)
@@ -227,7 +227,7 @@ namespace CarManagement.Services
             values.Add("@number");
             whereParams.Add(values, "number");
             keys.Add("=");
-            sentence.CommandText = $"{this.queryBuilder.select("SELECT id ", "enrollment")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
+            sentence.CommandText = $"{this.queryBuilder.select("id", "enrollment")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
         }
         private static void readEnrollmentId(IDbCommand sentence)
         {
@@ -322,7 +322,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = this.queryBuilder.select("SELECT serial, number ", "enrollment").ToString();
+                        sentence.CommandText = this.queryBuilder.select("serial, number ", "enrollment").ToString();
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -451,9 +451,9 @@ namespace CarManagement.Services
                                     this.keys.Add("=");
                                     this.whereParams.Add(this.values, "id");
 
-                                    sentence2.CommandText = $"{this.queryBuilder.select("SELECT isOpen ", "door")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
+                                    sentence2.CommandText = $"{this.queryBuilder.select("isOpen ", "door")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = $"{this.queryBuilder.select("SELECT pressure ", "wheel")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
+                                    sentence2.CommandText = $"{this.queryBuilder.select("pressure ", "wheel")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
