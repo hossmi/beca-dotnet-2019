@@ -56,7 +56,8 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.CommandText = this.queryBuilder.select("id ", "enrollment").ToString();
+                    this.queryBuilder = new QueryBuilder("id ", "enrollment");
+                    sentence.CommandText = $"{this.queryBuilder.querySelect}";
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -123,7 +124,8 @@ namespace CarManagement.Services
                             updateVehicle(sentence, vehicle, columnsValues);
                         else
                         {
-                            sentence.CommandText = this.queryBuilder.insert("vehicle", columnsValues).ToString();
+                            this.queryBuilder = new QueryBuilder("vehicle", columnsValues);
+                            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
                             insertwheelsdoors(vehicle, sentence);
                         }
                     }
@@ -163,14 +165,16 @@ namespace CarManagement.Services
             List<string> columnsValues = new List<string>();
             columnsValues.Add("serial");
             columnsValues.Add("number");
-            sentence.CommandText = this.queryBuilder.insert("enrollment", columnsValues).ToString();
+            this.queryBuilder = new QueryBuilder("enrollment", columnsValues);
+            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle)
         {
             List<string> columnsValues = setVehicleParameters(vehicle, sentence);
             columnsValues.Add("id");
-            sentence.CommandText = this.queryBuilder.insert("vehicle", columnsValues).ToString();
+            this.queryBuilder = new QueryBuilder("vehicle", columnsValues);
+            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -192,7 +196,8 @@ namespace CarManagement.Services
             List<string> columnsValues = new List<string>();
             sentence.Parameters.Add(insertParams(sentence, columnsValues, this.id, "id"));
             sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter, column));
-            sentence.CommandText = $"{this.queryBuilder.insert(table, columnsValues)}";
+            this.queryBuilder = new QueryBuilder(table, columnsValues);
+            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private object selectVehicle(IDbCommand sentence)
@@ -200,7 +205,8 @@ namespace CarManagement.Services
             List<string> keys = new List<string>();
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             whereParam("=", "id", keys, whereParams);
-            sentence.CommandText = $"{this.queryBuilder.select("*", "vehicle")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
+            this.queryBuilder = new QueryBuilder("*", "vehicle", whereParams, keys);
+            sentence.CommandText = $"{this.queryBuilder.querySelect}";
             return sentence.ExecuteScalar();
         }
         private void selectIdEnrollment(IDbCommand sentence)
@@ -210,7 +216,8 @@ namespace CarManagement.Services
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             whereParam("=", "serial", keys, whereParams);
             whereParam("=", "number", keys, whereParams);
-            sentence.CommandText = $"{this.queryBuilder.select("id", "enrollment")}{this.queryBuilder.where("vehicle", whereParams, keys)}";
+            this.queryBuilder = new QueryBuilder("id", "enrollment", whereParams, keys);
+            sentence.CommandText = $"{this.queryBuilder.querySelect}";
         }
         private static void whereParam(string key, string param, List<string> keys, IDictionary<List<string>, string> whereParams)
         {
@@ -234,7 +241,8 @@ namespace CarManagement.Services
             List<string> keys = new List<string>();
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             whereParam("=", "id", keys, whereParams);
-            sentence.CommandText = this.queryBuilder.update("vehicle", columnsValues, whereParams, keys).ToString();
+            this.queryBuilder = new QueryBuilder("vehicle", columnsValues, whereParams, keys);
+            sentence.CommandText = $"{this.queryBuilder.queryUpdate}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             deleteWheelsDoors(sentence);
             insertwheelsdoors(vehicle, sentence);
@@ -245,10 +253,12 @@ namespace CarManagement.Services
             List<string> keys = new List<string>();
             whereParam("=", "id", keys, whereParams);
             StringBuilder query = new StringBuilder();
-            query.Insert(query.Length, $@"
-                {this.queryBuilder.delete("wheel", whereParams, keys)};
-                {this.queryBuilder.delete("door", whereParams, keys)};
-                {this.queryBuilder.delete("vehicle", whereParams, keys)};");
+            this.queryBuilder = new QueryBuilder("wheel", whereParams, keys);
+            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
+            this.queryBuilder = new QueryBuilder("door", whereParams, keys);
+            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
+            this.queryBuilder = new QueryBuilder("vehicle", whereParams, keys);
+            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
             return query;
         }
         private void deleteWheelsDoors(IDbCommand sentence)
@@ -256,9 +266,11 @@ namespace CarManagement.Services
             IDictionary<List<string>, string> whereParams = new Dictionary<List<string>, string>();
             List<string> keys = new List<string>();
             whereParam("=", "id", keys, whereParams);
-            sentence.CommandText = this.queryBuilder.delete("wheel", whereParams, keys).ToString();
+            this.queryBuilder = new QueryBuilder("wheel", whereParams, keys);
+            sentence.CommandText = $"{this.queryBuilder.queryDelete}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            sentence.CommandText = this.queryBuilder.delete("door", whereParams, keys).ToString();
+            this.queryBuilder = new QueryBuilder("door", whereParams, keys);
+            sentence.CommandText = $"{this.queryBuilder.queryDelete}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private class PrvVehicleQuery : IVehicleQuery
@@ -297,7 +309,8 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = this.queryBuilder.select("serial, number ", "enrollment").ToString();
+                        this.queryBuilder = new QueryBuilder("serial, number ", "enrollment");
+                        sentence.CommandText = $"{this.queryBuilder.querySelect}";
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -411,10 +424,11 @@ namespace CarManagement.Services
                                     sentence2.Parameters.Add(setParameter(sentence, "@id", this.id));
 
                                     whereParam("=", "id", this.keys, this.whereParams);
-
-                                    sentence2.CommandText = $"{this.queryBuilder.select("isOpen ", "door")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
+                                    this.queryBuilder = new QueryBuilder("isOpen ", "door", this.whereParams, this.keys);
+                                    sentence2.CommandText = $"{this.queryBuilder.querySelect}";
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = $"{this.queryBuilder.select("pressure ", "wheel")}{this.queryBuilder.where("wheel", this.whereParams, this.keys)}";
+                                    this.queryBuilder = new QueryBuilder("pressure ", "wheel", this.whereParams, this.keys);
+                                    sentence2.CommandText = $"{this.queryBuilder.querySelect}";
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
