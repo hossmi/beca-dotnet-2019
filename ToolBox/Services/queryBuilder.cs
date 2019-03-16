@@ -6,13 +6,13 @@ namespace ToolBox.Services
 {
     public class QueryBuilder
     {
-        private IDictionary<string, List<string>> tablesColumns;
-        private IDictionary<string, string> joinConditions;
-        private IDictionary<List<string>, string> whereParams;
-        private List<string> keys;
-        private List<string> values;
-        private string table;
-        private string column;
+        private readonly IDictionary<string, List<string>> tablesColumns;
+        private readonly IDictionary<string, string> joinConditions;
+        private readonly IDictionary<List<string>, string> whereParams;
+        private readonly List<string> keys;
+        private readonly List<string> values;
+        private readonly string table;
+        private readonly string column;
 
         public QueryBuilder(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
         {

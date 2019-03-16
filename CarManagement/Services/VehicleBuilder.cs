@@ -9,7 +9,7 @@ namespace CarManagement.Services
 {
     public class VehicleBuilder : IVehicleBuilder
     {
-        private IEnrollmentProvider enrollmentProvider;
+        private readonly IEnrollmentProvider enrollmentProvider;
         private int doorsCount;
         private int wheelCount;
         private CarColor color;
@@ -17,8 +17,6 @@ namespace CarManagement.Services
         private bool checkColor;
         private List<IWheel> wheels;
         private List<IDoor> doors;
-        private IWheel wheel;
-        private IDoor door;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
@@ -267,8 +265,8 @@ namespace CarManagement.Services
         }
         private class Vehicle : IVehicle
         {
-            private List<IDoor> doors;
-            private List<IWheel> wheels;
+            private readonly List<IDoor> doors;
+            private readonly List<IWheel> wheels;
             public IEngine Engine { get; }
             public IEnrollment Enrollment { get; }
             public IWheel[] Wheels

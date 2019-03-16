@@ -18,7 +18,7 @@ namespace CarManagement.Services
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private IDataParameter parameter;
-        private List<int> idList;
+        private readonly List<int> idList;
         private int id;
         private object query;
         private QueryBuilder queryBuilder;
@@ -162,9 +162,11 @@ namespace CarManagement.Services
         }
         private void insertEnrollment(IDbCommand sentence)
         {
-            List<string> columnsValues = new List<string>();
-            columnsValues.Add("serial");
-            columnsValues.Add("number");
+            List<string> columnsValues = new List<string>
+            {
+                "serial",
+                "number"
+            };
             this.queryBuilder = new QueryBuilder("enrollment", columnsValues);
             sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -221,8 +223,10 @@ namespace CarManagement.Services
         }
         private static void whereParam(string key, string param, List<string> keys, IDictionary<List<string>, string> whereParams)
         {
-            List<string> values = new List<string>();
-            values.Add($"@{param}");
+            List<string> values = new List<string>
+            {
+                $"@{param}"
+            };
             whereParams.Add(values, param);
             keys.Add(key);
         }
@@ -280,10 +284,10 @@ namespace CarManagement.Services
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IEnrollmentProvider enrollmentProvider;
             private int id;
-            private IDictionary<string, object> queryParameters;
+            private readonly IDictionary<string, object> queryParameters;
             private IDictionary<List<string>, string> whereParams;
-            private IDictionary<string, List<string>> tablesColumns;
-            private IDictionary<string, string> joinConditions;
+            private readonly IDictionary<string, List<string>> tablesColumns;
+            private readonly IDictionary<string, string> joinConditions;
             private List<string> columns;
             private List<string> values;
             private List<string> keys;
@@ -399,10 +403,12 @@ namespace CarManagement.Services
                         this.columns.Add("number");
                         this.columns.Add("id");
                         this.tablesColumns.Add("enrollment", this.columns);
-                        this.columns = new List<string>();
-                        this.columns.Add("color");
-                        this.columns.Add("engineIsStarted");
-                        this.columns.Add("engineHorsePower");
+                        this.columns = new List<string>
+                        {
+                            "color",
+                            "engineIsStarted",
+                            "engineHorsePower"
+                        };
                         this.tablesColumns.Add("vehicle", this.columns);
                         this.joinConditions.Add("id", "enrollmentId");
                         sentence.CommandText = $"{this.queryBuilder.complexSelect(this.tablesColumns, this.joinConditions)}{this.queryBuilder.where("enrollment", this.whereParams, this.keys)}";
