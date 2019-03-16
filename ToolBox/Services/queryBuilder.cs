@@ -1,10 +1,96 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ToolBox.Services
 {
     public class QueryBuilder
     {
+        private IDictionary<string, List<string>> tablesColumns;
+        private IDictionary<string, string> joinConditions;
+        private IDictionary<List<string>, string> whereParams;
+        private List<string> keys;
+        private List<string> values;
+        private string table;
+        private string column;
+
+        public QueryBuilder(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
+        {
+            this.joinConditions = joinConditions;
+            this.tablesColumns = tablesColumns;
+        }
+        public QueryBuilder(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
+        {
+            this.table = table;
+            this.values = values;
+            this.whereParams = whereParams;
+            this.keys = keys;
+        }
+        public QueryBuilder(string table, List<string> values)
+        {
+            this.table = table;
+            this.values = values;
+        }
+        public QueryBuilder(string column, string table)
+        {
+            this.column = column;
+            this.table = table;
+        }
+        public QueryBuilder(string column, string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        {
+            this.column = column;
+            this.table = table;
+            this.whereParams = whereParams;
+            this.keys = keys;
+        }
+        public QueryBuilder(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        {
+            this.table = table;
+            this.whereParams = whereParams;
+            this.keys = keys;
+        }
+        public QueryBuilder()
+        {
+
+        }
+
+        public StringBuilder querySelect
+        {
+            get
+            {
+                if (this.whereParams == null)
+                {
+                    return select(this.column, this.table);
+                }
+                else
+                {
+                    return select(this.column, this.table, this.whereParams, this.keys);
+                }
+                
+            }
+        }
+        public StringBuilder queryInsert
+        {
+            get
+            {
+                return insert(this.table, this.values);
+            }
+        }
+        public StringBuilder queryUpdate
+        {
+            get
+            {
+                return update(this.table, this.values, this.whereParams, this.keys);
+            }
+        }
+        public StringBuilder queryDelete
+        {
+            get
+            {
+                return delete(this.table, this.whereParams, this.keys);
+            }
+        }
+
         public StringBuilder complexSelect(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
         {
             StringBuilder query = new StringBuilder(100);
@@ -42,23 +128,23 @@ namespace ToolBox.Services
             }
             return query;
         }
-        public StringBuilder update(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
+        private StringBuilder update(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
         {
             StringBuilder query = new StringBuilder(50);
             query.Insert(query.Length, $"UPDATE {table} SET {addFields(values, table, "UPDATE")} {where(table, whereParams, keys)}");
             return query;
         }
-        public StringBuilder insert(string table, List<string> values)
+        private StringBuilder insert(string table, List<string> values)
         {
             StringBuilder query = new StringBuilder(50);
             query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "INSERT", "condition")}) VALUES ({addFields(values, table, "INSERT", "value")})");
             return query;
         }
-        public StringBuilder select(string column, string table)
+        private StringBuilder select(string column, string table, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
         {
-            return selectDelete($"SELECT {column} ", table);
+            return selectDelete($"SELECT {column}", table, whereParams, keys);
         }
-        public StringBuilder delete(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        private StringBuilder delete(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
         {
             return selectDelete("DELETE", table, whereParams, keys);
         }
@@ -93,17 +179,23 @@ namespace ToolBox.Services
             {
                 if (from.Contains("INSERT"))
                 {
-                    if (type == "condition")
-                        query.Insert(query.Length, checkCondition(item, table));
-                    else
-                        query.Insert(query.Length, $"@{item}");
+                    query.Insert(query.Length, element(item, table, type));
                 }
                 else
-                    query.Insert(query.Length, $"{item} = @{item}");
+                    query.Insert(query.Length, $"{element(item, table, "condition")} = {element(item, table, "value")}");
                 if (counter < list.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
             }
+            return query;
+        }
+        private static StringBuilder element(string item, string table, string type)
+        {
+            StringBuilder query = new StringBuilder(30);
+            if (type != "condition")
+                query.Insert(query.Length, $"@{item}");
+            else
+                query.Insert(query.Length, checkCondition(item, table));
             return query;
         }
         private static string checkCondition(string condition, string table)
