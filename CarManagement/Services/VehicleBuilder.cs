@@ -67,6 +67,28 @@ namespace CarManagement.Services
             this.color = new CarColor();
             this.color = color;
         }
+
+        public IVehicle build()
+        {
+            Asserts.isTrue(this.wheelCount > 0);
+            this.wheels = new List<IWheel>();
+            this.doors = new List<IDoor>();
+            for (int i = 0; i < this.wheelCount; i++)
+            {
+                this.wheels.Add(new Wheel());
+            }
+            for (int i = 0; i < this.doorsCount; i++)
+            {
+                this.doors.Add(new Door());
+            }
+            return new Vehicle(
+                this.wheels, 
+                this.doors, 
+                new Engine(
+                    this.power), 
+                this.color, 
+                this.enrollmentProvider.getNew());
+        }
         private void checkColors(CarColor color)
         {
             foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
@@ -78,31 +100,6 @@ namespace CarManagement.Services
             }
             Asserts.isTrue(this.checkColor == true);
         }
-
-        public IVehicle build()
-        {
-            Asserts.isTrue(this.wheelCount > 0);
-            this.wheels = new List<IWheel>();
-            this.doors = new List<IDoor>();
-            for (int i = 0; i < this.wheelCount; i++)
-            {
-                this.wheel = new Wheel();
-                this.wheels.Add(this.wheel);
-            }
-            for (int i = 0; i < this.doorsCount; i++)
-            {
-                this.door = new Door();
-                this.doors.Add(this.door);
-            }
-            return new Vehicle(
-                this.wheels, 
-                this.doors, 
-                new Engine(
-                    this.power), 
-                this.color, 
-                this.enrollmentProvider.getNew());
-        }
-
         public VehicleDto export(IVehicle vehicle)
         {
             return convert(vehicle);
@@ -304,12 +301,5 @@ namespace CarManagement.Services
             }
             public CarColor Color { get; }
         }
-        /*void convertObjects(dynamic thingsin, dynamic thingsout)
-        {
-            for (int i = 0; i < thingsin.Length; i++)
-            {
-                thingsout[i] = convert(thingsin[i]);
-            }
-        }*/
     }
 }
