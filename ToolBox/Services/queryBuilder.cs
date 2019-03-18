@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace ToolBox.Services
@@ -171,18 +170,18 @@ namespace ToolBox.Services
             }
             return query;
         }
-        private static StringBuilder addFields(List<string> list, string table, string from, string type = null)
+        private static StringBuilder addFields<T>(List<T> list, string table, string from, string type = null)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
-            foreach (string item in list)
+            foreach (T item in list)
             {
                 if (from.Contains("INSERT"))
                 {
-                    query.Insert(query.Length, element(item, table, type));
+                    query.Insert(query.Length, element($"{item}", table, type));
                 }
                 else
-                    query.Insert(query.Length, $"{element(item, table, "condition")} = {element(item, table, "value")}");
+                    query.Insert(query.Length, $"{element($"{item}", table, "condition")} = {element($"{item}", table, "value")}");
                 if (counter < list.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
