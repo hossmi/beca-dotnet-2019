@@ -9,95 +9,97 @@
 
 <h2>Edit</h2><br />
 
-<form class="form" method="get">
+    @using (Html.BeginForm("Edit", "Vehicles", FormMethod.Post, null))
+    {
+             <fieldset>
+                 <table class="table">
+                     <tr>
+                         <th>
+                             Enrollment
+                         </th>
+                         <th>
+                             Serial
+                         </th>
+                         <th>
+                             Number
+                         </th>
+                         <th></th>
+                         <th></th>
+                     </tr>
+                     <tr>
+                         <td>@Model.Enrollment.Number.ToString("0000") - @Model.Enrollment.Serial</td>
+                         <td>@Model.Enrollment.Serial</td>
+                         <td>@Model.Enrollment.Number.ToString("0000")</td>
+                         <td></td>
+                         <td></td>
+                     </tr>
+                     <tr>
+                         <th colspan="3">Color</th>
+                     </tr>
+                     <tr>
+                         <td colspan="3">
+                             @Html.DropDownListFor(vehicle => vehicle.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
+                         </td>
+                         <td colspan="3"></td>
+                     </tr>
+                     <tr>
+                         <th>Engine</th>
+                         <th>Horse Power</th>
+                         <th>Is Started</th>
+                     </tr>
+                     <tr>
+                         <td>@Model.Engine.HorsePower cc - Started @Model.Engine.IsStarted.ToString()</td>
+                         <td>
+                             <input type="number" min="0" name="horsePower" value="@Model.Engine.HorsePower" />
+                         </td>
+                         <td>
+                             @Html.CheckBox("isStarted")
+                         </td>
+                     </tr>
+                     <tr>
+                         <th>Wheels</th>
+                     </tr>
+                     <tr>
+                         <td>
+                             <select name="wheels">
+                                 <option selected value="@Model.Wheels.Count()">@Model.Wheels.Count()</option>
+                                 @for (int i = 1; i < 5; i++)
+                                 {
+                                     if (Model.Wheels.Count() != i)
+                                     {
+                                         <option value="@i">@i</option>
+                                     }
+                                 }
+                             </select>
+                         </td>
+                     </tr>
+                     <tr>
+                         <th>Doors</th>
+                     </tr>
+                     <tr>
+                         <td>
+                             <select name="doors">
+                                 }
+                                 <option selected value="@Model.Doors.Count()">@Model.Doors.Count()</option>
+                                 @for (int i = 0; i < 7; i++)
+                                 {
+                                     if (Model.Doors.Count() != i)
+                                     {
+                                         <option value="@i">@i</option>
+                                     }
+                                 }
+                             </select>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>
+                             <input type="hidden" name="serial" value="@Model.Enrollment.Serial" />
+                             <input type="hidden" name="number" value="@Model.Enrollment.Number" />
+                             <input type="submit" value="save" />
+                         </td>
+                     </tr>
 
-    <table class="table">
-        <tr>
-            <th>
-                Enrollment
-            </th>
-            <th>
-                Serial
-            </th>
-            <th>
-                Number
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>@Model.Enrollment.Number.ToString("0000") - @Model.Enrollment.Serial</td>
-            <td>@Model.Enrollment.Serial</td>
-            <td>@Model.Enrollment.Number.ToString("0000")</td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <th colspan="3">Color</th>
-        </tr>
-        <tr>
-            <td colspan="3">
-                @Html.DropDownListFor(vehicle => vehicle.Color, new SelectList(Enum.GetValues(typeof(CarColor))))
-            </td>
-            <td colspan="3"></td>
-        </tr>
-        <tr>
-            <th>Engine</th>
-            <th>Horse Power</th>
-            <th>Is Started</th>
-        </tr>
-        <tr>
-            <td>@Model.Engine.HorsePower cc - Started @Model.Engine.IsStarted.ToString()</td>
-            <td>
-                <input type="number" min="0" name="horsePower" value="@Model.Engine.HorsePower" />
-            </td>
-            <td>
-                @Html.CheckBox("isStarted")
-            </td>
-        </tr>
-        <tr>
-            <th>Wheels</th>
-        </tr>
-        <tr>
-            <td>
-                <select name="wheels">
-                    <option selected value="@Model.Wheels.Count()">@Model.Wheels.Count()</option>
-                    @for (int i = 1; i < 5; i++)
-                    {
-                        if (Model.Wheels.Count() != i)
-                        {
-                            <option value="@i">@i</option>
-                        }
-                    }
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <th>Doors</th>
-        </tr>
-        <tr>
-            <td>
-                <select name="doors">
-                    }
-                    <option selected value="@Model.Doors.Count()">@Model.Doors.Count()</option>
-                    @for (int i = 0; i < 7; i++)
-                    {
-                        if (Model.Doors.Count() != i)
-                        {
-                            <option value="@i">@i</option>
-                        }
-                    }
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input type="hidden" name="serial" value="@Model.Enrollment.Serial" />
-                <input type="hidden" name="number" value="@Model.Enrollment.Number" />
-                <input type="submit" value="save" />
-            </td>
-        </tr>
-
-    </table>
-</form>
+                 </table>
+             </fieldset>
+    }
 

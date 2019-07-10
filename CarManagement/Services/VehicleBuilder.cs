@@ -161,6 +161,13 @@ namespace CarManagement.Services
                 wheelsDto, 
                 doorsDto);
         }
+        private void genericConversor<T>(int counter, T[] arrays, dynamic[] items)
+        {
+            for (int i = 0; i < counter; i++)
+            {
+                arrays[i] = convert(items[i]);
+            }
+        }
         private IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);
