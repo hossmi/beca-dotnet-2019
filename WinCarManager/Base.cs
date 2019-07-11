@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace WinCarManager
 {
-    public partial class Menu : Model
+    public partial class Base : Form
     {
-        public Menu()
+        public Base()
         {
             InitializeComponent();
         }
 
-        private void Menu_Load(object sender, EventArgs e)
+        private void Base_Load(object sender, EventArgs e)
         {
 
         }
