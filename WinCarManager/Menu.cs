@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarManagement.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,10 +11,14 @@ using System.Windows.Forms;
 
 namespace WinCarManager
 {
-    public partial class Menu : Model
+    public partial class Menu : Base
     {
-        public Menu()
+        private readonly IVehicleStorage vehicleStorage;
+        private readonly IEnrollmentProvider enrollmentProvider;
+        public Menu(IVehicleStorage vehicleStorage, IEnrollmentProvider enrollmentProvider)
         {
+            this.vehicleStorage = vehicleStorage;
+            this.enrollmentProvider = enrollmentProvider;
             InitializeComponent();
         }
 
