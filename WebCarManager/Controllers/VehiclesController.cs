@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using WebCarManager.Models;
 
@@ -28,10 +29,10 @@ namespace WebCarManager.Controllers
 
         // SET: Vehicles
         [HttpPost]
-        public ActionResult Edit(VehicleDto vehicleDto)
+        public ActionResult Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, EnrollmentDto enrollmentDto)
         {
             this.ViewBag.Message = "Edited Vehicle";
-            return View(this.vehicle.Edit(vehicleDto));
+            return View(this.vehicle.Edit(color, engineDto, Doors, Wheels, enrollmentDto));
         }
     }
 }

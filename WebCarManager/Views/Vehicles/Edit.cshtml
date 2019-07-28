@@ -1,6 +1,6 @@
 ﻿@using CarManagement.Core.Models
 @using CarManagement.Core.Models.DTOs
-@model CarManagement.Core.Models.DTOs.VehicleDto
+@model VehicleDto
 
 @{
     ViewBag.Title = "Edit";
@@ -53,7 +53,7 @@
                              <input type="number" min="0" name="horsePower" value="@Model.Engine.HorsePower" />
                          </td>
                          <td>
-                             @Html.CheckBox("isStarted")
+                             @Html.CheckBox("isStarted", Model.Engine.IsStarted)
                          </td>
                      </tr>
                      <tr>
@@ -93,8 +93,8 @@
                      </tr>
                      <tr>
                          <td>
-                             <input type="hidden" name="serial" value="@Model.Enrollment.Serial" />
-                             <input type="hidden" name="number" value="@Model.Enrollment.Number" />
+                             @Html.Hidden("serial", Model.Enrollment.Serial)
+                             @Html.Hidden("number", Model.Enrollment.Number)
                              <input type="submit" value="save" />
                          </td>
                      </tr>

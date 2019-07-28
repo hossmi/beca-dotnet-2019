@@ -13,6 +13,7 @@ namespace WebCarManager.Models
         private readonly IVehicleBuilder vehicleBuilder;
         private IEnumerable<IEnrollment> enrollmentEnum;
         private IList<EnrollmentDto> enrollmentDtoList;
+        private VehicleDto vehicleDto;
 
         public Vehicle()
         {
@@ -47,10 +48,24 @@ namespace WebCarManager.Models
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
         }
-        public VehicleDto Edit(VehicleDto vehicleDto)
+        public VehicleDto Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, EnrollmentDto enrollmentDto)
         {
-            set(vehicleDto);
-            return getVehicle(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number);
+            this.vehicleDto = new VehicleDto();
+            this.vehicleDto.Enrollment = enrollmentDto;
+            this.vehicleDto.Color = color;
+            this.vehicleDto.Engine = engineDto;
+            this.vehicleDto.Doors = new DoorDto[Doors];
+            for (int i = 0; i < Doors; i++)
+            {
+                this.vehicleDto.Doors[i] = new DoorDto();
+            }
+            this.vehicleDto.Wheels = new WheelDto[Wheels];
+            for (int i = 0; i < Wheels; i++)
+            {
+                this.vehicleDto.Wheels[i] = new WheelDto();
+            }
+            set(this.vehicleDto);
+            return getVehicle(this.vehicleDto.Enrollment.Serial, this.vehicleDto.Enrollment.Number);
         }
     }
 }
