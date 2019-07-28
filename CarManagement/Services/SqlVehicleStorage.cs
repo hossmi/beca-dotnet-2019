@@ -399,9 +399,12 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        this.columns.Add("serial");
-                        this.columns.Add("number");
-                        this.columns.Add("id");
+                        this.columns = new List<string>
+                        {
+                            "serial",
+                            "number",
+                            "id"
+                        };
                         this.tablesColumns.Add("enrollment", this.columns);
                         this.columns = new List<string>
                         {
@@ -411,7 +414,22 @@ namespace CarManagement.Services
                         };
                         this.tablesColumns.Add("vehicle", this.columns);
                         this.joinConditions.Add("id", "enrollmentId");
-                        sentence.CommandText = $"{this.queryBuilder.complexSelect(this.tablesColumns, this.joinConditions)}{this.queryBuilder.where("enrollment", this.whereParams, this.keys)}";
+                        sentence.CommandText = $@"
+                            {
+                                this.queryBuilder.complexSelect
+                                (
+                                    this.tablesColumns, 
+                                    this.joinConditions
+                                )
+                            }
+                            {
+                                this.queryBuilder.where
+                                (
+                                    "enrollment", 
+                                    this.whereParams, 
+                                    this.keys
+                                )
+                            }";
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {

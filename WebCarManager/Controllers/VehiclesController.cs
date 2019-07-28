@@ -1,41 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using CarManagement.Core.Models;
+﻿using System.Web.Mvc;
 using CarManagement.Core.Models.DTOs;
-using CarManagement.Core.Services;
+using WebCarManager.Models;
 
 namespace WebCarManager.Controllers
 {
-    public class VehiclesController : AbstractController
+    public class VehiclesController : Controller
     {
-        private readonly IVehicleStorage vehicleStorage;
-        private readonly IVehicleBuilder vehicleBuilder;
-        private IEnumerable<IEnrollment> enrollmentEnum;
-        private IList<EnrollmentDto> enrollmentDtoList;
-
+        private Vehicle vehicle;
         public VehiclesController()
         {
-            this.vehicleStorage = getService<IVehicleStorage>();
-            this.vehicleBuilder = getService<IVehicleBuilder>();
+            this.vehicle = new Vehicle();
         }
 
         public ActionResult Index()
         {
-            
-            this.enrollmentEnum = this.vehicleStorage
-                .get()
-                .Select(vehicle => vehicle.Enrollment);
-            this.enrollmentDtoList = new List<EnrollmentDto>();
-            foreach (IEnrollment enrollment in this.enrollmentEnum)
-            {
-                this.enrollmentDtoList.Add(
-                    new EnrollmentDto(
-                        enrollment.Serial,
-                        enrollment.Number));
-            }
-            this.ViewBag.Message = "Enrollment list";
-            return View(this.enrollmentDtoList);
+            this.ViewBag.Message = "Index";
+            return View(this.vehicle.enrollmentDTOList());
         }
 
         // GET: Vehicles
@@ -43,29 +23,15 @@ namespace WebCarManager.Controllers
         public ActionResult Edit(string serial, int number)
         {
             this.ViewBag.Message = "Edit Vehicle";
-            return View(getVehicle(serial, number));
+            return View(this.vehicle.getVehicle(serial, number));
         }
 
         // SET: Vehicles
         [HttpPost]
         public ActionResult Edit(VehicleDto vehicleDto)
         {
-            this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
             this.ViewBag.Message = "Edited Vehicle";
-            return View(
-                getVehicle(
-                    vehicleDto.Enrollment.Serial, 
-                    vehicleDto.Enrollment.Number));
-        }
-
-        private VehicleDto getVehicle(string serial, int number)
-        {
-            return this.vehicleBuilder.export(
-                this.vehicleStorage
-                    .get()
-                    .whereEnrollmentIs(this.vehicleBuilder.import(serial, number))
-                    .Single());
-            
+            return View(this.vehicle.Edit(vehicleDto));
         }
     }
 }
