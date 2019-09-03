@@ -61,9 +61,7 @@ namespace CarManagement.Services
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
-                        {
                             this.idList.Add((int)reader.GetValue(0));
-                        }
                         reader.Close();
                     }
                     foreach (int id in this.idList)
@@ -184,13 +182,9 @@ namespace CarManagement.Services
         private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
             foreach (IWheel wheel in vehicle.Wheels)
-            {
                 makeWheelDoor(sentence, wheel.Pressure, "pressure", "wheel");
-            }
             foreach (IDoor door in vehicle.Doors)
-            {
                 makeWheelDoor(sentence, door.IsOpen, "isOpen", "door");
-            }
         }
         private void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
         {
@@ -480,13 +474,9 @@ namespace CarManagement.Services
                     while (reader2.Read())
                     {
                         if (type == "door")
-                        {
                             this.doorsDto.Add(new DoorDto(Convert.ToBoolean(reader2.GetValue(0))));
-                        }
                         else
-                        {
                             this.wheelsDto.Add(new WheelDto(Convert.ToDouble(reader2.GetValue(0))));
-                        }
                     }
                 }
             }
@@ -495,9 +485,7 @@ namespace CarManagement.Services
                 if (sentence2.Parameters == null)
                 {
                     foreach (IDbDataParameter parameter in sentence.Parameters)
-                    {
                         sentence2.Parameters.Add(parameter);
-                    }
                 }
             }
         }

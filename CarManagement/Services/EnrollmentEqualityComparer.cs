@@ -12,9 +12,7 @@ namespace CarManagement.Services
         public bool Equals(IEnrollment y, IEnrollment x)
         {
             if (y.Serial == x.Serial && y.Number == x.Number)
-            {
                 return true;
-            }
             return false;
         }
 

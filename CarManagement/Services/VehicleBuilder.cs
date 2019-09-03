@@ -72,13 +72,9 @@ namespace CarManagement.Services
             this.wheels = new List<IWheel>();
             this.doors = new List<IDoor>();
             for (int i = 0; i < this.wheelCount; i++)
-            {
                 this.wheels.Add(new Wheel());
-            }
             for (int i = 0; i < this.doorsCount; i++)
-            {
                 this.doors.Add(new Door());
-            }
             return new Vehicle(
                 this.wheels, 
                 this.doors, 
@@ -92,9 +88,7 @@ namespace CarManagement.Services
             foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
             {
                 if (color == carColor)
-                {
                     this.checkColor = true;
-                }
             }
             Asserts.isTrue(this.checkColor == true);
         }
@@ -128,13 +122,9 @@ namespace CarManagement.Services
             this.wheels = new List<IWheel>();
             this.doors = new List<IDoor>();
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
-            {
                 this.wheels.Add(convert(wheelDto));
-            }
             foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
                 this.doors.Add(convert(doorDto));
-            }
             return new Vehicle(
                 this.wheels, 
                 this.doors, 
@@ -147,13 +137,9 @@ namespace CarManagement.Services
             WheelDto[] wheelsDto = new WheelDto[vehicle.Wheels.Length];
             DoorDto[] doorsDto = new DoorDto[vehicle.Doors.Length];
             for (int i = 0; i < vehicle.Wheels.Length; i++)
-            {
                 wheelsDto[i] = convert(vehicle.Wheels[i]);
-            }
             for (int i = 0; i < vehicle.Doors.Length; i++)
-            {
                 doorsDto[i] = convert(vehicle.Doors[i]);
-            }
             return new VehicleDto(
                 vehicle.Color, 
                 convert(vehicle.Engine), 
@@ -161,13 +147,13 @@ namespace CarManagement.Services
                 wheelsDto, 
                 doorsDto);
         }
+
         private void genericConversor<T>(int counter, T[] arrays, dynamic[] items)
         {
             for (int i = 0; i < counter; i++)
-            {
                 arrays[i] = convert(items[i]);
-            }
         }
+
         private IDoor convert(DoorDto doorDto)
         {
             return new Door(doorDto.IsOpen);

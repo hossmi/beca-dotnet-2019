@@ -24,6 +24,7 @@ namespace CarManagement.Services
                 return $"{this.Serial}-{this.Number.ToString("0000")}";
             }
         }
+
         IEnrollment IEnrollmentProvider.getNew()
         {
             int Number = 0;
@@ -59,18 +60,13 @@ namespace CarManagement.Services
                     }
                 }
                 else
-                {
                     Number++;
-                }
             }
             else
-            {
                 Console.WriteLine("Has alcanzado el máximo de matrículas");
-            }
             Enrollment enrollment = new Enrollment(Serial.ToString(), Number);
             return enrollment;
         }
-
         IEnrollment IEnrollmentImporter.import(string serial, int number)
         {
             return new Enrollment(serial, number);
