@@ -177,9 +177,7 @@ namespace ToolBox.Services
             foreach (T item in list)
             {
                 if (from.Contains("INSERT"))
-                {
                     query.Insert(query.Length, element($"{item}", table, type));
-                }
                 else
                     query.Insert(query.Length, $"{element($"{item}", table, "condition")} = {element($"{item}", table, "value")}");
                 if (counter < list.Count - 1)

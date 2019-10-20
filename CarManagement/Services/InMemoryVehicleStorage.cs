@@ -6,8 +6,7 @@ namespace CarManagement.Services
 {
     public class InMemoryVehicleStorage : AbstractVehicleStorage
     {
-        public InMemoryVehicleStorage() 
-            : base(load())
+        public InMemoryVehicleStorage() : base(load())
         {
         }
 

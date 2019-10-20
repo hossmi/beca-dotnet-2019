@@ -7,9 +7,7 @@ namespace CarManagement.Extensions.Vehicles
         public static void setWheelsPressure(this IVehicle vehicle, double pressure)
         {
             foreach (IWheel wheel in vehicle.Wheels)
-            {
                 wheel.Pressure = pressure;
-            }
         }
     }
 }

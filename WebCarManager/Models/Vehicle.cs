@@ -27,12 +27,10 @@ namespace WebCarManager.Models
                 .Select(vehicle => vehicle.Enrollment);
             this.enrollmentDtoList = new List<EnrollmentDto>();
             foreach (IEnrollment enrollment in this.enrollmentEnum)
-            {
                 this.enrollmentDtoList.Add(
                     new EnrollmentDto(
                         enrollment.Serial,
                         enrollment.Number));
-            }
             return this.enrollmentDtoList;
 }
         public VehicleDto getVehicle(string serial, int number)
@@ -42,7 +40,6 @@ namespace WebCarManager.Models
                     .get()
                     .whereEnrollmentIs(this.vehicleBuilder.import(serial, number))
                     .Single());
-
         }
         public void set(VehicleDto vehicleDto)
         {
@@ -56,14 +53,10 @@ namespace WebCarManager.Models
             this.vehicleDto.Engine = engineDto;
             this.vehicleDto.Doors = new DoorDto[Doors];
             for (int i = 0; i < Doors; i++)
-            {
                 this.vehicleDto.Doors[i] = new DoorDto();
-            }
             this.vehicleDto.Wheels = new WheelDto[Wheels];
             for (int i = 0; i < Wheels; i++)
-            {
                 this.vehicleDto.Wheels[i] = new WheelDto();
-            }
             set(this.vehicleDto);
             return getVehicle(this.vehicleDto.Enrollment.Serial, this.vehicleDto.Enrollment.Number);
         }

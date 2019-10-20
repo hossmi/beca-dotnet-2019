@@ -26,9 +26,7 @@ namespace CarManagement.Extensions.Filters
         public static IEnumerable<IEngine> selectEngines(this IEnumerable<IVehicle> vehicles)
         {
             foreach (IVehicle vehicle in vehicles)
-            {
                 yield return vehicle.Engine;
-            }
         }
 
         public static IEnumerable<IEngine> filterByStarted(this IEnumerable<IEngine> engines)

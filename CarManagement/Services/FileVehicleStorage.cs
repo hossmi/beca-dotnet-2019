@@ -27,11 +27,8 @@ namespace CarManagement.Services
 
         protected override void save(IEnumerable<IVehicle> vehicles)
         {
-
             foreach (IVehicle vehicle in vehicles)
-            {
                 this.vehiclesDtoList.Add(this.vehicleBuilder.export(vehicle));
-            }
             this.xmlSerializer.Serialize(this.textWriter, this.vehiclesDtoList);
             this.textWriter.Close();
         }
@@ -51,7 +48,6 @@ namespace CarManagement.Services
                     vehicleDictionary.Add(vehicle.Enrollment, vehicle);
                 }
             }
-
             return vehicleDictionary;
         }
     }
