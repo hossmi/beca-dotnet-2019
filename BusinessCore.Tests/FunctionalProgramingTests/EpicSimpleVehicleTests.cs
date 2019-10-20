@@ -42,14 +42,18 @@ namespace BusinessCore.Tests
         [TestMethod]
         public void Find_vehicle_enrollmment_with_most_powerful_engine_and_2_wheels()
         {
-            //IEnrollment querriedEnrollment = this.vehicleStorage
-            /*.get()
-            .Where(condition => condition.Wheels.Count() == 2)
+            IEnrollment querriedEnrollment = this.vehicleStorage
+            .get()
+            .Where(condition1 => condition1.Wheels.Count() == 2)
+            .Where(vehicle => vehicle.Engine.HorsePower == this.vehicleStorage
+                .get()
+                .Where(condition1 => condition1.Wheels.Count() == 2)
+                .Select(a => a.Engine.HorsePower).Max())
             .Select(vehicle => vehicle.Enrollment)
-            //.First().Enrollment;
+            .Single();
 
             Assert.AreEqual("ABC", querriedEnrollment.Serial);
-            Assert.AreEqual(1, querriedEnrollment.Number);*/
+            Assert.AreEqual(1, querriedEnrollment.Number);
         }
 
         [TestCategory("Functional Programing")]
@@ -58,8 +62,9 @@ namespace BusinessCore.Tests
         { // Vehicle has to have more than 1 wheel, and the greatest pressure is only present in one wheel
             IEnrollment[] querriedEnrollment = this.vehicleStorage
                 .get()
+                .Where(condiition1 => condiition1.Wheels.Count() >1)
+                .Where(condition2 => condition2.Wheels.Select(a => a.Pressure).Max() > condition2.Wheels.Select(a => a.Pressure).Average() + 1)
                 .Select(vehicle => vehicle.Enrollment)
-                /**/
                 .ToArray();
             try
             {
