@@ -5,27 +5,20 @@ namespace ToolBox.Services
 {
     public class QueryBuilder
     {
-        private readonly IDictionary<string, List<string>> tablesColumns;
-        private readonly IDictionary<string, string> joinConditions;
-        private readonly IDictionary<List<string>, string> whereParams;
-        private readonly List<string> keys;
-        private readonly List<string> values;
+        private readonly IList<FieldValues> fieldValues;
+        private readonly IList<string> keys;
+        private readonly IList<string> values;
         private readonly string table;
         private readonly string column;
 
-        public QueryBuilder(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
-        {
-            this.joinConditions = joinConditions;
-            this.tablesColumns = tablesColumns;
-        }
-        public QueryBuilder(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
+        public QueryBuilder(string table, IList<string> values, IList<FieldValues> fieldValues, IList<string> keys)
         {
             this.table = table;
             this.values = values;
-            this.whereParams = whereParams;
+            this.fieldValues = fieldValues;
             this.keys = keys;
         }
-        public QueryBuilder(string table, List<string> values)
+        public QueryBuilder(string table, IList<string> values)
         {
             this.table = table;
             this.values = values;
@@ -35,19 +28,20 @@ namespace ToolBox.Services
             this.column = column;
             this.table = table;
         }
-        public QueryBuilder(string column, string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        public QueryBuilder(string column, string table, IList<FieldValues> fieldValues, IList<string> keys)
         {
             this.column = column;
             this.table = table;
-            this.whereParams = whereParams;
+            this.fieldValues = fieldValues;
             this.keys = keys;
         }
-        public QueryBuilder(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        public QueryBuilder(string table, IList<FieldValues> fieldValues, IList<string> keys)
         {
             this.table = table;
-            this.whereParams = whereParams;
+            this.fieldValues = fieldValues;
             this.keys = keys;
         }
+
         public QueryBuilder()
         {
 
@@ -57,15 +51,15 @@ namespace ToolBox.Services
         {
             get
             {
-                if (this.whereParams == null)
+                if (this.fieldValues == null)
                 {
                     return select(this.column, this.table);
                 }
                 else
                 {
-                    return select(this.column, this.table, this.whereParams, this.keys);
+                    return select(this.column, this.table, this.fieldValues, this.keys);
                 }
-                
+
             }
         }
         public StringBuilder queryInsert
@@ -79,23 +73,23 @@ namespace ToolBox.Services
         {
             get
             {
-                return update(this.table, this.values, this.whereParams, this.keys);
+                return update(this.table, this.values, this.fieldValues, this.keys);
             }
         }
         public StringBuilder queryDelete
         {
             get
             {
-                return delete(this.table, this.whereParams, this.keys);
+                return delete(this.table, this.fieldValues, this.keys);
             }
         }
 
-        public StringBuilder complexSelect(IDictionary<string, List<string>> tablesColumns, IDictionary<string, string> joinConditions)
+        public StringBuilder complexSelect(IDictionary<string, IList<string>> tablesColumns, IDictionary<string, string> joinConditions)
         {
             StringBuilder query = new StringBuilder(100);
             query.Insert(query.Length, "SELECT ");
             int counter = 0;
-            foreach (KeyValuePair<string, List<string>> tableColumns in tablesColumns)
+            foreach (KeyValuePair<string, IList<string>> tableColumns in tablesColumns)
             {
                 for (int i = 0; i < tableColumns.Value.Count; i++)
                 {
@@ -109,7 +103,7 @@ namespace ToolBox.Services
             }
             query.Insert(query.Length, " FROM ");
             counter = 0;
-            foreach (KeyValuePair<string, List<string>> tableColumns in tablesColumns)
+            foreach (KeyValuePair<string, IList<string>> tableColumns in tablesColumns)
             {
                 query.Insert(query.Length, $"{tableColumns.Key} {tableColumns.Key[0]}");
                 if (counter < tablesColumns.Count - 1)
@@ -127,50 +121,50 @@ namespace ToolBox.Services
             }
             return query;
         }
-        private StringBuilder update(string table, List<string> values, IDictionary<List<string>, string> whereParams, List<string> keys)
+        private StringBuilder update(string table, IList<string> values, IList<FieldValues> fieldValues, IList<string> keys)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {table} SET {addFields(values, table, "UPDATE")} {where(table, whereParams, keys)}");
+            query.Insert(query.Length, $"UPDATE {table} SET {addFields(values, table, "UPDATE")} {where(table, fieldValues, keys)}");
             return query;
         }
-        private StringBuilder insert(string table, List<string> values)
+        private StringBuilder insert(string table, IList<string> values)
         {
             StringBuilder query = new StringBuilder(50);
             query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "INSERT", "condition")}) VALUES ({addFields(values, table, "INSERT", "value")})");
             return query;
         }
-        private StringBuilder select(string column, string table, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
+        private StringBuilder select(string column, string table, IList<FieldValues> fieldValues = null, IList<string> keys = null)
         {
-            return selectDelete($"SELECT {column}", table, whereParams, keys);
+            return selectDelete($"SELECT {column}", table, fieldValues, keys);
         }
-        private StringBuilder delete(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        private StringBuilder delete(string table, IList<FieldValues> fieldValues, IList<string> keys)
         {
-            return selectDelete("DELETE", table, whereParams, keys);
+            return selectDelete("DELETE", table, fieldValues, keys);
         }
-        private StringBuilder selectDelete(string command, string table, IDictionary<List<string>, string> whereParams = null, List<string> keys = null)
+        private StringBuilder selectDelete(string command, string table, IList<FieldValues> fieldValues = null, IList<string> keys = null)
         {
             StringBuilder query = new StringBuilder(30);
             query.Insert(query.Length, $"{command} FROM {table}");
-            if (whereParams != null)
-                query.Insert(query.Length, where(table, whereParams, keys));
+            if (fieldValues != null)
+                query.Insert(query.Length, where(table, fieldValues, keys));
             return query;
         }
-        public StringBuilder where(string table, IDictionary<List<string>, string> whereParams, List<string> keys)
+        public StringBuilder where(string table, IList<FieldValues> fieldValues, IList<string> keys)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
-            foreach (KeyValuePair<List<string>, string> where in whereParams)
+            foreach (FieldValues fieldvalues in fieldValues)
             {
-                if (counter == 0 || whereParams.Count == 1)
+                if (counter == 0 || fieldValues.Count == 1)
                     query.Insert(query.Length, " WHERE ");
                 else if (counter > 0)
                     query.Insert(query.Length, " AND ");
-                query.Insert(query.Length, buildCondition(checkCondition(where.Value, table), keys[counter], where.Key));
+                query.Insert(query.Length, buildCondition(checkCondition(fieldvalues.field, table), keys[counter], fieldvalues.values));
                 counter++;
             }
             return query;
         }
-        private static StringBuilder addFields<T>(List<T> list, string table, string from, string type = null)
+        private static StringBuilder addFields<T>(IList<T> list, string table, string from, string type = null)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
@@ -209,7 +203,7 @@ namespace ToolBox.Services
                 fix = condition;
             return fix;
         }
-        private static StringBuilder buildCondition(string condition, string key, List<string> values)
+        private static StringBuilder buildCondition(string condition, string key, IList<string> values)
         {
             StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
             if (values.Count != 1)
@@ -234,5 +228,6 @@ namespace ToolBox.Services
                 query.Insert(query.Length, values[0]);
             return query;
         }
+
     }
 }
