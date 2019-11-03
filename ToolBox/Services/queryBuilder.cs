@@ -7,21 +7,19 @@ namespace ToolBox.Services
     {
         private readonly IList<FieldValues> fieldValues;
         private readonly IList<string> keys;
-        private readonly IList<string> values;
         private readonly string table;
         private readonly string column;
+        private readonly FieldValues tableValues;
 
-        public QueryBuilder(string table, IList<string> values, IList<FieldValues> fieldValues, IList<string> keys)
+        public QueryBuilder(FieldValues tableValues, IList<FieldValues> fieldValues, IList<string> keys)
         {
-            this.table = table;
-            this.values = values;
+            this.tableValues = tableValues;
             this.fieldValues = fieldValues;
             this.keys = keys;
         }
-        public QueryBuilder(string table, IList<string> values)
+        public QueryBuilder(FieldValues tableValues)
         {
-            this.table = table;
-            this.values = values;
+            this.tableValues = tableValues;
         }
         public QueryBuilder(string column, string table)
         {
@@ -66,14 +64,14 @@ namespace ToolBox.Services
         {
             get
             {
-                return insert(this.table, this.values);
+                return insert(this.tableValues);
             }
         }
         public StringBuilder queryUpdate
         {
             get
             {
-                return update(this.table, this.values, this.fieldValues, this.keys);
+                return update(this.tableValues, this.fieldValues, this.keys);
             }
         }
         public StringBuilder queryDelete
@@ -84,29 +82,29 @@ namespace ToolBox.Services
             }
         }
 
-        public StringBuilder complexSelect(IDictionary<string, IList<string>> tablesColumns, IDictionary<string, string> joinConditions)
+        public StringBuilder complexSelect(IList<FieldValues> fieldValues, IDictionary<string, string> joinConditions)
         {
             StringBuilder query = new StringBuilder(100);
             query.Insert(query.Length, "SELECT ");
             int counter = 0;
-            foreach (KeyValuePair<string, IList<string>> tableColumns in tablesColumns)
+            foreach (FieldValues fieldvalues in fieldValues)
             {
-                for (int i = 0; i < tableColumns.Value.Count; i++)
+                for (int i = 0; i < fieldvalues.values.Count; i++)
                 {
-                    query.Insert(query.Length, $"{tableColumns.Key[0]}.{tableColumns.Value[i]}");
-                    if (i < tableColumns.Value.Count - 1)
+                    query.Insert(query.Length, $"{fieldvalues.field[0]}.{fieldvalues.values[i]}");
+                    if (i < fieldvalues.values.Count - 1)
                         query.Insert(query.Length, ", ");
                 }
-                if (counter < tablesColumns.Count - 1)
+                if (counter < fieldValues.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
             }
             query.Insert(query.Length, " FROM ");
             counter = 0;
-            foreach (KeyValuePair<string, IList<string>> tableColumns in tablesColumns)
+            foreach (FieldValues fieldvalues in fieldValues)
             {
-                query.Insert(query.Length, $"{tableColumns.Key} {tableColumns.Key[0]}");
-                if (counter < tablesColumns.Count - 1)
+                query.Insert(query.Length, $"{fieldvalues.field} {fieldvalues.field[0]}");
+                if (counter < fieldValues.Count - 1)
                     query.Insert(query.Length, " INNER JOIN ");
                 counter++;
             }
@@ -121,16 +119,16 @@ namespace ToolBox.Services
             }
             return query;
         }
-        private StringBuilder update(string table, IList<string> values, IList<FieldValues> fieldValues, IList<string> keys)
+        private StringBuilder update(FieldValues tableValues, IList<FieldValues> fieldValues, IList<string> keys)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {table} SET {addFields(values, table, "UPDATE")} {where(table, fieldValues, keys)}");
+            query.Insert(query.Length, $"UPDATE {tableValues.field} SET {addFields(tableValues.values, tableValues.field, "UPDATE")} {where(tableValues.field, fieldValues, keys)}");
             return query;
         }
-        private StringBuilder insert(string table, IList<string> values)
+        private StringBuilder insert(FieldValues tableValues)
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {table} ({addFields(values, table, "INSERT", "condition")}) VALUES ({addFields(values, table, "INSERT", "value")})");
+            query.Insert(query.Length, $"INSERT INTO {tableValues.field} ({addFields(tableValues.values, tableValues.field, "INSERT", "condition")}) VALUES ({addFields(tableValues.values, tableValues.field, "INSERT", "value")})");
             return query;
         }
         private StringBuilder select(string column, string table, IList<FieldValues> fieldValues = null, IList<string> keys = null)

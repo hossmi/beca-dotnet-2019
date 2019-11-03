@@ -123,7 +123,7 @@ namespace CarManagement.Services
                             updateVehicle(sentence, vehicle, columnsValues);
                         else
                         {
-                            this.queryBuilder = new QueryBuilder("vehicle", columnsValues);
+                            this.queryBuilder = new QueryBuilder(new FieldValues() { field = "vehicle", values = columnsValues });
                             sentence.CommandText = $"{this.queryBuilder.queryInsert}";
                             insertwheelsdoors(vehicle, sentence);
                         }
@@ -166,7 +166,7 @@ namespace CarManagement.Services
                 "serial",
                 "number"
             };
-            this.queryBuilder = new QueryBuilder("enrollment", columnsValues);
+            this.queryBuilder = new QueryBuilder(new FieldValues() { field = "enrollment", values = columnsValues });
             sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
@@ -174,7 +174,7 @@ namespace CarManagement.Services
         {
             List<string> columnsValues = setVehicleParameters(vehicle, sentence);
             columnsValues.Add("id");
-            this.queryBuilder = new QueryBuilder("vehicle", columnsValues);
+            this.queryBuilder = new QueryBuilder(new FieldValues() { field = "vehicle", values = columnsValues });
             sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence);
@@ -193,7 +193,7 @@ namespace CarManagement.Services
             List<string> columnsValues = new List<string>();
             sentence.Parameters.Add(insertParams(sentence, columnsValues, this.id, "id"));
             sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter, column));
-            this.queryBuilder = new QueryBuilder(table, columnsValues);
+            this.queryBuilder = new QueryBuilder(new FieldValues() { field = table, values = columnsValues });
             sentence.CommandText = $"{this.queryBuilder.queryInsert}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
@@ -215,15 +215,6 @@ namespace CarManagement.Services
             this.queryBuilder = new QueryBuilder("id", "enrollment", fieldValues, keys);
             sentence.CommandText = $"{this.queryBuilder.querySelect}";
         }
-        /*private static void whereParam(string key, string param, List<string> keys, IDictionary<List<string>, string> whereParams)
-        {
-            List<string> values = new List<string>
-            {
-                $"@{param}"
-            };
-            whereParams.Add(values, param);
-            keys.Add(key);
-        }*/
         private static void whereParam(string key, string param, IList<string> keys, IList<FieldValues> whereParams)
         {
             keys.Add(key);
@@ -252,7 +243,7 @@ namespace CarManagement.Services
             IList<string> keys = new List<string>();
             IList<FieldValues> fieldValues = new List<FieldValues>();
             whereParam("=", "id", keys, fieldValues);
-            this.queryBuilder = new QueryBuilder("vehicle", columnsValues, fieldValues, keys);
+            this.queryBuilder = new QueryBuilder(new FieldValues() { field = "vehicle", values = columnsValues }, fieldValues, keys);
             sentence.CommandText = $"{this.queryBuilder.queryUpdate}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             deleteWheelsDoors(sentence);
@@ -293,10 +284,10 @@ namespace CarManagement.Services
             private readonly IEnrollmentProvider enrollmentProvider;
             private int id;
             private readonly IDictionary<string, object> queryParameters;
-            private IList<FieldValues> fieldValues;
-            private readonly IDictionary<string, IList<string>> tablesColumns;
+            private readonly IList<FieldValues> fieldValues;
+            private readonly IList<FieldValues> tablesColumns;
             private readonly IDictionary<string, string> joinConditions;
-            private IList<string> columns;
+            private readonly IList<string> columns;
             private IList<string> values;
             private IList<string> keys;
             private IList<WheelDto> wheelsDto;
@@ -310,7 +301,7 @@ namespace CarManagement.Services
                 this.values = new List<string>();
                 this.keys = new List<string>();
                 this.fieldValues = new List<FieldValues>();
-                this.tablesColumns = new Dictionary<string, IList<string>>();
+                this.tablesColumns = new List<FieldValues>();
                 this.columns = new List<string>();
                 this.joinConditions = new Dictionary<string, string>();
             }
@@ -383,16 +374,18 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.values.Add("@min");
-                this.values.Add("@max");
                 this.fieldValues.Add
-                    (
-                        new FieldValues()
+                (
+                    new FieldValues()
+                    {
+                        field = "engineHorsePower",
+                        values =
                         {
-                            field = "engineHorsePower",
-                            values = this.values
+                            "@min",
+                            "@max"
                         }
-                    );
+                    }
+                );
                 this.keys.Add("BETWEEN");
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
@@ -414,27 +407,40 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        this.columns = new List<string>
-                        {
-                            "serial",
-                            "number",
-                            "id"
-                        };
-                        this.tablesColumns.Add("enrollment", this.columns);
-                        this.columns = new List<string>
-                        {
-                            "color",
-                            "engineIsStarted",
-                            "engineHorsePower"
-                        };
-                        this.tablesColumns.Add("vehicle", this.columns);
-                        this.joinConditions.Add("id", "enrollmentId");
                         sentence.CommandText = $@"
                             {
                                 this.queryBuilder.complexSelect
                                 (
-                                    this.tablesColumns, 
-                                    this.joinConditions
+                                    new List<FieldValues>
+                                    {
+                                        new FieldValues()
+                                        {
+                                            field = "enrollment",
+                                            values = new List<string>
+                                            {
+                                                "serial",
+                                                "number",
+                                                "id"
+                                            }
+                                        },
+                                        new FieldValues()
+                                        {
+                                            field = "vehicle",
+                                            values = new List<string>
+                                            {
+                                                "color",
+                                                "engineIsStarted",
+                                                "engineHorsePower"
+                                            }
+                                        }
+                                    },
+                                    new Dictionary<string, string>()
+                                    {
+                                        {
+                                            "id",
+                                            "enrollmentId"
+                                        }
+                                    }
                                 )
                             }
                             {
