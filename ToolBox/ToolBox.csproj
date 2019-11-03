@@ -49,6 +49,7 @@
     <Compile Include="Services\DB.cs" />
     <Compile Include="Services\ICommandBuilder.cs" />
     <Compile Include="Services\QueryBuilder.cs" />
+    <Compile Include="Services\whereFieldValues.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">
