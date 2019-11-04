@@ -291,7 +291,6 @@ namespace CarManagement.Services
             private readonly IEnrollmentProvider enrollmentProvider;
             private int id;
             private readonly IDictionary<string, object> queryParameters;
-            private readonly IList<FieldValues> fieldValues;
             private readonly IList<FieldValues> tablesColumns;
             private readonly IList<whereFieldValues> whereValues;
             private readonly IDictionary<string, string> joinConditions;
@@ -308,7 +307,6 @@ namespace CarManagement.Services
                 this.queryParameters = new Dictionary<string, object>();
                 this.values = new List<string>();
                 this.keys = new List<string>();
-                this.fieldValues = new List<FieldValues>();
                 this.whereValues = new List<whereFieldValues>();
                 this.tablesColumns = new List<FieldValues>();
                 this.columns = new List<string>();
@@ -347,41 +345,35 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                whereParam("=", "color", this.keys, this.fieldValues);
-                //whereParam("=", "color", this.whereValues);
+                whereParam("=", "color", this.whereValues);
                 this.queryParameters.Add("@color", (int)color);
                 return this;
             }
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                whereParam("=", "engineIsStarted", this.keys, this.fieldValues);
-                //whereParam("=", "engineIsStarted", this.whereValues);
+                whereParam("=", "engineIsStarted", this.whereValues);
                 this.queryParameters.Add("@engineIsStarted", started);
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                whereParam("=", "number", this.keys, this.fieldValues);
-                //whereParam("=", "number", this.whereValues);
+                whereParam("=", "number", this.whereValues);
                 this.queryParameters.Add("@number", enrollment.Number);
-                whereParam("=", "serial", this.keys, this.fieldValues);
-                //whereParam("=", "serial", this.whereValues);
+                whereParam("=", "serial", this.whereValues);
                 this.queryParameters.Add("@serial", enrollment.Serial);
                 return this;
             }
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isTrue(serial != null);
-                whereParam("=", "serial", this.keys, this.fieldValues);
-                //whereParam("=", "serial", this.whereValues);
+                whereParam("=", "serial", this.whereValues);
                 this.queryParameters.Add("@serial", serial);
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                whereParam("=", "engineHorsePower", this.keys, this.fieldValues);
-                //whereParam("=", "engineHorsePower", this.whereValues);
+                whereParam("=", "engineHorsePower", this.whereValues);
                 this.queryParameters.Add("@engineHorsePower", horsePower);
                 return this;
             }
@@ -389,19 +381,20 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.fieldValues.Add
+                this.whereValues.Add
                 (
-                    new FieldValues()
+                    new whereFieldValues()
                     {
                         field = "engineHorsePower",
                         values =
                         {
                             "@min",
                             "@max"
-                        }
+                        },
+                        key = "BETWEEN"
                     }
+
                 );
-                this.keys.Add("BETWEEN");
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 return this;
@@ -465,9 +458,7 @@ namespace CarManagement.Services
                                 this.queryBuilder.where
                                 (
                                     "enrollment",
-                                    //this.whereValues
-                                    this.fieldValues, 
-                                    this.keys
+                                    this.whereValues
                                 )
                             }";
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);

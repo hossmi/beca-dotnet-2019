@@ -40,7 +40,7 @@ namespace ToolBox.Services
                     this.keys.Add(wherevalues.key);
                 }
             }
-            //this.whereValues = whereValues;
+            this.whereValues = whereValues;
         }
         public QueryBuilder(string table, IList<whereFieldValues> whereValues)
         {
@@ -53,11 +53,11 @@ namespace ToolBox.Services
 
         }
 
-        /*public StringBuilder querySelect
+        public StringBuilder querySelect
         {
             get
             {
-                if (this.fieldValues == null)
+                if (this.whereValues == null)
                 {
                     return select(this.column, this.table);
                 }
@@ -65,22 +65,6 @@ namespace ToolBox.Services
                 {
                     return select(this.column, this.table, this.whereValues);
                 }
-
-            }
-        }*/
-        public StringBuilder querySelect
-        {
-            get
-            {
-                if (this.fieldValues == null)
-                {
-                    return select(this.column, this.table);
-                }
-                else
-                {
-                    return select(this.column, this.table, this.fieldValues, this.keys);
-                }
-
             }
         }
         public StringBuilder queryInsert
@@ -154,13 +138,9 @@ namespace ToolBox.Services
             query.Insert(query.Length, $"INSERT INTO {tableValues.field} ({addFields(tableValues.values, tableValues.field, "INSERT", "condition")}) VALUES ({addFields(tableValues.values, tableValues.field, "INSERT", "value")})");
             return query;
         }
-        /*private StringBuilder select(string column, string table, IList<whereFieldValues> whereValues = null)
+        private StringBuilder select(string column, string table, IList<whereFieldValues> whereValues = null)
         {
-            return selectDelete($"SELECT {column}", table, whereValues);
-        }*/
-        private StringBuilder select(string column, string table, IList<FieldValues> fieldValues = null, IList<string> keys = null)
-        {
-            return selectDelete($"SELECT {column}", table, fieldValues, keys);
+            return selectDelete($"SELECT {column}", table, this.whereValues);
         }
         private StringBuilder delete(string table, IList<whereFieldValues> whereValues)
         {
@@ -170,7 +150,7 @@ namespace ToolBox.Services
         {
             StringBuilder query = new StringBuilder(30);
             query.Insert(query.Length, $"{command} FROM {table}");
-            if (this.fieldValues != null)
+            if (this.whereValues != null)
                 query.Insert(query.Length, where(table, whereValues));
             return query;
         }
@@ -277,6 +257,5 @@ namespace ToolBox.Services
                 query.Insert(query.Length, values[0]);
             return query;
         }
-
     }
 }
