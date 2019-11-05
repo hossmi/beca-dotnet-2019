@@ -5,8 +5,6 @@ namespace ToolBox.Services
 {
     public class QueryBuilder
     {
-        private readonly IList<FieldValues> fieldValues;
-        private readonly IList<string> keys;
         private readonly string table;
         private readonly string column;
         private readonly FieldValues tableValues;
@@ -30,16 +28,6 @@ namespace ToolBox.Services
         {
             this.column = column;
             this.table = table;
-            if (whereValues != null)
-            {
-                this.fieldValues = new List<FieldValues>();
-                this.keys = new List<string>();
-                foreach (whereFieldValues wherevalues in whereValues)
-                {
-                    this.fieldValues.Add(new FieldValues() { field = wherevalues.field, values = wherevalues.values });
-                    this.keys.Add(wherevalues.key);
-                }
-            }
             this.whereValues = whereValues;
         }
         public QueryBuilder(string table, IList<whereFieldValues> whereValues)
@@ -132,20 +120,41 @@ namespace ToolBox.Services
             query.Insert(query.Length, $"UPDATE {tableValues.field} SET {addFields(tableValues.values, tableValues.field, "UPDATE")} {where(tableValues.field, whereValues)}");
             return query;
         }
+        private StringBuilder update(iQuery iquery)
+        {
+            StringBuilder query = new StringBuilder(50);
+            query.Insert(query.Length, $"UPDATE {iquery.tablesColumns[0].field} SET {addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "UPDATE")} {where(iquery.tablesColumns[0].field, iquery.whereValues)}");
+            return query;
+        }
         private StringBuilder insert(FieldValues tableValues)
         {
             StringBuilder query = new StringBuilder(50);
             query.Insert(query.Length, $"INSERT INTO {tableValues.field} ({addFields(tableValues.values, tableValues.field, "INSERT", "condition")}) VALUES ({addFields(tableValues.values, tableValues.field, "INSERT", "value")})");
             return query;
         }
+        private StringBuilder insert(iQuery iquery)
+        {
+            StringBuilder query = new StringBuilder(50);
+            query.Insert(query.Length, $"INSERT INTO {iquery.tablesColumns[0].field} ({addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "INSERT", "condition")}) VALUES ({addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "INSERT", "value")})");
+            return query;
+        }
         private StringBuilder select(string column, string table, IList<whereFieldValues> whereValues = null)
         {
             return selectDelete($"SELECT {column}", table, this.whereValues);
+        }
+        private StringBuilder select(iQuery iquery)
+        {
+            return selectDelete($"SELECT", iquery);
         }
         private StringBuilder delete(string table, IList<whereFieldValues> whereValues)
         {
             return selectDelete("DELETE", table, whereValues);
         }
+        private StringBuilder delete(iQuery iquery)
+        {
+            return selectDelete("DELETE", iquery);
+        }
+
         private StringBuilder selectDelete(string command, string table, IList<whereFieldValues> whereValues = null)
         {
             StringBuilder query = new StringBuilder(30);
@@ -154,27 +163,12 @@ namespace ToolBox.Services
                 query.Insert(query.Length, where(table, whereValues));
             return query;
         }
-        private StringBuilder selectDelete(string command, string table, IList<FieldValues> fieldValues = null, IList<string> keys = null)
+        private StringBuilder selectDelete(string command, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{command} FROM {table}");
-            if (fieldValues != null)
-                query.Insert(query.Length, where(table, fieldValues, keys));
-            return query;
-        }
-        public StringBuilder where(string table, IList<FieldValues> fieldValues, IList<string> keys)
-        {
-            StringBuilder query = new StringBuilder(100);
-            int counter = 0;
-            foreach (FieldValues fieldvalues in fieldValues)
-            {
-                if (counter == 0 || fieldValues.Count == 1)
-                    query.Insert(query.Length, " WHERE ");
-                else if (counter > 0)
-                    query.Insert(query.Length, " AND ");
-                query.Insert(query.Length, buildCondition(checkCondition(fieldvalues.field, table), keys[counter], fieldvalues.values));
-                counter++;
-            }
+            query.Insert(query.Length, $"{command} {iquery.tablesColumns[0].values[0]} FROM {iquery.tablesColumns[0].field}");
+            if (this.whereValues != null)
+                query.Insert(query.Length, where(iquery.tablesColumns[0].field, iquery.whereValues));
             return query;
         }
         public StringBuilder where(string table, IList<whereFieldValues> whereValues)
@@ -182,6 +176,21 @@ namespace ToolBox.Services
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
             foreach (whereFieldValues wherevalues in whereValues)
+            {
+                if (counter == 0 || whereValues.Count == 1)
+                    query.Insert(query.Length, " WHERE ");
+                else if (counter > 0)
+                    query.Insert(query.Length, " AND ");
+                query.Insert(query.Length, buildCondition(checkCondition(wherevalues.field, table), wherevalues.key, wherevalues.values));
+                counter++;
+            }
+            return query;
+        }
+        public StringBuilder where(iQuery iquery)
+        {
+            StringBuilder query = new StringBuilder(100);
+            int counter = 0;
+            foreach (whereFieldValues wherevalues in iquery.whereValues)
             {
                 if (counter == 0 || whereValues.Count == 1)
                     query.Insert(query.Length, " WHERE ");
