@@ -9,11 +9,16 @@ namespace ToolBox.Services
         private readonly string column;
         private readonly FieldValues tableValues;
         private readonly IList<whereFieldValues> whereValues;
+        private readonly iQuery iquery;
 
         public QueryBuilder(FieldValues tableValues, IList<whereFieldValues> whereValues)
         {
             this.tableValues = tableValues;
             this.whereValues = whereValues;
+        }
+        public QueryBuilder(iQuery iquery)
+        {
+            this.iquery = iquery;
         }
         public QueryBuilder(FieldValues tableValues)
         {
@@ -55,6 +60,13 @@ namespace ToolBox.Services
                 }
             }
         }
+        public StringBuilder newquerySelect
+        {
+            get
+            {
+                return select(this.iquery);
+            }
+        }
         public StringBuilder queryInsert
         {
             get
@@ -69,13 +81,20 @@ namespace ToolBox.Services
                 return update(this.tableValues, this.whereValues);
             }
         }
-        public StringBuilder queryDelete
+        public StringBuilder newqueryDelete
+        {
+            get
+            {
+                return delete(this.iquery);
+            }
+        }
+        /*public StringBuilder queryDelete
         {
             get
             {
                 return delete(this.table, this.whereValues);
             }
-        }
+        }*/
 
         public StringBuilder complexSelect(IList<FieldValues> fieldValues, IList<FieldValues> joinConditions)
         {
@@ -144,15 +163,15 @@ namespace ToolBox.Services
         }
         private StringBuilder select(iQuery iquery)
         {
-            return selectDelete($"SELECT", iquery);
+            return selectDelete($"SELECT {iquery.tablesColumns[0].values[0]}", iquery.tablesColumns[0].field, iquery.whereValues);
         }
-        private StringBuilder delete(string table, IList<whereFieldValues> whereValues)
+        /*private StringBuilder delete(string table, IList<whereFieldValues> whereValues)
         {
             return selectDelete("DELETE", table, whereValues);
-        }
+        }*/
         private StringBuilder delete(iQuery iquery)
         {
-            return selectDelete("DELETE", iquery);
+            return selectDelete("DELETE", iquery.tablesColumns[0].field, iquery.whereValues);
         }
 
         private StringBuilder selectDelete(string command, string table, IList<whereFieldValues> whereValues = null)
@@ -163,14 +182,14 @@ namespace ToolBox.Services
                 query.Insert(query.Length, where(table, whereValues));
             return query;
         }
-        private StringBuilder selectDelete(string command, iQuery iquery)
+        /*private StringBuilder selectDelete(string command, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{command} {iquery.tablesColumns[0].values[0]} FROM {iquery.tablesColumns[0].field}");
+            query.Insert(query.Length, $"{command} FROM {iquery.tablesColumns[0].field}");
             if (this.whereValues != null)
                 query.Insert(query.Length, where(iquery.tablesColumns[0].field, iquery.whereValues));
             return query;
-        }
+        }*/
         public StringBuilder where(string table, IList<whereFieldValues> whereValues)
         {
             StringBuilder query = new StringBuilder(100);
