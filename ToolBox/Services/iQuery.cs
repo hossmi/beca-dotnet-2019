@@ -6,5 +6,6 @@ namespace ToolBox.Services
     {
         public IList<FieldValues> tablesColumns { get; set; }
         public IList<whereFieldValues> whereValues { get; set; }
+        public IList<FieldValues> innerValues { get; set; }
     }
 }
