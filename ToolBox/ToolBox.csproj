@@ -45,12 +45,9 @@
     <Compile Include="Extensions\DbCommands\DBCommandExtensions.cs" />
     <Compile Include="Models\TransactionAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\FieldValues.cs" />
     <Compile Include="Services\DB.cs" />
     <Compile Include="Services\ICommandBuilder.cs" />
-    <Compile Include="Services\iQuery.cs" />
     <Compile Include="Services\QueryBuilder.cs" />
-    <Compile Include="Services\whereFieldValues.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CarManagement.Core\CarManagement.Core.csproj">

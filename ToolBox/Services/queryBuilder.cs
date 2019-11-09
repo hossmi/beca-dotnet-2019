@@ -12,48 +12,12 @@ namespace ToolBox.Services
             this.iquery = iquery;
         }
 
-        public StringBuilder querySelect
-        {
-            get
-            {
-                return select(this.iquery);
-            }
-        }
-        public StringBuilder queryInsert
-        {
-            get
-            {
-                return insert(this.iquery);
-            }
-        }
-        public StringBuilder queryUpdate
-        {
-            get
-            {
-                return update(this.iquery);
-            }
-        }
-        public StringBuilder queryDelete
-        {
-            get
-            {
-                return delete(this.iquery);
-            }
-        }
-        public StringBuilder queryComplexSelect
-        {
-            get
-            {
-                return complexSelect(this.iquery);
-            }
-        }
-
-        private StringBuilder complexSelect(iQuery iQuery)
+        public StringBuilder complexSelect()
         {
             StringBuilder query = new StringBuilder(100);
             query.Insert(query.Length, "SELECT ");
             int counter = 0;
-            foreach (FieldValues fieldvalues in iQuery.tablesColumns)
+            foreach (FieldValues fieldvalues in this.iquery.tablesColumns)
             {
                 for (int i = 0; i < fieldvalues.values.Count; i++)
                 {
@@ -61,61 +25,61 @@ namespace ToolBox.Services
                     if (i < fieldvalues.values.Count - 1)
                         query.Insert(query.Length, ", ");
                 }
-                if (counter < iQuery.tablesColumns.Count - 1)
+                if (counter < this.iquery.tablesColumns.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
             }
             query.Insert(query.Length, " FROM ");
             counter = 0;
-            foreach (FieldValues fieldvalues in iQuery.tablesColumns)
+            foreach (FieldValues fieldvalues in this.iquery.tablesColumns)
             {
                 query.Insert(query.Length, $"{fieldvalues.field} {fieldvalues.field[0]}");
-                if (counter < iQuery.tablesColumns.Count - 1)
+                if (counter < this.iquery.tablesColumns.Count - 1)
                     query.Insert(query.Length, " INNER JOIN ");
                 counter++;
             }
             query.Insert(query.Length, " ON ");
             counter = 0;
-            foreach (FieldValues joinCondition in iQuery.innerValues)
+            foreach (FieldValues joinCondition in this.iquery.innerValues)
             {
                 query.Insert(query.Length, $"{joinCondition.field} = {joinCondition.values[0]}");
-                if (counter < iQuery.innerValues.Count - 1)
+                if (counter < this.iquery.innerValues.Count - 1)
                     query.Insert(query.Length, " AND ");
                 counter++;
             }
-            query.Insert(query.Length, where(iQuery));
+            query.Insert(query.Length, where(this.iquery));
             return query;
         }
-        private StringBuilder update(iQuery iquery)
+        public StringBuilder update()
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {iquery.tablesColumns[0].field} SET {addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "UPDATE")} {where(iquery)}");
+            query.Insert(query.Length, $"UPDATE {this.iquery.tablesColumns[0].field} SET {addFields(this.iquery.tablesColumns[0], "UPDATE")} {where(this.iquery)}");
             return query;
         }
-        private StringBuilder insert(iQuery iquery)
+        public StringBuilder insert()
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {iquery.tablesColumns[0].field} ({addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "INSERT", "condition")}) VALUES ({addFields(iquery.tablesColumns[0].values, iquery.tablesColumns[0].field, "INSERT", "value")})");
+            query.Insert(query.Length, $"INSERT INTO {this.iquery.tablesColumns[0].field} ({addFields(this.iquery.tablesColumns[0], "INSERT", "condition")}) VALUES ({addFields(this.iquery.tablesColumns[0], "INSERT", "value")})");
             return query;
         }
-        private StringBuilder select(iQuery iquery)
+        public StringBuilder select()
         {
-            return selectDelete($"SELECT {iquery.tablesColumns[0].values[0]}", iquery);
+            return selectDelete($"SELECT {this.iquery.tablesColumns[0].values[0]}", this.iquery);
         }
-        private StringBuilder delete(iQuery iquery)
+        public StringBuilder delete()
         {
-            return selectDelete("DELETE", iquery);
+            return selectDelete("DELETE", this.iquery);
         }
 
-        private StringBuilder selectDelete(string command, iQuery iquery)
+        private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{command} FROM {iquery.tablesColumns[0].field}");
+            query.Insert(query.Length, $"{instruction} FROM {iquery.tablesColumns[0].field}");
             if (iquery.whereValues != null)
                 query.Insert(query.Length, where(iquery));
             return query;
         }
-        public StringBuilder where(iQuery iquery)
+        private static StringBuilder where(iQuery iquery)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
@@ -125,41 +89,42 @@ namespace ToolBox.Services
                     query.Insert(query.Length, " WHERE ");
                 else if (counter > 0)
                     query.Insert(query.Length, " AND ");
-                query.Insert(query.Length, buildCondition(checkCondition(wherevalues.field, iquery.tablesColumns[0].field), wherevalues.key, wherevalues.values));
+                query.Insert(query.Length, buildCondition(checkCondition(wherevalues.field, iquery.tablesColumns[0].field), wherevalues));
                 counter++;
             }
             return query;
         }
 
-        private static StringBuilder addFields<T>(IList<T> list, string table, string from, string type = null)
+        private static StringBuilder addFields(FieldValues tableColumns, string instruction, string fieldType = null)
         {
             StringBuilder query = new StringBuilder(100);
             int counter = 0;
-            foreach (T item in list)
+            foreach (string column in tableColumns.values)
             {
-                if (from.Contains("INSERT"))
-                    query.Insert(query.Length, element($"{item}", table, type));
+                if (instruction.Contains("INSERT"))
+                    query.Insert(query.Length, element(column, tableColumns.field, fieldType));
                 else
-                    query.Insert(query.Length, $"{element($"{item}", table, "condition")} = {element($"{item}", table, "value")}");
-                if (counter < list.Count - 1)
+                    query.Insert(query.Length, $"{element(column, tableColumns.field, "condition")} = {element(column, tableColumns.field, "value")}");
+                if (counter < tableColumns.values.Count - 1)
                     query.Insert(query.Length, ", ");
                 counter++;
             }
             return query;
         }
-        private static StringBuilder element(string item, string table, string type)
+        private static StringBuilder element(string column, string table, string type)
         {
             StringBuilder query = new StringBuilder(30);
             if (type != "condition")
-                query.Insert(query.Length, $"@{item}");
+                query.Insert(query.Length, $"@{column}");
             else
-                query.Insert(query.Length, checkCondition(item, table));
+                query.Insert(query.Length, checkCondition(column, table));
             return query;
         }
-        private static string checkCondition(string condition, string table)
+
+        private static string checkCondition(string column, string table)
         {
             string fix;
-            if (condition == "id" && table != "enrollment")
+            if (column == "id" && table != "enrollment")
             {
                 if (table == "vehicle")
                     fix = "enrollmentId";
@@ -167,33 +132,49 @@ namespace ToolBox.Services
                     fix = "vehicleId";
             }
             else
-                fix = condition;
+                fix = column;
             return fix;
         }
-        private static StringBuilder buildCondition(string condition, string key, IList<string> values)
+        private static StringBuilder buildCondition(string whereColumn, whereFieldValues whereValues)
         {
-            StringBuilder query = new StringBuilder($"{condition} {key} ", 60);
-            if (values.Count != 1)
+            StringBuilder query = new StringBuilder($"{whereColumn} {whereValues.key} ", 60);
+            if (whereValues.values.Count != 1)
             {
-                for (int i = 0; i < values.Count; i++)
+                for (int i = 0; i < whereValues.values.Count; i++)
                 {
-                    if (key == "IN")
+                    if (whereValues.key == "IN")
                     {
-                        query.Insert(query.Length, $"({values[i]} ,");
-                        if (i == values.Count - 1)
+                        query.Insert(query.Length, $"({whereValues.values[i]} ,");
+                        if (i == whereValues.values.Count - 1)
                             query.Insert(query.Length, $")");
                     }
                     else
                     {
-                        query.Insert(query.Length, values[i]);
+                        query.Insert(query.Length, whereValues.values[i]);
                         if (i == 0)
                             query.Insert(query.Length, $" AND ");
                     }
                 }
             }
             else
-                query.Insert(query.Length, values[0]);
+                query.Insert(query.Length, whereValues.values[0]);
             return query;
+        }
+
+        public class iQuery
+        {
+            public IList<FieldValues> tablesColumns { get; set; }
+            public IList<whereFieldValues> whereValues { get; set; }
+            public IList<FieldValues> innerValues { get; set; }
+        }
+        public class FieldValues
+        {
+            public string field { get; set; }
+            public IList<string> values { get; set; }
+        }
+        public class whereFieldValues : FieldValues
+        {
+            public string key { get; set; }
         }
     }
 }

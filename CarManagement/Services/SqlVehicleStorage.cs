@@ -11,6 +11,7 @@ using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using ToolBox.Extensions.DbCommands;
 using ToolBox.Services;
+using static ToolBox.Services.QueryBuilder;
 
 namespace CarManagement.Services
 {
@@ -58,7 +59,7 @@ namespace CarManagement.Services
                 {
                     con.Open();
                     this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "id" } } }});
-                    sentence.CommandText = $"{this.queryBuilder.querySelect}";
+                    sentence.CommandText = $"{this.queryBuilder.select()}";
                     using (IDataReader reader = sentence.ExecuteReader())
                     {
                         while (reader.Read())
@@ -124,7 +125,7 @@ namespace CarManagement.Services
                         else
                         {
                             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = columnsValues } } });
-                            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
+                            sentence.CommandText = $"{this.queryBuilder.insert()}";
                             insertwheelsdoors(vehicle, sentence);
                         }
                     }
@@ -167,7 +168,7 @@ namespace CarManagement.Services
                 "number"
             };
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = columnsValues } } });
-            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
+            sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle)
@@ -175,7 +176,7 @@ namespace CarManagement.Services
             IList<string> columnsValues = setVehicleParameters(vehicle, sentence);
             columnsValues.Add("id");
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = columnsValues } } });
-            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
+            sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -194,7 +195,7 @@ namespace CarManagement.Services
             sentence.Parameters.Add(insertParams(sentence, columnsValues, this.id, "id"));
             sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter, column));
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = table, values = columnsValues } } });
-            sentence.CommandText = $"{this.queryBuilder.queryInsert}";
+            sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private object selectVehicle(IDbCommand sentence)
@@ -222,7 +223,7 @@ namespace CarManagement.Services
                     whereValues = whereValues
                 }
             );
-            sentence.CommandText = $"{this.queryBuilder.querySelect}";
+            sentence.CommandText = $"{this.queryBuilder.select()}";
             return sentence.ExecuteScalar();
         }
         private void selectIdEnrollment(IDbCommand sentence)
@@ -249,7 +250,7 @@ namespace CarManagement.Services
                     }
                 }
             );
-            sentence.CommandText = $"{this.queryBuilder.querySelect}";
+            sentence.CommandText = $"{this.queryBuilder.select()}";
         }
         private static whereFieldValues WhereParam(string key, string param)
         {
@@ -295,7 +296,7 @@ namespace CarManagement.Services
                     }
                 }
             );
-            sentence.CommandText = $"{this.queryBuilder.queryUpdate}";
+            sentence.CommandText = $"{this.queryBuilder.update()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             deleteWheelsDoors(sentence);
             insertwheelsdoors(vehicle, sentence);
@@ -308,11 +309,11 @@ namespace CarManagement.Services
             };
             StringBuilder query = new StringBuilder();
             this.queryBuilder = new QueryBuilder(new iQuery() {tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel", values = new List<string>() }}, whereValues = wherevalues});
-            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
+            query.Insert(query.Length, $"{this.queryBuilder.delete()};");
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door", values = new List<string>() } }, whereValues = wherevalues });
-            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
+            query.Insert(query.Length, $"{this.queryBuilder.delete()};");
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = new List<string>() } }, whereValues = wherevalues });
-            query.Insert(query.Length, $"{this.queryBuilder.queryDelete};");
+            query.Insert(query.Length, $"{this.queryBuilder.delete()};");
             return query;
         }
         private void deleteWheelsDoors(IDbCommand sentence)
@@ -326,14 +327,14 @@ namespace CarManagement.Services
                 whereValues = this.whereValues,
                 tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel" } }
             });
-            sentence.CommandText = $"{this.queryBuilder.queryDelete}";
+            sentence.CommandText = $"{this.queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             this.queryBuilder = new QueryBuilder(new iQuery
             {
                 whereValues = this.whereValues,
                 tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door" } }
             });
-            sentence.CommandText = $"{this.queryBuilder.queryDelete}";
+            sentence.CommandText = $"{this.queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private class PrvVehicleQuery : IVehicleQuery
@@ -362,7 +363,7 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "serial, number " } } } });
-                        sentence.CommandText = $"{this.queryBuilder.querySelect}";
+                        sentence.CommandText = $"{this.queryBuilder.select()}";
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -497,7 +498,7 @@ namespace CarManagement.Services
                                 whereValues = this.whereValues
                             }
                         );
-                        sentence.CommandText = $"{this.queryBuilder.queryComplexSelect}";
+                        sentence.CommandText = $"{this.queryBuilder.complexSelect()}";
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
@@ -515,10 +516,10 @@ namespace CarManagement.Services
                                     };
                                     sentence2.Parameters.Add(setParameter(sentence2, "@id", id));
                                     this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door", values = new List<string>() { "isOpen" } } }, whereValues = whereValues });
-                                    sentence2.CommandText = $"{this.queryBuilder.querySelect}";
+                                    sentence2.CommandText = $"{this.queryBuilder.select()}";
                                     elements(sentence2, "door");
                                     this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel", values = new List<string>() { "pressure" } } }, whereValues = whereValues });
-                                    sentence2.CommandText = $"{this.queryBuilder.querySelect}";
+                                    sentence2.CommandText = $"{this.queryBuilder.select()}";
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
