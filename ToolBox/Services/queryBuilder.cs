@@ -59,7 +59,14 @@ namespace ToolBox.Services
         public StringBuilder insert()
         {
             StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"INSERT INTO {this.iquery.tablesColumns[0].field} ({addFields(this.iquery.tablesColumns[0], "INSERT", "condition")}) VALUES ({addFields(this.iquery.tablesColumns[0], "INSERT", "value")})");
+            if (this.iquery.tablesColumns[0].output != null)
+            {
+                query.Insert(query.Length, $"INSERT INTO {this.iquery.tablesColumns[0].field} ({addFields(this.iquery.tablesColumns[0], "INSERT", "condition")}) {this.iquery.tablesColumns[0].output} VALUES ({addFields(this.iquery.tablesColumns[0], "INSERT", "value")})");
+            }
+            else
+            {
+                query.Insert(query.Length, $"INSERT INTO {this.iquery.tablesColumns[0].field} ({addFields(this.iquery.tablesColumns[0], "INSERT", "condition")}) VALUES ({addFields(this.iquery.tablesColumns[0], "INSERT", "value")})");
+            }
             return query;
         }
         public StringBuilder select()
@@ -171,6 +178,7 @@ namespace ToolBox.Services
         {
             public string field { get; set; }
             public IList<string> values { get; set; }
+            public string output { get; set; }
         }
         public class whereFieldValues : FieldValues
         {
