@@ -68,7 +68,7 @@ namespace CarManagement.Services
                     }
                     foreach (int id in this.idList)
                     {
-                        this.parameter = setParameter(sentence, "@id", id);
+                        this.parameter = SetParameter(sentence, new Param("id", id));
                         sentence.Parameters.Add(this.parameter);
                         sentence.CommandText = deleteAllQuery().ToString();
                         sentence.ExecuteNonQuery();
@@ -92,8 +92,8 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.Parameters.Add(setParameter(sentence, "@serial", enrollment.Serial));
-                    sentence.Parameters.Add(setParameter(sentence, "@number", enrollment.Number));
+                    sentence.Parameters.Add(SetParameter(sentence, new Param("serial", enrollment.Serial)));
+                    sentence.Parameters.Add(SetParameter(sentence, new Param("number", enrollment.Number)));
                     insertEnrollment(sentence);
                     selectVehicle(sentence);
                     if (sentence.ExecuteScalar() != null)
@@ -114,7 +114,15 @@ namespace CarManagement.Services
                     if (enrollmentExist(sentence, vehicle) != null)
                     {
                         this.id = readEnrollmentId(sentence);
-                        IList<string> columnsValues = setVehicleParameters(vehicle, sentence);
+                        IList<string> columnsValues = new List<string>()
+                        {
+                            "color",
+                            "engineIsStarted",
+                            "engineHorsePower"
+                        };
+                        sentence.Parameters.Add(SetParameter(sentence, new Param("color", (int)vehicle.Color)));
+                        sentence.Parameters.Add(SetParameter(sentence, new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0)));
+                        sentence.Parameters.Add(SetParameter(sentence, new Param("engineHorsePower", vehicle.Engine.HorsePower)));
                         if (vehicleExist(sentence) != null)
                             updateVehicle(sentence, vehicle, columnsValues);
                         else
@@ -150,8 +158,8 @@ namespace CarManagement.Services
         private string enrollmentExist(IDbCommand sentence, IVehicle vehicle)
         {
             string response = string.Empty;
-            sentence.Parameters.Add(setParameter(sentence, "@serial", vehicle.Enrollment.Serial));
-            sentence.Parameters.Add(setParameter(sentence, "@number", vehicle.Enrollment.Number));
+            sentence.Parameters.Add(SetParameter(sentence, new Param("serial", vehicle.Enrollment.Serial)));
+            sentence.Parameters.Add(SetParameter(sentence, new Param("number", vehicle.Enrollment.Number)));
             selectIdEnrollment(sentence);
             if (sentence.ExecuteScalar() != null)
             {
@@ -164,24 +172,25 @@ namespace CarManagement.Services
                 return response;
         }
 
-        private static IDataParameter insertParams(IDbCommand sentence, IList<string> columnsValues, object value, string name)
+        private static IDataParameter insertParams(IDbCommand sentence, IList<string> columnsValues, Param param)
         {
-            columnsValues.Add(name);
-            return setParameter(sentence, $"@{name}", value);
+            columnsValues.Add(param.Name);
+            return SetParameter(sentence, param);
         }
-        private static IDataParameter setParameter(IDbCommand sentence, string name, object value)
+        private static IDataParameter SetParameter(IDbCommand sentence, Param param)
         {
             IDataParameter parameter = sentence.CreateParameter();
-            parameter.ParameterName = name;
-            parameter.Value = value;
+            parameter.ParameterName = param.Name;
+            parameter.Value = param.Value;
             return parameter;
         }
-        private static IList<string> setVehicleParameters(IVehicle vehicle, IDbCommand sentence)
+        private static IList<string> setParameters(IDbCommand sentence, IList<Param> parameters)
         {
             List<string> columnsValues = new List<string>();
-            sentence.Parameters.Add(insertParams(sentence, columnsValues, (int)vehicle.Color, "color"));
-            sentence.Parameters.Add(insertParams(sentence, columnsValues, vehicle.Engine.IsStarted ? 1 : 0, "engineIsStarted"));
-            sentence.Parameters.Add(insertParams(sentence, columnsValues, vehicle.Engine.HorsePower, "engineHorsePower"));
+            foreach (Param parameter in parameters)
+            {
+                sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter));
+            }
             return columnsValues;
         }
         private void insertEnrollment(IDbCommand sentence)
@@ -206,13 +215,60 @@ namespace CarManagement.Services
             );
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             this.id = (int)sentence.ExecuteScalar();
-            sentence.Parameters.Add(setParameter(sentence, $"@id", this.id));
+            sentence.Parameters.Add(SetParameter(sentence, new Param("id", this.id)));
         }
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle)
         {
-            IList<string> columnsValues = setVehicleParameters(vehicle, sentence);
-            columnsValues.Add("id");
-            this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = columnsValues } } });
+            sentence.Parameters.Clear();
+            this.queryBuilder = new QueryBuilder
+            (
+                new iQuery()
+                {
+                    tablesColumns = new List<FieldValues>()
+                    {
+                        new FieldValues()
+                        {
+                            field = "vehicle",
+                            values = setParameters
+                            (
+                                sentence,
+                                new List<Param>()
+                                {
+                                    {
+                                        new Param
+                                        (
+                                            "id",
+                                            this.id
+                                        )
+                                    },
+                                    {
+                                        new Param
+                                        (
+                                            "color",
+                                            (int)vehicle.Color
+                                        )
+
+                                    },
+                                    {
+                                        new Param
+                                        (
+                                            "engineIsStarted",
+                                            vehicle.Engine.IsStarted ? 1 : 0
+                                        )
+                                    },
+                                    {
+                                        new Param
+                                        (
+                                            "engineHorsePower",
+                                            vehicle.Engine.HorsePower
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            );
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence);
@@ -221,17 +277,30 @@ namespace CarManagement.Services
         private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence)
         {
             foreach (IWheel wheel in vehicle.Wheels)
-                makeWheelDoor(sentence, wheel.Pressure, "pressure", "wheel");
+                makeWheelDoor(sentence, new List<Param>(){new Param("id", this.id), new Param("pressure", wheel.Pressure)}, "wheel");
             foreach (IDoor door in vehicle.Doors)
-                makeWheelDoor(sentence, door.IsOpen, "isOpen", "door");
+                makeWheelDoor(sentence, new List<Param>(){new Param("id", this.id), new Param("isOpen", door.IsOpen)}, "door");
         }
-        private void makeWheelDoor(IDbCommand sentence, object parameter, string column, string table)
+        private void makeWheelDoor(IDbCommand sentence, IList<Param> parameters, string table)
         {
             sentence.Parameters.Clear();
-            List<string> columnsValues = new List<string>();
-            sentence.Parameters.Add(insertParams(sentence, columnsValues, this.id, "id"));
-            sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter, column));
-            this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = table, values = columnsValues } } });
+            this.queryBuilder = new QueryBuilder
+            (
+                new iQuery()
+                {
+                    tablesColumns = new List<FieldValues>()
+                    {
+                        new FieldValues()
+                        {
+                            field = table,
+                            values = setParameters
+                            (
+                                sentence, parameters
+                            )
+                        }
+                    }
+                }
+            );
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
@@ -342,7 +411,7 @@ namespace CarManagement.Services
             {
                 reader.Read();
                 id = (int)reader.GetValue(0);
-                sentence.Parameters.Add(setParameter(sentence, $"@{reader.GetName(0)}", reader.GetValue(0)));
+                sentence.Parameters.Add(SetParameter(sentence, new Param(reader.GetName(0), reader.GetValue(0))));
                 reader.Close();
             }
             return id;
@@ -464,6 +533,18 @@ namespace CarManagement.Services
             );
             sentence.CommandText = $"{this.queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        public class Param
+        {
+            public Param(string Param_name, object Param_value)
+            {
+                this.Name = Param_name;
+                this.Var = $"@{Param_name}";
+                this.Value = Param_value;
+            }
+            public string Name { get; }
+            public string Var { get; }
+            public object Value { get; }
         }
         private class PrvVehicleQuery : IVehicleQuery
         {
@@ -642,7 +723,7 @@ namespace CarManagement.Services
                                     {
                                         WhereParam("=", "id")
                                     };
-                                    sentence2.Parameters.Add(setParameter(sentence2, "@id", id));
+                                    sentence2.Parameters.Add(SetParameter(sentence, new Param("id", id)));
                                     this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door", values = new List<string>() { "isOpen" } } }, whereValues = whereValues });
                                     sentence2.CommandText = $"{this.queryBuilder.select()}";
                                     elements(sentence2, "door");
