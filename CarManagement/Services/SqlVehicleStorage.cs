@@ -19,8 +19,6 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private IDataParameter parameter;
-        private readonly IList<int> idList;
         private int id;
         private QueryBuilder queryBuilder;
         private List<whereFieldValues> whereValues;
@@ -31,7 +29,6 @@ namespace CarManagement.Services
         {
             this.connectionString = connectionString;
             this.vehicleBuilder = vehicleBuilder;
-            this.idList = new List<int>();
         }
 
         public int Count {
@@ -57,22 +54,9 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "id" } } }});
-                    sentence.CommandText = $"{this.queryBuilder.select()}";
-                    using (IDataReader reader = sentence.ExecuteReader())
-                    {
-                        while (reader.Read())
-                            this.idList.Add((int)reader.GetValue(0));
-                        reader.Close();
-                    }
-                    foreach (int id in this.idList)
-                    {
-                        this.parameter = SetParameter(sentence, new Param("id", id));
-                        sentence.Parameters.Add(this.parameter);
-                        sentence.CommandText = deleteAllQuery().ToString();
-                        sentence.ExecuteNonQuery();
-                        sentence.Parameters.Remove(this.parameter);
-                    }
+                    sentence.CommandText = $"{removeQuery()}";
+                    sentence.ExecuteNonQuery();
+                    con.Close();
                 }
             }
         }
@@ -91,15 +75,15 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     con.Open();
-                    sentence.Parameters.Add(SetParameter(sentence, new Param("serial", enrollment.Serial)));
-                    sentence.Parameters.Add(SetParameter(sentence, new Param("number", enrollment.Number)));
-                    insertEnrollment(sentence);
-                    selectVehicle(sentence);
+                    setParameters2(sentence, new List<Param>(){new Param("serial", enrollment.Serial), new Param("number", enrollment.Number)});
+                    this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "enrollment", values = new List<string>(){"serial", "number"}}}, whereValues = new List<whereFieldValues>(){WhereParam("=", "id")}});
+                    sentence.CommandText = $"{this.queryBuilder.select()}";
                     if (sentence.ExecuteScalar() != null)
                     {
-                        sentence.CommandText = deleteAllQuery().ToString();
+                        sentence.CommandText = $"{removeQuery(new List<whereFieldValues>() { WhereParam("=", "id") })}";
                         sentence.ExecuteNonQuery();
                     }
+                    con.Close();
                 }
             }
         }
@@ -113,50 +97,14 @@ namespace CarManagement.Services
                     if (enrollmentExist(sentence, vehicle) != null)
                     {
                         this.id = readEnrollmentId(sentence);
-                        IList<string> columnsValues = setParameters
-                        (
-                            sentence, new List<Param>()
-                            {
-                                {
-                                    new Param("color", (int)vehicle.Color)
-                                },
-                                {
-                                    new Param
-                                    (
-                                        "engineIsStarted", 
-                                        vehicle.Engine.IsStarted ? 1 : 0
-                                    )
-                                },
-                                {
-                                    new Param
-                                    (
-                                        "engineHorsePower", 
-                                        vehicle.Engine.HorsePower
-                                    )
-                                }
-                            }
-                        );
+                        setParameters2(sentence, new List<Param>(){new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower)});
                         if (vehicleExist(sentence) != null)
-                            updateVehicle(sentence, vehicle, columnsValues);
+                        {
+                            updateVehicle(sentence, vehicle);
+                        }
                         else
                         {
-                            insertwheelsdoors(vehicle, sentence);
-                            this.queryBuilder = new QueryBuilder
-                            (
-                                new iQuery()
-                                {
-                                    tablesColumns = new List<FieldValues>()
-                                    {
-                                        new FieldValues()
-                                        {
-                                            field = "vehicle",
-                                            values = columnsValues
-                                        }
-                                    }
-                                }
-                            );
-                            sentence.CommandText = $"{this.queryBuilder.insert()}";
-                            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                            insertVehicle(sentence, vehicle);
                         }
                     }
                     else
@@ -170,24 +118,23 @@ namespace CarManagement.Services
 
         private string enrollmentExist(IDbCommand sentence, IVehicle vehicle)
         {
-            string response = string.Empty;
-            sentence.Parameters.Add(SetParameter(sentence, new Param("serial", vehicle.Enrollment.Serial)));
-            sentence.Parameters.Add(SetParameter(sentence, new Param("number", vehicle.Enrollment.Number)));
-            selectIdEnrollment(sentence);
-            if (sentence.ExecuteScalar() != null)
-            {
-                response = "OK";
-            }
-            else
+            string response = "OK";
+            setParameters2(sentence, new List<Param>(){new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number)});
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "enrollment", values = new List<string>(){"id"}}}, whereValues = new List<whereFieldValues>(){WhereParam("=", "serial"), WhereParam("=", "number")}});
+            sentence.CommandText = $"{this.queryBuilder.select()}";
+            if (sentence.ExecuteScalar() == null)
             {
                 response = null;
             }
-                return response;
+            return response;
         }
 
-        private static IDataParameter insertParams(IDbCommand sentence, IList<string> columnsValues, Param param)
+        private static IDataParameter insertParams(IDbCommand sentence, Param param, IList<string> columnsValues = null)
         {
-            columnsValues.Add(param.Name);
+            if (columnsValues != null)
+            {
+                columnsValues.Add(param.Name);
+            }
             return SetParameter(sentence, param);
         }
         private static IDataParameter SetParameter(IDbCommand sentence, Param param)
@@ -199,33 +146,24 @@ namespace CarManagement.Services
         }
         private static IList<string> setParameters(IDbCommand sentence, IList<Param> parameters)
         {
-            List<string> columnsValues = new List<string>();
+            IList<string> columnsValues = new List<string>();
             foreach (Param parameter in parameters)
             {
-                sentence.Parameters.Add(insertParams(sentence, columnsValues, parameter));
+                sentence.Parameters.Add(insertParams(sentence, parameter, columnsValues));
             }
             return columnsValues;
         }
+        private static void setParameters2(IDbCommand sentence, IList<Param> parameters)
+        {
+            foreach (Param parameter in parameters)
+            {
+                sentence.Parameters.Add(insertParams(sentence, parameter));
+            }
+        }
+
         private void insertEnrollment(IDbCommand sentence)
         {
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "enrollment",
-                            values = new List<string>()
-                            {
-                                "serial", "number"
-                            },
-                            output = "OUTPUT INSERTED.ID"
-                        }
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "enrollment", values = new List<string>(){"serial", "number"}, output = "OUTPUT INSERTED.ID"}}});
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             this.id = (int)sentence.ExecuteScalar();
             sentence.Parameters.Add(SetParameter(sentence, new Param("id", this.id)));
@@ -233,55 +171,7 @@ namespace CarManagement.Services
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle)
         {
             sentence.Parameters.Clear();
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "vehicle",
-                            values = setParameters
-                            (
-                                sentence,
-                                new List<Param>()
-                                {
-                                    {
-                                        new Param
-                                        (
-                                            "id",
-                                            this.id
-                                        )
-                                    },
-                                    {
-                                        new Param
-                                        (
-                                            "color",
-                                            (int)vehicle.Color
-                                        )
-
-                                    },
-                                    {
-                                        new Param
-                                        (
-                                            "engineIsStarted",
-                                            vehicle.Engine.IsStarted ? 1 : 0
-                                        )
-                                    },
-                                    {
-                                        new Param
-                                        (
-                                            "engineHorsePower",
-                                            vehicle.Engine.HorsePower
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "vehicle", values = setParameters(sentence, new List<Param>(){new Param("id", this.id), new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower)})}}});
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence);
@@ -297,77 +187,20 @@ namespace CarManagement.Services
         private void makeWheelDoor(IDbCommand sentence, IList<Param> parameters, string table)
         {
             sentence.Parameters.Clear();
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = table,
-                            values = setParameters
-                            (
-                                sentence, parameters
-                            )
-                        }
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = table, values = setParameters(sentence, parameters)}}});
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
 
-        private object selectVehicle(IDbCommand sentence)
+        private void selectVehicle(IDbCommand sentence)
         {
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "vehicle",
-                            values = new List<string>()
-                            {
-                                "*"
-                            }
-                        }
-                    },
-                    whereValues = new List<whereFieldValues>
-                    {
-                        WhereParam("=", "id")
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "vehicle", values = new List<string>(){"*"}}}, whereValues = new List<whereFieldValues>{WhereParam("=", "id")}});
             sentence.CommandText = $"{this.queryBuilder.select()}";
-            return sentence.ExecuteScalar();
         }
         private string vehicleExist(IDbCommand sentence)
         {
-            string response = string.Empty;
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "vehicle",
-                            values = new List<string>()
-                            {
-                                "*"
-                            }
-                        }
-                    },
-                    whereValues = new List<whereFieldValues>
-                    {
-                        WhereParam("=", "id")
-                    }
-                }
-            );
+            string response = "OK";
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "vehicle", values = new List<string>(){"*"}}}, whereValues = new List<whereFieldValues>{WhereParam("=", "id")}});
             sentence.CommandText = $"{this.queryBuilder.select()}";
             if (sentence.ExecuteScalar() == null)
             {
@@ -375,45 +208,9 @@ namespace CarManagement.Services
             }
             return response;
         }
-        private void selectIdEnrollment(IDbCommand sentence)
-        {
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "enrollment",
-                            values = new List<string>()
-                            {
-                                "id"
-                            }
-                        }
-                    },
-                    whereValues = new List<whereFieldValues>()
-                    {
-                        WhereParam("=", "serial"),
-                        WhereParam("=", "number"),
-                    }
-                }
-            );
-            sentence.CommandText = $"{this.queryBuilder.select()}";
-        }
         private static whereFieldValues WhereParam(string key, string param)
         {
-            whereFieldValues whereValues = new whereFieldValues()
-            {
-                field = param,
-                values = new
-                List<string>
-                {
-                    $"@{param}"
-                },
-                key = key
-            };
-            return whereValues;
+            return new whereFieldValues() { field = param, values = new List<string> { $"@{param}" }, key = key };
         }
         private static int readEnrollmentId(IDbCommand sentence)
         {
@@ -427,125 +224,36 @@ namespace CarManagement.Services
             }
             return id;
         }
-        private void updateVehicle(IDbCommand sentence, IVehicle vehicle, IList<string> columnsValues)
+        private void updateVehicle(IDbCommand sentence, IVehicle vehicle)
         {
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "vehicle",
-                            values = columnsValues
-                        }
-                    },
-                    whereValues = new List<whereFieldValues>()
-                    {
-                        WhereParam("=", "id")
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "vehicle", values = new List<string>(){"color", "engineIsStarted", "engineHorsePower"}}}, whereValues = new List<whereFieldValues>(){WhereParam("=", "id")}});
             sentence.CommandText = $"{this.queryBuilder.update()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             deleteWheelsDoors(sentence);
             insertwheelsdoors(vehicle, sentence);
         }
-        private StringBuilder deleteAllQuery()
+        private StringBuilder removeQuery(IList<whereFieldValues> wherevalues = null)
         {
-            IList<whereFieldValues> wherevalues = new List<whereFieldValues>()
-            {
-                WhereParam("=", "id")
-            };
             StringBuilder query = new StringBuilder();
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "wheel"
-                        }
-                    },
-                    whereValues = wherevalues
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "wheel"}}, whereValues = wherevalues});
             query.Insert(query.Length, $"{this.queryBuilder.delete()};");
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "door"
-                        }
-                    },
-                    whereValues = wherevalues
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "door"}}, whereValues = wherevalues});
             query.Insert(query.Length, $"{this.queryBuilder.delete()};");
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery()
-                {
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "vehicle"
-                        }
-                    },
-                    whereValues = wherevalues
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "vehicle"}}, whereValues = wherevalues});
             query.Insert(query.Length, $"{this.queryBuilder.delete()};");
             return query;
         }
         private void deleteWheelsDoors(IDbCommand sentence)
         {
-            this.whereValues = new List<whereFieldValues>()
-            {
-                WhereParam("=", "id")
-            };
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery
-                {
-                    whereValues = this.whereValues,
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "wheel"
-                        }
-                    }
-                }
-            );
+            this.whereValues = new List<whereFieldValues>(){WhereParam("=", "id")};
+            this.queryBuilder = new QueryBuilder(new iQuery{whereValues = this.whereValues, tablesColumns = new List<FieldValues>(){new FieldValues(){field = "wheel"}}});
             sentence.CommandText = $"{this.queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            this.queryBuilder = new QueryBuilder
-            (
-                new iQuery
-                {
-                    whereValues = this.whereValues,
-                    tablesColumns = new List<FieldValues>()
-                    {
-                        new FieldValues()
-                        {
-                            field = "door"
-                        }
-                    }
-                }
-            );
+            this.queryBuilder = new QueryBuilder(new iQuery{whereValues = this.whereValues, tablesColumns = new List<FieldValues>(){new FieldValues(){field = "door"}}});
             sentence.CommandText = $"{this.queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        public class Param
+        private class Param
         {
             public Param(string Param_name, object Param_value)
             {
