@@ -22,7 +22,6 @@ namespace CarManagement.Services
         private IDataParameter parameter;
         private readonly IList<int> idList;
         private int id;
-        private object query;
         private QueryBuilder queryBuilder;
         private List<whereFieldValues> whereValues;
         const string COUNT_VEHICLE = @"USE CarManagement
@@ -114,15 +113,29 @@ namespace CarManagement.Services
                     if (enrollmentExist(sentence, vehicle) != null)
                     {
                         this.id = readEnrollmentId(sentence);
-                        IList<string> columnsValues = new List<string>()
-                        {
-                            "color",
-                            "engineIsStarted",
-                            "engineHorsePower"
-                        };
-                        sentence.Parameters.Add(SetParameter(sentence, new Param("color", (int)vehicle.Color)));
-                        sentence.Parameters.Add(SetParameter(sentence, new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0)));
-                        sentence.Parameters.Add(SetParameter(sentence, new Param("engineHorsePower", vehicle.Engine.HorsePower)));
+                        IList<string> columnsValues = setParameters
+                        (
+                            sentence, new List<Param>()
+                            {
+                                {
+                                    new Param("color", (int)vehicle.Color)
+                                },
+                                {
+                                    new Param
+                                    (
+                                        "engineIsStarted", 
+                                        vehicle.Engine.IsStarted ? 1 : 0
+                                    )
+                                },
+                                {
+                                    new Param
+                                    (
+                                        "engineHorsePower", 
+                                        vehicle.Engine.HorsePower
+                                    )
+                                }
+                            }
+                        );
                         if (vehicleExist(sentence) != null)
                             updateVehicle(sentence, vehicle, columnsValues);
                         else
@@ -307,11 +320,6 @@ namespace CarManagement.Services
 
         private object selectVehicle(IDbCommand sentence)
         {
-            IList<whereFieldValues> whereValues = new List<whereFieldValues>
-            {
-                WhereParam("=", "id")
-            };
-
             this.queryBuilder = new QueryBuilder
             (
                 new iQuery()
@@ -327,7 +335,10 @@ namespace CarManagement.Services
                             }
                         }
                     },
-                    whereValues = whereValues
+                    whereValues = new List<whereFieldValues>
+                    {
+                        WhereParam("=", "id")
+                    }
                 }
             );
             sentence.CommandText = $"{this.queryBuilder.select()}";
