@@ -74,8 +74,8 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    setParameters(sentence, new List<Param>(){new Param("serial", enrollment.Serial), new Param("number", enrollment.Number)});
-                    this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = "enrollment", values = new List<string>(){"serial", "number"}}}, whereValues = new List<whereFieldValues>(){WhereParam("=", "id")}});
+                    setParameters(sentence, new List<Param>() { new Param("serial", enrollment.Serial), new Param("number", enrollment.Number) });
+                    this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "serial", "number" } } }, whereValues = new List<whereFieldValues>() { WhereParam("=", "id") } });
                     sentence.CommandText = $"{this.queryBuilder.select()}";
                     if (sentence.ExecuteScalar() != null)
                     {
@@ -91,7 +91,7 @@ namespace CarManagement.Services
             {
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
-                {                  
+                {
                     if (enrollmentExist(sentence, vehicle) != null)
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -102,7 +102,7 @@ namespace CarManagement.Services
                             reader.Close();
                         }
 
-                        setParameters(sentence, new List<Param>(){new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower)});
+                        setParameters(sentence, new List<Param>() { new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower) });
                         if (vehicleExist(sentence) != null)
                         {
                             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = new List<string>() { "color", "engineIsStarted", "engineHorsePower" } } }, whereValues = new List<whereFieldValues>() { WhereParam("=", "id") } });
@@ -191,9 +191,13 @@ namespace CarManagement.Services
         private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence, int id)
         {
             foreach (IWheel wheel in vehicle.Wheels)
-                makeWheelDoor(sentence, new List<Param>(){new Param("id", id), new Param("pressure", wheel.Pressure)}, "wheel");
+            {
+                makeWheelDoor(sentence, new List<Param>() { new Param("id", id), new Param("pressure", wheel.Pressure) }, "wheel");
+            }
             foreach (IDoor door in vehicle.Doors)
-                makeWheelDoor(sentence, new List<Param>(){new Param("id", id), new Param("isOpen", door.IsOpen)}, "door");
+            {
+                makeWheelDoor(sentence, new List<Param>() { new Param("id", id), new Param("isOpen", door.IsOpen) }, "door");
+            }
         }
         private void makeWheelDoor(IDbCommand sentence, IList<Param> parameters, string table)
         {
@@ -225,6 +229,13 @@ namespace CarManagement.Services
             sentence.CommandText = $"{queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
+        private static void method()
+        {
+            IInstanceProvider provider = DefaultInstanceProvider.Instance;
+            IVehicle vehicle = provider.get<IVehicle>();
+            //vehicle.
+        }
+
 
         private class Param
         {
@@ -461,6 +472,42 @@ namespace CarManagement.Services
                     foreach (IDbDataParameter parameter in sentence.Parameters)
                         sentence2.Parameters.Add(parameter);
                 }
+            }
+        }
+        public interface IInstanceProvider
+        {
+            void register<T>(Func<T> buildDelegate);
+            T get<T>();
+        }
+        public class DefaultInstanceProvider : IInstanceProvider
+        {
+            private readonly IDictionary<Type, object> instances;
+
+            static DefaultInstanceProvider()
+            {
+                Instance = new DefaultInstanceProvider();
+            }
+
+            private DefaultInstanceProvider()
+            {
+                this.instances = new Dictionary<Type, object>();
+            }
+
+            public static IInstanceProvider Instance { get; }
+
+            public T get<T>()
+            {
+                Type typeOfT = typeof(T);
+                object instance;
+
+                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out instance));
+                return (T)instance;
+            }
+
+            public void register<T>(Func<T> buildDelegate)
+            {
+                T instance = buildDelegate();
+                this.instances.Add(typeof(T), instance);
             }
         }
     }
