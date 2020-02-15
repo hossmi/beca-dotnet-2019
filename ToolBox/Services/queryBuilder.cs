@@ -84,12 +84,20 @@ namespace ToolBox.Services
         {
             IList<string> strings = new List<string>();
             int counter = 0;
-            foreach (whereFieldValues wherevalues in iquery.whereValues)
+            if (iquery.whereValues.Count != 0)
             {
-                strings.Add($"{buildCondition(checkCondition(wherevalues.field, iquery.tablesColumns[0].field), wherevalues)}");
-                counter++;
+                foreach (whereFieldValues wherevalues in iquery.whereValues)
+                {
+                    strings.Add($"{buildCondition(checkCondition(wherevalues.field, iquery.tablesColumns[0].field), wherevalues)}");
+                    counter++;
+                }
+                return new StringBuilder(100).Append($" WHERE {string.Join(" AND ", strings)}");
             }
-            return new StringBuilder(100).Append($" WHERE {string.Join(" AND ", strings)}");
+            else
+            {
+                return new StringBuilder();
+            }
+            
         }
 
         private static StringBuilder addFields(FieldValues tableColumns, string instruction, string fieldType = null)
