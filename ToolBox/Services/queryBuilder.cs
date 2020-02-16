@@ -12,38 +12,6 @@ namespace ToolBox.Services
             this.iquery = iquery;
         }
 
-        public StringBuilder complexSelect()
-        {
-            StringBuilder query = new StringBuilder(100);
-            int counter = 0;
-            IList<string> strings = new List<string>();
-            foreach (FieldValues fieldvalues in this.iquery.tablesColumns)
-            {
-                for (int i = 0; i < fieldvalues.values.Count; i++)
-                {
-                    strings.Add($"{fieldvalues.field[0]}.{fieldvalues.values[i]}");
-                }
-                counter++;
-            }
-            query.Insert(query.Length, $"SELECT {string.Join(", ", strings)} FROM ");
-            counter = 0;
-            strings = new List<string>();
-            foreach (FieldValues fieldvalues in this.iquery.tablesColumns)
-            {
-                strings.Add($"{fieldvalues.field} {fieldvalues.field[0]}");
-                counter++;
-            }
-            query.Insert(query.Length, $"{string.Join(" INNER JOIN ", strings)} ON ");
-            counter = 0;
-            strings = new List<string>();
-            foreach (FieldValues joinCondition in this.iquery.innerValues)
-            {
-                strings.Add($"{joinCondition.field} = {joinCondition.values[0]}");
-                counter++;
-            }
-            query.Insert(query.Length, $"{string.Join(" AND ", strings)} {where(this.iquery)}");
-            return query;
-        }
         public StringBuilder update()
         {
             StringBuilder query = new StringBuilder(50);
@@ -69,7 +37,6 @@ namespace ToolBox.Services
         {
             return selectDelete("DELETE", this.iquery);
         }
-
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);

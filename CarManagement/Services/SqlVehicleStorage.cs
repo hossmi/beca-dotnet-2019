@@ -21,8 +21,9 @@ namespace CarManagement.Services
         private int id;
         private QueryBuilder queryBuilder;
         private List<whereFieldValues> whereValues;
-        const string COUNT_VEHICLE = @"USE CarManagement
+        private const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
+        private const string COMPLEX_QUERY = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON e.id = v.enrollmentId  WHERE number = @number AND serial = @serial";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -180,7 +181,7 @@ namespace CarManagement.Services
                 new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0),
                 new Param("engineHorsePower", vehicle.Engine.HorsePower)
             };
-            this.setParameters(sentence, parameters);
+            setParameters(sentence, parameters);
 
             this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle", values = parameterNames(parameters) } } });
             sentence.CommandText = $"{this.queryBuilder.insert()}";
@@ -202,7 +203,7 @@ namespace CarManagement.Services
         private void makeWheelDoor(IDbCommand sentence, IList<Param> parameters, string table)
         {
             sentence.Parameters.Clear();
-            this.setParameters(sentence, parameters);
+            setParameters(sentence, parameters);
             this.queryBuilder = new QueryBuilder(new iQuery(){tablesColumns = new List<FieldValues>(){new FieldValues(){field = table, values = parameterNames(parameters)}}});
             sentence.CommandText = $"{this.queryBuilder.insert()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -229,13 +230,6 @@ namespace CarManagement.Services
             sentence.CommandText = $"{queryBuilder.delete()}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        private static void method()
-        {
-            IInstanceProvider provider = DefaultInstanceProvider.Instance;
-            IVehicle vehicle = provider.get<IVehicle>();
-            //vehicle.
-        }
-
 
         private class Param
         {
@@ -370,47 +364,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        this.queryBuilder = new QueryBuilder
-                        (
-                            new iQuery()
-                            {
-                                tablesColumns = new List<FieldValues>()
-                                {
-                                    new FieldValues()
-                                    {
-                                        field = "enrollment",
-                                        values = new List<string>
-                                        {
-                                            "serial",
-                                            "number",
-                                            "id"
-                                        }
-                                    },
-                                    new FieldValues()
-                                    {
-                                        field = "vehicle",
-                                        values = new List<string>
-                                        {
-                                            "color",
-                                            "engineIsStarted",
-                                            "engineHorsePower"
-                                        }
-                                    }
-                                },
-                                innerValues = new List<FieldValues>()
-                                {
-                                    new FieldValues(){
-                                        field = "id",
-                                        values = new List<string>()
-                                        {
-                                            "enrollmentId"
-                                        }
-                                    }
-                                },
-                                whereValues = this.whereValues
-                            }
-                        );
-                        sentence.CommandText = $"{this.queryBuilder.complexSelect()}";
+                        sentence.CommandText = COMPLEX_QUERY;
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
@@ -498,9 +452,8 @@ namespace CarManagement.Services
             public T get<T>()
             {
                 Type typeOfT = typeof(T);
-                object instance;
 
-                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out instance));
+                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out object instance));
                 return (T)instance;
             }
 
