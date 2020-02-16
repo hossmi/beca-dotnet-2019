@@ -23,7 +23,10 @@ namespace CarManagement.Services
         private List<whereFieldValues> whereValues;
         private const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
-        private const string COMPLEX_QUERY = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON e.id = v.enrollmentId  WHERE number = @number AND serial = @serial";
+        private const string COMPLEX_SELECT = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
+        private const string WHERE = " WHERE number = @number AND serial = @serial";
+        private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id";
+        private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -364,7 +367,11 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = COMPLEX_QUERY;
+                        sentence.CommandText = COMPLEX_SELECT;
+                        if (this.whereValues.Count > 0)
+                        {
+                            sentence.CommandText += WHERE;
+                        }
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
@@ -376,16 +383,10 @@ namespace CarManagement.Services
                                     copyParameters(sentence, sentence2);
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
-                                    IList<whereFieldValues> whereValues = new List<whereFieldValues>()
-                                    {
-                                        WhereParam("=", "id")
-                                    };
                                     sentence2.Parameters.Add(SetParameter(sentence, new Param("id", id)));
-                                    this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door", values = new List<string>() { "isOpen" } } }, whereValues = whereValues });
-                                    sentence2.CommandText = $"{this.queryBuilder.select()}";
+                                    sentence2.CommandText = SELECT_DOOR;
                                     elements(sentence2, "door");
-                                    this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel", values = new List<string>() { "pressure" } } }, whereValues = whereValues });
-                                    sentence2.CommandText = $"{this.queryBuilder.select()}";
+                                    sentence2.CommandText = SELECT_WHEEL;
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
@@ -452,8 +453,9 @@ namespace CarManagement.Services
             public T get<T>()
             {
                 Type typeOfT = typeof(T);
+                object instance;
 
-                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out object instance));
+                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out instance));
                 return (T)instance;
             }
 
