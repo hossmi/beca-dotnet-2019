@@ -11,6 +11,10 @@ namespace ToolBox.Services
         {
             this.iquery = iquery;
         }
+        public QueryBuilder()
+        {
+
+        }
 
         public StringBuilder update()
         {
@@ -60,18 +64,20 @@ namespace ToolBox.Services
             return "";
         }
 
-        private string from(IList<string> tables, IList<Condition_value> conditions = null)
+        public string from(IList<string> tables, IList<Condition_value> conditions = null)
         {
             int counter = 0;
-            string query = string.Empty;
+            int counter2 = 0;
+            string query = "FROM ";
             foreach (string table in tables)
             {
                 query += table;
                 if (counter >=1 && counter < tables.Count)
                 {
-                    query += $" ON {conditions[counter].condition} = {conditions[counter].value}";
+                    query += $" ON {conditions[counter2].condition} = {conditions[counter2].value}";
+                    counter2++;
                 }
-                if (tables.Count > 1)
+                if (tables.Count > 1 && counter < tables.Count-1)
                 {
                     query += " INNER JOIN ";
                 }
