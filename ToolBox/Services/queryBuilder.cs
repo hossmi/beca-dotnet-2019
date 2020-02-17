@@ -37,6 +37,51 @@ namespace ToolBox.Services
         {
             return selectDelete("DELETE", this.iquery);
         }
+        //SELECT [fields(s)1-n] 
+        //FROM [table(s)1-n] (INNER JOIN [table_n] ON [condition_n] = [value_n])
+        //(optional)WHERE [condition(s) 1-n]
+        private string select(IList<string> fields)
+        {
+            return string.Join(", ", fields);
+        }
+        private string where()
+        {
+            //case 1: condition_1 = value1 AND/OR condition_2 = value_2
+            //2 list(string) + union type
+
+            //case 2: conditions_group_1/condition_1 AND/OR condition_2/ conditions_group_2
+            //2 list(string) + union type
+
+            //case 3: condition BETWEEN value_1 AND value_2
+            //2 list string + union type -> list(condition_values object)
+
+            //case 4: condition 1-n IN (value_list) 1-n
+            //list(string) + list(list(string)) + union type
+            return "";
+        }
+
+        private string from(IList<string> tables, IList<Condition_value> conditions = null)
+        {
+            int counter = 0;
+            string query = string.Empty;
+            foreach (string table in tables)
+            {
+                query += table;
+                if (counter >=1 && counter < tables.Count)
+                {
+                    query += $" ON {conditions[counter].condition} = {conditions[counter].value}";
+                }
+                if (tables.Count > 1)
+                {
+                    query += " INNER JOIN ";
+                }
+                counter++;
+            }
+
+            return query;
+        }
+
+
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
@@ -155,6 +200,19 @@ namespace ToolBox.Services
         public class whereFieldValues : FieldValues
         {
             public string key { get; set; }
+        }
+
+        public class Condition_values
+        {
+            public string condition { get; set; }
+            public IList<string> values { get; set; }
+            public string union_type { get; set; }
+        }
+        public class Condition_value
+        {
+            public string condition { get; set; }
+            public string value { get; set; }
+            public string union_type { get; set; }
         }
     }
 }
