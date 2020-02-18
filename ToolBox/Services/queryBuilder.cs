@@ -101,17 +101,18 @@ namespace ToolBox.Services
         //list(string) + list(list(string)) + union type
         public static string where(whereFieldValues condition_value)
         {
-            string query = " WHERE";
+            string query = " WHERE ";
             if (condition_value.values.Count > 1)
             {
                 if (condition_value.key == "AND" || condition_value.key == "OR")
                 {
-                    return $"{query} {string.Join(condition_value.key, condition_value.values)}";
+                    query+= $"{string.Join(condition_value.key, condition_value.values)}";
                 }
                 else if (condition_value.key == "IN")
                 {
-                    return $"{query} {string.Join(condition_value.key, string.Join(", ", condition_value.values))}";
+                    query += $"{string.Join(condition_value.key, string.Join(", ", condition_value.values))}";
                 }
+                return query;
             }
             else
             {
