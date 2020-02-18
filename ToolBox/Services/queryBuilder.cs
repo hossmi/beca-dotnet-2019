@@ -49,32 +49,15 @@ namespace ToolBox.Services
         {
             return selectDelete("DELETE", this.iquery);
         }
-        private StringBuilder select(IList<FieldValues> fields)
+        private static StringBuilder select(IList<FieldValues> fields)
         {
             IList<string> strings = new List<string>();
             foreach (FieldValues fieldValue in fields)
             {
-                strings.Add(string.Join(", ", fieldValue.values));
+                strings.Add(string.Join(", ", alias(fieldValue)));
             }
-            
             return new StringBuilder($"SELECT {string.Join(", ", strings)} ");
         }
-        private string where()
-        {
-            //case 1: condition_1 = value1 AND/OR condition_2 = value_2
-            //2 list(string) + union type
-
-            //case 2: conditions_group_1/condition_1 AND/OR condition_2/ conditions_group_2
-            //2 list(string) + union type
-
-            //case 3: condition BETWEEN value_1 AND value_2
-            //2 list string + union type -> list(condition_values object)
-
-            //case 4: condition 1-n IN (value_list) 1-n
-            //list(string) + list(list(string)) + union type
-            return "";
-        }
-
         public static string from(IList<string> tables, IList<Condition_values> conditions = null)
         {
             int counter = 0;
@@ -104,7 +87,39 @@ namespace ToolBox.Services
         {
             return $"{condition_value.condition} = {condition_value.values[0]}";
         }
-        private IList<string> alias(FieldValues fieldValues)
+        //case 1: condition_1 = value1 AND/OR condition_2 = value_2
+        //2 list(string) + union type
+        //IDictionary<whereFieldValues>
+
+        //case 2: conditions_group_1/condition_1 AND/OR condition_2/ conditions_group_2
+        //2 list(string) + union type
+
+        //case 3: condition BETWEEN value_1 AND value_2
+        //2 list string + union type -> list(condition_values object)
+
+        //case 4: condition 1-n IN (value_list) 1-n
+        //list(string) + list(list(string)) + union type
+        public static string where(whereFieldValues condition_value)
+        {
+            string query = " WHERE";
+            if (condition_value.values.Count > 1)
+            {
+                if (condition_value.key == "AND" || condition_value.key == "OR")
+                {
+                    return $"{query} {string.Join(condition_value.key, condition_value.values)}";
+                }
+                else if (condition_value.key == "IN")
+                {
+                    return $"{query} {string.Join(condition_value.key, string.Join(", ", condition_value.values))}";
+                }
+            }
+            else
+            {
+                return $"{query} {condition_value.field} = {condition_value.values[0]}";
+            }
+            
+        }
+        private static IList<string> alias(FieldValues fieldValues)
         {
             IList<string> strings = new List<string>();
             foreach (string value in fieldValues.values)
@@ -113,7 +128,6 @@ namespace ToolBox.Services
             }
             return strings;
         }
-
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
