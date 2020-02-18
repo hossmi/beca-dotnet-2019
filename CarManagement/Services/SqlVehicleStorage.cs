@@ -370,8 +370,7 @@ namespace CarManagement.Services
                         //sentence.CommandText = COMPLEX_SELECT;
                         sentence.CommandText = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower";
                         //sentence.CommandText += "FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
-                        this.queryBuilder = new QueryBuilder();
-                        sentence.CommandText += $" {this.queryBuilder.from(new List<string>() { "enrollment e", "vehicle v" }, new List<Condition_value>() { new Condition_value() { condition = "id", value = "enrollmentId", union_type = "=" } })}";
+                        sentence.CommandText += $" {from(new List<string>() { "enrollment e", "vehicle v" }, new List<Condition_values>() { new Condition_values() { condition = "id", values = new List<string>() { "enrollmentId" } } })}";
                         if (this.whereValues.Count > 0)
                         {
                             sentence.CommandText += WHERE;

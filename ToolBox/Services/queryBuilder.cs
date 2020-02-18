@@ -41,9 +41,6 @@ namespace ToolBox.Services
         {
             return selectDelete("DELETE", this.iquery);
         }
-        //SELECT [fields(s)1-n] 
-        //FROM [table(s)1-n] (INNER JOIN [table_n] ON [condition_n] = [value_n])
-        //(optional)WHERE [condition(s) 1-n]
         private string select(IList<string> fields)
         {
             return string.Join(", ", fields);
@@ -64,34 +61,40 @@ namespace ToolBox.Services
             return "";
         }
 
-        public string from(IList<string> tables, IList<Condition_value> conditions = null)
+        public static string from(IList<string> tables, IList<Condition_values> conditions = null)
         {
             int counter = 0;
             int counter2 = 0;
             string query = "FROM ";
             foreach (string table in tables)
-            {
-                query += table;
-                if (counter >=1 && counter < tables.Count)
+            {                
+                if (counter == 0)
                 {
-                    query += $" ON {conditions[counter2].condition} = {conditions[counter2].value}";
-                    counter2++;
+                    query += table;
                 }
-                if (tables.Count > 1 && counter < tables.Count-1)
+                else
                 {
-                    query += " INNER JOIN ";
+                    query += inner_join(table, conditions[counter2]);
+                    counter2++;
                 }
                 counter++;
             }
 
             return query;
         }
-
+        private static string inner_join(string table_name, Condition_values condition_value)
+        {
+            return $" INNER JOIN {table_name} ON {condition_Value(condition_value)}";
+        }
+        private static string condition_Value(Condition_values condition_value)
+        {
+            return $"{condition_value.condition} = {condition_value.values[0]}";
+        }
 
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{instruction} FROM {iquery.tablesColumns[0].field}");
+            query.Insert(query.Length, $"{instruction} {from(new List<string>() { iquery.tablesColumns[0].field })}");
             if (iquery.whereValues != null)
             {
                 query.Insert(query.Length, where(iquery));
@@ -212,12 +215,6 @@ namespace ToolBox.Services
         {
             public string condition { get; set; }
             public IList<string> values { get; set; }
-            public string union_type { get; set; }
-        }
-        public class Condition_value
-        {
-            public string condition { get; set; }
-            public string value { get; set; }
             public string union_type { get; set; }
         }
     }
