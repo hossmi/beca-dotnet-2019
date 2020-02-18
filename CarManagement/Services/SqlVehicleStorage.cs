@@ -368,7 +368,9 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         //sentence.CommandText = COMPLEX_SELECT;
-                        sentence.CommandText = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower";
+                        this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "e.serial", "e.number", "e.id" } }, new FieldValues() { field = "vehicle", values = new List<string>() { "v.color", "v.engineIsStarted", "v.engineHorsePower" } } } });
+                        sentence.CommandText = $"{this.queryBuilder.select()}";
+                        //sentence.CommandText = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower";
                         //sentence.CommandText += "FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
                         sentence.CommandText += $" {from(new List<string>() { "enrollment e", "vehicle v" }, new List<Condition_values>() { new Condition_values() { condition = "id", values = new List<string>() { "enrollmentId" } } })}";
                         if (this.whereValues.Count > 0)

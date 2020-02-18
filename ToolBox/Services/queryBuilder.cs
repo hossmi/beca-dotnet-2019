@@ -35,15 +35,29 @@ namespace ToolBox.Services
         }
         public StringBuilder select()
         {
-            return selectDelete($"SELECT {this.iquery.tablesColumns[0].values[0]}", this.iquery);
+            if (this.iquery.tablesColumns[0].values.Count == 1)
+            {
+                return selectDelete($"SELECT {this.iquery.tablesColumns[0].values[0]}", this.iquery);
+            }
+            else
+            {
+                return select(this.iquery.tablesColumns);
+            }
+            
         }
         public StringBuilder delete()
         {
             return selectDelete("DELETE", this.iquery);
         }
-        private string select(IList<string> fields)
+        private StringBuilder select(IList<FieldValues> fields)
         {
-            return string.Join(", ", fields);
+            IList<string> strings = new List<string>();
+            foreach (FieldValues fieldValue in fields)
+            {
+                strings.Add(string.Join(", ", fieldValue.values));
+            }
+            
+            return new StringBuilder($"SELECT {string.Join(", ", strings)} ");
         }
         private string where()
         {
@@ -210,7 +224,6 @@ namespace ToolBox.Services
         {
             public string key { get; set; }
         }
-
         public class Condition_values
         {
             public string condition { get; set; }
