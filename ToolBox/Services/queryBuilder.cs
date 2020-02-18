@@ -104,6 +104,15 @@ namespace ToolBox.Services
         {
             return $"{condition_value.condition} = {condition_value.values[0]}";
         }
+        private IList<string> alias(FieldValues fieldValues)
+        {
+            IList<string> strings = new List<string>();
+            foreach (string value in fieldValues.values)
+            {
+                strings.Add($"{fieldValues.field[0]}.{value}");
+            }
+            return strings;
+        }
 
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
