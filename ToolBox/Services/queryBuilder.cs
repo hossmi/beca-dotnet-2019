@@ -87,16 +87,16 @@ namespace ToolBox.Services
         {
             return $"{condition_value.condition} = {condition_value.values[0]}";
         }
-        //case 1: condition_1 = value1 AND/OR condition_2 = value_2
+        //case 1: WHERE condition_1 = value_1 AND/OR condition_2 = value_2 AND/OR condition_n = value_n...
         //2 list(string) + union type
         //IDictionary<whereFieldValues>
+        //{ condition = "", value = "", union_type = ""}
 
         //case 2: conditions_group_1/condition_1 AND/OR condition_2/ conditions_group_2
         //2 list(string) + union type
 
         //case 3: condition BETWEEN value_1 AND value_2
         //2 list string + union type -> list(condition_values object)
-
         //case 4: condition 1-n IN (value_list) 1-n
         //list(string) + list(list(string)) + union type
         public static string where(whereFieldValues condition_value)
@@ -110,7 +110,11 @@ namespace ToolBox.Services
                 }
                 else if (condition_value.key == "IN")
                 {
-                    query += $"{string.Join(condition_value.key, string.Join(", ", condition_value.values))}";
+                    query += $" {string.Join(condition_value.key, new List<string>() { condition_value.field, $"({ string.Join(", ", condition_value.values) })"})}";
+                }
+                else if (condition_value.key == "BETWEEN")
+                {
+                    query += $" {string.Join(condition_value.key, new List<string>() {condition_value.field, string.Join( "AND", new List<string>() {condition_value.values[0], condition_value.values[1]})})}";
                 }
                 return query;
             }
@@ -158,7 +162,6 @@ namespace ToolBox.Services
             }
             
         }
-
         private static StringBuilder addFields(FieldValues tableColumns, string instruction, string fieldType = null)
         {
             IList<string> strings = new List<string>();
