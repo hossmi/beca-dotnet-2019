@@ -49,6 +49,10 @@ namespace ToolBox.Services
         {
             return selectDelete("DELETE", this.iquery);
         }
+        public string query_select(Select select)
+        {
+            return string.Empty;
+        }
         private static StringBuilder select(IList<FieldValues> fields)
         {
             IList<string> strings = new List<string>();
@@ -58,12 +62,12 @@ namespace ToolBox.Services
             }
             return new StringBuilder($"SELECT {string.Join(", ", strings)} ");
         }
-        public static string from(IList<string> tables, IList<Condition_values> conditions = null)
+        public static string from(From from)
         {
             int counter = 0;
             int counter2 = 0;
             string query = "FROM ";
-            foreach (string table in tables)
+            foreach (string table in from.tables)
             {                
                 if (counter == 0)
                 {
@@ -71,7 +75,7 @@ namespace ToolBox.Services
                 }
                 else
                 {
-                    query += inner_join(table, conditions[counter2]);
+                    query += inner_join(table, from.conditions[counter2]);
                     counter2++;
                 }
                 counter++;
@@ -99,16 +103,21 @@ namespace ToolBox.Services
         //2 list string + union type -> list(condition_values object)
         //case 4: condition 1-n IN (value_list) 1-n
         //list(string) + list(list(string)) + union type
-        public static string where(whereFieldValues condition_value)
+        public string where(Where wh3re)
+        {
+            string query = string.Empty;
+            foreach (whereFieldValues whereValue in wh3re.where_fields_values)
+            {
+                query += string.Join(wh3re.key, where_value(whereValue));
+            }
+            return query;
+        }
+        private static string where_value(whereFieldValues condition_value)
         {
             string query = " WHERE ";
             if (condition_value.values.Count > 1)
             {
-                if (condition_value.key == "AND" || condition_value.key == "OR")
-                {
-                    query+= $"{string.Join(condition_value.key, condition_value.values)}";
-                }
-                else if (condition_value.key == "IN")
+                if (condition_value.key == "IN")
                 {
                     query += $" {string.Join(condition_value.key, new List<string>() { condition_value.field, $"({ string.Join(", ", condition_value.values) })"})}";
                 }
@@ -136,7 +145,7 @@ namespace ToolBox.Services
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
             StringBuilder query = new StringBuilder(30);
-            query.Insert(query.Length, $"{instruction} {from(new List<string>() { iquery.tablesColumns[0].field })}");
+            query.Insert(query.Length, $"{instruction} {from(new From() { tables = new List<string>() { iquery.tablesColumns[0].field } })}");
             if (iquery.whereValues != null)
             {
                 query.Insert(query.Length, where(iquery));
@@ -221,16 +230,16 @@ namespace ToolBox.Services
             {
                 if (whereValues.key == "IN")
                 {
-                    query.Insert(query.Length, $"({string.Join(", ", whereValues.values)})");
+                    query.Append($"({string.Join(", ", whereValues.values)})");
                 }
                 else
                 {
-                    query.Insert(query.Length, string.Join(" AND ", whereValues.values));
+                    query.Append(string.Join(" AND ", whereValues.values));
                 }
             }
             else
             {
-                query.Insert(query.Length, whereValues.values[0]);
+                query.Append(whereValues.values[0]);
             }
             return query;
         }
@@ -256,6 +265,25 @@ namespace ToolBox.Services
             public string condition { get; set; }
             public IList<string> values { get; set; }
             public string union_type { get; set; }
+        }
+
+        public class Where
+        {
+            public IList<whereFieldValues> where_fields_values { get; set; }
+            public string key { get; set; }
+        }
+        public class From
+        {
+            public IList<string> tables { get; set; }
+            public IList<Condition_values> conditions { get; set; }
+        }
+        public class Select
+        {
+            public IList<FieldValues> fields { get; set; }
+
+            public Where where { get; set; }
+
+            public From from { get; set; }
         }
     }
 }
