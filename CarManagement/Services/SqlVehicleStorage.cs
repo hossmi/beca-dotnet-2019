@@ -370,6 +370,51 @@ namespace CarManagement.Services
                         //sentence.CommandText = COMPLEX_SELECT;
                         this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "enrollment", values = new List<string>() { "serial", "number", "id" } }, new FieldValues() { field = "vehicle", values = new List<string>() { "color", "engineIsStarted", "engineHorsePower" } } } });
                         sentence.CommandText = $"{this.queryBuilder.select()}";
+                        object Select_query = new
+                        {
+                            Select = new List<FieldValues>()
+                            { 
+                                new FieldValues()
+                                {
+                                    field = "enrollment",
+                                    values = new List<string>()
+                                    {
+                                        "serial",
+                                        "number",
+                                        "id"
+                                    }
+                                },
+                                new FieldValues()
+                                {
+                                    field = "",
+                                    values = new List<string>()
+                                    {
+                                        "color",
+                                        "engineIsStarted",
+                                        "engineHorsePower"
+                                    }
+                                }
+                            },
+                            Where = new List<whereFieldValues>() 
+                            {
+                                new whereFieldValues()
+                                {
+                                    field = "serial",
+                                    values = new List<string>()
+                                    {
+                                        "@serial"
+                                    }
+                                },
+                                new whereFieldValues()
+                                {
+                                    field = "number",
+                                    values = new List<string>()
+                                    {
+                                        "@number"
+                                    }
+                                }
+                            }
+                        };
                         //sentence.CommandText = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower";
                         //sentence.CommandText += "FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
                         sentence.CommandText += $" {from(new From() { tables = new List<string>() { "enrollment e", "vehicle v" }, conditions = new List<Condition_values>() { new Condition_values() { condition = "id", values = new List<string>() { "enrollmentId" } } } })}";
