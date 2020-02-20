@@ -16,12 +16,6 @@ namespace ToolBox.Services
 
         }
 
-        public StringBuilder update()
-        {
-            StringBuilder query = new StringBuilder(50);
-            query.Insert(query.Length, $"UPDATE {this.iquery.tablesColumns[0].field} SET {addFields(this.iquery.tablesColumns[0], "UPDATE")} {where(this.iquery)}");
-            return query;
-        }
         public StringBuilder insert()
         {
             StringBuilder query = new StringBuilder(50);
@@ -33,34 +27,9 @@ namespace ToolBox.Services
             query.Insert(query.Length, $" VALUES({ addFields(this.iquery.tablesColumns[0], "INSERT", "value")})");
             return query;
         }
-        public StringBuilder select()
-        {
-            if (this.iquery.tablesColumns[0].values.Count == 1)
-            {
-                return selectDelete($"SELECT {this.iquery.tablesColumns[0].values[0]}", this.iquery);
-            }
-            else
-            {
-                return select(this.iquery.tablesColumns);
-            }
-            
-        }
         public StringBuilder delete()
         {
             return selectDelete("DELETE", this.iquery);
-        }
-        public string query_select(Select select)
-        {
-            return string.Empty;
-        }
-        private static StringBuilder select(IList<FieldValues> fields)
-        {
-            IList<string> strings = new List<string>();
-            foreach (FieldValues fieldValue in fields)
-            {
-                strings.Add(string.Join(", ", alias(fieldValue)));
-            }
-            return new StringBuilder($"SELECT {string.Join(", ", strings)} ");
         }
         public static string from(From from)
         {
@@ -90,57 +59,6 @@ namespace ToolBox.Services
         private static string condition_Value(Condition_values condition_value)
         {
             return $"{condition_value.condition} = {condition_value.values[0]}";
-        }
-        //case 1: WHERE condition_1 = value_1 AND/OR condition_2 = value_2 AND/OR condition_n = value_n...
-        //2 list(string) + union type
-        //IDictionary<whereFieldValues>
-        //{ condition = "", value = "", union_type = ""}
-
-        //case 2: conditions_group_1/condition_1 AND/OR condition_2/ conditions_group_2
-        //2 list(string) + union type
-
-        //case 3: condition BETWEEN value_1 AND value_2
-        //2 list string + union type -> list(condition_values object)
-        //case 4: condition 1-n IN (value_list) 1-n
-        //list(string) + list(list(string)) + union type
-        public string where(Where wh3re)
-        {
-            string query = string.Empty;
-            foreach (whereFieldValues whereValue in wh3re.where_fields_values)
-            {
-                query += string.Join(wh3re.key, where_value(whereValue));
-            }
-            return query;
-        }
-        private static string where_value(whereFieldValues condition_value)
-        {
-            string query = " WHERE ";
-            if (condition_value.values.Count > 1)
-            {
-                if (condition_value.key == "IN")
-                {
-                    query += $" {string.Join(condition_value.key, new List<string>() { condition_value.field, $"({ string.Join(", ", condition_value.values) })"})}";
-                }
-                else if (condition_value.key == "BETWEEN")
-                {
-                    query += $" {string.Join(condition_value.key, new List<string>() {condition_value.field, string.Join( "AND", new List<string>() {condition_value.values[0], condition_value.values[1]})})}";
-                }
-                return query;
-            }
-            else
-            {
-                return $"{query} {condition_value.field} = {condition_value.values[0]}";
-            }
-            
-        }
-        private static IList<string> alias(FieldValues fieldValues)
-        {
-            IList<string> strings = new List<string>();
-            foreach (string value in fieldValues.values)
-            {
-                strings.Add($"{fieldValues.field[0]}.{value}");
-            }
-            return strings;
         }
         private static StringBuilder selectDelete(string instruction, iQuery iquery)
         {
@@ -267,23 +185,10 @@ namespace ToolBox.Services
             public string union_type { get; set; }
         }
 
-        public class Where
-        {
-            public IList<whereFieldValues> where_fields_values { get; set; }
-            public string key { get; set; }
-        }
         public class From
         {
             public IList<string> tables { get; set; }
             public IList<Condition_values> conditions { get; set; }
-        }
-        public class Select
-        {
-            public IList<FieldValues> fields { get; set; }
-
-            public Where where { get; set; }
-
-            public From from { get; set; }
         }
     }
 }
