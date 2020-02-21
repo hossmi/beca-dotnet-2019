@@ -9,7 +9,6 @@ using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
 using CarManagement.Core.Services;
 using ToolBox.Extensions.DbCommands;
-using ToolBox.Services;
 using static ToolBox.Services.QueryBuilder;
 
 namespace CarManagement.Services
@@ -19,21 +18,10 @@ namespace CarManagement.Services
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private int id;
-        private QueryBuilder queryBuilder;
         private List<whereFieldValues> whereValues;
         private const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
-        private const string COMPLEX_SELECT = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
-        private const string WHERE = " WHERE number = @number AND serial = @serial";
-        //private const string SELECT_ENROLLMENT = "SELECT serial, number FROM enrollment";
-        //private const string SELECT_ID_ENROLLMENT = "SELECT id FROM enrollment WHERE serial = @serial AND number = @number";
-        //private const string SELECT_VEHICLE = "SELECT * FROM vehicle WHERE enrollmentId = @id";
-        //private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id";
-        //private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id";
         private const string UPDATE_VEHICLE = "UPDATE vehicle SET color = @color, engineIsStarted = @engineIsStarted, engineHorsePower = @engineHorsePower  WHERE enrollmentId = @id";
-        private const string INSERT_ENROLLMENT = "INSERT INTO enrollment (serial, number) OUTPUT INSERTED.ID VALUES(@serial, @number)";
-        private const string INSERT_VEHICLE = "INSERT INTO vehicle (enrollmentId, color, engineIsStarted, engineHorsePower)  VALUES(@id, @color, @engineIsStarted, @engineHorsePower)";
-        //private const string ISERT_WHEEL = "INSERT INTO wheel (vehicleId, pressure)  VALUES(@id, @pressure)";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -91,7 +79,7 @@ namespace CarManagement.Services
                     sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     if (sentence.ExecuteScalar() != null)
                     {
-                        remover(sentence, new List<whereFieldValues>() { WhereParam("=", "id") });
+                        remover(sentence, id, "@id");
                     }
                 }
                 con.Close();
@@ -119,9 +107,9 @@ namespace CarManagement.Services
                         {
                             sentence.CommandText = UPDATE_VEHICLE;
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                            string id = check_tag_name("id", "wheel");
                             this.whereValues = new List<whereFieldValues>() { WhereParam("=", "id") };
-                            delete(sentence, new QueryBuilder(new iQuery { whereValues = this.whereValues, tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel" } } }));
-                            delete(sentence, new QueryBuilder(new iQuery { whereValues = this.whereValues, tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door" } } }));
+                            delete(sentence, $"{delete("wheel", id, "@id")} {delete("door", id, "@id")}");
                             insertwheelsdoors(vehicle, sentence, this.id);
                         }
                         else
@@ -131,7 +119,7 @@ namespace CarManagement.Services
                     }
                     else
                     {
-                        sentence.CommandText = INSERT_ENROLLMENT;
+                        sentence.CommandText = $"{insert("enrollment")} {setData(string.Join(", ", new List<string>() { "serial", "number" }), "OUTPUT INSERTED.ID", string.Join(", ", new List<string>() { "@serial", "@number" }))}";
                         this.id = (int)sentence.ExecuteScalar();
                         sentence.Parameters.Add(SetParameter(sentence, new Param("id", this.id)));
                         insertVehicle(sentence, vehicle, this.id);
@@ -172,7 +160,6 @@ namespace CarManagement.Services
         {
             string response = "OK";
             setParameters(sentence, new List<Param>() { new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number) });
-            //"SELECT id FROM enrollment WHERE serial = @serial AND number = @number"
             sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
             if (sentence.ExecuteScalar() == null)
             {
@@ -191,7 +178,7 @@ namespace CarManagement.Services
                 new Param("engineHorsePower", vehicle.Engine.HorsePower)
             };
             setParameters(sentence, parameters);
-            sentence.CommandText = INSERT_VEHICLE;
+            sentence.CommandText = $"{insert("vehicle")} {setData(fields_values(new List<string>() { "@id", "@color", "@engineHorsePower", "@engineIsStarted" }))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence, id);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -211,8 +198,15 @@ namespace CarManagement.Services
         {
             sentence.Parameters.Clear();
             setParameters(sentence, parameters);
-            this.queryBuilder = new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = table, values = parameterNames(parameters) } } });
-            sentence.CommandText = $"{this.queryBuilder.insert()}";
+            IList<string> values = new List<string>();
+            IList<string> fields = new List<string>();
+
+            foreach (string value in parameterNames(parameters))
+            {
+                values.Add($"{element(value, table, "value")}");
+                fields.Add($"{element(value, table, "condition")}");
+            }
+            sentence.CommandText = $"{insert(table)} {setData(fields_values(fields), fields_values(values))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private string vehicleExist(IDbCommand sentence)
@@ -226,16 +220,28 @@ namespace CarManagement.Services
             }
             return response;
         }
-        private static void remover(IDbCommand sentence, IList<whereFieldValues> wherevalues = null)
+        private static void remover(IDbCommand sentence, string field, string value)
         {
-            delete(sentence, new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "wheel" } }, whereValues = wherevalues }));
-            delete(sentence, new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "door" } }, whereValues = wherevalues }));
-            delete(sentence, new QueryBuilder(new iQuery() { tablesColumns = new List<FieldValues>() { new FieldValues() { field = "vehicle" } }, whereValues = wherevalues }));
-        }
-        private static void delete(IDbCommand sentence, QueryBuilder queryBuilder)
-        {
-            sentence.CommandText = $"{queryBuilder.delete()}";
+            sentence.CommandText = $"{delete("wheel", field, value)} {delete("door", field, value)} {delete("vehicle", field, value)}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        private static void remover(IDbCommand sentence)
+        {
+            sentence.CommandText = $"{delete("wheel")} {delete("door")} {delete("vehicle")}";
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        private static void delete(IDbCommand sentence, string order)
+        {
+            sentence.CommandText = $"{order}";
+            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+        }
+        private static string delete(string table_name)
+        {
+            return $"DELETE {from(table_name)};";
+        }
+        private static string delete(string table_name, string field, string value)
+        {
+            return $"DELETE {from(table_name)} {where()} {equal(field, value)};";
         }
 
         private class Param
@@ -252,12 +258,11 @@ namespace CarManagement.Services
         }
         private class PrvVehicleQuery : IVehicleQuery
         {
-            private QueryBuilder queryBuilder;
             private readonly string connectionString;
             private readonly IVehicleBuilder vehicleBuilder;
             private readonly IEnrollmentProvider enrollmentProvider;
             private readonly IDictionary<string, object> queryParameters;
-            private readonly IList<whereFieldValues> whereValues;
+            private readonly IList<string> where;
             private IList<WheelDto> wheelsDto;
             private IList<DoorDto> doorsDto;
             public PrvVehicleQuery(string connectionString, IVehicleBuilder vehicleBuilder)
@@ -266,7 +271,7 @@ namespace CarManagement.Services
                 this.vehicleBuilder = vehicleBuilder;
                 this.enrollmentProvider = new DefaultEnrollmentProvider();
                 this.queryParameters = new Dictionary<string, object>();
-                this.whereValues = new List<whereFieldValues>();
+                this.where = new List<string>();
             }
             private IEnumerable<IEnrollment> enumerateEnrollments()
             {
@@ -300,56 +305,44 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                this.whereValues.Add(WhereParam("=", "color"));
+
                 this.queryParameters.Add("@color", (int)color);
+                this.where.Add(equal("color", "@color"));
                 return this;
             }
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.whereValues.Add(WhereParam("=", "engineIsStarted"));
                 this.queryParameters.Add("@engineIsStarted", started);
+                this.where.Add(equal("engineIsStarted", "@engineIsStarted"));
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                this.whereValues.Add(WhereParam("=", "number"));
+                this.where.Add(equal("number", "@number"));
                 this.queryParameters.Add("@number", enrollment.Number);
-                this.whereValues.Add(WhereParam("=", "serial"));
                 this.queryParameters.Add("@serial", enrollment.Serial);
+                this.where.Add(equal("serial", "@serial"));
                 return this;
             }
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isTrue(serial != null);
-                this.whereValues.Add(WhereParam("=", "serial"));
                 this.queryParameters.Add("@serial", serial);
+                this.where.Add(equal("serial", "@serial"));
                 return this;
             }
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.whereValues.Add(WhereParam("=", "engineHorsePower"));
                 this.queryParameters.Add("@engineHorsePower", horsePower);
+                this.where.Add(equal("engineHorsePower", "@engineHorsePower"));
                 return this;
             }
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.whereValues.Add
-                (
-                    new whereFieldValues()
-                    {
-                        field = "engineHorsePower",
-                        values =
-                        {
-                            "@min",
-                            "@max"
-                        },
-                        key = "BETWEEN"
-                    }
-
-                );
+                this.where.Add(equal("engineHorsePower", between("@min", "@max")));
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 return this;
@@ -370,10 +363,13 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = COMPLEX_SELECT;
-                        if (this.whereValues.Count > 0)
+                        sentence.CommandText = $@"
+                            {select(new List<string>() { "e.serial", "e.number", "e.id", "v.color", "v.engineIsStarted", "v.engineHorsePower" })}
+                            {from("enrollment e")} {inner_join("vehicle v")} {on()} {condition_value("id", "enrollmentId")}";
+
+                        if (this.where.Count > 0)
                         {
-                            sentence.CommandText += $"{where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
+                            sentence.CommandText += $" {where()} {string.Join(" AND ", this.where)}";
                         }
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -418,9 +414,13 @@ namespace CarManagement.Services
                     while (reader2.Read())
                     {
                         if (type == "door")
+                        {
                             this.doorsDto.Add(new DoorDto(Convert.ToBoolean(reader2.GetValue(0))));
+                        }
                         else
+                        {
                             this.wheelsDto.Add(new WheelDto(Convert.ToDouble(reader2.GetValue(0))));
+                        }
                     }
                 }
             }
@@ -429,7 +429,9 @@ namespace CarManagement.Services
                 if (sentence2.Parameters == null)
                 {
                     foreach (IDbDataParameter parameter in sentence.Parameters)
+                    {
                         sentence2.Parameters.Add(parameter);
+                    }
                 }
             }
         }
