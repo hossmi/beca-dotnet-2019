@@ -18,22 +18,22 @@ namespace ToolBox.Services
 
         //SELECT
         //2+ fields(not all)
-        public string select(IList<string> fields)
+        public static string select(IList<string> fields)
         {
             return $"select {string.Join(", ", fields)}";
         }
         //all fields
-        public string select()
+        public static string select()
         {
             return "SELECT *";
         }
         //1 field
-        public string select(string field)
+        public static string select(string field)
         {
             return $"SELECT {field}";
         }
         //FROM
-        public string from(string table_name)
+        public static string from(string table_name)
         {
             return $"FROM {table_name}";
         }
@@ -62,14 +62,14 @@ namespace ToolBox.Services
         {
             return $"BETWEEN {a} AND {b}";
         }
-        public string where()
+        public static string where()
         {
             return "WHERE";
         }
         //condition = value
-        public string where(string condition, string value)
+        public static string equal(string condition, string value)
         {
-            return $"WHERE {condition_value(condition, value)}";
+            return $"{condition} = {value}";
         }
         //WHERE condition IN (value_list)
         public string where(string condition, IList<string> values)
@@ -82,7 +82,7 @@ namespace ToolBox.Services
             return $"WHERE {and_or(conditions1, instruction, conditions2)}";
         }
         //a and/or b
-        public string and_or(string a, string instruction, string b)
+        public static string and_or(string a, string instruction, string b)
         {
             return $"{a} {instruction} {b}";
         }
@@ -152,7 +152,7 @@ namespace ToolBox.Services
             {
                 foreach (whereFieldValues wherevalues in iquery.whereValues)
                 {
-                    strings.Add($"{buildCondition(checkCondition(wherevalues.field, iquery.tablesColumns[0].field), wherevalues)}");
+                    strings.Add($"{buildCondition(check_tag_name(wherevalues.field, iquery.tablesColumns[0].field), wherevalues)}");
                     counter++;
                 }
                 return new StringBuilder(100).Append($" WHERE {string.Join(" AND ", strings)}");
@@ -190,12 +190,12 @@ namespace ToolBox.Services
             }
             else
             {
-                query.Insert(query.Length, checkCondition(column, table));
+                query.Insert(query.Length, check_tag_name(column, table));
             }
             return query;
         }
 
-        private static string checkCondition(string column, string table)
+        public static string check_tag_name(string column, string table)
         {
             string fix;
             if (column == "id" && table != "enrollment")

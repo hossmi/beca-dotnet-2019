@@ -25,11 +25,11 @@ namespace CarManagement.Services
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
         private const string COMPLEX_SELECT = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
         private const string WHERE = " WHERE number = @number AND serial = @serial";
-        private const string SELECT_ENROLLMENT = "SELECT serial, number FROM enrollment";
-        private const string SELECT_ID_ENROLLMENT = "SELECT id FROM enrollment WHERE serial = @serial AND number = @number";
-        private const string SELECT_VEHICLE = "SELECT * FROM vehicle WHERE enrollmentId = @id";
-        private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id";
-        private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id";
+        //private const string SELECT_ENROLLMENT = "SELECT serial, number FROM enrollment";
+        //private const string SELECT_ID_ENROLLMENT = "SELECT id FROM enrollment WHERE serial = @serial AND number = @number";
+        //private const string SELECT_VEHICLE = "SELECT * FROM vehicle WHERE enrollmentId = @id";
+        //private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id";
+        //private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id";
         private const string UPDATE_VEHICLE = "UPDATE vehicle SET color = @color, engineIsStarted = @engineIsStarted, engineHorsePower = @engineHorsePower  WHERE enrollmentId = @id";
         private const string INSERT_ENROLLMENT = "INSERT INTO enrollment (serial, number) OUTPUT INSERTED.ID VALUES(@serial, @number)";
         private const string INSERT_VEHICLE = "INSERT INTO vehicle (enrollmentId, color, engineIsStarted, engineHorsePower)  VALUES(@id, @color, @engineIsStarted, @engineHorsePower)";
@@ -87,7 +87,8 @@ namespace CarManagement.Services
                 using (IDbCommand sentence = con.CreateCommand())
                 {
                     setParameters(sentence, new List<Param>() { new Param("serial", enrollment.Serial), new Param("number", enrollment.Number) });
-                    sentence.CommandText = $"{SELECT_ENROLLMENT} WHERE id = @id";
+                    string id = check_tag_name("id", "enrollment");
+                    sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     if (sentence.ExecuteScalar() != null)
                     {
                         remover(sentence, new List<whereFieldValues>() { WhereParam("=", "id") });
@@ -171,7 +172,8 @@ namespace CarManagement.Services
         {
             string response = "OK";
             setParameters(sentence, new List<Param>() { new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number) });
-            sentence.CommandText = SELECT_ID_ENROLLMENT;
+            //"SELECT id FROM enrollment WHERE serial = @serial AND number = @number"
+            sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
             if (sentence.ExecuteScalar() == null)
             {
                 response = null;
@@ -216,7 +218,8 @@ namespace CarManagement.Services
         private string vehicleExist(IDbCommand sentence)
         {
             string response = "OK";
-            sentence.CommandText = SELECT_VEHICLE;
+            string id = check_tag_name("enrollment", "id");
+            sentence.CommandText = $"{select()} {from("enrollment")} {where()} {equal("id", "@id")}";
             if (sentence.ExecuteScalar() == null)
             {
                 response = null;
@@ -272,7 +275,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = SELECT_ENROLLMENT;
+                        sentence.CommandText = $"{select()} {from("enrollment")}";
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -370,7 +373,7 @@ namespace CarManagement.Services
                         sentence.CommandText = COMPLEX_SELECT;
                         if (this.whereValues.Count > 0)
                         {
-                            sentence.CommandText += WHERE;
+                            sentence.CommandText += $"{where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
                         }
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -384,9 +387,10 @@ namespace CarManagement.Services
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
                                     sentence2.Parameters.Add(SetParameter(sentence, new Param("id", id)));
-                                    sentence2.CommandText = SELECT_DOOR;
+                                    string key = check_tag_name("id", "door");
+                                    sentence2.CommandText = $"{select("isOpen")} {from("door")} {where()} {equal(key, "@id")}";
                                     elements(sentence2, "door");
-                                    sentence2.CommandText = SELECT_WHEEL;
+                                    sentence2.CommandText = $"{select("pressure")} {from("wheel")} {where()} {equal(key, "@id")}";
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
