@@ -16,6 +16,80 @@ namespace ToolBox.Services
 
         }
 
+        //SELECT
+        //2+ fields(not all)
+        public string select(IList<string> fields)
+        {
+            return $"select {string.Join(", ", fields)}";
+        }
+        //all fields
+        public string select()
+        {
+            return "SELECT *";
+        }
+        //1 field
+        public string select(string field)
+        {
+            return $"SELECT {field}";
+        }
+        //FROM
+        public string from(string table_name)
+        {
+            return $"FROM {table_name}";
+        }
+        //INNER JOIN
+        public string inner_join(string table_name)
+        {
+            return $"INNER JOIN {table_name}";
+        }
+        //ON condition
+        public string on()
+        {
+            return "ON";
+        }
+        //condition = value
+        public string condition_value(string condition, string value)
+        {
+            return $"{condition} = {value}";
+        }
+        //IN (value_list)
+        public string condition_in_values(string condition, IList<string> values)
+        {
+            return $"{condition} IN ({string.Join(", ", values)})";
+        }
+        //BETWEEN 
+        public string between(string a, string b)
+        {
+            return $"BETWEEN {a} AND {b}";
+        }
+        public string where()
+        {
+            return "WHERE";
+        }
+        //condition = value
+        public string where(string condition, string value)
+        {
+            return $"WHERE {condition_value(condition, value)}";
+        }
+        //WHERE condition IN (value_list)
+        public string where(string condition, IList<string> values)
+        {
+            return $"WHERE {condition_in_values(condition, values)}";
+        }
+        //WHERE condition_value and/or condition_value
+        public string where_group(string conditions1, string instruction, string conditions2)
+        {
+            return $"WHERE {and_or(conditions1, instruction, conditions2)}";
+        }
+        //a and/or b
+        public string and_or(string a, string instruction, string b)
+        {
+            return $"{a} {instruction} {b}";
+        }
+
+        //UPDATE
+        //soon
+
         public StringBuilder insert()
         {
             StringBuilder query = new StringBuilder(50);
