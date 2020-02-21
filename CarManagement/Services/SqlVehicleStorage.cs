@@ -18,10 +18,8 @@ namespace CarManagement.Services
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
         private int id;
-        private List<whereFieldValues> whereValues;
         private const string COUNT_VEHICLE = @"USE CarManagement
             SELECT count(enrollmentId) AS 'Count' FROM vehicle";
-        private const string UPDATE_VEHICLE = "UPDATE vehicle SET color = @color, engineIsStarted = @engineIsStarted, engineHorsePower = @engineHorsePower  WHERE enrollmentId = @id";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -105,10 +103,14 @@ namespace CarManagement.Services
                         setParameters(sentence, new List<Param>() { new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower) });
                         if (vehicleExist(sentence) != null)
                         {
-                            sentence.CommandText = UPDATE_VEHICLE;
+                            string id = check_tag_name("id", "vehicle");
+                            sentence.CommandText = $@"
+                            {update("vehicle")} 
+                            {setData(new List<FieldValue>() { new FieldValue() { field = "color", value = "@color" }, new FieldValue() { field = "engineIsStarted", value = "@engineIsStarted" }, new FieldValue() { field = "engineHorsePower", value = "@engineHorsePower" }})}
+                            {where()} {equal(id, "@id")}";
+
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            string id = check_tag_name("id", "wheel");
-                            this.whereValues = new List<whereFieldValues>() { WhereParam("=", "id") };
+                            id = check_tag_name("id", "wheel");
                             delete(sentence, $"{delete("wheel", id, "@id")} {delete("door", id, "@id")}");
                             insertwheelsdoors(vehicle, sentence, this.id);
                         }
@@ -151,11 +153,6 @@ namespace CarManagement.Services
                 sentence.Parameters.Add(SetParameter(sentence, parameter));
             }
         }
-        private static whereFieldValues WhereParam(string key, string param)
-        {
-            return new whereFieldValues() { field = param, values = new List<string> { $"@{param}" }, key = key };
-        }
-
         private string enrollmentExist(IDbCommand sentence, IVehicle vehicle)
         {
             string response = "OK";
@@ -379,7 +376,13 @@ namespace CarManagement.Services
                                 int id = (int)reader.GetValue(2);
                                 using (IDbCommand sentence2 = con.CreateCommand())
                                 {
-                                    copyParameters(sentence, sentence2);
+                                    if (sentence2.Parameters == null)
+                                    {
+                                        foreach (IDbDataParameter parameter in sentence.Parameters)
+                                        {
+                                            sentence2.Parameters.Add(parameter);
+                                        }
+                                    }
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
                                     sentence2.Parameters.Add(SetParameter(sentence, new Param("id", id)));
@@ -423,52 +426,6 @@ namespace CarManagement.Services
                         }
                     }
                 }
-            }
-            private static void copyParameters(IDbCommand sentence, IDbCommand sentence2)
-            {
-                if (sentence2.Parameters == null)
-                {
-                    foreach (IDbDataParameter parameter in sentence.Parameters)
-                    {
-                        sentence2.Parameters.Add(parameter);
-                    }
-                }
-            }
-        }
-        public interface IInstanceProvider
-        {
-            void register<T>(Func<T> buildDelegate);
-            T get<T>();
-        }
-        public class DefaultInstanceProvider : IInstanceProvider
-        {
-            private readonly IDictionary<Type, object> instances;
-
-            static DefaultInstanceProvider()
-            {
-                Instance = new DefaultInstanceProvider();
-            }
-
-            private DefaultInstanceProvider()
-            {
-                this.instances = new Dictionary<Type, object>();
-            }
-
-            public static IInstanceProvider Instance { get; }
-
-            public T get<T>()
-            {
-                Type typeOfT = typeof(T);
-                object instance;
-
-                Asserts.isTrue(this.instances.TryGetValue(typeOfT, out instance));
-                return (T)instance;
-            }
-
-            public void register<T>(Func<T> buildDelegate)
-            {
-                T instance = buildDelegate();
-                this.instances.Add(typeof(T), instance);
             }
         }
     }

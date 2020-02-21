@@ -42,7 +42,7 @@ namespace ToolBox.Services
             return $"{condition} = {value}";
         }
         //IN (value_list)
-        public string condition_in_values(string condition, IList<string> values)
+        public static string condition_in_values(string condition, IList<string> values)
         {
             return $"{condition} IN ({string.Join(", ", values)})";
         }
@@ -76,7 +76,19 @@ namespace ToolBox.Services
             return $"{a} {instruction} {b}";
         }
         //UPDATE
-        //soon
+        public static string update(string table_name)
+        {
+            return $"UPDATE {table_name}";
+        }
+        public static string setData(IList<FieldValue> fields)
+        {
+            IList<string> strings = new List<string>();
+            foreach (FieldValue fieldValue in fields)
+            {
+                strings.Add(equal(fieldValue.field, fieldValue.value));
+            }
+            return $"SET {string.Join(", ", strings)}";
+        }
         //INSERT
         public static string insert(string table_name)
         {
@@ -132,15 +144,10 @@ namespace ToolBox.Services
             }
             return fix;
         }
-        public class FieldValues
+        public class FieldValue
         {
             public string field { get; set; }
-            public IList<string> values { get; set; }
-            public string output { get; set; }
-        }
-        public class whereFieldValues : FieldValues
-        {
-            public string key { get; set; }
+            public string value { get; set; }
         }
     }
 }
