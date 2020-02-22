@@ -27,10 +27,9 @@ namespace WebCarManager.Models
                 .Select(vehicle => vehicle.Enrollment);
             this.enrollmentDtoList = new List<EnrollmentDto>();
             foreach (IEnrollment enrollment in this.enrollmentEnum)
-                this.enrollmentDtoList.Add(
-                    new EnrollmentDto(
-                        enrollment.Serial,
-                        enrollment.Number));
+            {
+                this.enrollmentDtoList.Add( new EnrollmentDto() { Serial = enrollment.Serial, Number = enrollment.Number });
+            }
             return this.enrollmentDtoList;
 }
         public VehicleDto getVehicle(string serial, int number)
@@ -47,16 +46,22 @@ namespace WebCarManager.Models
         }
         public VehicleDto Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, EnrollmentDto enrollmentDto)
         {
-            this.vehicleDto = new VehicleDto();
-            this.vehicleDto.Enrollment = enrollmentDto;
-            this.vehicleDto.Color = color;
-            this.vehicleDto.Engine = engineDto;
-            this.vehicleDto.Doors = new DoorDto[Doors];
+            this.vehicleDto = new VehicleDto() 
+            { 
+                Enrollment = enrollmentDto, 
+                Color = color, 
+                Engine = engineDto, 
+                Doors = new DoorDto[Doors] 
+            };
             for (int i = 0; i < Doors; i++)
+            {
                 this.vehicleDto.Doors[i] = new DoorDto();
+            }
             this.vehicleDto.Wheels = new WheelDto[Wheels];
             for (int i = 0; i < Wheels; i++)
+            {
                 this.vehicleDto.Wheels[i] = new WheelDto();
+            }
             set(this.vehicleDto);
             return getVehicle(this.vehicleDto.Enrollment.Serial, this.vehicleDto.Enrollment.Number);
         }
