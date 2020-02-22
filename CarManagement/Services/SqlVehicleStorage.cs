@@ -52,7 +52,8 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    remover(sentence);
+                    sentence.CommandText = $"{$"DELETE {from("wheel")};"} {$"DELETE {from("door")};"} {$"DELETE {from("vehicle")};"}";
+                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                 }
                 con.Close();
             }
@@ -77,7 +78,8 @@ namespace CarManagement.Services
                     sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     if (sentence.ExecuteScalar() != null)
                     {
-                        remover(sentence, id, "@id");
+                        sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"} {$"DELETE {from("vehicle")} {where()} {equal(id, "@id")};"}";
+                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                     }
                 }
                 con.Close();
@@ -90,7 +92,9 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    if (enrollmentExist(sentence, vehicle) != null)
+                    setParameters(sentence, new List<Param>() { new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number) });
+                    sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
+                    if (sentence.ExecuteScalar() != null)
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
@@ -101,7 +105,9 @@ namespace CarManagement.Services
                         }
 
                         setParameters(sentence, new List<Param>() { new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower) });
-                        if (vehicleExist(sentence) != null)
+                        string key = check_tag_name("id", "enrollment");
+                        sentence.CommandText = $"{select()} {from("enrollment")} {where()} {equal(key, "@id")}";
+                        if (sentence.ExecuteScalar() != null)
                         {
                             string id = check_tag_name("id", "vehicle");
                             sentence.CommandText = $@"
@@ -111,7 +117,8 @@ namespace CarManagement.Services
 
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                             id = check_tag_name("id", "wheel");
-                            delete(sentence, $"{delete("wheel", id, "@id")} {delete("door", id, "@id")}");
+                            sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"}";
+                            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                             insertwheelsdoors(vehicle, sentence, this.id);
                         }
                         else
@@ -137,32 +144,12 @@ namespace CarManagement.Services
             parameter.Value = param.Value;
             return parameter;
         }
-        private IList<string> parameterNames(IList<Param> parameters)
-        {
-            IList<string> columnsValues = new List<string>();
-            foreach (Param parameter in parameters)
-            {
-                columnsValues.Add(parameter.Name);
-            }
-            return columnsValues;
-        }
         private void setParameters(IDbCommand sentence, IList<Param> parameters)
         {
             foreach (Param parameter in parameters)
             {
                 sentence.Parameters.Add(SetParameter(sentence, parameter));
             }
-        }
-        private string enrollmentExist(IDbCommand sentence, IVehicle vehicle)
-        {
-            string response = "OK";
-            setParameters(sentence, new List<Param>() { new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number) });
-            sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
-            if (sentence.ExecuteScalar() == null)
-            {
-                response = null;
-            }
-            return response;
         }
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle, int id)
         {
@@ -198,47 +185,13 @@ namespace CarManagement.Services
             IList<string> values = new List<string>();
             IList<string> fields = new List<string>();
 
-            foreach (string value in parameterNames(parameters))
+            foreach (Param parameter in parameters)
             {
-                values.Add($"{element(value, table, "value")}");
-                fields.Add($"{element(value, table, "condition")}");
+                values.Add($"{element(parameter.Name, table, "value")}");
+                fields.Add($"{element(parameter.Name, table, "condition")}");
             }
             sentence.CommandText = $"{insert(table)} {setData(fields_values(fields), fields_values(values))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-        }
-        private string vehicleExist(IDbCommand sentence)
-        {
-            string response = "OK";
-            string id = check_tag_name("enrollment", "id");
-            sentence.CommandText = $"{select()} {from("enrollment")} {where()} {equal("id", "@id")}";
-            if (sentence.ExecuteScalar() == null)
-            {
-                response = null;
-            }
-            return response;
-        }
-        private static void remover(IDbCommand sentence, string field, string value)
-        {
-            sentence.CommandText = $"{delete("wheel", field, value)} {delete("door", field, value)} {delete("vehicle", field, value)}";
-            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-        }
-        private static void remover(IDbCommand sentence)
-        {
-            sentence.CommandText = $"{delete("wheel")} {delete("door")} {delete("vehicle")}";
-            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-        }
-        private static void delete(IDbCommand sentence, string order)
-        {
-            sentence.CommandText = $"{order}";
-            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-        }
-        private static string delete(string table_name)
-        {
-            return $"DELETE {from(table_name)};";
-        }
-        private static string delete(string table_name, string field, string value)
-        {
-            return $"DELETE {from(table_name)} {where()} {equal(field, value)};";
         }
 
         private class Param
@@ -393,17 +346,22 @@ namespace CarManagement.Services
                                     elements(sentence2, "wheel");
                                 }
                                 yield return this.vehicleBuilder.import(
-                                    new VehicleDto(
-                                        (CarColor)Enum.Parse(typeof(CarColor),
-                                        reader.GetValue(3).ToString()),
-                                        new EngineDto(
-                                            Convert.ToInt32(reader.GetValue(5)),
-                                            Convert.ToBoolean(reader.GetValue(4))),
-                                        new EnrollmentDto(
-                                            reader.GetValue(0).ToString(),
-                                            Convert.ToInt32(reader.GetValue(1))),
-                                        this.wheelsDto.ToArray(),
-                                        this.doorsDto.ToArray()));
+                                new VehicleDto()
+                                {
+                                    Engine = new EngineDto()
+                                    {
+                                        IsStarted = Convert.ToBoolean(reader.GetValue(4)),
+                                        HorsePower = Convert.ToInt32(reader.GetValue(5))
+                                    },
+                                    Enrollment = new EnrollmentDto()
+                                    {
+                                        Serial = reader.GetValue(0).ToString(),
+                                        Number = Convert.ToInt32(reader.GetValue(1))
+                                    },
+                                    Wheels = this.wheelsDto.ToArray(),
+                                    Doors = this.doorsDto.ToArray(),
+                                    Color = (CarColor)Enum.Parse(typeof(CarColor), reader.GetValue(3).ToString())
+                                });
                             }
                             reader.Close();
                         }
@@ -418,11 +376,11 @@ namespace CarManagement.Services
                     {
                         if (type == "door")
                         {
-                            this.doorsDto.Add(new DoorDto(Convert.ToBoolean(reader2.GetValue(0))));
+                            this.doorsDto.Add( new DoorDto() { IsOpen = Convert.ToBoolean(reader2.GetValue(0)) });
                         }
                         else
                         {
-                            this.wheelsDto.Add(new WheelDto(Convert.ToDouble(reader2.GetValue(0))));
+                            this.wheelsDto.Add(new WheelDto() { Pressure = Convert.ToDouble(reader2.GetValue(0)) });
                         }
                     }
                 }

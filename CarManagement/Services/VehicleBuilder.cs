@@ -14,29 +14,10 @@ namespace CarManagement.Services
         private int wheelCount;
         private CarColor color;
         private int power;
-        private bool checkColor;
-        private List<IWheel> wheels;
-        private List<IDoor> doors;
 
         public VehicleBuilder(IEnrollmentProvider enrollmentProvider)
         {
             this.enrollmentProvider = enrollmentProvider;
-            this.wheelCount = 0;
-            this.checkColor = false;
-            this.doorsCount = 0;
-            this.power = 0;
-        }
-        public VehicleBuilder(IEnrollmentProvider enrollmentProvider, CarColor color, int horsePower, int wheels, int doors)
-        {
-            this.enrollmentProvider = enrollmentProvider;
-            checkColors(color);
-            this.color = color;
-            Asserts.isTrue(horsePower > -1);
-            this.power = horsePower;
-            Asserts.isTrue(doors > -1 && doors < 6);
-            this.doorsCount = doors;
-            Asserts.isTrue(wheels > -1 && wheels < 7);
-            this.wheelCount = wheels;
         }
 
         public void addWheel()
@@ -61,43 +42,32 @@ namespace CarManagement.Services
         }
         public void setColor(CarColor color)
         {
-            checkColors(color);
-            this.color = new CarColor();
+            Asserts.isTrue(Enum.IsDefined(typeof(CarColor), color));
             this.color = color;
         }
 
         public IVehicle build()
         {
             Asserts.isTrue(this.wheelCount > 0);
-            this.wheels = new List<IWheel>();
-            this.doors = new List<IDoor>();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors  = new List<IDoor>();
             for (int i = 0; i < this.wheelCount; i++)
             {
-                this.wheels.Add(new Wheel());
+                wheels.Add(new Wheel());
             }
             for (int i = 0; i < this.doorsCount; i++)
             {
-                this.doors.Add(new Door());
+                doors.Add(new Door(false));
             }
             return new Vehicle(
-                this.wheels, 
-                this.doors, 
+                wheels, 
+                doors, 
                 new Engine(
-                    this.power), 
+                    this.power, false), 
                 this.color, 
                 this.enrollmentProvider.getNew());
         }
-        private void checkColors(CarColor color)
-        {
-            foreach (CarColor carColor in Enum.GetValues(typeof(CarColor)))
-            {
-                if (color == carColor)
-                {
-                    this.checkColor = true;
-                }
-            }
-            Asserts.isTrue(this.checkColor == true);
-        }
+
         public VehicleDto export(IVehicle vehicle)
         {
             return convert(vehicle);
@@ -117,23 +87,23 @@ namespace CarManagement.Services
         }
         private EngineDto convert(IEngine engine)
         {
-            return new EngineDto(engine.HorsePower, engine.IsStarted);
+            return new EngineDto() { HorsePower = engine.HorsePower, IsStarted = engine.IsStarted };
         }
         private IVehicle convert(VehicleDto vehicleDto)
         {
-            this.wheels = new List<IWheel>();
-            this.doors = new List<IDoor>();
+            List<IWheel> wheels = new List<IWheel>();
+            List<IDoor> doors = new List<IDoor>();
             foreach (WheelDto wheelDto in vehicleDto.Wheels)
             {
-                this.wheels.Add(convert(wheelDto));
+                wheels.Add(convert(wheelDto));
             }
             foreach (DoorDto doorDto in vehicleDto.Doors)
             {
-                this.doors.Add(convert(doorDto));
+                doors.Add(convert(doorDto));
             }
             return new Vehicle(
-                this.wheels, 
-                this.doors, 
+                wheels, 
+                doors, 
                 convert(vehicleDto.Engine), 
                 vehicleDto.Color, 
                 convert(vehicleDto.Enrollment));
@@ -150,12 +120,14 @@ namespace CarManagement.Services
             {
                 doorsDto[i] = convert(vehicle.Doors[i]);
             }
-            return new VehicleDto(
-                vehicle.Color, 
-                convert(vehicle.Engine), 
-                convert(vehicle.Enrollment), 
-                wheelsDto, 
-                doorsDto);
+            return new VehicleDto()
+            {
+                Color = vehicle.Color,
+                Engine = convert(vehicle.Engine),
+                Enrollment = convert(vehicle.Enrollment),
+                Wheels = wheelsDto,
+                Doors = doorsDto
+            };
         }
 
         private IDoor convert(DoorDto doorDto)
@@ -164,7 +136,7 @@ namespace CarManagement.Services
         }
         private DoorDto convert(IDoor door)
         {
-            return new DoorDto(door.IsOpen);
+            return new DoorDto() { IsOpen = door.IsOpen };
         }
         private IWheel convert(WheelDto wheelDto)
         {
@@ -172,7 +144,7 @@ namespace CarManagement.Services
         }
         private WheelDto convert(IWheel wheel)
         {
-            return new WheelDto(wheel.Pressure);
+            return new WheelDto() { Pressure = wheel.Pressure };
         }
         private IEnrollment convert(EnrollmentDto enrollmentDto)
         {
@@ -180,7 +152,7 @@ namespace CarManagement.Services
         }
         private EnrollmentDto convert(IEnrollment enrollment)
         {
-            return new EnrollmentDto(enrollment.Serial, enrollment.Number);
+            return new EnrollmentDto() { Serial = enrollment.Serial, Number = enrollment.Number };
         }
 
         private class Engine : IEngine
@@ -190,17 +162,10 @@ namespace CarManagement.Services
                 this.HorsePower = horsePower;
                 this.IsStarted = isStarted;
             }
-            public Engine(int horsePower)
-            {
-                this.HorsePower = horsePower;
-            }
-            public Engine()
-            {
-                this.HorsePower = 1;
-            }
 
             public int HorsePower { get; }
             public bool IsStarted { get; private set; }
+            
             public void start()
             {
                 Asserts.isTrue(this.IsStarted == false);
@@ -242,10 +207,6 @@ namespace CarManagement.Services
             public Door(bool isOpen)
             {
                 this.IsOpen = isOpen;
-            }
-            public Door()
-            {
-                this.IsOpen = false;
             }
 
             public void open()
