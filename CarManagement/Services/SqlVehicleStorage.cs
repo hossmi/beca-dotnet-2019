@@ -73,7 +73,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    setParameters(sentence, new List<Param>() { new Param("serial", enrollment.Serial), new Param("number", enrollment.Number) });
+                    setParameters(sentence, new List<Param>() { new Param() { Name = "serial" , Value = enrollment.Serial }, new Param("number", enrollment.Number) });
                     string id = check_tag_name("id", "enrollment");
                     sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     if (sentence.ExecuteScalar() != null)
@@ -202,9 +202,13 @@ namespace CarManagement.Services
                 this.Var = $"@{Param_name}";
                 this.Value = Param_value;
             }
-            public string Name { get; }
-            public string Var { get; }
-            public object Value { get; }
+            public Param()
+            {
+
+            }
+            public string Name { get; set; }
+            public string Var { get; set; }
+            public object Value { get; set; }
         }
         private class PrvVehicleQuery : IVehicleQuery
         {
