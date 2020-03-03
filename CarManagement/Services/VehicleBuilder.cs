@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CarManagement.Core;
 using CarManagement.Core.Models;
 using CarManagement.Core.Models.DTOs;
@@ -57,15 +58,26 @@ namespace CarManagement.Services
             }
             for (int i = 0; i < this.doorsCount; i++)
             {
-                doors.Add(new Door(false));
+                doors.Add
+                (
+                    new Door() 
+                    { 
+                        IsOpen = false
+                    }
+                );
             }
-            return new Vehicle(
-                wheels, 
-                doors, 
-                new Engine(
-                    this.power, false), 
-                this.color, 
-                this.enrollmentProvider.getNew());
+            return new Vehicle()
+            {
+                Wheels = wheels.ToArray(), 
+                Doors = doors.ToArray(), 
+                Engine = new Engine() 
+                { 
+                    HorsePower = this.power, 
+                    IsStarted = false
+                }, 
+                Color = color, 
+                Enrollment = this.enrollmentProvider.getNew()
+            };
         }
 
         public VehicleDto export(IVehicle vehicle)
@@ -83,7 +95,11 @@ namespace CarManagement.Services
 
         private IEngine convert(EngineDto engineDto)
         {
-            return new Engine(engineDto.HorsePower, engineDto.IsStarted);
+            return new Engine() 
+            { 
+                HorsePower = engineDto.HorsePower, 
+                IsStarted = engineDto.IsStarted
+            };
         }
         private EngineDto convert(IEngine engine)
         {
@@ -132,15 +148,24 @@ namespace CarManagement.Services
 
         private IDoor convert(DoorDto doorDto)
         {
-            return new Door(doorDto.IsOpen);
+            return new Door() 
+            { 
+                IsOpen = doorDto.IsOpen
+            };
         }
         private DoorDto convert(IDoor door)
         {
-            return new DoorDto() { IsOpen = door.IsOpen };
+            return new DoorDto() 
+            { 
+                IsOpen = door.IsOpen 
+            };
         }
         private IWheel convert(WheelDto wheelDto)
         {
-            return new Wheel(wheelDto.Pressure);
+            return new Wheel() 
+            { 
+                Pressure = wheelDto.Pressure 
+            };
         }
         private WheelDto convert(IWheel wheel)
         {
@@ -157,14 +182,8 @@ namespace CarManagement.Services
 
         private class Engine : IEngine
         {
-            public Engine(int horsePower, bool isStarted)
-            {
-                this.HorsePower = horsePower;
-                this.IsStarted = isStarted;
-            }
-
-            public int HorsePower { get; }
-            public bool IsStarted { get; private set; }
+            public int HorsePower { get; set; }
+            public bool IsStarted { get; set; }
             
             public void start()
             {
@@ -179,11 +198,7 @@ namespace CarManagement.Services
         }
         private class Wheel : IWheel
         {
-            private double pressure;
-            public Wheel(double pressure)
-            {
-                this.pressure = pressure;
-            }
+            private double pressure { get; set; }
             public Wheel()
             {
                 this.pressure = 1;
@@ -204,11 +219,6 @@ namespace CarManagement.Services
         }
         private class Door : IDoor
         {
-            public Door(bool isOpen)
-            {
-                this.IsOpen = isOpen;
-            }
-
             public void open()
             {
                 Asserts.isTrue(this.IsOpen == false);
@@ -219,19 +229,23 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.IsOpen == true);
                 this.IsOpen = false;
             }
-            public bool IsOpen { get; private set; }
+            public bool IsOpen { get; set; }
         }
         private class Vehicle : IVehicle
         {
-            private readonly List<IDoor> doors;
-            private readonly List<IWheel> wheels;
-            public IEngine Engine { get; }
-            public IEnrollment Enrollment { get; }
+            private List<IDoor> doors;
+            private List<IWheel> wheels;
+            public IEngine Engine { get; set; }
+            public IEnrollment Enrollment { get; set; }
             public IWheel[] Wheels
             {
                 get
                 {
                     return this.wheels.ToArray();
+                }
+                set 
+                {
+                    this.wheels = value.ToList();
                 }
             }
 
@@ -254,8 +268,12 @@ namespace CarManagement.Services
                 {
                     return this.doors.ToArray();
                 }
+                set
+                {
+                    this.doors = value.ToList();
+                }
             }
-            public CarColor Color { get; }
+            public CarColor Color { get; set; }
         }
     }
 }

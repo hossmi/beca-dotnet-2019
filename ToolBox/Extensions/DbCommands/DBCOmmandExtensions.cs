@@ -8,7 +8,9 @@ namespace ToolBox.Extensions.DbCommands
         public static void setParameters(this IDbCommand command, IEnumerable<KeyValuePair<string, object>> parameters)
         {
             foreach (var parameter in parameters)
+            {
                 prv_setParameter(command, parameter.Key, parameter.Value);
+            }
         }
 
         public static void setParameter(this IDbCommand command, string name, object value)

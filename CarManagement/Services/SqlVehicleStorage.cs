@@ -73,7 +73,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    setParameters(sentence, new List<Param>() { new Param() { Name = "serial" , Value = enrollment.Serial }, new Param("number", enrollment.Number) });
+                    setParameters(sentence, new List<Param>() { new Param() { Name = "serial" , Value = enrollment.Serial }, new Param() { Name = "number", Value = enrollment.Number } });
                     string id = check_tag_name("id", "enrollment");
                     sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     if (sentence.ExecuteScalar() != null)
@@ -92,7 +92,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    setParameters(sentence, new List<Param>() { new Param("serial", vehicle.Enrollment.Serial), new Param("number", vehicle.Enrollment.Number) });
+                    setParameters(sentence, new List<Param>() { new Param() { Name = "serial", Value = vehicle.Enrollment.Serial }, new Param() { Name = "number", Value = vehicle.Enrollment.Number } });
                     sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
                     if (sentence.ExecuteScalar() != null)
                     {
@@ -100,11 +100,11 @@ namespace CarManagement.Services
                         {
                             reader.Read();
                             this.id = (int)reader.GetValue(0);
-                            sentence.Parameters.Add(SetParameter(sentence, new Param(reader.GetName(0), reader.GetValue(0))));
+                            sentence.Parameters.Add(SetParameter(sentence, new Param(){Name = reader.GetName(0), Value = reader.GetValue(0)}));
                             reader.Close();
                         }
 
-                        setParameters(sentence, new List<Param>() { new Param("color", (int)vehicle.Color), new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0), new Param("engineHorsePower", vehicle.Engine.HorsePower) });
+                        setParameters(sentence, new List<Param>() { new Param() { Name = "color", Value = (int)vehicle.Color }, new Param() { Name = "engineIsStarted", Value = vehicle.Engine.IsStarted ? 1 : 0 }, new Param() { Name = "engineHorsePower", Value = vehicle.Engine.HorsePower} });
                         string key = check_tag_name("id", "enrollment");
                         sentence.CommandText = $"{select()} {from("enrollment")} {where()} {equal(key, "@id")}";
                         if (sentence.ExecuteScalar() != null)
@@ -130,7 +130,7 @@ namespace CarManagement.Services
                     {
                         sentence.CommandText = $"{insert("enrollment")} {setData(string.Join(", ", new List<string>() { "serial", "number" }), "OUTPUT INSERTED.ID", string.Join(", ", new List<string>() { "@serial", "@number" }))}";
                         this.id = (int)sentence.ExecuteScalar();
-                        sentence.Parameters.Add(SetParameter(sentence, new Param("id", this.id)));
+                        sentence.Parameters.Add(SetParameter(sentence, new Param() { Name = "id", Value = this.id}));
                         insertVehicle(sentence, vehicle, this.id);
                     }
                 }
@@ -156,10 +156,10 @@ namespace CarManagement.Services
             sentence.Parameters.Clear();
             IList<Param> parameters = new List<Param>()
             {
-                new Param("id", id),
-                new Param("color", (int)vehicle.Color),
-                new Param("engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0),
-                new Param("engineHorsePower", vehicle.Engine.HorsePower)
+                new Param(){ Name = "id", Value = id},
+                new Param(){ Name = "color", Value = (int)vehicle.Color},
+                new Param(){ Name = "engineIsStarted", Value = vehicle.Engine.IsStarted ? 1 : 0},
+                new Param(){ Name = "engineHorsePower", Value = vehicle.Engine.HorsePower }
             };
             setParameters(sentence, parameters);
             sentence.CommandText = $"{insert("vehicle")} {setData(fields_values(new List<string>() { "@id", "@color", "@engineHorsePower", "@engineIsStarted" }))}";
@@ -171,11 +171,11 @@ namespace CarManagement.Services
         {
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                makeWheelDoor(sentence, new List<Param>() { new Param("id", id), new Param("pressure", wheel.Pressure) }, "wheel");
+                makeWheelDoor(sentence, new List<Param>() { new Param() { Name = "id", Value = id}, new Param() { Name = "pressure", Value = wheel.Pressure} }, "wheel");
             }
             foreach (IDoor door in vehicle.Doors)
             {
-                makeWheelDoor(sentence, new List<Param>() { new Param("id", id), new Param("isOpen", door.IsOpen) }, "door");
+                makeWheelDoor(sentence, new List<Param>() { new Param() { Name = "id", Value = id}, new Param() { Name = "isOpen", Value = door.IsOpen } }, "door");
             }
         }
         private void makeWheelDoor(IDbCommand sentence, IList<Param> parameters, string table)
@@ -196,15 +196,9 @@ namespace CarManagement.Services
 
         private class Param
         {
-            public Param(string Param_name, object Param_value)
-            {
-                this.Name = Param_name;
-                this.Var = $"@{Param_name}";
-                this.Value = Param_value;
-            }
             public Param()
             {
-
+                this.Var = $"@{this.Name}";
             }
             public string Name { get; set; }
             public string Var { get; set; }
@@ -342,7 +336,7 @@ namespace CarManagement.Services
                                     }
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
-                                    sentence2.Parameters.Add(SetParameter(sentence, new Param("id", id)));
+                                    sentence2.Parameters.Add(SetParameter(sentence, new Param() { Name = "id", Value = id}));
                                     string key = check_tag_name("id", "door");
                                     sentence2.CommandText = $"{select("isOpen")} {from("door")} {where()} {equal(key, "@id")}";
                                     elements(sentence2, "door");
