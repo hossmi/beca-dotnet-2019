@@ -75,19 +75,12 @@ namespace CarManagement.Services
                 {
                     setParameters(sentence, new List<Param>() { new Param() { Name = "serial" , Value = enrollment.Serial }, new Param() { Name = "number", Value = enrollment.Number } });
                     string id = check_tag_name("id", "enrollment");
-                    //sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
                     sentence.CommandText = $@"{select()} {from("enrollment")} {equal(id, $"@id")}
                                             DECLARE @ID INT = {select()} {from("enrollment")} {equal(id, $"@id")}
                                             DELETE {from("wheel")} {where()} {equal(id, "@ID")}; 
                                             DELETE {from("door")} {where()} {equal(id, "@ID")}; 
                                             DELETE {from("vehicle")} {where()} {equal(id, "@ID")};";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                    //DECLARE @id
-                    /*if (sentence.ExecuteScalar() != null)
-                    {
-                        sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"} {$"DELETE {from("vehicle")} {where()} {equal(id, "@id")};"}";
-                        Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                    }*/
                 }
                 con.Close();
             }
@@ -297,7 +290,7 @@ namespace CarManagement.Services
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.where.Add(equal("engineHorsePower", between("@min", "@max")));
+                this.where.Add($"engineHorsePower {between("@min", "@max")}");
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 return this;
@@ -319,7 +312,7 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = $@"
-                            {select(new List<string>() { "e.serial", "e.number", "e.id", "v.color", "v.engineIsStarted", "v.engineHorsePower" })}
+                            {select(string.Join(", ", new List<string>() { "e.serial", "e.number", "e.id", "v.color", "v.engineIsStarted", "v.engineHorsePower" }))}
                             {from("enrollment e")} {inner_join("vehicle v")} {on()} {condition_value("id", "enrollmentId")}";
 
                         if (this.where.Count > 0)
