@@ -75,12 +75,19 @@ namespace CarManagement.Services
                 {
                     setParameters(sentence, new List<Param>() { new Param() { Name = "serial" , Value = enrollment.Serial }, new Param() { Name = "number", Value = enrollment.Number } });
                     string id = check_tag_name("id", "enrollment");
-                    sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
-                    if (sentence.ExecuteScalar() != null)
+                    //sentence.CommandText = $"{select()} {from("enrollment")} {equal(id, $"@id")}";
+                    sentence.CommandText = $@"{select()} {from("enrollment")} {equal(id, $"@id")}
+                                            DECLARE @ID INT = {select()} {from("enrollment")} {equal(id, $"@id")}
+                                            DELETE {from("wheel")} {where()} {equal(id, "@ID")}; 
+                                            DELETE {from("door")} {where()} {equal(id, "@ID")}; 
+                                            DELETE {from("vehicle")} {where()} {equal(id, "@ID")};";
+                    Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
+                    //DECLARE @id
+                    /*if (sentence.ExecuteScalar() != null)
                     {
                         sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"} {$"DELETE {from("vehicle")} {where()} {equal(id, "@id")};"}";
                         Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                    }
+                    }*/
                 }
                 con.Close();
             }

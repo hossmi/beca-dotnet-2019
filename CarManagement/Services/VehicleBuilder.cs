@@ -82,74 +82,12 @@ namespace CarManagement.Services
 
         public VehicleDto export(IVehicle vehicle)
         {
-            return convert(vehicle);
-        }
-        public IVehicle import(VehicleDto vehicleDto)
-        {
-            return convert(vehicleDto);
-        }
-        public IEnrollment import(string serial, int number)
-        {
-            return this.enrollmentProvider.import(serial, number);
-        }
-
-        private IEngine convert(EngineDto engineDto)
-        {
-            return new Engine() 
-            { 
-                HorsePower = engineDto.HorsePower, 
-                IsStarted = engineDto.IsStarted
-            };
-        }
-        private EngineDto convert(IEngine engine)
-        {
-            return new EngineDto() { HorsePower = engine.HorsePower, IsStarted = engine.IsStarted };
-        }
-        private IVehicle convert(VehicleDto vehicleDto)
-        {
-            IList<IWheel> wheels = new List<IWheel>();
-            IList<IDoor> doors = new List<IDoor>();
-            foreach (WheelDto wheelDto in vehicleDto.Wheels)
-            {
-                wheels.Add
-                (
-                    new Wheel() 
-                    { 
-                        Pressure = wheelDto .Pressure
-                    }
-                );
-            }
-            foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
-                doors.Add
-                (
-                    new Door() 
-                    { 
-                        IsOpen = doorDto.IsOpen
-                    }
-                );
-            }
-            return new Vehicle()
-            { 
-                Wheels = wheels.ToArray(),
-                Doors = doors.ToArray(),
-                Engine = new Engine() 
-                { 
-                    HorsePower = vehicleDto.Engine.HorsePower, 
-                    IsStarted = vehicleDto.Engine.IsStarted 
-                },
-                Color = vehicleDto.Color,
-                Enrollment = this.enrollmentProvider.import(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number)
-            };
-        }
-        private VehicleDto convert(IVehicle vehicle)
-        {
             WheelDto[] wheelsDto = new WheelDto[vehicle.Wheels.Length];
             DoorDto[] doorsDto = new DoorDto[vehicle.Doors.Length];
             for (int i = 0; i < vehicle.Wheels.Length; i++)
             {
-                wheelsDto[i] = new WheelDto() 
-                { 
+                wheelsDto[i] = new WheelDto()
+                {
                     Pressure = vehicle.Wheels[i].Pressure
                 };
             }
@@ -160,13 +98,13 @@ namespace CarManagement.Services
             return new VehicleDto()
             {
                 Color = vehicle.Color,
-                Engine = new EngineDto() 
-                { 
+                Engine = new EngineDto()
+                {
                     IsStarted = vehicle.Engine.IsStarted,
                     HorsePower = vehicle.Engine.HorsePower
                 },
-                Enrollment = new EnrollmentDto() 
-                { 
+                Enrollment = new EnrollmentDto()
+                {
                     Number = vehicle.Enrollment.Number,
                     Serial = vehicle.Enrollment.Serial
                 },
@@ -174,46 +112,47 @@ namespace CarManagement.Services
                 Doors = doorsDto
             };
         }
+        public IVehicle import(VehicleDto vehicleDto)
+        {
+            IList<IWheel> wheels = new List<IWheel>();
+            IList<IDoor> doors = new List<IDoor>();
 
-        private IDoor convert(DoorDto doorDto)
-        {
-            return new Door() 
-            { 
-                IsOpen = doorDto.IsOpen
+            foreach (WheelDto wheelDto in vehicleDto.Wheels)
+            {
+                wheels.Add
+                (
+                    new Wheel()
+                    {
+                        Pressure = wheelDto.Pressure
+                    }
+                );
+            }
+            foreach (DoorDto doorDto in vehicleDto.Doors)
+            {
+                doors.Add
+                (
+                    new Door()
+                    {
+                        IsOpen = doorDto.IsOpen
+                    }
+                );
+            }
+            return new Vehicle()
+            {
+                Wheels = wheels.ToArray(),
+                Doors = doors.ToArray(),
+                Engine = new Engine()
+                {
+                    HorsePower = vehicleDto.Engine.HorsePower,
+                    IsStarted = vehicleDto.Engine.IsStarted
+                },
+                Color = vehicleDto.Color,
+                Enrollment = this.enrollmentProvider.import(vehicleDto.Enrollment.Serial, vehicleDto.Enrollment.Number)
             };
         }
-        private DoorDto convert(IDoor door)
+        public IEnrollment import(string serial, int number)
         {
-            return new DoorDto() 
-            { 
-                IsOpen = door.IsOpen 
-            };
-        }
-        private IWheel convert(WheelDto wheelDto)
-        {
-            return new Wheel() 
-            { 
-                Pressure = wheelDto.Pressure 
-            };
-        }
-        private WheelDto convert(IWheel wheel)
-        {
-            return new WheelDto() 
-            { 
-                Pressure = wheel.Pressure 
-            };
-        }
-        private IEnrollment convert(EnrollmentDto enrollmentDto)
-        {
-            return this.enrollmentProvider.import(enrollmentDto.Serial, enrollmentDto.Number);
-        }
-        private EnrollmentDto convert(IEnrollment enrollment)
-        {
-            return new EnrollmentDto() 
-            { 
-                Serial = enrollment.Serial, 
-                Number = enrollment.Number 
-            };
+            return this.enrollmentProvider.import(serial, number);
         }
 
         private class Engine : IEngine
