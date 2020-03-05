@@ -17,9 +17,6 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
-        private int id;
-        private const string COUNT_VEHICLE = @"USE CarManagement
-            SELECT count(enrollmentId) AS 'Count' FROM vehicle";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -33,18 +30,21 @@ namespace CarManagement.Services
             {
                 using (IDbConnection con = new SqlConnection(this.connectionString))
                 {
+                    int counter;
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = COUNT_VEHICLE;
-                        this.id = (int)sentence.ExecuteScalar();
+                        sentence.CommandText = $@"USE CarManagement;
+                        {select("count(enrollmentId)")} {from("vehicle")}";
+                        counter = (int)sentence.ExecuteScalar();
                     }
                     con.Close();
-                    return this.id;
+                    return counter;
                 }
 
             }
         }
+
         public void clear()
         {
             using (IDbConnection con = new SqlConnection(this.connectionString))
@@ -92,6 +92,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
+                    int ID;
                     setParameters(sentence, new List<Param>() { new Param() { Name = "serial", Value = vehicle.Enrollment.Serial }, new Param() { Name = "number", Value = vehicle.Enrollment.Number } });
                     sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
                     if (sentence.ExecuteScalar() != null)
@@ -99,7 +100,7 @@ namespace CarManagement.Services
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             reader.Read();
-                            this.id = (int)reader.GetValue(0);
+                            ID = (int)reader.GetValue(0);
                             sentence.Parameters.Add(SetParameter(sentence, new Param(){Name = reader.GetName(0), Value = reader.GetValue(0)}));
                             reader.Close();
                         }
@@ -119,19 +120,19 @@ namespace CarManagement.Services
                             id = check_tag_name("id", "wheel");
                             sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"}";
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            insertwheelsdoors(vehicle, sentence, this.id);
+                            insertwheelsdoors(vehicle, sentence, ID);
                         }
                         else
                         {
-                            insertVehicle(sentence, vehicle, this.id);
+                            insertVehicle(sentence, vehicle, ID);
                         }
                     }
                     else
                     {
                         sentence.CommandText = $"{insert("enrollment")} {setData(string.Join(", ", new List<string>() { "serial", "number" }), "OUTPUT INSERTED.ID", string.Join(", ", new List<string>() { "@serial", "@number" }))}";
-                        this.id = (int)sentence.ExecuteScalar();
-                        sentence.Parameters.Add(SetParameter(sentence, new Param() { Name = "id", Value = this.id}));
-                        insertVehicle(sentence, vehicle, this.id);
+                        ID = (int)sentence.ExecuteScalar();
+                        sentence.Parameters.Add(SetParameter(sentence, new Param() { Name = "id", Value = ID }));
+                        insertVehicle(sentence, vehicle, ID);
                     }
                 }
             }
