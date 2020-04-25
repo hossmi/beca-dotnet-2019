@@ -6,8 +6,8 @@ namespace ToolBox.Services
     public class QueryBuilder
     {
         //SELECT
-        //2+ fields(not all)
-        public static string select(IList<string> fields)
+        //1+ fields(not all)
+        public static string select(params string[] fields)
         {
             return $"select {string.Join(", ", fields)}";
         }
@@ -15,11 +15,6 @@ namespace ToolBox.Services
         public static string select()
         {
             return "SELECT *";
-        }
-        //1 field
-        public static string select(string field)
-        {
-            return $"SELECT {field}";
         }
         //FROM
         public static string from(string table_name)
@@ -42,7 +37,7 @@ namespace ToolBox.Services
             return $"{condition} = {value}";
         }
         //IN (value_list)
-        public static string condition_in_values(string condition, IList<string> values)
+        public static string condition_in_values(string condition, params string[] values)
         {
             return $"{condition} IN ({string.Join(", ", values)})";
         }
@@ -61,7 +56,7 @@ namespace ToolBox.Services
             return $"{condition} = {value}";
         }
         //WHERE condition IN (value_list)
-        public string where(string condition, IList<string> values)
+        public string where(string condition, string[] values)
         {
             return $"WHERE {condition_in_values(condition, values)}";
         }
@@ -80,12 +75,14 @@ namespace ToolBox.Services
         {
             return $"UPDATE {table_name}";
         }
-        public static string setData(IList<FieldValue> fields)
+        public static string setData(params FieldValue[] fields)
         {
-            IList<string> strings = new List<string>();
+            string[] strings = new string[fields.Length];
+            int counter = 0;
             foreach (FieldValue fieldValue in fields)
             {
-                strings.Add(equal(fieldValue.field, fieldValue.value));
+                strings[counter] = equal(fieldValue.field, fieldValue.value);
+                counter++;
             }
             return $"SET {string.Join(", ", strings)}";
         }
@@ -107,7 +104,7 @@ namespace ToolBox.Services
         {
             return $"VALUES ({values})";
         }
-        public static string fields_values(IList<string> fields_values)
+        public static string fields_values(params string[] fields_values)
         {
             return $"{string.Join(", ", fields_values)}";
         }

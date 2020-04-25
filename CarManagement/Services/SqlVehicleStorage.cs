@@ -138,7 +138,7 @@ namespace CarManagement.Services
                             string id = check_tag_name("id", "vehicle");
                             sentence.CommandText = $@"
                             {update("vehicle")} 
-                            {setData(new List<FieldValue>() { new FieldValue() { field = "color", value = "@color" }, new FieldValue() { field = "engineIsStarted", value = "@engineIsStarted" }, new FieldValue() { field = "engineHorsePower", value = "@engineHorsePower" }})}
+                            {setData(new FieldValue() { field = "color", value = "@color" }, new FieldValue() { field = "engineIsStarted", value = "@engineIsStarted" }, new FieldValue() { field = "engineHorsePower", value = "@engineHorsePower" })}
                             {where()} {equal(id, "@id")}";
 
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -176,7 +176,7 @@ namespace CarManagement.Services
                     { "engineHorsePower", vehicle.Engine.HorsePower }
                 }
             );
-            sentence.CommandText = $"{insert("vehicle")} {setData(fields_values(new List<string>() { "@id", "@color", "@engineHorsePower", "@engineIsStarted" }))}";
+            sentence.CommandText = $"{insert("vehicle")} {setData(fields_values( "@id", "@color", "@engineHorsePower", "@engineIsStarted" ))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence, id);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -212,13 +212,14 @@ namespace CarManagement.Services
         {
             sentence.Parameters.Clear();
             DBCommandExtensions.setParameters(sentence, parameters);
-            IList<string> values = new List<string>();
-            IList<string> fields = new List<string>();
-
+            string[] values = new string[parameters.Count];
+            string[] fields = new string[parameters.Count];
+            int counter = 0;
             foreach (KeyValuePair<string, object> parameter in parameters)
             {
-                values.Add($"{element(parameter.Key, table, "value")}");
-                fields.Add($"{element(parameter.Key, table, "condition")}");
+                values[counter] = $"{element(parameter.Key, table, "value")}";
+                fields[counter] = $"{element(parameter.Key, table, "condition")}";
+                counter++;
             }
             sentence.CommandText = $"{insert(table)} {setData(fields_values(fields), fields_values(values))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
