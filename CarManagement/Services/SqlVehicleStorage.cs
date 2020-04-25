@@ -34,8 +34,8 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = $@"USE CarManagement;
-                        {select("count(enrollmentId)")} {from("vehicle")}";
+                        sentence.CommandText = $@"{QueryWords.USE} CarManagement;
+                        {QueryWords.SELECT} {$"{QueryWords.COUNT}({FieldNames.enrollmentId})"} {QueryWords.FROM} {TableNames.vehicle}";
                         counter = (int)sentence.ExecuteScalar();
                     }
                     con.Close();
@@ -52,7 +52,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    sentence.CommandText = $"{$"DELETE {from("wheel")};"} {$"DELETE {from("door")};"} {$"DELETE {from("vehicle")};"}";
+                    sentence.CommandText = $"{$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.door};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.vehicle};"}";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                 }
                 con.Close();
@@ -76,18 +76,17 @@ namespace CarManagement.Services
                     DBCommandExtensions.setParameters
                     (
                         sentence, 
-                        new Dictionary<string, object>() 
+                        new Dictionary<FieldNames, object>() 
                         {
-                            { "serial" , enrollment.Serial },  
-                            { "number", enrollment.Number } 
+                            { FieldNames.serial , enrollment.Serial },  
+                            { FieldNames.number, enrollment.Number } 
                         }
                     );
-                    string id = check_tag_name("id", "enrollment");
-                    sentence.CommandText = $@"{select()} {from("enrollment")} {equal(id, $"@id")}
-                                            DECLARE @ID INT = {select()} {from("enrollment")} {equal(id, $"@id")}
-                                            DELETE {from("wheel")} {where()} {equal(id, "@ID")}; 
-                                            DELETE {from("door")} {where()} {equal(id, "@ID")}; 
-                                            DELETE {from("vehicle")} {where()} {equal(id, "@ID")};";
+                    FieldNames id = check_tag_name(FieldNames.id, TableNames.enrollment);
+                    sentence.CommandText = $@"{QueryWords.DECLARE} @ID INT = {QueryWords.SELECT} {FieldNames.id} {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {$"{FieldNames.serial} = @{FieldNames.serial}"} {QueryWords.AND} {$"{FieldNames.number} = @{FieldNames.number}"};
+                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {QueryWords.WHERE} {$"{id} = @ID"}; 
+                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {$"{id} = @ID"}; 
+                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.vehicle} {QueryWords.WHERE} {$"{id} = @ID"};";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                 }
                 con.Close();
@@ -104,13 +103,13 @@ namespace CarManagement.Services
                     DBCommandExtensions.setParameters
                     (
                         sentence, 
-                        new Dictionary<string, object>()
+                        new Dictionary<FieldNames, object>()
                         { 
-                            { "serial", vehicle.Enrollment.Serial }, 
-                            { "number", vehicle.Enrollment.Number } 
+                            { FieldNames.serial, vehicle.Enrollment.Serial }, 
+                            { FieldNames.number, vehicle.Enrollment.Number } 
                         }
                     );
-                    sentence.CommandText = $"{select("id")} {from("enrollment")} {where()} {and_or(equal("serial", "@serial"), "AND", equal("number", "@number"))}";
+                    sentence.CommandText = $"{QueryWords.SELECT} {FieldNames.id} {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {$"{FieldNames.serial} = @{FieldNames.serial}"} {QueryWords.AND} {$"{FieldNames.number} = @{FieldNames.number}"}";
                     if (sentence.ExecuteScalar() != null)
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -124,26 +123,26 @@ namespace CarManagement.Services
                         DBCommandExtensions.setParameters
                         (
                             sentence, 
-                            new Dictionary<string, object>()
+                            new Dictionary<FieldNames, object>()
                             {
-                                {"color", (int)vehicle.Color },
-                                {"engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0 },
-                                {"engineHorsePower", vehicle.Engine.HorsePower }
+                                {FieldNames.color, (int)vehicle.Color },
+                                {FieldNames.engineIsStarted, vehicle.Engine.IsStarted ? 1 : 0 },
+                                {FieldNames.engineHorsePower, vehicle.Engine.HorsePower }
                             }
                         );
-                        string key = check_tag_name("id", "enrollment");
-                        sentence.CommandText = $"{select()} {from("enrollment")} {where()} {equal(key, "@id")}";
+                        FieldNames key = check_tag_name(FieldNames.id, TableNames.enrollment);
+                        sentence.CommandText = $"{QueryWords.SELECT} * {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {$"{key} = @{FieldNames.id}"}";
                         if (sentence.ExecuteScalar() != null)
                         {
-                            string id = check_tag_name("id", "vehicle");
+                            FieldNames id = check_tag_name(FieldNames.id, TableNames.vehicle);
                             sentence.CommandText = $@"
-                            {update("vehicle")} 
-                            {setData(new FieldValue() { field = "color", value = "@color" }, new FieldValue() { field = "engineIsStarted", value = "@engineIsStarted" }, new FieldValue() { field = "engineHorsePower", value = "@engineHorsePower" })}
-                            {where()} {equal(id, "@id")}";
+                            {QueryWords.UPDATE} {TableNames.vehicle}
+                            {setData(new FieldValue() { field = $"{FieldNames.color}", value = $"@{FieldNames.color}" }, new FieldValue() { field = $"{FieldNames.engineIsStarted}", value = $"@{FieldNames.engineIsStarted}" }, new FieldValue() { field = $"{FieldNames.engineHorsePower}", value = $"@{FieldNames.engineHorsePower}" })}
+                            {QueryWords.WHERE} {$"{id} = @{FieldNames.id}"}";
 
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            id = check_tag_name("id", "wheel");
-                            sentence.CommandText = $"{$"DELETE {from("wheel")} {where()} {equal(id, "@id")};"} {$"DELETE {from("door")} {where()} {equal(id, "@id")};"}";
+                            id = check_tag_name(FieldNames.id, TableNames.wheel);
+                            sentence.CommandText = $"{$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {$"{id} = @id"};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {$"{id} = @{FieldNames.id}"};"}";
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                             insertwheelsdoors(vehicle, sentence, ID);
                         }
@@ -154,9 +153,9 @@ namespace CarManagement.Services
                     }
                     else
                     {
-                        sentence.CommandText = $"{insert("enrollment")} {setData(string.Join(", ", new List<string>() { "serial", "number" }), "OUTPUT INSERTED.ID", string.Join(", ", new List<string>() { "@serial", "@number" }))}";
+                        sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {TableNames.enrollment} {setData(string.Join(", ", new List<string>() { $"{FieldNames.serial}", $"{FieldNames.number}" }), $"{QueryWords.OUTPUT} INSERTED.ID", string.Join(", ", new List<string>() { $"@{FieldNames.serial}", $"@{FieldNames.number}" }))}";
                         ID = (int)sentence.ExecuteScalar();
-                        DBCommandExtensions.setParameter(sentence, "id", ID );
+                        DBCommandExtensions.setParameter(sentence, FieldNames.id, ID );
                         insertVehicle(sentence, vehicle, ID);
                     }
                 }
@@ -168,15 +167,16 @@ namespace CarManagement.Services
             DBCommandExtensions.setParameters
             (
                 sentence,
-                new Dictionary<string, object>() 
+                new Dictionary<FieldNames, object>() 
                 {
-                    { "id", id },
-                    { "color", (int)vehicle.Color },
-                    { "engineIsStarted", vehicle.Engine.IsStarted ? 1 : 0 },
-                    { "engineHorsePower", vehicle.Engine.HorsePower }
+                    { FieldNames.id, id },
+                    { FieldNames.color, (int)vehicle.Color },
+                    { FieldNames.engineIsStarted, vehicle.Engine.IsStarted ? 1 : 0 },
+                    { FieldNames.engineHorsePower, vehicle.Engine.HorsePower }
                 }
             );
-            sentence.CommandText = $"{insert("vehicle")} {setData(fields_values( "@id", "@color", "@engineHorsePower", "@engineIsStarted" ))}";
+            
+            sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {TableNames.vehicle} {setData(string.Join(", ", new List<string>() { $"@{FieldNames.id}", $"@{FieldNames.color}", $"@{FieldNames.engineHorsePower}", $"@{FieldNames.engineIsStarted}" }))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence, id);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -188,11 +188,11 @@ namespace CarManagement.Services
                 makeWheelDoor
                 (
                     sentence, 
-                    new Dictionary<string, object>() 
-                    { 
-                        { "id", id }, 
-                        { "pressure",  wheel.Pressure } 
-                    }, "wheel"
+                    new Dictionary<FieldNames, object>() 
+                    {
+                        { FieldNames.id, id }, 
+                        { FieldNames.pressure,  wheel.Pressure } 
+                    }, TableNames.wheel
                 );
             }
             foreach (IDoor door in vehicle.Doors)
@@ -200,28 +200,30 @@ namespace CarManagement.Services
                 makeWheelDoor
                 (
                     sentence, 
-                    new Dictionary<string, object>() 
+                    new Dictionary<FieldNames, object>() 
                     { 
-                        { "id", id }, 
-                        { "isOpen", door.IsOpen } 
-                    }, "door"
+                        { FieldNames.id, id }, 
+                        { FieldNames.isOpen, door.IsOpen } 
+                    }, TableNames.door
                 );
             }
         }
-        private void makeWheelDoor(IDbCommand sentence, IDictionary<string, object> parameters, string table)
+
+        private void makeWheelDoor(IDbCommand sentence, IDictionary<FieldNames, object> parameters, TableNames table)
         {
             sentence.Parameters.Clear();
             DBCommandExtensions.setParameters(sentence, parameters);
             string[] values = new string[parameters.Count];
             string[] fields = new string[parameters.Count];
             int counter = 0;
-            foreach (KeyValuePair<string, object> parameter in parameters)
+            foreach (KeyValuePair<FieldNames, object> parameter in parameters)
             {
                 values[counter] = $"{element(parameter.Key, table, "value")}";
                 fields[counter] = $"{element(parameter.Key, table, "condition")}";
                 counter++;
             }
-            sentence.CommandText = $"{insert(table)} {setData(fields_values(fields), fields_values(values))}";
+
+            sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {table} {setData(string.Join(", ", fields), string.Join(", ", values))}";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private class PrvVehicleQuery : IVehicleQuery
@@ -248,7 +250,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = $"{select()} {from("enrollment")}";
+                        sentence.CommandText = $"{QueryWords.SELECT} * {QueryWords.FROM} {TableNames.enrollment}";
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -273,44 +275,46 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-
-                this.queryParameters.Add("@color", (int)color);
-                this.where.Add(equal("color", "@color"));
+                this.queryParameters.Add($"@{FieldNames.color}", (int)color);
+                this.where.Add($"{FieldNames.color} = @{FieldNames.color}");
                 return this;
             }
+
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.queryParameters.Add("@engineIsStarted", started);
-                this.where.Add(equal("engineIsStarted", "@engineIsStarted"));
+                this.queryParameters.Add($"@{FieldNames.engineIsStarted}", started);
+                this.where.Add($"{FieldNames.engineIsStarted} = @{FieldNames.engineIsStarted}");
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                this.where.Add(equal("number", "@number"));
-                this.queryParameters.Add("@number", enrollment.Number);
-                this.queryParameters.Add("@serial", enrollment.Serial);
-                this.where.Add(equal("serial", "@serial"));
+                this.where.Add($"{FieldNames.number} = @{FieldNames.number}");
+                this.queryParameters.Add($"@{FieldNames.number}", enrollment.Number);
+                this.queryParameters.Add($"@{FieldNames.serial}", enrollment.Serial);
+                this.where.Add($"{FieldNames.serial} = @{FieldNames.serial}");
                 return this;
             }
+
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isTrue(serial != null);
-                this.queryParameters.Add("@serial", serial);
-                this.where.Add(equal("serial", "@serial"));
+                this.queryParameters.Add($"@{FieldNames.serial}", serial);
+                this.where.Add($"{FieldNames.serial} = @{FieldNames.serial}");
                 return this;
             }
+
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
-                this.queryParameters.Add("@engineHorsePower", horsePower);
-                this.where.Add(equal("engineHorsePower", "@engineHorsePower"));
+                this.queryParameters.Add($"@{FieldNames.engineHorsePower}", horsePower);
+                this.where.Add($"{FieldNames.engineHorsePower} = @{FieldNames.engineHorsePower}");
                 return this;
             }
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.where.Add($"engineHorsePower {between("@min", "@max")}");
+                this.where.Add($"{FieldNames.engineHorsePower} {QueryWords.BETWEEN} {"@min"} {QueryWords.AND} {"@max"}");
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 return this;
@@ -332,12 +336,12 @@ namespace CarManagement.Services
                     using (IDbCommand sentence = con.CreateCommand())
                     {
                         sentence.CommandText = $@"
-                            {select(string.Join(", ", new List<string>() { "e.serial", "e.number", "e.id", "v.color", "v.engineIsStarted", "v.engineHorsePower" }))}
-                            {from("enrollment e")} {inner_join("vehicle v")} {on()} {condition_value("id", "enrollmentId")}";
+                            {QueryWords.SELECT} {string.Join(", ", new List<string>() { $"e.{FieldNames.serial}", $"e.{FieldNames.number}", $"e.{FieldNames.id}", $"v.{FieldNames.color}", $"v.{FieldNames.engineIsStarted}", $"v.{FieldNames.engineHorsePower}" })}
+                            {QueryWords.FROM} {TableNames.enrollment} e {QueryWords.INNER} {QueryWords.JOIN} {TableNames.vehicle} v {QueryWords.ON} {$"{FieldNames.id} = {FieldNames.enrollmentId}"}";
 
                         if (this.where.Count > 0)
                         {
-                            sentence.CommandText += $" {where()} {string.Join(" AND ", this.where)}";
+                            sentence.CommandText += $" {QueryWords.WHERE} {string.Join($" {QueryWords.AND} ", this.where)}";
                         }
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -354,14 +358,15 @@ namespace CarManagement.Services
                                             sentence2.Parameters.Add(parameter);
                                         }
                                     }
+
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
-                                    DBCommandExtensions.setParameter(sentence2, "id", id);
-                                    string key = check_tag_name("id", "door");
-                                    sentence2.CommandText = $"{select("isOpen")} {from("door")} {where()} {equal(key, "@id")}";
-                                    elements(sentence2, "door");
-                                    sentence2.CommandText = $"{select("pressure")} {from("wheel")} {where()} {equal(key, "@id")}";
-                                    elements(sentence2, "wheel");
+                                    DBCommandExtensions.setParameter(sentence2, $"{FieldNames.id}", id);
+                                    FieldNames key = check_tag_name(FieldNames.id, TableNames.door);
+                                    sentence2.CommandText = $"{QueryWords.SELECT} {FieldNames.isOpen} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {$"{key} = @{FieldNames.id}"}";
+                                    elements(sentence2, TableNames.door);
+                                    sentence2.CommandText = $"{QueryWords.SELECT} {FieldNames.pressure} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {$"{key} = @{FieldNames.id}"}";
+                                    elements(sentence2, TableNames.wheel);
                                 }
                                 yield return this.vehicleBuilder.import(
                                 new VehicleDto()
@@ -386,19 +391,23 @@ namespace CarManagement.Services
                     }
                 }
             }
-            void elements(IDbCommand sentence2, string type)
+
+            void elements(IDbCommand sentence2, TableNames type)
             {
                 using (IDataReader reader2 = sentence2.ExecuteReader())
                 {
                     while (reader2.Read())
                     {
-                        if (type == "door")
+                        switch (type)
                         {
-                            this.doorsDto.Add( new DoorDto() { IsOpen = Convert.ToBoolean(reader2.GetValue(0)) });
-                        }
-                        else
-                        {
-                            this.wheelsDto.Add(new WheelDto() { Pressure = Convert.ToDouble(reader2.GetValue(0)) });
+                            case TableNames.door:
+                                this.doorsDto.Add(new DoorDto() { IsOpen = Convert.ToBoolean(reader2.GetValue(0)) });
+                                break;
+                            case TableNames.wheel:
+                                this.wheelsDto.Add(new WheelDto() { Pressure = Convert.ToDouble(reader2.GetValue(0)) });
+                                break;
+                            default:
+                                break;
                         }
                     }
                 }
