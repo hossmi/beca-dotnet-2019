@@ -17,9 +17,8 @@ namespace CarManagement.Services
         private int total;
         public DefaultEnrollmentProvider()
         {
-            this.A = new StringBuilder("BCDFGHJKLMNPRSTUVWXYZ");
-            this.Serial = new StringBuilder(3);
-            this.lenght = A.Length - 1;
+            this.A = new StringBuilder("BCDFGHJKLMNPRSTVWXYZ");
+            this.lenght = this.A.Length - 1;
             this.Number = 0;
             this.i = 0;
             this.i2 = 0;
@@ -46,27 +45,26 @@ namespace CarManagement.Services
 
         IEnrollment IEnrollmentProvider.getNew()
         {
+            this.Serial = new StringBuilder(3);
             this.Serial.Insert(0, $"{(this.A[this.i])}{(this.A[this.i2])}{(this.A[this.i3])}");
             if (this.i <= this.lenght)
             {
-                if (this.Number == this.total)
+                if (this.Number.Equals(this.total))
                 {
-                    if (this.i2 >= this.lenght && this.i3 == this.lenght)
+                    if (this.i2.Equals(this.lenght) && this.i3.Equals(this.lenght))
                     {
                         this.i2 = 0;
                         this.i3 = 0;
                         this.i++;
                     }
-                    if (this.i3 == lenght)
+                    else if (this.i3.Equals(this.lenght))
                     {
                         this.i3 = 0;
                         this.i2++;
                     }
                     else
-                    {
                         this.i3++;
-                        this.Number = 0;
-                    }
+                    this.Number = 0;
                 }
                 else
                     this.Number++;
