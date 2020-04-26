@@ -7,9 +7,22 @@ namespace CarManagement.Services
 {
     public class DefaultEnrollmentProvider : IEnrollmentProvider
     {
+        private int counter;
+        private int i;
+        private int i2;
+        private int i3;
+        private int total;
+        public DefaultEnrollmentProvider()
+        {
+            this.counter = 0;
+            this.i = 0;
+            this.i2 = 0;
+            this.i3 = 0;
+            this.total = 9999;
+        }
+
         private class Enrollment : IEnrollment
         {
-
             public Enrollment(string serial, int number)
             {
                 this.Serial = serial;
@@ -21,50 +34,45 @@ namespace CarManagement.Services
 
             public override string ToString()
             {
-                return $"{this.Serial}-{this.Number.ToString("0000")}";
+                return $"{this.Serial}-{this.Number:0000}";
             }
         }
 
         IEnrollment IEnrollmentProvider.getNew()
         {
-            int Number = 0;
+            
             StringBuilder Serial = new StringBuilder(3);
-            StringBuilder A = new StringBuilder("BCDFGHJKLMNPRSTUVWXYZ", 21);
+            StringBuilder A = new StringBuilder("BCDFGHJKLMNPRSTUVWXYZ");
             int lenght = A.Length - 1;
-            int i = 0;
-            int i2 = 0;
-            int i3 = 0;
-            int total = 9999;
 
-            Serial.Insert(0, $"{(A[i])}{(A[i2])}{(A[i3])}");
-            if (i <= lenght)
+            Serial.Insert(0, $"{(A[this.i])}{(A[this.i2])}{(A[this.i3])}");
+            if (this.i <= lenght)
             {
-
-                if (Number == total)
+                if (this.counter == this.total)
                 {
-                    if (i2 >= lenght && i3 == lenght)
+                    if (this.i2 >= lenght && this.i3 == lenght)
                     {
                         i2 = 0;
                         i3 = 0;
                         i++;
                     }
-                    if (i3 == lenght)
+                    if (this.i3 == lenght)
                     {
                         i3 = 0;
                         i2++;
                     }
                     else
                     {
-                        i3++;
-                        Number = 0;
+                        this.i3++;
+                        this.counter = 0;
                     }
                 }
                 else
-                    Number++;
+                    this.counter++;
             }
             else
                 Console.WriteLine("Has alcanzado el máximo de matrículas");
-            Enrollment enrollment = new Enrollment(Serial.ToString(), Number);
+            Enrollment enrollment = new Enrollment(Serial.ToString(), this.counter);
             return enrollment;
         }
         IEnrollment IEnrollmentImporter.import(string serial, int number)
