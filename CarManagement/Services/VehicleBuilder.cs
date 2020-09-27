@@ -173,7 +173,7 @@ namespace CarManagement.Services
         }
         private class Wheel : IWheel
         {
-            private double pressure { get; set; }
+            private double pressure;
             public Wheel()
             {
                 this.pressure = 1;
@@ -194,6 +194,7 @@ namespace CarManagement.Services
         }
         private class Door : IDoor
         {
+            public bool IsOpen { get; set; }
             public void open()
             {
                 Asserts.isTrue(this.IsOpen == false);
@@ -204,7 +205,6 @@ namespace CarManagement.Services
                 Asserts.isTrue(this.IsOpen == true);
                 this.IsOpen = false;
             }
-            public bool IsOpen { get; set; }
         }
         private class Vehicle : IVehicle
         {
@@ -212,6 +212,7 @@ namespace CarManagement.Services
             private List<IWheel> wheels;
             public IEngine Engine { get; set; }
             public IEnrollment Enrollment { get; set; }
+            public CarColor Color { get; set; }
             public IWheel[] Wheels
             {
                 get
@@ -223,8 +224,6 @@ namespace CarManagement.Services
                     this.wheels = value.ToList();
                 }
             }
-
-
             public IDoor[] Doors
             {
                 get
@@ -236,7 +235,6 @@ namespace CarManagement.Services
                     this.doors = value.ToList();
                 }
             }
-            public CarColor Color { get; set; }
         }
     }
 }
