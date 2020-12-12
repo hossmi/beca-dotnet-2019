@@ -6,39 +6,7 @@ namespace ToolBox.Services
     {
         public static FieldNames check_tag_name(FieldNames column, TableNames table)
         {
-            if (column.Equals(FieldNames.id) && !table.Equals(TableNames.enrollment))
-                if (table.Equals(TableNames.vehicle))
-                    return FieldNames.enrollmentId;
-                else
-                    return FieldNames.vehicleId;
-            else
-                return column;
-        }
-        public enum QueryWords
-        {
-            SELECT,
-            UPDATE,
-            DELETE,
-            INSERT,
-            ON,
-            IN,
-            BETWEEN,
-            WHERE,
-            AND,
-            OR,
-            NOT,
-            SET,
-            INNER,
-            JOIN,
-            INTO,
-            VALUES,
-            FROM,
-            DECLARE,
-            OUTPUT,
-            USE,
-            DROP,
-            TRUNCATE,
-            COUNT
+            return column.Equals(FieldNames.id) && !table.Equals(TableNames.enrollment) ? (column.Equals(FieldNames.id) && table.Equals(TableNames.vehicle) ? FieldNames.enrollmentId : FieldNames.vehicleId) : column;
         }
         public enum TableNames
         {

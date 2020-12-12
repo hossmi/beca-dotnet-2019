@@ -17,6 +17,24 @@ namespace CarManagement.Services
     {
         private readonly string connectionString;
         private readonly IVehicleBuilder vehicleBuilder;
+        private const string USE = "USE CarManagement;";
+        private const string DECLARE = "DECLARE @ID INT = SELECT id FROM enrollment WHERE serial = @serial AND number = @number;";
+        private readonly string COUNT_VEHICLE = "SELECT COUNT(enrollmentId) FROM vehicle";
+        private const string SELECT_ID_ENROLLMENT = "SELECT id FROM enrollment WHERE serial = @serial AND number = @number;";
+        private const string SELECT_ENROLLMENT = "SELECT * FROM enrollment;";
+        private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id;";
+        private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id;";
+        private const string INSERT_ENROLLMENT = "INSERT INTO enrollment (serial, number) OUTPUT INSERTED.ID VALUES (@serial, @number);";
+        private const string INSERT_VEHICLE = "INSERT INTO vehicle VALUES (@id, @color, @engineHorsePower, @engineIsStarted);";
+        private const string DELETE_VEHICLE_COMPLEX = "DELETE FROM vehicle WHERE enrollmentId = @ID;";
+        private const string DELETE_DOOR_COMPLEX = "DELETE FROM door WHERE vehicleId = @ID;";
+        private const string DELETE_WHEEL_COMPLEX = "DELETE FROM wheel WHERE vehicleId = @ID;";
+        private const string DELETE_WHEEL = "DELETE FROM wheel;";
+        private const string DELETE_DOOR = "DELETE FROM door;";
+        private const string DELETE_VEHICLE = "DELETE FROM vehicle;";
+        private const string SELECT_ALL_ENROLLMENT = "SELECT * FROM enrollment WHERE id = @id;";
+        private const string UPDATE_VEHICLE = "UPDATE vehicle SET color = @color, engineIsStarted = @engineIsStarted, engineHorsePower = @engineHorsePower WHERE enrollmentId = @id;";
+        private const string SELECT_ENROLLMENT_VEHICLE = "SELECT e.serial, e.number, e.id, v.color, v.engineIsStarted, v.engineHorsePower FROM enrollment e INNER JOIN vehicle v ON id = enrollmentId";
 
         public SqlVehicleStorage(string connectionString, IVehicleBuilder vehicleBuilder)
         {
@@ -34,8 +52,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = $@"{QueryWords.USE} CarManagement;
-                        {QueryWords.SELECT} {$"{QueryWords.COUNT}({FieldNames.enrollmentId})"} {QueryWords.FROM} {TableNames.vehicle}";
+                        sentence.CommandText = $"{USE} {COUNT_VEHICLE}";
                         counter = (int)sentence.ExecuteScalar();
                     }
                     con.Close();
@@ -52,7 +69,7 @@ namespace CarManagement.Services
                 con.Open();
                 using (IDbCommand sentence = con.CreateCommand())
                 {
-                    sentence.CommandText = $"{$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.door};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.vehicle};"}";
+                    sentence.CommandText = $"{DELETE_WHEEL} {DELETE_DOOR} {DELETE_VEHICLE}";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                 }
                 con.Close();
@@ -83,10 +100,8 @@ namespace CarManagement.Services
                         }
                     );
                     FieldNames id = check_tag_name(FieldNames.id, TableNames.enrollment);
-                    sentence.CommandText = $@"{QueryWords.DECLARE} @ID INT = {QueryWords.SELECT} {FieldNames.id} {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {$"{FieldNames.serial} = @{FieldNames.serial}"} {QueryWords.AND} {$"{FieldNames.number} = @{FieldNames.number}"};
-                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {QueryWords.WHERE} {$"{id} = @ID"}; 
-                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {$"{id} = @ID"}; 
-                                            {QueryWords.DELETE} {QueryWords.FROM} {TableNames.vehicle} {QueryWords.WHERE} {$"{id} = @ID"};";
+                    
+                    sentence.CommandText = $"{DECLARE} {DELETE_WHEEL_COMPLEX} {DELETE_DOOR_COMPLEX} {DELETE_VEHICLE_COMPLEX}";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                 }
                 con.Close();
@@ -109,7 +124,7 @@ namespace CarManagement.Services
                             { FieldNames.number, vehicle.Enrollment.Number } 
                         }
                     );
-                    sentence.CommandText = $"{QueryWords.SELECT} {FieldNames.id} {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {$"{FieldNames.serial} = @{FieldNames.serial}"} {QueryWords.AND} {$"{FieldNames.number} = @{FieldNames.number}"}";
+                    sentence.CommandText = SELECT_ID_ENROLLMENT;
                     if (sentence.ExecuteScalar() != null)
                     {
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -131,18 +146,15 @@ namespace CarManagement.Services
                             }
                         );
                         FieldNames key = check_tag_name(FieldNames.id, TableNames.enrollment);
-                        sentence.CommandText = $"{QueryWords.SELECT} * {QueryWords.FROM} {TableNames.enrollment} {QueryWords.WHERE} {key} = @{FieldNames.id}";
+                        sentence.CommandText = SELECT_ALL_ENROLLMENT;
                         if (sentence.ExecuteScalar() != null)
                         {
                             FieldNames id = check_tag_name(FieldNames.id, TableNames.vehicle);
-                            sentence.CommandText = $@"
-                            {QueryWords.UPDATE} {TableNames.vehicle}
-                            {QueryWords.SET} {FieldNames.color} = @{FieldNames.color}, {FieldNames.engineIsStarted} = @{FieldNames.engineIsStarted}, {FieldNames.engineHorsePower} = @{FieldNames.engineHorsePower}
-                            {QueryWords.WHERE} {id} = @{FieldNames.id}";
+                            sentence.CommandText = UPDATE_VEHICLE;
 
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                             id = check_tag_name(FieldNames.id, TableNames.wheel);
-                            sentence.CommandText = $"{$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {id} = @{FieldNames.id};"} {$"{QueryWords.DELETE} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {id} = @{FieldNames.id};"}";
+                            sentence.CommandText = $"{DELETE_WHEEL_COMPLEX} {DELETE_DOOR_COMPLEX}";
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                             insertwheelsdoors(vehicle, sentence, ID);
                         }
@@ -153,7 +165,7 @@ namespace CarManagement.Services
                     }
                     else
                     {
-                        sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {TableNames.enrollment} ({FieldNames.serial}, {FieldNames.number}) { QueryWords.OUTPUT} INSERTED.ID {QueryWords.VALUES} (@{FieldNames.serial}, @{FieldNames.number})";
+                        sentence.CommandText = INSERT_ENROLLMENT;
                         ID = (int)sentence.ExecuteScalar();
                         DBCommandExtensions.setParameter(sentence, FieldNames.id, ID );
                         insertVehicle(sentence, vehicle, ID);
@@ -176,7 +188,7 @@ namespace CarManagement.Services
                 }
             );
             
-            sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {TableNames.vehicle} {QueryWords.VALUES} (@{FieldNames.id}, @{FieldNames.color}, @{FieldNames.engineHorsePower}, @{FieldNames.engineIsStarted})";
+            sentence.CommandText = INSERT_VEHICLE;
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
             insertwheelsdoors(vehicle, sentence, id);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -222,7 +234,7 @@ namespace CarManagement.Services
                 counter++;
             }
 
-            sentence.CommandText = $"{QueryWords.INSERT} {QueryWords.INTO} {table} ({string.Join(", ", fields)}) {QueryWords.VALUES} ({string.Join(", ", values)})";
+            sentence.CommandText = $"INSERT INTO {table} ({string.Join(", ", fields)}) VALUES ({string.Join(", ", values)})";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
         private class PrvVehicleQuery : IVehicleQuery
@@ -249,7 +261,7 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = $"{QueryWords.SELECT} * {QueryWords.FROM} {TableNames.enrollment}";
+                        sentence.CommandText = SELECT_ENROLLMENT;
                         using (IDataReader reader = sentence.ExecuteReader())
                         {
                             while (reader.Read())
@@ -274,46 +286,46 @@ namespace CarManagement.Services
             public IVehicleQuery whereColorIs(CarColor color)
             {
                 Asserts.isEnumDefined(color);
-                this.queryParameters.Add($"@{FieldNames.color}", (int)color);
-                this.where.Add($"{FieldNames.color} = @{FieldNames.color}");
+                this.queryParameters.Add($"@color", (int)color);
+                this.where.Add($"color = @color");
                 return this;
             }
 
             public IVehicleQuery whereEngineIsStarted(bool started)
             {
-                this.queryParameters.Add($"@{FieldNames.engineIsStarted}", started);
-                this.where.Add($"{FieldNames.engineIsStarted} = @{FieldNames.engineIsStarted}");
+                this.queryParameters.Add($"@engineIsStarted", started);
+                this.where.Add($"engineIsStarted = @engineIsStarted");
                 return this;
             }
             public IVehicleQuery whereEnrollmentIs(IEnrollment enrollment)
             {
                 Asserts.isTrue(enrollment != null);
-                this.where.Add($"{FieldNames.number} = @{FieldNames.number}");
-                this.queryParameters.Add($"@{FieldNames.number}", enrollment.Number);
-                this.queryParameters.Add($"@{FieldNames.serial}", enrollment.Serial);
-                this.where.Add($"{FieldNames.serial} = @{FieldNames.serial}");
+                this.where.Add($"number = @number");
+                this.queryParameters.Add($"@number", enrollment.Number);
+                this.queryParameters.Add($"@Serial", enrollment.Serial);
+                this.where.Add($"Serial = @Serial");
                 return this;
             }
 
             public IVehicleQuery whereEnrollmentSerialIs(string serial)
             {
                 Asserts.isTrue(serial != null);
-                this.queryParameters.Add($"@{FieldNames.serial}", serial);
-                this.where.Add($"{FieldNames.serial} = @{FieldNames.serial}");
+                this.queryParameters.Add($"@Serial", serial);
+                this.where.Add($"Serial = @Serial");
                 return this;
             }
 
             public IVehicleQuery whereHorsePowerEquals(int horsePower)
             {
                 this.queryParameters.Add($"@{FieldNames.engineHorsePower}", horsePower);
-                this.where.Add($"{FieldNames.engineHorsePower} = @{FieldNames.engineHorsePower}");
+                this.where.Add($"engineHorsePower = @engineHorsePower");
                 return this;
             }
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
                 Asserts.isTrue(min > 0);
                 Asserts.isTrue(max > 0);
-                this.where.Add($"{FieldNames.engineHorsePower} {QueryWords.BETWEEN} {"@min"} {QueryWords.AND} {"@max"}");
+                this.where.Add($"engineHorsePower BETWEEN @min AND @max");
                 this.queryParameters.Add("@min", min);
                 this.queryParameters.Add("@max", max);
                 return this;
@@ -334,13 +346,11 @@ namespace CarManagement.Services
                     con.Open();
                     using (IDbCommand sentence = con.CreateCommand())
                     {
-                        sentence.CommandText = $@"
-                            {QueryWords.SELECT} {string.Join(", ", new List<string>() { $"e.{FieldNames.serial}", $"e.{FieldNames.number}", $"e.{FieldNames.id}", $"v.{FieldNames.color}", $"v.{FieldNames.engineIsStarted}", $"v.{FieldNames.engineHorsePower}" })}
-                            {QueryWords.FROM} {TableNames.enrollment} e {QueryWords.INNER} {QueryWords.JOIN} {TableNames.vehicle} v {QueryWords.ON} {$"{FieldNames.id} = {FieldNames.enrollmentId}"}";
+                        sentence.CommandText = SELECT_ENROLLMENT_VEHICLE;
 
                         if (this.where.Count > 0)
                         {
-                            sentence.CommandText += $" {QueryWords.WHERE} {string.Join($" {QueryWords.AND} ", this.where)}";
+                            sentence.CommandText += $" WHERE {string.Join($" AND ", this.where)}";
                         }
                         DBCommandExtensions.setParameters(sentence, this.queryParameters);
                         using (IDataReader reader = sentence.ExecuteReader())
@@ -360,11 +370,11 @@ namespace CarManagement.Services
 
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
-                                    DBCommandExtensions.setParameter(sentence2, $"{FieldNames.id}", id);
+                                    DBCommandExtensions.setParameter(sentence2, $"id", id);
                                     FieldNames key = check_tag_name(FieldNames.id, TableNames.door);
-                                    sentence2.CommandText = $"{QueryWords.SELECT} {FieldNames.isOpen} {QueryWords.FROM} {TableNames.door} {QueryWords.WHERE} {$"{key} = @{FieldNames.id}"}";
+                                    sentence2.CommandText = SELECT_DOOR;
                                     elements(sentence2, TableNames.door);
-                                    sentence2.CommandText = $"{QueryWords.SELECT} {FieldNames.pressure} {QueryWords.FROM} {TableNames.wheel} {QueryWords.WHERE} {$"{key} = @{FieldNames.id}"}";
+                                    sentence2.CommandText = SELECT_WHEEL;
                                     elements(sentence2, TableNames.wheel);
                                 }
                                 yield return this.vehicleBuilder.import(
