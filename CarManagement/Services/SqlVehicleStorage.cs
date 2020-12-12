@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using CarManagement.Core;
 using CarManagement.Core.Models;
@@ -25,7 +26,6 @@ namespace CarManagement.Services
         private const string SELECT_DOOR = "SELECT isOpen FROM door WHERE vehicleId = @id;";
         private const string SELECT_WHEEL = "SELECT pressure FROM wheel WHERE vehicleId = @id;";
         private const string INSERT_ENROLLMENT = "INSERT INTO enrollment (serial, number) OUTPUT INSERTED.ID VALUES (@serial, @number);";
-        private const string INSERT_VEHICLE = "INSERT INTO vehicle VALUES (@id, @color, @engineHorsePower, @engineIsStarted);";
         private const string DELETE_VEHICLE_COMPLEX = "DELETE FROM vehicle WHERE enrollmentId = @ID;";
         private const string DELETE_DOOR_COMPLEX = "DELETE FROM door WHERE vehicleId = @ID;";
         private const string DELETE_WHEEL_COMPLEX = "DELETE FROM wheel WHERE vehicleId = @ID;";
@@ -99,7 +99,6 @@ namespace CarManagement.Services
                             { FieldNames.number, enrollment.Number } 
                         }
                     );
-                    FieldNames id = check_tag_name(FieldNames.id, TableNames.enrollment);
                     
                     sentence.CommandText = $"{DECLARE} {DELETE_WHEEL_COMPLEX} {DELETE_DOOR_COMPLEX} {DELETE_VEHICLE_COMPLEX}";
                     Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
@@ -145,18 +144,17 @@ namespace CarManagement.Services
                                 {FieldNames.engineHorsePower, vehicle.Engine.HorsePower }
                             }
                         );
-                        FieldNames key = check_tag_name(FieldNames.id, TableNames.enrollment);
                         sentence.CommandText = SELECT_ALL_ENROLLMENT;
                         if (sentence.ExecuteScalar() != null)
                         {
-                            FieldNames id = check_tag_name(FieldNames.id, TableNames.vehicle);
                             sentence.CommandText = UPDATE_VEHICLE;
 
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            id = check_tag_name(FieldNames.id, TableNames.wheel);
                             sentence.CommandText = $"{DELETE_WHEEL_COMPLEX} {DELETE_DOOR_COMPLEX}";
                             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-                            insertwheelsdoors(vehicle, sentence, ID);
+
+                            sentence.CommandText = insertwheelsdoors(vehicle, sentence, ID);
+                            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
                         }
                         else
                         {
@@ -166,77 +164,38 @@ namespace CarManagement.Services
                     else
                     {
                         sentence.CommandText = INSERT_ENROLLMENT;
-                        ID = (int)sentence.ExecuteScalar();
-                        DBCommandExtensions.setParameter(sentence, FieldNames.id, ID );
-                        insertVehicle(sentence, vehicle, ID);
+                        insertVehicle(sentence, vehicle, (int)sentence.ExecuteScalar());
                     }
                 }
             }
         }
         private void insertVehicle(IDbCommand sentence, IVehicle vehicle, int id)
         {
-            sentence.Parameters.Clear();
-            DBCommandExtensions.setParameters
-            (
-                sentence,
-                new Dictionary<FieldNames, object>() 
-                {
-                    { FieldNames.id, id },
-                    { FieldNames.color, (int)vehicle.Color },
-                    { FieldNames.engineIsStarted, vehicle.Engine.IsStarted ? 1 : 0 },
-                    { FieldNames.engineHorsePower, vehicle.Engine.HorsePower }
-                }
-            );
-            
-            sentence.CommandText = INSERT_VEHICLE;
+            int boolean = vehicle.Engine.IsStarted ? 1 : 0;            
+            sentence.CommandText = $"INSERT INTO vehicle VALUES ({id}, {(int)vehicle.Color}, {vehicle.Engine.HorsePower}, {boolean});";
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-            insertwheelsdoors(vehicle, sentence, id);
+            sentence.CommandText = insertwheelsdoors(vehicle, sentence, id);
             Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
         }
-        private void insertwheelsdoors(IVehicle vehicle, IDbCommand sentence, int id)
+        private string insertwheelsdoors(IVehicle vehicle, IDbCommand sentence, int id)
         {
+            string sentences = string.Empty;
             foreach (IWheel wheel in vehicle.Wheels)
             {
-                makeWheelDoor
-                (
-                    sentence, 
-                    new Dictionary<FieldNames, object>() 
-                    {
-                        { FieldNames.id, id }, 
-                        { FieldNames.pressure,  wheel.Pressure } 
-                    }, TableNames.wheel
-                );
+                sentence.Parameters.Clear();
+                NumberFormatInfo provider = new NumberFormatInfo();
+                provider.NumberDecimalSeparator = ".";
+                sentences += $"INSERT INTO wheel (vehicleId, pressure) VALUES ({id}, {wheel.Pressure.ToString(provider)});";           
             }
             foreach (IDoor door in vehicle.Doors)
             {
-                makeWheelDoor
-                (
-                    sentence, 
-                    new Dictionary<FieldNames, object>() 
-                    { 
-                        { FieldNames.id, id }, 
-                        { FieldNames.isOpen, door.IsOpen } 
-                    }, TableNames.door
-                );
+                int boolean = door.IsOpen ? 1 : 0;
+                sentence.Parameters.Clear();
+                sentences += $"INSERT INTO door (vehicleId, isOpen) VALUES ({id}, {boolean});";
             }
+            return sentences;
         }
-        private void makeWheelDoor(IDbCommand sentence, IDictionary<FieldNames, object> parameters, TableNames table)
-        {
-            sentence.Parameters.Clear();
-            DBCommandExtensions.setParameters(sentence, parameters);
-            string[] values = new string[parameters.Count];
-            string[] fields = new string[parameters.Count];
-            int counter = 0;
-            foreach (KeyValuePair<FieldNames, object> parameter in parameters)
-            {
-                fields[counter] = $"{check_tag_name(parameter.Key, table)}";
-                values[counter] = $"@{parameter.Key}";
-                counter++;
-            }
 
-            sentence.CommandText = $"INSERT INTO {table} ({string.Join(", ", fields)}) VALUES ({string.Join(", ", values)})";
-            Asserts.isTrue(sentence.ExecuteNonQuery() > 0);
-        }
         private class PrvVehicleQuery : IVehicleQuery
         {
             private readonly string connectionString;
@@ -371,7 +330,7 @@ namespace CarManagement.Services
                                     this.doorsDto = new List<DoorDto>();
                                     this.wheelsDto = new List<WheelDto>();
                                     DBCommandExtensions.setParameter(sentence2, $"id", id);
-                                    FieldNames key = check_tag_name(FieldNames.id, TableNames.door);
+                                    //FieldNames key = check_tag_name(FieldNames.id, TableNames.door);
                                     sentence2.CommandText = SELECT_DOOR;
                                     elements(sentence2, TableNames.door);
                                     sentence2.CommandText = SELECT_WHEEL;
