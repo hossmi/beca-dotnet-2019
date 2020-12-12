@@ -44,7 +44,19 @@ namespace WebCarManager.Models
         {
             this.vehicleStorage.set(this.vehicleBuilder.import(vehicleDto));
         }
-        public VehicleDto Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, EnrollmentDto enrollmentDto)
+        private int[] fixPressure(int wheels, int[] pressure)
+        {
+            List<int> lista = pressure.ToList();
+            if (lista.Count < wheels)
+            {
+                for (int i = pressure.Length; i < wheels; i++)
+                {
+                    lista.Add(1);
+                }
+            }
+            return lista.ToArray();
+        }
+        public VehicleDto Edit(CarColor color, EngineDto engineDto, int Doors,  int wheels, int[] pressure, EnrollmentDto enrollmentDto)
         {
             this.vehicleDto = new VehicleDto() 
             { 
@@ -53,15 +65,39 @@ namespace WebCarManager.Models
                 Engine = engineDto, 
                 Doors = new DoorDto[Doors] 
             };
+
             for (int i = 0; i < Doors; i++)
             {
                 this.vehicleDto.Doors[i] = new DoorDto();
             }
-            this.vehicleDto.Wheels = new WheelDto[Wheels];
-            for (int i = 0; i < Wheels; i++)
+
+            int[] newPressure;
+            if (pressure.Length < wheels)
             {
-                this.vehicleDto.Wheels[i] = new WheelDto();
+                newPressure = fixPressure(wheels, pressure);
             }
+            else
+            {
+                newPressure = pressure;
+            }
+
+            this.vehicleDto.Wheels = new WheelDto[wheels];
+            if (newPressure.Length > 0)
+            {
+                for (int i = 0; i < wheels; i++)
+                {
+                    this.vehicleDto.Wheels[i] = new WheelDto();
+                    this.vehicleDto.Wheels[i].Pressure = newPressure[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < wheels; i++)
+                {
+                    this.vehicleDto.Wheels[i] = new WheelDto();
+                }
+            }
+
             set(this.vehicleDto);
             return getVehicle(this.vehicleDto.Enrollment.Serial, this.vehicleDto.Enrollment.Number);
         }

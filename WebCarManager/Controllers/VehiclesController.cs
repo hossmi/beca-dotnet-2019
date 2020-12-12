@@ -29,10 +29,10 @@ namespace WebCarManager.Controllers
 
         // SET: Vehicles
         [HttpPost]
-        public ActionResult Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, EnrollmentDto enrollmentDto)
+        public ActionResult Edit(CarColor color, EngineDto engineDto, int Doors, int Wheels, int[] pressure, EnrollmentDto enrollmentDto)
         {
             this.ViewBag.Message = "Edited Vehicle";
-            return View(this.vehicle.Edit(color, engineDto, Doors, Wheels, enrollmentDto));
+            return View(this.vehicle.Edit(color, engineDto, Doors, Wheels, pressure, enrollmentDto));
         }
     }
 }

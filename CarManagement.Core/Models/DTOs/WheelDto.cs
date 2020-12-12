@@ -3,5 +3,10 @@
     public class WheelDto
     {
         public double Pressure { get; set; }
+
+        public WheelDto ()
+        {
+            this.Pressure = 1;
+        }
     }
 }
