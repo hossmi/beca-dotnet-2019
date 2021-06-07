@@ -18,14 +18,14 @@ namespace BusinessCore
         }
         public static int fibonacci(int n)
         {
-            int c = 0;
-            for (int a = 0, b = 1, i = 0; i < n; i++)
+            int[] arr = new int[n + 2];
+            arr[0] = 0;
+            arr[1] = 1;
+            for (int i = 2; i <= n; i++)
             {
-                c = a + b;
-                a = b;
-                b = c;
+                arr[i] = arr[i - 1] + arr[i - 2];
             }
-            return c;
+            return arr[n];
         }
     }
 }
