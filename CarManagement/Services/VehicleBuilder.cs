@@ -86,14 +86,11 @@ namespace CarManagement.Services
             DoorDto[] doorsDto = new DoorDto[vehicle.Doors.Length];
             for (int i = 0; i < vehicle.Wheels.Length; i++)
             {
-                wheelsDto[i] = new WheelDto()
-                {
-                    Pressure = vehicle.Wheels[i].Pressure
-                };
+                wheelsDto[i] = new WheelDto(vehicle.Wheels[i].Pressure);
             }
             for (int i = 0; i < vehicle.Doors.Length; i++)
             {
-                doorsDto[i] = new DoorDto() { IsOpen = vehicle.Doors[i].IsOpen };
+                doorsDto[i] = new DoorDto(vehicle.Doors[i].IsOpen);
             }
             return new VehicleDto()
             {

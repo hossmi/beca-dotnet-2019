@@ -86,8 +86,7 @@ namespace WebCarManager.Models
             {
                 for (int i = 0; i < wheels; i++)
                 {
-                    this.vehicleDto.Wheels[i] = new WheelDto();
-                    this.vehicleDto.Wheels[i].Pressure = newPressure[i];
+                    this.vehicleDto.Wheels[i] = new WheelDto(newPressure[i]);
                 }
             }
             else

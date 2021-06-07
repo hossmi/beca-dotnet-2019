@@ -8,5 +8,9 @@
         {
             this.Pressure = 1;
         }
+        public WheelDto(double pressure)
+        {
+            this.Pressure = pressure;
+        }
     }
 }

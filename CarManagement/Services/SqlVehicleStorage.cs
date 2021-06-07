@@ -369,10 +369,10 @@ namespace CarManagement.Services
                         switch (type)
                         {
                             case TableNames.door:
-                                this.doorsDto.Add(new DoorDto() { IsOpen = Convert.ToBoolean(reader2.GetValue(0)) });
+                                this.doorsDto.Add(new DoorDto(Convert.ToBoolean(reader2.GetValue(0))));
                                 break;
                             case TableNames.wheel:
-                                this.wheelsDto.Add(new WheelDto() { Pressure = Convert.ToDouble(reader2.GetValue(0)) });
+                                this.wheelsDto.Add(new WheelDto(Convert.ToDouble(reader2.GetValue(0))));
                                 break;
                             default:
                                 break;
