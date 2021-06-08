@@ -129,7 +129,7 @@ namespace CarManagement.Services
 
             public IVehicleQuery whereHorsePowerIsBetween(int min, int max)
             {
-                if (this.v == false)
+                if (!this.v)
                 {
                     this.vehicles = this.vehicles
                         .Where(vehicle => vehicle.Engine.HorsePower >= min)

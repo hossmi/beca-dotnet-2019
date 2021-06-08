@@ -82,32 +82,31 @@ namespace CarManagement.Services
 
         public VehicleDto export(IVehicle vehicle)
         {
-            WheelDto[] wheelsDto = new WheelDto[vehicle.Wheels.Length];
-            DoorDto[] doorsDto = new DoorDto[vehicle.Doors.Length];
-            for (int i = 0; i < vehicle.Wheels.Length; i++)
+            return new VehicleDto(
+                vehicle.Color, 
+                new EngineDto(vehicle.Engine.IsStarted, vehicle.Engine.HorsePower), 
+                new EnrollmentDto(vehicle.Enrollment.Serial, vehicle.Enrollment.Number),
+                (WheelDto[])makeArray(vehicle.Wheels.Length, "wheel", vehicle),
+                (DoorDto[])makeArray(vehicle.Doors.Length, "door", vehicle)
+                );
+        }
+        private object[] makeArray(int length, string type, IVehicle vehicle)
+        {
+            object[] result = new object[length];
+            for (int i = 0; i < length; i++)
             {
-                wheelsDto[i] = new WheelDto(vehicle.Wheels[i].Pressure);
-            }
-            for (int i = 0; i < vehicle.Doors.Length; i++)
-            {
-                doorsDto[i] = new DoorDto(vehicle.Doors[i].IsOpen);
-            }
-            return new VehicleDto()
-            {
-                Color = vehicle.Color,
-                Engine = new EngineDto()
+                if (type == "door")
                 {
-                    IsStarted = vehicle.Engine.IsStarted,
-                    HorsePower = vehicle.Engine.HorsePower
-                },
-                Enrollment = new EnrollmentDto()
+                    result = new DoorDto[length];
+                    result[i] = new DoorDto(vehicle.Doors[i].IsOpen);
+                }
+                else
                 {
-                    Number = vehicle.Enrollment.Number,
-                    Serial = vehicle.Enrollment.Serial
-                },
-                Wheels = wheelsDto,
-                Doors = doorsDto
-            };
+                    result = new WheelDto[length];
+                    result[i] = new WheelDto(vehicle.Wheels[i].Pressure);
+                }
+            }
+            return result;
         }
         public IVehicle import(VehicleDto vehicleDto)
         {

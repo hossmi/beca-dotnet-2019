@@ -337,22 +337,11 @@ namespace CarManagement.Services
                                     elements(sentence2, TableNames.wheel);
                                 }
                                 yield return this.vehicleBuilder.import(
-                                new VehicleDto()
-                                {
-                                    Engine = new EngineDto()
-                                    {
-                                        IsStarted = Convert.ToBoolean(reader.GetValue(4)),
-                                        HorsePower = Convert.ToInt32(reader.GetValue(5))
-                                    },
-                                    Enrollment = new EnrollmentDto()
-                                    {
-                                        Serial = reader.GetValue(0).ToString(),
-                                        Number = Convert.ToInt32(reader.GetValue(1))
-                                    },
-                                    Wheels = this.wheelsDto.ToArray(),
-                                    Doors = this.doorsDto.ToArray(),
-                                    Color = (CarColor)Enum.Parse(typeof(CarColor), reader.GetValue(3).ToString())
-                                });
+                                new VehicleDto((CarColor)Enum.Parse(typeof(CarColor), reader.GetValue(3).ToString()),
+                                new EngineDto(Convert.ToBoolean(reader.GetValue(4)), Convert.ToInt32(reader.GetValue(5))),
+                                new EnrollmentDto(reader.GetValue(0).ToString(), Convert.ToInt32(reader.GetValue(1))),
+                                this.wheelsDto.ToArray(),
+                                this.doorsDto.ToArray()));
                             }
                             reader.Close();
                         }
