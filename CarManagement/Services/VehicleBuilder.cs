@@ -72,8 +72,7 @@ namespace CarManagement.Services
                 Doors = doors.ToArray(), 
                 Engine = new Engine() 
                 { 
-                    HorsePower = this.power, 
-                    IsStarted = false
+                    HorsePower = this.power
                 }, 
                 Color = color, 
                 Enrollment = this.enrollmentProvider.getNew()
@@ -86,57 +85,16 @@ namespace CarManagement.Services
                 vehicle.Color, 
                 new EngineDto(vehicle.Engine.IsStarted, vehicle.Engine.HorsePower), 
                 new EnrollmentDto(vehicle.Enrollment.Serial, vehicle.Enrollment.Number),
-                (WheelDto[])makeArray(vehicle.Wheels.Length, "wheel", vehicle),
-                (DoorDto[])makeArray(vehicle.Doors.Length, "door", vehicle)
+                vehicle.Wheels.Select(x => new WheelDto() { Pressure = x.Pressure }).ToArray(),
+                vehicle.Doors.Select(x => new DoorDto() { IsOpen = x.IsOpen }).ToArray()
                 );
-        }
-        private object[] makeArray(int length, string type, IVehicle vehicle)
-        {
-            object[] result = new object[length];
-            for (int i = 0; i < length; i++)
-            {
-                if (type == "door")
-                {
-                    result = new DoorDto[length];
-                    result[i] = new DoorDto(vehicle.Doors[i].IsOpen);
-                }
-                else
-                {
-                    result = new WheelDto[length];
-                    result[i] = new WheelDto(vehicle.Wheels[i].Pressure);
-                }
-            }
-            return result;
         }
         public IVehicle import(VehicleDto vehicleDto)
         {
-            IList<IWheel> wheels = new List<IWheel>();
-            IList<IDoor> doors = new List<IDoor>();
-
-            foreach (WheelDto wheelDto in vehicleDto.Wheels)
-            {
-                wheels.Add
-                (
-                    new Wheel()
-                    {
-                        Pressure = wheelDto.Pressure
-                    }
-                );
-            }
-            foreach (DoorDto doorDto in vehicleDto.Doors)
-            {
-                doors.Add
-                (
-                    new Door()
-                    {
-                        IsOpen = doorDto.IsOpen
-                    }
-                );
-            }
             return new Vehicle()
             {
-                Wheels = wheels.ToArray(),
-                Doors = doors.ToArray(),
+                Wheels = vehicleDto.Wheels.Select(x => (IWheel)new Wheel() { Pressure = x.Pressure }).ToArray(),
+                Doors = vehicleDto.Doors.Select(x => (IDoor)new Door() { IsOpen = x.IsOpen }).ToArray(),
                 Engine = new Engine()
                 {
                     HorsePower = vehicleDto.Engine.HorsePower,
@@ -149,88 +107,6 @@ namespace CarManagement.Services
         public IEnrollment import(string serial, int number)
         {
             return this.enrollmentProvider.import(serial, number);
-        }
-
-        private class Engine : IEngine
-        {
-            public int HorsePower { get; set; }
-            public bool IsStarted { get; set; }
-            
-            public void start()
-            {
-                Asserts.isTrue(this.IsStarted == false);
-                this.IsStarted = true;
-            }
-            public void stop()
-            {
-                Asserts.isTrue(this.IsStarted == true);
-                this.IsStarted = false;
-            }
-        }
-        private class Wheel : IWheel
-        {
-            private double pressure;
-            public Wheel()
-            {
-                this.pressure = 1;
-            }
-
-            public double Pressure
-            {
-                get
-                {
-                    return this.pressure;
-                }
-                set
-                {
-                    Asserts.isTrue(value >= 1 && value <= 5);
-                    this.pressure = value;
-                }
-            }
-        }
-        private class Door : IDoor
-        {
-            public bool IsOpen { get; set; }
-            public void open()
-            {
-                Asserts.isTrue(this.IsOpen == false);
-                this.IsOpen = true;
-            }
-            public void close()
-            {
-                Asserts.isTrue(this.IsOpen == true);
-                this.IsOpen = false;
-            }
-        }
-        private class Vehicle : IVehicle
-        {
-            private List<IDoor> doors;
-            private List<IWheel> wheels;
-            public IEngine Engine { get; set; }
-            public IEnrollment Enrollment { get; set; }
-            public CarColor Color { get; set; }
-            public IWheel[] Wheels
-            {
-                get
-                {
-                    return this.wheels.ToArray();
-                }
-                set 
-                {
-                    this.wheels = value.ToList();
-                }
-            }
-            public IDoor[] Doors
-            {
-                get
-                {
-                    return this.doors.ToArray();
-                }
-                set
-                {
-                    this.doors = value.ToList();
-                }
-            }
         }
     }
 }
