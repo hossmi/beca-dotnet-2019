@@ -58,13 +58,7 @@ namespace CarManagement.Services
             }
             for (int i = 0; i < this.doorsCount; i++)
             {
-                doors.Add
-                (
-                    new Door() 
-                    { 
-                        IsOpen = false
-                    }
-                );
+                doors.Add(new Door());
             }
             return new Vehicle()
             {
@@ -107,6 +101,91 @@ namespace CarManagement.Services
         public IEnrollment import(string serial, int number)
         {
             return this.enrollmentProvider.import(serial, number);
+        }
+
+        private class Vehicle : IVehicle
+        {
+            private List<IDoor> doors;
+            private List<IWheel> wheels;
+            public IEngine Engine { get; set; }
+            public IEnrollment Enrollment { get; set; }
+            public CarColor Color { get; set; }
+            public IWheel[] Wheels
+            {
+                get
+                {
+                    return this.wheels.ToArray();
+                }
+                set
+                {
+                    this.wheels = value.ToList();
+                }
+            }
+            public IDoor[] Doors
+            {
+                get
+                {
+                    return this.doors.ToArray();
+                }
+                set
+                {
+                    this.doors = value.ToList();
+                }
+            }
+        }
+
+        private class Wheel : IWheel
+        {
+            public double pressure;
+            public double Pressure
+            {
+                get
+                {
+                    return this.pressure;
+                }
+                set
+                {
+                    Asserts.isTrue(value >= 1 && value <= 5);
+                    this.pressure = value;
+                }
+            }
+            public Wheel()
+            {
+                this.pressure = 1;
+            }
+        }
+
+        private class Engine : IEngine
+        {
+            public int HorsePower { get; set; }
+            public bool IsStarted { get; set; }
+
+            public void start()
+            {
+                Asserts.isTrue(this.IsStarted == false);
+                this.IsStarted = true;
+            }
+            public void stop()
+            {
+                Asserts.isTrue(this.IsStarted == true);
+                this.IsStarted = false;
+            }
+        }
+
+        private class Door : IDoor
+        {
+            public bool IsOpen { get; set; }
+
+            public void open()
+            {
+                Asserts.isTrue(this.IsOpen == false);
+                this.IsOpen = true;
+            }
+            public void close()
+            {
+                Asserts.isTrue(this.IsOpen == true);
+                this.IsOpen = false;
+            }
         }
     }
 }
